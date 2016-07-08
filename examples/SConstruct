@@ -1,0 +1,9 @@
+import os
+
+env = Environment(ENV = {'PATH':os.environ['PATH']})
+
+env.ParseConfig("root-config --glibs --cflags")
+env.Append(CCFLAGS = ['-g'])
+env.Append(CPPPATH = ['/u/home/dmriser/include/'], LIBPATH = ['/u/home/dmriser/lib/'],LIBS = ['h22'])
+
+env.Program('test','test.cxx')

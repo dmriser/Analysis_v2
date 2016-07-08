@@ -1,0 +1,13 @@
+
+# outputs
+*.pdf
+*.png
+*.root 
+
+# libs
+*.o
+*.a
+*.os
+*.so
+
+*~ 

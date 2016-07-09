@@ -10,4 +10,6 @@
 *.os
 *.so
 
-*~ 
+# variety of annoyances 
+*~
+*.scons* 

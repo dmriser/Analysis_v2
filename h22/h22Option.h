@@ -13,7 +13,9 @@
 #include <map>
 #include <vector>
 #include <iostream>
-using namespace std;
+using std::string;
+using std::vector;
+using std::map;
 
 // my includes 
 class opts

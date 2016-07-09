@@ -14,7 +14,6 @@
 // c++ includes 
 #include <iostream>
 #include <fstream>
-using namespace std;
 
 // my includes 
 #include "h22Event.h"
@@ -118,16 +117,15 @@ public :
    void Init();
 
    void AddFile(TString);
-//   void AddFile(string);
    int GetEntries(){return fchain->GetEntries(); }
 
    h22Event GetEvent(){return event;}
 
-   string GetFilename(){return fchain->GetCurrentFile()->GetName();}
-   string GetFilenameChunk(int,int);
+    std::string GetFilename(){return fchain->GetCurrentFile()->GetName();}
+    std::string GetFilenameChunk(int,int);
 
-   void AddList(string, int);
-   void AddList(string, int, int);
+    void AddList(std::string, int);
+    void AddList(std::string, int, int);
    void GetEntry(int ien){fchain->GetEntry(ien);}
 
 };

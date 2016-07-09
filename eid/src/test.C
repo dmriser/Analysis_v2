@@ -4,7 +4,7 @@
 
 // my includes 
 #include "pars.h"
-#include "pars.cc"
+#include "pars.cxx"
 
 int main(int argc, char * argv[])
 {

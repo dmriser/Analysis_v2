@@ -25,18 +25,18 @@ int main(int argc, char * argv[])
     
     
     // Setup Options
-    h22Options OPT;
-    OPT.set(argc,argv);
+    h22Options opts;
+    opts.set(argc,argv);
     
     // Setup Reader
     int GSIM = 0;                             //! Set to false, not initializing MC banks.
     h22Reader * fReader = new h22Reader(GSIM);
 //    vector<string>::iterator it;
-    for (auto it=OPT.ifiles.begin(); it<OPT.ifiles.end(); it++) { fReader->AddFile(*it); }
+    for (auto it=opts.ifiles.begin(); it<opts.ifiles.end(); it++) { fReader->AddFile(*it); }
     fReader->Init();
     
     // Sample event loop.
-    for (int iev=0; iev<OPT.args["N"].arg; iev++)
+    for (int iev=0; iev<opts.args["N"].arg; iev++)
     {
         fReader->GetEntry(iev);
         h22Event event = fReader->GetEvent();

@@ -26,8 +26,8 @@ epars::epars()
     {
       ECSSA[s] = 0.00;   ECSSB[s] = 0.00;   ECSSC[s] = 0.00;  ECSSD[s] = 0.00;
       ECSMA[s] = 0.00;   ECSMB[s] = 0.00;   ECSMC[s] = 0.00;  ECSMD[s] = 0.00;
-      ECUMIN[s] = 0.00;  ECVMIN[s] = 0.00;  ECWMIN[s] = 0.00;
-      ECUMAX[s] = 0.00;  ECVMAX[s] = 0.00;  ECWMAX[s] = 0.00;  
+      ECUMIN[s] = 70;   ECVMIN[s] = 0;    ECWMIN[s] = 0;
+      ECUMAX[s] = 400;  ECVMAX[s] = 400;  ECWMAX[s] = 400;
       ECSNSIGMA[s] = 3.00;
     }
   

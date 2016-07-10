@@ -24,6 +24,7 @@
 #include "TCanvas.h"
 #include "TH1.h"
 #include "TH2.h"
+#include "TLine.h"
 #include "TVector3.h"
 
 int main(int argc, char * argv[])
@@ -54,10 +55,9 @@ int main(int argc, char * argv[])
     
     for (int s=0; s<6; s++)
     {
-        h1_ecu[s] = new TH1F(Form("h1_ecu_%d",s),Form(" EC U Coord. Sector %d",s+1),400,-400,400);
-        h1_ecv[s] = new TH1F(Form("h1_ecv_%d",s),Form(" EC V Coord. Sector %d",s+1),400,-100,800);
-        h1_ecw[s] = new TH1F(Form("h1_ecw_%d",s),Form(" EC W Coord. Sector %d",s+1),400,-100,800);
-
+        h1_ecu[s] = new TH1F(Form("h1_ecu_%d",s),Form(" EC U Coord. Sector %d",s+1),400,0,500);
+        h1_ecv[s] = new TH1F(Form("h1_ecv_%d",s),Form(" EC V Coord. Sector %d",s+1),400,0,500);
+        h1_ecw[s] = new TH1F(Form("h1_ecw_%d",s),Form(" EC W Coord. Sector %d",s+1),400,0,500);
     }
     
     for (int iev=0; iev<nev; iev++)
@@ -85,12 +85,17 @@ int main(int argc, char * argv[])
     
     for (int s=0; s<6; s++)
     {
+        // Lines to visualize cuts
+        TLine umin(pars.ECUMIN[s],0,pars.ECUMIN[s],h1_ecu[s]->GetMaximum()); TLine umax(pars.ECUMAX[s],0,pars.ECUMAX[s],h1_ecu[s]->GetMaximum());
+        TLine vmin(pars.ECVMIN[s],0,pars.ECVMIN[s],h1_ecu[s]->GetMaximum()); TLine vmax(pars.ECVMAX[s],0,pars.ECVMAX[s],h1_ecu[s]->GetMaximum());
+        TLine wmin(pars.ECWMIN[s],0,pars.ECWMIN[s],h1_ecu[s]->GetMaximum()); TLine wmax(pars.ECWMAX[s],0,pars.ECWMAX[s],h1_ecu[s]->GetMaximum());
+        
         c1->cd(1);
-        h1_ecu[s]->Draw();
+        h1_ecu[s]->Draw(); umin.Draw("same"); umax.Draw("same");
         c1->cd(2);
-        h1_ecv[s]->Draw();
+        h1_ecv[s]->Draw(); vmin.Draw("same"); vmax.Draw("same");
         c1->cd(3);
-        h1_ecw[s]->Draw();
+        h1_ecw[s]->Draw(); wmin.Draw("same"); wmax.Draw("same");
         c1->Print("test.pdf");
     }
     

@@ -154,7 +154,7 @@ double epars::ec_samp_max(double p, int s)
 }
 
 //! region passed in
-double epars::dc_left(int r, double y)
+double epars::dc_left(double y, int r)
 {
     if (r == 1)
     {
@@ -172,7 +172,7 @@ double epars::dc_left(int r, double y)
 }
 
 //! region passed in
-double epars::dc_right(int r, double y)
+double epars::dc_right(double y, int r)
 {
     if (r == 1)
     {

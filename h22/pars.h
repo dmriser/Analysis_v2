@@ -52,8 +52,8 @@ public:
     
     double ec_samp_min(double, int);
     double ec_samp_max(double, int);
-    double dc_left(int, double);
-    double dc_right(int, double);
+    double dc_left(double, int);
+    double dc_right(double, int);
 };
 
 #endif

@@ -9,3 +9,4 @@ env.Append(CPPPATH = ['/usr/local/include/'], LIBPATH = ['/usr/local/lib/'],LIBS
 
 
 env.Program('test','test.cxx')
+env.Program('calc_eid_cuts','calc_eid_cuts.cxx')

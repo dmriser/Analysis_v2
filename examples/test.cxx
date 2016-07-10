@@ -18,7 +18,7 @@
 #include "h22Event.h"
 #include "h22Option.h"
 #include "h22Reader.h"
-#include "pars.h"   
+#include "pars.h"
 
 // root includes
 #include "TVector3.h"
@@ -45,15 +45,20 @@ int main(int argc, char * argv[])
     int pass, fail;
     pass = 0; fail = 0;
     
+    std::cout << " Total number of events loaded: " << fReader->GetEntries() << std::endl;
+    
+    long int nev = opts.args["N"].arg;
+    if (nev > fReader->GetEntries()) nev = fReader->GetEntries();
+    
     // Sample event loop.
-    for (int iev=0; iev<opts.args["N"].arg; iev++)
+    for (int iev=0; iev<nev; iev++)
     {
         fReader->GetEntry(iev);
         h22Event event = fReader->GetEvent();
         //event.printEvent();
         
-        if (event.tl3_x[0] > pars.dc_left(3,event.tl3_y[0]) &&
-            event.tl3_x[0] > pars.dc_right(3, event.tl3_y[0])) pass++;
+        if (event.tl3_x[0] > pars.dc_left(event.tl3_y[0], 3) &&
+            event.tl3_x[0] > pars.dc_right(event.tl3_y[0], 3)) pass++;
         else { fail++; }
         
     }

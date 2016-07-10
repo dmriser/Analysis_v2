@@ -34,10 +34,20 @@ h22Options::h22Options()
     args["BEAM_E"].name = "Beam Energy";
     args["BEAM_E"].help = "Beam Energy";
  
+    args["PRINT"].arg  = 100000;
+    args["PRINT"].type = 0;
+    args["PRINT"].name = "Print message every number of events";
+    args["PRINT"].help = "Print message every number of events";
+    
     args["MC"].arg  = 0;
     args["MC"].type = 0;
     args["MC"].name = "Monte Carlo Status";
     args["MC"].help = "Monte Carlo Status (0-False, 1-True)";
+    
+    args["VERBOSE"].arg  = 0;
+    args["VERBOSE"].type = 0;
+    args["VERBOSE"].name = "Verbosity Status";
+    args["VERBOSE"].help = "Verbosity Status (0-False, 1-True)";
     
     args["EPARS_FILE"].args = "elec_default.dat";
     args["EPARS_FILE"].type = 1;

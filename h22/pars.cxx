@@ -168,7 +168,7 @@ double epars::dc_left(int r, double y)
         return (DCR3FIDH - slope*y);
 
     }
-
+    return 0.0;
 }
 
 //! region passed in
@@ -186,7 +186,7 @@ double epars::dc_right(int r, double y)
         return (DCR3FIDH + slope*y);
         
     }
-    
+    return 0.0;
 }
 
 #endif

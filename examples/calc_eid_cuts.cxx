@@ -83,23 +83,35 @@ int main(int argc, char * argv[])
     c1->Divide(3,1);
     c1->Print("test.pdf[");
     
+    // Drawing Cuts
+    TLine line;
+    line.SetLineColor(kRed);
+    
     for (int s=0; s<6; s++)
     {
-        // Lines to visualize cuts
-        TLine umin(pars.ECUMIN[s],0,pars.ECUMIN[s],h1_ecu[s]->GetMaximum()); TLine umax(pars.ECUMAX[s],0,pars.ECUMAX[s],h1_ecu[s]->GetMaximum());
-        TLine vmin(pars.ECVMIN[s],0,pars.ECVMIN[s],h1_ecu[s]->GetMaximum()); TLine vmax(pars.ECVMAX[s],0,pars.ECVMAX[s],h1_ecu[s]->GetMaximum());
-        TLine wmin(pars.ECWMIN[s],0,pars.ECWMIN[s],h1_ecu[s]->GetMaximum()); TLine wmax(pars.ECWMAX[s],0,pars.ECWMAX[s],h1_ecu[s]->GetMaximum());
+        std::cout << "U Bounds: " << pars.ECUMIN[s] << " " << pars.ECUMAX[s] << std::endl;
+        std::cout << "V Bounds: " << pars.ECVMIN[s] << " " << pars.ECVMAX[s] << std::endl;
+        std::cout << "W Bounds: " << pars.ECWMIN[s] << " " << pars.ECWMAX[s] << std::endl;
         
         c1->cd(1);
-        h1_ecu[s]->Draw(); umin.Draw("same"); umax.Draw("same");
+        h1_ecu[s]->Draw();
+        line.DrawLine(pars.ECUMIN[s],0,pars.ECUMIN[s],h1_ecu[s]->GetMaximum());
+        line.DrawLine(pars.ECUMAX[s],0,pars.ECUMAX[s],h1_ecu[s]->GetMaximum());
         c1->cd(2);
-        h1_ecv[s]->Draw(); vmin.Draw("same"); vmax.Draw("same");
+        h1_ecv[s]->Draw();
+        line.DrawLine(pars.ECVMIN[s],0,pars.ECVMIN[s],h1_ecv[s]->GetMaximum());
+        line.DrawLine(pars.ECVMAX[s],0,pars.ECVMAX[s],h1_ecv[s]->GetMaximum());
         c1->cd(3);
-        h1_ecw[s]->Draw(); wmin.Draw("same"); wmax.Draw("same");
+        h1_ecw[s]->Draw();
+        line.DrawLine(pars.ECWMIN[s],0,pars.ECWMIN[s],h1_ecw[s]->GetMaximum());
+        line.DrawLine(pars.ECWMAX[s],0,pars.ECWMAX[s],h1_ecw[s]->GetMaximum());
         c1->Print("test.pdf");
     }
     
     c1->Print("test.pdf]");
+    
+    pars.save(opts.args["EPARS_FILE"].args);
+
     
     return 0;
 }

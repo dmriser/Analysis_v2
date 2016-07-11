@@ -127,6 +127,7 @@ public :
     void AddList(std::string, int);
     void AddList(std::string, int, int);
    void GetEntry(int ien){fchain->GetEntry(ien);}
+    int runno();
 
 };
 #endif

@@ -180,4 +180,19 @@ string h22Reader::GetFilenameChunk(int stringStart, int stringLen)
   return fname.substr(stringStart,stringLen); ;
 }
 
+int h22Reader::runno()
+{
+    // default case
+    int run = 0;
+    
+    string file = fchain->GetCurrentFile()->GetName();
+    size_t pos  = file.rfind("_");
+    string srun = file.substr(pos+2,5);
+//    run = stoi(srun,nullptr,0);
+//    cout << srun << " ";
+    run = atoi( srun.c_str() );
+    
+    return run;
+}
+
 #endif

@@ -19,6 +19,7 @@
 #include "h22Option.h"
 #include "h22Reader.h"
 #include "pars.h"
+#include "ParticleFilter.h"
 
 // root includes
 #include "TVector3.h"
@@ -42,6 +43,8 @@ int main(int argc, char * argv[])
     for (auto it=opts.ifiles.begin(); it<opts.ifiles.end(); it++) { fReader->AddFile(*it); }
     fReader->Init();
     
+    // Setup particle filter
+    ParticleFilter filter(opts.args["EPARS_FILE"].args);
     int pass, fail;
     pass = 0; fail = 0;
     
@@ -50,20 +53,25 @@ int main(int argc, char * argv[])
     long int nev = opts.args["N"].arg;
     if (nev > fReader->GetEntries()) nev = fReader->GetEntries();
     
+    int runno = fReader->runno();
+    
     // Sample event loop.
     for (int iev=0; iev<nev; iev++)
     {
         fReader->GetEntry(iev);
         h22Event event = fReader->GetEvent();
         //event.printEvent();
+     
+        // keep runno up to date
+        if (runno != fReader->runno() ) { runno = fReader->runno(); }
         
-        if (event.tl3_x[0] > pars.dc_left(event.tl3_y[0], 3) &&
-            event.tl3_x[0] > pars.dc_right(event.tl3_y[0], 3)) pass++;
-        else { fail++; }
+        int e_index = filter.getByPID(event,11);
+        if (e_index > -123) pass++;
+        else fail++;
         
     }
     
-    std::cout << " Pass: " << pass << " Fail: " << fail << std::endl;
+    std::cout << "Pass: " << pass << " Fail: " << fail << std::endl;
     std::cout << " Done! " << std::endl;
     
     

@@ -114,6 +114,9 @@ class h22Event
    double theta(int);    //! Polar angle of track
    TVector3 uvw(int);    //! EC Coordinates U, V, W returned as U = vector.X(), V = vector.Y(), W = vector.Z() 
     
+    double rot_dc1x(int);
+    double rot_dc1y(int);
+    
    // MC Momenta 
    double mcpx(int);
    double mcpy(int);

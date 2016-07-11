@@ -145,4 +145,17 @@ double h22Event::mcpz(int ipart)
     return mcp[ipart]*cos(mctheta[ipart]*3.14159/180);
 }
 
+double h22Event::rot_dc1x(int ipart)
+{
+    int sm1 = dc_sect[ipart]-1;
+    return tl1_y[ipart]*sin(sm1*(3.14159/180.0)*60.0)+tl1_x[ipart]*cos(sm1*(3.14159/180.0)*60.0);
+}
+
+double h22Event::rot_dc1y(int ipart)
+{
+    int sm1 = dc_sect[ipart]-1;
+    return tl1_y[ipart]*cos(sm1*(3.14159/180.0)*60.0)-tl1_x[ipart]*sin(sm1*(3.14159/180.0)*60.0);
+}
+
+
 #endif

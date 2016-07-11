@@ -15,6 +15,7 @@
 
 // c++ includes
 #include <iostream>
+#include <map>
 
 // my includes
 #include "Corrections.h"
@@ -42,6 +43,7 @@ public:
     // Member Functions
     int getByPID(h22Event, int);//! get by PID
     void set_info(bool, int);
+    std::map<std::string,bool> eid_map(h22Event);
 };
 
 #endif

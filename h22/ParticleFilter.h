@@ -17,6 +17,7 @@
 #include <iostream>
 
 // my includes
+#include "Corrections.h"
 #include "h22Event.h"
 #include "pars.h"
 
@@ -32,13 +33,15 @@ public:
     
     // Data Members
     epars eid;
-    bool MC;
+    Corrections corr;
+    bool MC; int runno;
+    
     std::string eparfile;
     std::string hparfile;
     
     // Member Functions
     int getByPID(h22Event, int);//! get by PID
-    void set_mc_by_runno(int);
+    void set_info(bool, int);
 };
 
 #endif

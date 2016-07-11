@@ -15,6 +15,7 @@
 #include <vector>
 
 // my includes
+#include "Corrections.h"
 #include "h22Event.h"
 #include "h22Option.h"
 #include "h22Reader.h"
@@ -59,13 +60,12 @@ int main(int argc, char * argv[])
     {
         fReader->GetEntry(iev);
         h22Event event = fReader->GetEvent();
-        event.printEvent();
      
         // keep runno up to date
         if (runno != fReader->runno() ) { runno = fReader->runno(); }
-   
+        
         int e_index = filter.getByPID(event,11);
-        if (e_index > -123) { pass++; event.printEvent(); }
+        if (e_index > -123) { pass++; }
         else fail++;
         
     }

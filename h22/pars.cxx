@@ -32,8 +32,8 @@ epars::epars()
     }
   
   ECEDEPMIN = 0.05; //!  50 MeV Minimum EDEP in Inner Electromagnetic Calorimeter   
-  VZMIN     = -28.0;//!  Centimeters
-  VZMAX     = -20.0;
+  VZMIN     = -27.7302;//!  Centimeters
+  VZMAX     = -22.6864;
   CCNPHE    = 25;   //   This really means 2.5 
   DCR1FIDH  = 22.0; DCR1FIDA = 60.0;
   DCR3FIDH  = 80.0; DCR3FIDA = 49.0;

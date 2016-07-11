@@ -3,6 +3,9 @@
 
   option.h 
 
+    Almost entirely the same as CLAS_Event
+    from Mauri. 
+ 
 */
 //////////////////////////////////////
 

@@ -28,6 +28,7 @@ using namespace std;
 #include <TChain.h>
 #include <TFile.h>
 
+
 h22Reader::h22Reader(int mc) 
 {
   GSIM   = mc;
@@ -153,7 +154,7 @@ void h22Reader::Init()
    fchain->SetBranchAddress("tl3_cz", event.tl3_cz, &b_tl3_cz);
    fchain->SetBranchAddress("vx", event.vx, &b_vx);
    fchain->SetBranchAddress("vy", event.vy, &b_vy);
-
+    
    if (GSIM)
      {
        fchain->SetBranchAddress("mcnentr", &event.mcnentr, &b_mcnentr);

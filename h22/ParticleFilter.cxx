@@ -29,24 +29,36 @@ ParticleFilter::ParticleFilter()
     eparfile = "eid_default_pars.dat";
     hparfile = "hid_default_pars.dat";
     eid.load(eparfile);
+    
+    MC = false;
 }
 
 ParticleFilter::ParticleFilter(std::string efile)
 {
     eparfile = efile;
     eid.load(eparfile);
+    
+    MC = false;
 }
 
 ParticleFilter::ParticleFilter(std::string efile, std::string hfile)
 {
     eparfile = efile; hparfile = hfile;
     eid.load(eparfile);
+    
+    MC = false;
 }
 
 
 ParticleFilter::~ParticleFilter()
 {
     // Don't need to save EID pars because it shouldnt be changing them.
+}
+
+void ParticleFilter::set_mc_by_runno(int runno)
+{
+    if (runno > 37657 && runno < 38752) MC = false;
+    else MC = true;
 }
 
 int ParticleFilter::getByPID(h22Event event, int pid)

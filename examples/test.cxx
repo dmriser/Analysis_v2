@@ -37,8 +37,7 @@ int main(int argc, char * argv[])
     pars.load(opts.args["EPARS_FILE"].args);
     
     // Setup Reader
-    int GSIM = 0;                             //! Set to false, not initializing MC banks.
-    h22Reader * fReader = new h22Reader(GSIM);
+    h22Reader * fReader = new h22Reader(opts.args["MC"].arg);
     
     for (auto it=opts.ifiles.begin(); it<opts.ifiles.end(); it++) { fReader->AddFile(*it); }
     fReader->Init();
@@ -60,15 +59,13 @@ int main(int argc, char * argv[])
     {
         fReader->GetEntry(iev);
         h22Event event = fReader->GetEvent();
-        //event.printEvent();
+        event.printEvent();
      
         // keep runno up to date
         if (runno != fReader->runno() ) { runno = fReader->runno(); }
-        
-//        std::cout << "tl1_x: " << event.rot_dc1x(0) << " left: " << pars.dc_left(event.rot_dc1y(0),1) << " right: " << pars.dc_right(event.rot_dc1y(0),1) << std::endl;
-        
+   
         int e_index = filter.getByPID(event,11);
-        if (e_index > -123) pass++;
+        if (e_index > -123) { pass++; event.printEvent(); }
         else fail++;
         
     }

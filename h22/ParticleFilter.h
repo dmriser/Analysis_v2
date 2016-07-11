@@ -32,12 +32,13 @@ public:
     
     // Data Members
     epars eid;
+    bool MC;
     std::string eparfile;
     std::string hparfile;
     
     // Member Functions
-    int getByPID(h22Event, int);                //! get by PID
-    
+    int getByPID(h22Event, int);//! get by PID
+    void set_mc_by_runno(int);
 };
 
 #endif

@@ -117,6 +117,8 @@ class h22Event
     double rot_dc1x(int);
     double rot_dc1y(int);
     
+    double theta_cc(int); //! Theta as reported at Cherenkov Counter
+    
    // MC Momenta 
    double mcpx(int);
    double mcpy(int);

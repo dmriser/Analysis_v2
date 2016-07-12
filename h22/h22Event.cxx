@@ -81,15 +81,15 @@ void h22Event::printEvent()
 TVector3 h22Event::uvw(int ipart)
 {
     //! Routine hijacked from Nathan
-    Float_t u, v, w, xi, yi, zi;
-    Float_t EC_the = 0.4363323;
-    Float_t EC_phi;
-    Float_t ylow   = -182.974;
-    Float_t yhi    = 189.956;
-    Float_t tgrho  = 1.95325;
-    Float_t sinrho = 0.8901256;
-    Float_t cosrho = 0.455715;
-    Float_t rot[3][3];
+    double u, v, w, xi, yi, zi;
+    double EC_the = 0.4363323;
+    double EC_phi;
+    double ylow   = -182.974;
+    double yhi    = 189.956;
+    double tgrho  = 1.95325;
+    double sinrho = 0.8901256;
+    double cosrho = 0.455715;
+    double rot[3][3];
     
     double x = ech_x[ipart];
     double y = ech_y[ipart];
@@ -128,6 +128,25 @@ TVector3 h22Event::uvw(int ipart)
     TVector3 uvw(u,v,w);
     return uvw;
     
+}
+
+double h22Event::theta_cc(int ipart)
+{
+    //! Routine Hijacked from Nathan who Hijacked it from Maurizio. 
+    
+    double cc_pln[3] = {-0.0007840784063, 0.0, -0.001681461571};
+    double d = 1.0;
+    
+    double dir[3] = {tl3_cx[ipart], tl3_cy[ipart], tl3_cz[ipart]};
+    double P1[3] = {tl3_x[ipart], tl3_y[ipart], tl3_z[ipart]};
+    double t = (cc_pln[0]*P1[0] + cc_pln[1]*P1[1] + cc_pln[2]*P1[2] + d)/(cc_pln[0]*dir[0] + cc_pln[1]*dir[1] + cc_pln[2]*dir[2]);
+    
+    double CCx = (P1[0] + dir[0]*t)*10;
+    double CCy = (P1[1] + dir[1]*t)*10;
+    double CCz = (P1[2] + dir[2]*t)*10;
+    
+    double thetaCC = atan2(sqrt(CCx*CCx + CCy*CCy), CCz);
+    return thetaCC*(180/3.14159);
 }
 
 double h22Event::mcpx(int ipart)

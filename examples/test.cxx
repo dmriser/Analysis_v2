@@ -77,6 +77,9 @@ int main(int argc, char * argv[])
         if (e_index > -123) { pass++; }
         else fail++;
     
+        //! Testing h22Event::theta_cc(int ipart)
+        std::cout << event.theta_cc(0) << " ";
+        
         std::map<std::string,bool> eid_map = filter.eid_map(event);
 
         if ( !eid_map["EC_GEO"] )     n_ec_geo_fail++;

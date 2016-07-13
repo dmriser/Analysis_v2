@@ -32,27 +32,21 @@ int main(int argc, char * argv[])
     // Setup Options
     h22Options opts;
     opts.set(argc,argv);
-    
-    //    epars pars;
-    //    pars.load(opts.args["EPARS"].args);
-    
-    Corrections corr;
-    
+    int GSIM     = opts.args["MC"].arg;
+    long int nev = opts.args["N"].arg;
+
     // Setup Reader
-    int GSIM = 0;                              //! Set to false, not initializing MC banks.
     h22Reader * fReader = new h22Reader(GSIM);
-    
-    // Loading Files
     for (auto it=opts.ifiles.begin(); it<opts.ifiles.end(); it++) { fReader->AddFile(*it); }
     fReader->Init();
     
-    // Setting important constants
-    long int nev = opts.args["N"].arg;
-    if (nev > fReader->GetEntries()) nev = fReader->GetEntries();
-    int runno = fReader->runno();
+    nev = smallest(nev, fReader->GetEntries());
     
+    // Setting important constants
+    int runno = fReader->runno();
     ParticleFilter filter(opts.args["EPARS"].args);
     filter.set_info(GSIM, runno);
+    Corrections corr;
     
     // Histograms
     TH2F * h2_p_b_pos[6];
@@ -96,7 +90,6 @@ int main(int argc, char * argv[])
                 }
             }
         }
-        
     }
     
     TCanvas * c1 = new TCanvas("c1","",1200,800);
@@ -109,6 +102,6 @@ int main(int argc, char * argv[])
     
     c1->Print("test.pdf]");
     
-    cout << " Event: " << nev << " Electrons: " << electrons << endl;
+    cout << " Events: " << nev << " Electrons: " << electrons << endl;
     
 }

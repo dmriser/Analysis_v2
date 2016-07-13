@@ -83,6 +83,17 @@ inline std::string stringify(int x)
     return o.str();
 }
 
+inline int biggest(int a, int b)
+{
+    if (a > b) return a;
+    else return b;
+}
+
+inline int smallest(int a, int b)
+{
+    if (a < b) return a;
+    else return b;
+}
 
 #endif
 

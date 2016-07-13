@@ -15,6 +15,7 @@
 #include <vector>
 
 // my includes
+#include "CommonTools.h"
 #include "h22Event.h"
 #include "h22Option.h"
 #include "h22Reader.h"
@@ -58,6 +59,9 @@ int main(int argc, char * argv[])
     double P_STEP = (P_MAX-P_MIN)/(N_SLICES-1);
     
     // Histograms, Fits, Graphs
+    TH1F * h1_vz[6];
+    TH1F * h1_nphe[6];
+    
     TH1F * h1_ecu[6];
     TH1F * h1_ecv[6];
     TH1F * h1_ecw[6];
@@ -84,6 +88,9 @@ int main(int argc, char * argv[])
     
     for (int s=0; s<6; s++)
     {
+        h1_vz[s]   = new TH1F(Form("h1_vz_%d",s),Form(" Z Vertex Sector %d",s+1),400,-85,0);
+        h1_nphe[s] = new TH1F(Form("h1_nphe_%d",s),Form(" N. Photo-electrons Sector %d",s+1),400,0,100);
+        
         h1_ecu[s] = new TH1F(Form("h1_ecu_%d",s),Form(" EC U Coord. Sector %d",s+1),400,0,500);
         h1_ecv[s] = new TH1F(Form("h1_ecv_%d",s),Form(" EC V Coord. Sector %d",s+1),400,0,500);
         h1_ecw[s] = new TH1F(Form("h1_ecw_%d",s),Form(" EC W Coord. Sector %d",s+1),400,0,500);
@@ -100,6 +107,8 @@ int main(int argc, char * argv[])
         int sector = event.ec_sect[0]-1;
         if (sector > -1 && event.q[0]<0)
         {
+            h1_vz[sector]->Fill(event.vz[0]);
+            h1_nphe[sector]->Fill(event.nphe[0]);
             h1_ecu[sector]->Fill(uvw.X());
             h1_ecv[sector]->Fill(uvw.Y());
             h1_ecw[sector]->Fill(uvw.Z());
@@ -197,10 +206,10 @@ int main(int argc, char * argv[])
     c1->Print("test.pdf");
     
     c1->Clear();
-    c1->Divide(6,1);
+    c1->Divide(6,1);    
     
-    
-  
+    for (int s=0; s<6; s++) { c1->cd(s+1); h1_nphe[s]->Draw(); } c1->Print("test.pdf");
+    for (int s=0; s<6; s++) { c1->cd(s+1); h1_vz[s]->Draw(); } c1->Print("test.pdf");
     
     // Print Slices
     for (int b=0; b<N_SLICES; b++)
@@ -212,6 +221,7 @@ int main(int argc, char * argv[])
         }
         c1->Print("test.pdf");
     }
+    
     
     c1->Print("test.pdf]");
     

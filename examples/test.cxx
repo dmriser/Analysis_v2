@@ -36,7 +36,7 @@ int main(int argc, char * argv[])
     
     // Testing
     epars pars;
-    pars.load(opts.args["EPARS_FILE"].args);
+    pars.load(opts.args["EPARS"].args);
     
     // Setup Reader
     h22Reader * fReader = new h22Reader(opts.args["MC"].arg);
@@ -45,7 +45,7 @@ int main(int argc, char * argv[])
     fReader->Init();
     
     // Setup particle filter
-    ParticleFilter filter(opts.args["EPARS_FILE"].args);
+    ParticleFilter filter(opts.args["EPARS"].args);
     int pass, fail;
     pass = 0; fail = 0;
     
@@ -71,14 +71,14 @@ int main(int argc, char * argv[])
         h22Event event = fReader->GetEvent();
      
         // keep runno up to date
-        if (runno != fReader->runno() ) { runno = fReader->runno(); filter.set_info(runno,opts.args["MC"].arg); }
+        if (runno != fReader->runno() ) { runno = fReader->runno(); filter.set_info(runno,opts.args["MC"].arg); std::cout << runno << std::endl;}
         
         int e_index = filter.getByPID(event,11);
         if (e_index > -123) { pass++; }
         else fail++;
     
         //! Testing h22Event::theta_cc(int ipart)
-        std::cout << event.theta_cc(0) << " ";
+//        std::cout << event.theta_cc(0) << " ";
         
         std::map<std::string,bool> eid_map = filter.eid_map(event);
 

@@ -38,7 +38,7 @@ int main(int argc, char * argv[])
     opts.set(argc,argv);
     
     epars pars;
-    pars.load(opts.args["EPARS_FILE"].args);
+    pars.load(opts.args["EPARS"].args);
     
     // Setup Reader
     int GSIM = 0;                             //! Set to false, not initializing MC banks.
@@ -215,7 +215,7 @@ int main(int argc, char * argv[])
     
     c1->Print("test.pdf]");
     
-    pars.save(opts.args["EPARS_FILE"].args);
+    pars.save(opts.args["EPARS"].args);
     
     
     return 0;

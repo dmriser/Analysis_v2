@@ -49,15 +49,15 @@ h22Options::h22Options()
     args["VERBOSE"].name = "Verbosity Status";
     args["VERBOSE"].help = "Verbosity Status (0-False, 1-True)";
     
-    args["EPARS_FILE"].args = "elec_default.dat";
-    args["EPARS_FILE"].type = 1;
-    args["EPARS_FILE"].name = "EID Parameters File";
-    args["EPARS_FILE"].help = "EID Parameters File";
+    args["EPARS"].args = "elec_default.dat";
+    args["EPARS"].type = 1;
+    args["EPARS"].name = "EID Parameters File";
+    args["EPARS"].help = "EID Parameters File";
     
-    args["HPARS_FILE"].args = "had_default.dat";
-    args["HPARS_FILE"].type = 1;
-    args["HPARS_FILE"].name = "HID Parameters File";
-    args["HPARS_FILE"].help = "HID Parameters File";
+    args["HPARS"].args = "had_default.dat";
+    args["HPARS"].type = 1;
+    args["HPARS"].name = "HID Parameters File";
+    args["HPARS"].help = "HID Parameters File";
     
     args["DATASET"].args = "e1f";
     args["DATASET"].type = 1;

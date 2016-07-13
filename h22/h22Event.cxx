@@ -23,6 +23,7 @@ using namespace std;
 
 // my includes
 #include "h22Event.h"
+#include "CommonTools.h"
 
 h22Event::h22Event()
 {
@@ -37,12 +38,12 @@ h22Event::~h22Event()
 
 double h22Event::theta(int ipart)
 {
-    return acos(cz[ipart])*(180/3.14159);
+    return acos(cz[ipart])*to_degrees;
 }
 
 double h22Event::rphi(int ipart)
 {
-    double rphi = (180/3.14159)*atan(cy[ipart]/cx[ipart]);
+    double rphi = to_degrees*atan(cy[ipart]/cx[ipart]);
     if (rphi > 330.00) rphi -= 360.00;
     rphi = rphi - 60*floor((rphi+30)/60);
     return rphi;
@@ -96,10 +97,10 @@ TVector3 h22Event::uvw(int ipart)
     double z = ech_z[ipart];
     
     double at = atan2(y, x);
-    if (at < 0) at += 2*3.14159;
+    if (at < 0) at += 2*pi;
     
     
-    double phi = (180/3.14159)*at;
+    double phi = to_degrees*at;
     phi=phi+30.;
     if (phi>=360.) phi=phi-360.;
     
@@ -146,34 +147,34 @@ double h22Event::theta_cc(int ipart)
     double CCz = (P1[2] + dir[2]*t)*10;
     
     double thetaCC = atan2(sqrt(CCx*CCx + CCy*CCy), CCz);
-    return thetaCC*(180/3.14159);
+    return thetaCC*to_degrees;
 }
 
 double h22Event::mcpx(int ipart)
 {
-    return mcp[ipart]*sin(mctheta[ipart]*3.14159/180)*cos(mcphi[ipart]*3.14159/180);
+    return mcp[ipart]*sin(mctheta[ipart]*to_radians)*cos(mcphi[ipart]*to_radians);
 }
 
 double h22Event::mcpy(int ipart)
 {
-    return mcp[ipart]*sin(mctheta[ipart]*3.14159/180)*sin(mcphi[ipart]*3.14159/180);
+    return mcp[ipart]*sin(mctheta[ipart]*to_radians)*sin(mcphi[ipart]*to_radians);
 }
 
 double h22Event::mcpz(int ipart)
 {
-    return mcp[ipart]*cos(mctheta[ipart]*3.14159/180);
+    return mcp[ipart]*cos(mctheta[ipart]*to_radians);
 }
 
 double h22Event::rot_dc1x(int ipart)
 {
     int sm1 = dc_sect[ipart]-1;
-    return tl1_y[ipart]*sin(sm1*(3.14159/180.0)*60.0)+tl1_x[ipart]*cos(sm1*(3.14159/180.0)*60.0);
+    return tl1_y[ipart]*sin(sm1*to_radians*60.0)+tl1_x[ipart]*cos(sm1*to_radians*60.0);
 }
 
 double h22Event::rot_dc1y(int ipart)
 {
     int sm1 = dc_sect[ipart]-1;
-    return tl1_y[ipart]*cos(sm1*(3.14159/180.0)*60.0)-tl1_x[ipart]*sin(sm1*(3.14159/180.0)*60.0);
+    return tl1_y[ipart]*cos(sm1*to_radians*60.0)-tl1_x[ipart]*sin(sm1*to_radians*60.0);
 }
 
 

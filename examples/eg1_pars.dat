@@ -25,8 +25,8 @@
   ECEDEPMIN:        0.05
 
  # Z-Vertex of Track Bounds  
-      VZMIN:    -27.7302
-      VZMAX:    -22.6864
+      VZMIN:    -74
+      VZMAX:    -54
 
  # Number of Photoelectrons in Cherenkov Counter (x10)
      CCNPHE:          25

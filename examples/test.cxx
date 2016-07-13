@@ -89,7 +89,6 @@ int main(int argc, char * argv[])
         if ( !eid_map["DCR3_FID"] )   n_dc_r3_fail++;
         if ( !eid_map["VZ"] )         n_vz_fail++;
         if ( !eid_map["CC_NPHE"] )     n_nphe_fail++;
-        
     }
     
     std::cout << "Pass: " << pass << " Fail: " << fail << std::endl;
@@ -102,6 +101,7 @@ int main(int argc, char * argv[])
     std::cout << "cc nphe    : " << (double )n_nphe_fail/fail << std::endl;
     std::cout << " Done! " << std::endl;
     
+    std::cout << "Ending run number: " << runno << std::endl;
     
     return 0;
 }

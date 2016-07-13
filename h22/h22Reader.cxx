@@ -184,14 +184,45 @@ string h22Reader::GetFilenameChunk(int stringStart, int stringLen)
 int h22Reader::runno()
 {
     // default case
-    int run = 0;
+ 
+    string e1f_file = fchain->GetCurrentFile()->GetName();
+    string eg1_file = e1f_file;
     
+    size_t pos_e1f = e1f_file.find("clas_");
+    size_t pos_eg1 = eg1_file.find("root22_");
+    
+    string srun_e1f = e1f_file.substr(pos_e1f+6,5);
+    string srun_eg1 = eg1_file.substr(pos_eg1+7,5);
+    
+    int e1f_run = atoi( srun_e1f.c_str() );
+    int eg1_run = atoi( srun_eg1.c_str() );
+
+//    std::cout << "e1f: " << e1f_run << " eg1: " << eg1_run << std::endl;
+    
+    if (e1f_run == 0 && eg1_run != 0) return eg1_run;
+    if (e1f_run != 0 && eg1_run == 0) return e1f_run;
+    else return 0;
+    
+    /*
+     int run = 0;
+
     string file = fchain->GetCurrentFile()->GetName();
     size_t pos  = file.rfind("_");
     string srun = file.substr(pos+2,5);
     run = atoi( srun.c_str() );
     
-    return run;
+    // Try checking if eg1 naming scheme
+    if (run == 0)
+    {
+        pos  = file.find("_");
+        srun = file.substr(pos+1,5);
+        run  = atoi( srun.c_str() );
+    }
+     return run;
+
+     */
+
+
 }
 
 #endif

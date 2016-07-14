@@ -34,7 +34,8 @@ int main(int argc, char * argv[])
     opts.set(argc,argv);
     int GSIM     = opts.args["MC"].arg;
     long int nev = opts.args["N"].arg;
-
+    string eparfile = opts.args["EPARS"].args;
+    
     // Setup Reader
     h22Reader * fReader = new h22Reader(GSIM);
     for (auto it=opts.ifiles.begin(); it<opts.ifiles.end(); it++) { fReader->AddFile(*it); }
@@ -44,7 +45,7 @@ int main(int argc, char * argv[])
     
     // Setting important constants
     int runno = fReader->runno();
-    ParticleFilter filter(opts.args["EPARS"].args);
+    ParticleFilter filter(eparfile);
     filter.set_info(GSIM, runno);
     Corrections corr;
     
@@ -77,7 +78,7 @@ int main(int argc, char * argv[])
         if (e_index > -123)
         {
             electrons++;
-            double start_time = corr.electron_sct(event,0,runno,GSIM) - event.sc_r[0]/event.b[0];
+            double start_time = corr.electron_sct(event,0,runno,GSIM) - event.sc_r[0]/speed_of_light;
             for (int ipart=1; ipart<event.gpart; ipart++)
             {
                 int sector = event.sc_sect[ipart]-1;

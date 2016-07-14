@@ -59,10 +59,12 @@ int main(int argc, char * argv[])
     int n_ec_samp_fail, n_ec_geo_fail, n_ec_edep_fail;
     int n_dc_r1_fail, n_dc_r3_fail;
     int n_nphe_fail, n_vz_fail;
+    int n_cc_fid_fail;
     
     n_ec_samp_fail = 0; n_ec_geo_fail = 0; n_ec_edep_fail = 0;
     n_dc_r1_fail = 0; n_dc_r3_fail = 0;
     n_nphe_fail = 0; n_vz_fail = 0;
+    n_cc_fid_fail = 0;
     
     // Sample event loop.
     for (int iev=0; iev<nev; iev++)
@@ -89,6 +91,7 @@ int main(int argc, char * argv[])
         if ( !eid_map["DCR3_FID"] )   n_dc_r3_fail++;
         if ( !eid_map["VZ"] )         n_vz_fail++;
         if ( !eid_map["CC_NPHE"] )     n_nphe_fail++;
+        if ( !eid_map["CC_FID"] )     n_cc_fid_fail++;
     }
     
     std::cout << "Pass: " << pass << " Fail: " << fail << std::endl;
@@ -99,6 +102,7 @@ int main(int argc, char * argv[])
     std::cout << "dc r3 fid  : " << (double) n_dc_r3_fail/fail << std::endl;
     std::cout << "vz         : " << (double) n_vz_fail/fail << std::endl;
     std::cout << "cc nphe    : " << (double )n_nphe_fail/fail << std::endl;
+    std::cout << "cc fid     : " << (double )n_cc_fid_fail/fail << std::endl;
     std::cout << " Done! " << std::endl;
     
     std::cout << "Ending run number: " << runno << std::endl;

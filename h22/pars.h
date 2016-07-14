@@ -46,6 +46,9 @@ public:
     // Number of Photoelectrons in Cherenkov Counter PMT
     double CCNPHE;
     
+    // Cherenkov Counter Fid. Cut: A - B sqrt(1 - rphi^2/360)
+    double CCFIDA, CCFIDB;
+    
     // member functions
     void load(string);
     void save(string);
@@ -54,6 +57,7 @@ public:
     double ec_samp_max(double, int);
     double dc_left(double, int);
     double dc_right(double, int);
+    double cc_min(double);
 };
 
 #endif

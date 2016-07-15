@@ -330,6 +330,16 @@ double hpars::dc_right(double y)
     
 }
 
+double hpars::dvz_min(int s)
+{
+    return (DVZM[s] - DVZNSIGMA*DVZS[s]);
+}
+
+double hpars::dvz_max(int s)
+{
+    return (DVZM[s] + DVZNSIGMA*DVZS[s]);
+}
+
 double hpars::dbeta_min(int s, int pid)
 {
     if (pid == 2212) { return PROT_DBM[s] - PROT_DBNSIGMA*PROT_DBS[s]; }

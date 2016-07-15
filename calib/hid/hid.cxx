@@ -57,9 +57,9 @@ int main(int argc, char * argv[])
     Corrections corr;
     
     // Bit of Important Parameters for Histograms
-    int NPBINS = 100;
+    int NPBINS = 50;
     double PMIN = 0.5;
-    double PMAX = 2.8;
+    double PMAX = 2.0;
     double PSTEP = (PMAX-PMIN)/(NPBINS-1);
     const int NSLICES = NPBINS;
     
@@ -121,11 +121,8 @@ int main(int argc, char * argv[])
         // keeping track of run number and making sure particle filter knows about it as well.
         if ( runno != fReader->runno() ){ runno = fReader->runno(); filter.set_info(GSIM, runno); }
         
-        // Looking for electron
-        int e_index = filter.getByPID(event,11);
-        
         // Load up hadrons if we've electron.
-        if (e_index > -123)
+        if (filter.has_electron(event))
         {
             electrons++;
             double start_time = corr.electron_sct(event,0,runno,GSIM) - event.sc_r[0]/speed_of_light;
@@ -258,6 +255,38 @@ int main(int argc, char * argv[])
     for (int s=0; s<6; s++) {c1->cd(s+1); h2_p_db_pip[s]->Draw("colz"); g_mean_pip[s]->Draw("same");}  c1->Print("test.pdf");
     for (int s=0; s<6; s++) {c1->cd(s+1); h2_p_db_pim[s]->Draw("colz"); g_mean_pim[s]->Draw("same");}  c1->Print("test.pdf");
     for (int s=0; s<6; s++) {c1->cd(s+1); h1_dvz[s]->Draw("colz"); }       c1->Print("test.pdf");
+    
+    // Print Slices
+    for (int b=0; b<NSLICES; b++)
+    {
+        for (int s=0; s<6; s++)
+        {
+            c1->cd(s+1);
+            h1_slice_prot[s][b]->Draw();
+        }
+        c1->Print("test.pdf");
+    }
+    
+    // Print Slices
+    for (int b=0; b<NSLICES; b++)
+    {
+        for (int s=0; s<6; s++)
+        {
+            c1->cd(s+1);
+            h1_slice_pip[s][b]->Draw();
+        }
+        c1->Print("test.pdf");
+    }
+    // Print Slices
+    for (int b=0; b<NSLICES; b++)
+    {
+        for (int s=0; s<6; s++)
+        {
+            c1->cd(s+1);
+            h1_slice_pim[s][b]->Draw();
+        }
+        c1->Print("test.pdf");
+    }
     
     c1->Print("test.pdf]");
     

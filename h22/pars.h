@@ -86,7 +86,8 @@ class hpars
     
     double dc_left(double);   //! ( event.tl1_y[i] )
     double dc_right(double);
-    
+    double dvz_min(int);
+    double dvz_max(int);
     double dbeta_min(int,int); //! (sector, pid)
     double dbeta_max(int,int); //! (sector, pid)
 };

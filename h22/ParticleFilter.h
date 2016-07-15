@@ -34,6 +34,7 @@ public:
     
     // Data Members
     epars eid;
+    hpars hid;
     Corrections corr;
     bool MC; int runno;
     
@@ -41,9 +42,12 @@ public:
     std::string hparfile;
     
     // Member Functions
+    bool has_electron(h22Event);       //! yes or no, always particle 0
     int getByPID(h22Event, int);//! get by PID
     void set_info(bool, int);
     std::map<std::string,bool> eid_map(h22Event);
+    std::map<std::string,bool> hid_map(h22Event, int);
+
 };
 
 #endif

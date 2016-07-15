@@ -53,12 +53,19 @@ int main(int argc, char * argv[])
     TH2F * h2_p_b_pos[6];
     TH2F * h2_p_b_neg[6];
     TH2F * h2_p_b_neu[6];
+    TH2F * h2_p_db_prot[6];
+    TH2F * h2_p_db_pim[6];
+    TH2F * h2_p_db_pip[6];
+    
     
     for (int s=0; s<6; s++)
     {
-        h2_p_b_pos[s] = new TH2F(Form("h2_p_b_pos_%d",s),Form(" Beta vs. Momentum (q>0) Sector %d ",s+1),100,0.5,5,100,0.2,1.2);
-        h2_p_b_neg[s] = new TH2F(Form("h2_p_b_neg_%d",s),Form(" Beta vs. Momentum (q<0) Sector %d ",s+1),100,0.5,5,100,0.2,1.2);
-        h2_p_b_neu[s] = new TH2F(Form("h2_p_b_neu_%d",s),Form(" Beta vs. Momentum (q=0) Sector %d ",s+1),100,0.5,5,100,0.2,1.2);
+        h2_p_b_pos[s]   = new TH2F(Form("h2_p_b_pos_%d",s),Form(" Beta vs. Momentum (q>0) Sector %d ",s+1),100,0.5,5,100,0.2,1.2);
+        h2_p_b_neg[s]   = new TH2F(Form("h2_p_b_neg_%d",s),Form(" Beta vs. Momentum (q<0) Sector %d ",s+1),100,0.5,5,100,0.2,1.2);
+        h2_p_b_neu[s]   = new TH2F(Form("h2_p_b_neu_%d",s),Form(" Beta vs. Momentum (q=0) Sector %d ",s+1),100,0.5,5,100,0.2,1.2);
+        h2_p_db_prot[s] = new TH2F(Form("h2_p_db_prot_%d",s),Form(" #Delta Beta vs. Momentum (Proton) Sector %d ",s+1),100,0.5,5,100,-0.6,0.2);
+        h2_p_db_pip[s]  = new TH2F(Form("h2_p_db_pip_%d",s),Form(" #Delta Beta vs. Momentum (#pi^+) Sector %d ",s+1),100,0.5,5,100,-0.2,0.6);
+        h2_p_db_pim[s]  = new TH2F(Form("h2_p_db_pim_%d",s),Form(" #Delta Beta vs. Momentum (#pi^-) Sector %d ",s+1),100,0.5,5,100,-0.2,0.2);
     }
     
     int electrons = 0;
@@ -85,10 +92,19 @@ int main(int argc, char * argv[])
                 if (sector > -1)
                 {
                     double cbeta = event.sc_r[ipart]/(corr.hadron_sct(event,ipart,runno,GSIM)-start_time);
-                    if (event.q[ipart] < 0) h2_p_b_neg[sector]->Fill(event.p[ipart],cbeta);
-                    if (event.q[ipart] > 0) h2_p_b_pos[sector]->Fill(event.p[ipart],cbeta);
-                    if (event.q[ipart] == 0) h2_p_b_neu[sector]->Fill(event.p[ipart],cbeta);
+                    double beta = cbeta/speed_of_light;
+                    if (event.q[ipart] < 0) {
+                        h2_p_b_neg[sector]  ->Fill(event.p[ipart],beta);
+                        h2_p_db_pim[sector] ->Fill(event.p[ipart],(event.p[ipart])/sqrt(event.p[ipart]*event.p[ipart]+pi_mass*pi_mass)-beta);
+                    }
+                    if (event.q[ipart] > 0) {
+                        h2_p_b_pos[sector]   ->Fill(event.p[ipart],beta);
+                        h2_p_db_prot[sector] ->Fill(event.p[ipart],(event.p[ipart])/sqrt(event.p[ipart]*event.p[ipart]+proton_mass*proton_mass)-beta);
+                        h2_p_db_pip[sector]  ->Fill(event.p[ipart],(event.p[ipart])/sqrt(event.p[ipart]*event.p[ipart]+pi_mass*pi_mass)-beta);
+                    }
+                    if (event.q[ipart] == 0) { h2_p_b_neu[sector]->Fill(event.p[ipart],beta); }
                 }
+                if (iev%opts.args["PRINT"].arg == 0) cout << "\r done " << iev << endl;
             }
         }
     }
@@ -100,6 +116,9 @@ int main(int argc, char * argv[])
     for (int s=0; s<6; s++) {c1->cd(s+1); h2_p_b_neg[s]->Draw("colz"); } c1->Print("test.pdf");
     for (int s=0; s<6; s++) {c1->cd(s+1); h2_p_b_pos[s]->Draw("colz"); } c1->Print("test.pdf");
     for (int s=0; s<6; s++) {c1->cd(s+1); h2_p_b_neu[s]->Draw("colz"); } c1->Print("test.pdf");
+    for (int s=0; s<6; s++) {c1->cd(s+1); h2_p_db_prot[s]->Draw("colz"); } c1->Print("test.pdf");
+    for (int s=0; s<6; s++) {c1->cd(s+1); h2_p_db_pip[s]->Draw("colz"); } c1->Print("test.pdf");
+    for (int s=0; s<6; s++) {c1->cd(s+1); h2_p_db_pim[s]->Draw("colz"); } c1->Print("test.pdf");
     
     c1->Print("test.pdf]");
     

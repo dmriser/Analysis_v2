@@ -104,7 +104,7 @@ int ParticleFilter::getByPID(h22Event event, int pid)
     if (pid == 2212)
     { index = -123; }
     
-    return index;   //! Default Case & Nathan Harrison Convention (for nothing found)
+    return index;   //! Default Case & Nathan Harrison Convention (-123 -> for nothing found)
 }
 
 std::map<std::string, bool> ParticleFilter::eid_map(h22Event event)

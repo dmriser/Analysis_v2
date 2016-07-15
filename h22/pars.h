@@ -67,17 +67,17 @@ class hpars
         ~hpars();
     
     // ---------- All Hadrons -------------
-    double DVZMIN[6], DVZMAX[6];    //! Left and Right limit for Electron VZ - Hadron VZ
+    double DVZM[6], DVZS[6], DVZNSIGMA;    //! Left and Right limit for Electron VZ - Hadron VZ
     double DCR1FIDH, DCR1FIDA;  //! DC Region 1 Fid. Cuts
     
     // ---------- Protons --------------
-    double PROT_DBMIN[6], PROT_DBMAX[6];
+    double PROT_DBM[6], PROT_DBS[6], PROT_DBNSIGMA;
     
     // ---------- Pi + --------------
-    double PIP_DBMIN[6], PIP_DBMAX[6];
+    double PIP_DBM[6], PIP_DBS[6], PIP_DBNSIGMA;
     
     // ---------- Pi - --------------
-    double PIM_DBMIN[6], PIM_DBMAX[6];
+    double PIM_DBM[6], PIM_DBS[6], PIM_DBNSIGMA;
     
     
     // member functions
@@ -86,6 +86,9 @@ class hpars
     
     double dc_left(double);   //! ( event.tl1_y[i] )
     double dc_right(double);
+    
+    double dbeta_min(int,int); //! (sector, pid)
+    double dbeta_max(int,int); //! (sector, pid)
 };
 
 #endif

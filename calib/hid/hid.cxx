@@ -78,9 +78,16 @@ int main(int argc, char * argv[])
     TF1 * f_db_mean   = new TF1("f_db_mean","[0]",PMIN,PMAX);
     TF1 * f_db_sigma  = new TF1("f_db_sigma","[0]",PMIN,PMAX);
 
-    TH1D * h1_slice[6][NSLICES];
+    TH1D * h1_slice_prot[6][NSLICES];
+    TH1D * h1_slice_pip[6][NSLICES];
+    TH1D * h1_slice_pim[6][NSLICES];
+    
     TGraphErrors * g_mean_prot[6];
     TGraphErrors * g_sigma_prot[6];
+    TGraphErrors * g_mean_pip[6];
+    TGraphErrors * g_sigma_pip[6];
+    TGraphErrors * g_mean_pim[6];
+    TGraphErrors * g_sigma_pim[6];
     
     double mean[NSLICES];
     double sigma[NSLICES];
@@ -154,7 +161,8 @@ int main(int argc, char * argv[])
     for (int s=0; s<6; s++)
     {
         h1_dvz[s]->Fit("f_dvz_gauss","RQ");
-        
+        pars.DVZM[s] = f_dvz_gauss->GetParameter(1);
+        pars.DVZS[s] = f_dvz_gauss->GetParameter(2);
     }
     
     // Do the fitting and slicing for dbeta (proton)
@@ -162,10 +170,10 @@ int main(int argc, char * argv[])
     {
         for (int b=0; b<NSLICES; b++)
         {
-            string name       = Form("h1_slice_%d_%d",s,b);
-            h1_slice[s][b]    = new TH1D(name.c_str(),name.c_str(),100,-0.6,0.2);
+            string name       = Form("h1_slice_prot_%d_%d",s,b);
+            h1_slice_prot[s][b]    = new TH1D(name.c_str(),name.c_str(),100,-0.6,0.2);
             h2_p_db_prot[s]   ->ProjectionY(name.c_str(),b+1,b+2);
-            h1_slice[s][b]    ->Fit("f_db_gauss","RQ");
+            h1_slice_prot[s][b]    ->Fit("f_db_gauss","RQ");
             
             mean[b]    = f_db_gauss->GetParameter(1);
             sigma[b]   = f_db_gauss->GetParameter(2);
@@ -177,14 +185,67 @@ int main(int argc, char * argv[])
         g_sigma_prot[s] = new TGraphErrors(NSLICES,x,sigma,dx,sigma_e);
         g_mean_prot[s]  ->Fit("f_db_mean","RQ");
         g_sigma_prot[s] ->Fit("f_db_sigma","RQ");
+
+        // setting params
+        pars.PROT_DBM[s] = f_db_mean ->GetParameter(0);
+        pars.PROT_DBS[s] = f_db_sigma->GetParameter(0);
     }
+
     
-    // Output Parameters for Proton
+    // Do the fitting and slicing for dbeta (pip)
     for (int s=0; s<6; s++)
     {
-        // Doing this code soon. 
+        for (int b=0; b<NSLICES; b++)
+        {
+            string name           = Form("h1_slice_pip_%d_%d",s,b);
+            h1_slice_pip[s][b]    = new TH1D(name.c_str(),name.c_str(),100,-0.6,0.2);
+            h2_p_db_pip[s]        ->ProjectionY(name.c_str(),b+1,b+2);
+            h1_slice_pip[s][b]    ->Fit("f_db_gauss","RQ");
+            
+            mean[b]    = f_db_gauss->GetParameter(1);
+            sigma[b]   = f_db_gauss->GetParameter(2);
+            mean_e[b]  = f_db_gauss->GetParError(1);
+            sigma_e[b] = f_db_gauss->GetParError(2);
+        }
+        
+        g_mean_pip[s]  = new TGraphErrors(NSLICES,x,mean,dx,mean_e);
+        g_sigma_pip[s] = new TGraphErrors(NSLICES,x,sigma,dx,sigma_e);
+        g_mean_pip[s]  ->Fit("f_db_mean","RQ");
+        g_sigma_pip[s] ->Fit("f_db_sigma","RQ");
+
+        pars.PIP_DBM[s] = f_db_mean->GetParameter(0);
+        pars.PIP_DBS[s] = f_db_sigma->GetParameter(0);
     }
     
+    
+    // Do the fitting and slicing for dbeta (pim)
+    for (int s=0; s<6; s++)
+    {
+        for (int b=0; b<NSLICES; b++)
+        {
+            string name           = Form("h1_slice_pim_%d_%d",s,b);
+            h1_slice_pim[s][b]    = new TH1D(name.c_str(),name.c_str(),100,-0.6,0.2);
+            h2_p_db_pim[s]        ->ProjectionY(name.c_str(),b+1,b+2);
+            h1_slice_pim[s][b]    ->Fit("f_db_gauss","RQ");
+            
+            mean[b]    = f_db_gauss->GetParameter(1);
+            sigma[b]   = f_db_gauss->GetParameter(2);
+            mean_e[b]  = f_db_gauss->GetParError(1);
+            sigma_e[b] = f_db_gauss->GetParError(2);
+        }
+        
+        g_mean_pim[s]  = new TGraphErrors(NSLICES,x,mean,dx,mean_e);
+        g_sigma_pim[s] = new TGraphErrors(NSLICES,x,sigma,dx,sigma_e);
+        g_mean_pim[s]  ->Fit("f_db_mean","RQ");
+        g_sigma_pim[s] ->Fit("f_db_sigma","RQ");
+        
+        // Setting parfile
+        pars.PIM_DBM[s] = f_db_mean ->GetParameter(0);
+        pars.PIM_DBS[s] = f_db_sigma->GetParameter(0);
+
+    }
+    
+      pars.save(hparfile);
     
     TCanvas * c1 = new TCanvas("c1","",1200,800);
     c1->Divide(3,2);
@@ -193,9 +254,9 @@ int main(int argc, char * argv[])
     for (int s=0; s<6; s++) {c1->cd(s+1); h2_p_b_neg[s]->Draw("colz"); }   c1->Print("test.pdf");
     for (int s=0; s<6; s++) {c1->cd(s+1); h2_p_b_pos[s]->Draw("colz"); }   c1->Print("test.pdf");
     for (int s=0; s<6; s++) {c1->cd(s+1); h2_p_b_neu[s]->Draw("colz"); }   c1->Print("test.pdf");
-    for (int s=0; s<6; s++) {c1->cd(s+1); h2_p_db_prot[s]->Draw("colz"); g_mean[s]->Draw("same"); } c1->Print("test.pdf");
-    for (int s=0; s<6; s++) {c1->cd(s+1); h2_p_db_pip[s]->Draw("colz"); }  c1->Print("test.pdf");
-    for (int s=0; s<6; s++) {c1->cd(s+1); h2_p_db_pim[s]->Draw("colz"); }  c1->Print("test.pdf");
+    for (int s=0; s<6; s++) {c1->cd(s+1); h2_p_db_prot[s]->Draw("colz"); g_mean_prot[s]->Draw("same"); } c1->Print("test.pdf");
+    for (int s=0; s<6; s++) {c1->cd(s+1); h2_p_db_pip[s]->Draw("colz"); g_mean_pip[s]->Draw("same");}  c1->Print("test.pdf");
+    for (int s=0; s<6; s++) {c1->cd(s+1); h2_p_db_pim[s]->Draw("colz"); g_mean_pim[s]->Draw("same");}  c1->Print("test.pdf");
     for (int s=0; s<6; s++) {c1->cd(s+1); h1_dvz[s]->Draw("colz"); }       c1->Print("test.pdf");
     
     c1->Print("test.pdf]");

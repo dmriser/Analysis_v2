@@ -1,0 +1,35 @@
+
+ # Parameter File e1f_hpars.dat Updated at Fri Jul 15 11:29:07 2016
+
+
+ # All Hadrons 
+
+ # Z-Vertex Difference Between Electron and Hadron Limits 
+       DVZM:   0.0355953  -0.0906914   -0.190793  -0.0919902  -0.0933062   0.0477931
+       DVZS:    0.588815    0.577887    0.722755    0.592447    0.548057    0.585729
+  DVZNSIGMA:           0
+
+ # Drift Chamber Region 1 Fiducial Height and Angle 
+   DCR1FIDH:          22
+   DCR1FIDA:          60
+
+ # Protons 
+
+ # Delta Beta Assuming Proton Min/Max
+   PROT_DBM:  0.00203623  0.00305603  0.00401862  0.00360561  0.00521699  0.00219294
+   PROT_DBS:   0.0111659   0.0105759   0.0101614   0.0104859   0.0114702    0.010797
+PROT_DBNSIGMA:           3
+
+ # Pi + 
+
+ # Delta Beta Assuming Pi + Min/Max
+    PIP_DBM: 0.000660755   0.0014015  0.00224489   0.0034573  0.00665763 0.000334609
+    PIP_DBS:   0.0170713   0.0163071   0.0156405   0.0160817   0.0171178   0.0157163
+PIP_DBNSIGMA:           3
+
+ # Pi - 
+
+ # Delta Beta Assuming Pi - Min/Max
+    PIM_DBM: -0.00188856 -0.00129957-0.000753096  0.00152721  0.00424067 -0.00026822
+    PIM_DBS:   0.0131973   0.0139758    0.012618   0.0136016   0.0145033   0.0128042
+PIM_DBNSIGMA:           3

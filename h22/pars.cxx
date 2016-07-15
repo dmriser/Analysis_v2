@@ -213,14 +213,17 @@ hpars::hpars()
     // Initialize Default Values
     for (int s=0; s<6; s++)
     {
-        PROT_DBMIN[s] = -0.05; PROT_DBMAX[s] = 0.05;
-        PIP_DBMIN[s] = -0.05;  PIP_DBMAX[s] = 0.05;
-        PIM_DBMIN[s] = -0.05;  PIM_DBMAX[s] = 0.05;
-        DVZMIN[s] = -2.0;      DVZMAX[s] = 2.0;
+        PROT_DBM[s] = 0.0;  PROT_DBS[s] = 0.02;
+        PIP_DBM[s]  = 0.0;  PIP_DBS[s]  = 0.02;
+        PIM_DBM[s]  = 0.0;  PIM_DBS[s]  = 0.02;
+        DVZM[s] = 0.0;      DVZS[s] = 0.8;
     }
     
+    DVZNSIGMA = 3;
     DCR1FIDH  = 22.0; DCR1FIDA = 60.0;
-    
+    PROT_DBNSIGMA = 3;
+    PIP_DBNSIGMA  = 3;
+    PIM_DBNSIGMA  = 3;
 }
 
 hpars::~hpars()
@@ -245,16 +248,20 @@ void hpars::load(string fname)
             string buffer;
             cuts >> buffer;
             
-            if (buffer == "DVZMIN:")    { for (int s=0; s<6; s++) cuts >> DVZMIN[s]; }
-            else if (buffer == "DVZMAX:"){ for (int s=0; s<6; s++) cuts >> DVZMAX[s]; }
+            if (buffer == "DVZM:")    { for (int s=0; s<6; s++) cuts >> DVZM[s]; }
+            else if (buffer == "DVZS:"){ for (int s=0; s<6; s++) cuts >> DVZS[s]; }
+            else if (buffer == "DVZNSIGMA:") {cuts >> DVZNSIGMA; }
             else if (buffer == "DCR1FIDA:"){ cuts >> DCR1FIDA; }
             else if (buffer == "DCR1FIDH:"){ cuts >> DCR1FIDH; }
-            else if (buffer == "PROT_DBMIN:"){ for (int s=0; s<6; s++) cuts >> PROT_DBMIN[s]; }
-            else if (buffer == "PROT_DBMAX:"){ for (int s=0; s<6; s++) cuts >> PROT_DBMAX[s]; }
-            else if (buffer == "PIP_DBMIN:"){ for (int s=0; s<6; s++) cuts >> PIP_DBMIN[s]; }
-            else if (buffer == "PIP_DBMAX:"){ for (int s=0; s<6; s++) cuts >> PIP_DBMAX[s]; }
-            else if (buffer == "PIM_DBMIN:"){ for (int s=0; s<6; s++) cuts >> PIM_DBMIN[s]; }
-            else if (buffer == "PIM_DBMAX:"){ for (int s=0; s<6; s++) cuts >> PIM_DBMAX[s]; }
+            else if (buffer == "PROT_DBM:"){ for (int s=0; s<6; s++) cuts >> PROT_DBM[s]; }
+            else if (buffer == "PROT_DBS:"){ for (int s=0; s<6; s++) cuts >> PROT_DBS[s]; }
+            else if (buffer == "PROT_DBNSIGMA:") {cuts >> PROT_DBNSIGMA; }
+            else if (buffer == "PIP_DBM:"){ for (int s=0; s<6; s++) cuts >> PIP_DBM[s]; }
+            else if (buffer == "PIP_DBS:"){ for (int s=0; s<6; s++) cuts >> PIP_DBS[s]; }
+            else if (buffer == "PIP_DBNSIGMA:") {cuts >> PIP_DBNSIGMA; }
+            else if (buffer == "PIM_DBM:"){ for (int s=0; s<6; s++) cuts >> PIM_DBM[s]; }
+            else if (buffer == "PIM_DBS:"){ for (int s=0; s<6; s++) cuts >> PIM_DBS[s]; }
+            else if (buffer == "PIM_DBNSIGMA:") {cuts >> PIM_DBNSIGMA; }
 
             }
     }
@@ -276,8 +283,10 @@ void hpars::save(string fname)
     parfile << "\n # Parameter File " << fname << " Updated at " << asctime(timeinfo) << endl;
     parfile << "\n # All Hadrons " << endl;
     parfile << "\n # Z-Vertex Difference Between Electron and Hadron Limits " << endl;
-    parfile.width(12); parfile << "DVZMIN:"; for (int s=0; s<6; s++) { parfile.width(12); parfile<<DVZMIN[s]; } parfile << endl;
-    parfile.width(12); parfile << "DVZMAX:"; for (int s=0; s<6; s++) { parfile.width(12); parfile<<DVZMAX[s]; } parfile << endl;
+    parfile.width(12); parfile << "DVZM:"; for (int s=0; s<6; s++) { parfile.width(12); parfile<<DVZM[s]; } parfile << endl;
+    parfile.width(12); parfile << "DVZS:"; for (int s=0; s<6; s++) { parfile.width(12); parfile<<DVZS[s]; } parfile << endl;
+    parfile.width(12); parfile << "DVZNSIGMA:"; parfile.width(12); parfile << DVZNSIGMA << endl;
+
     
     parfile << "\n # Drift Chamber Region 1 Fiducial Height and Angle " << endl;
     parfile.width(12); parfile << "DCR1FIDH:"; parfile.width(12); parfile << DCR1FIDH << endl;
@@ -285,18 +294,22 @@ void hpars::save(string fname)
     
     parfile << "\n # Protons " << endl;
     parfile << "\n # Delta Beta Assuming Proton Min/Max" << endl;
-    parfile.width(12); parfile << "PROT_DBMIN:"; for (int s=0; s<6; s++) { parfile.width(12); parfile<<PROT_DBMIN[s]; } parfile << endl;
-    parfile.width(12); parfile << "PROT_DBMAX:"; for (int s=0; s<6; s++) { parfile.width(12); parfile<<PROT_DBMAX[s]; } parfile << endl;
+    parfile.width(12); parfile << "PROT_DBM:"; for (int s=0; s<6; s++) { parfile.width(12); parfile<<PROT_DBM[s]; } parfile << endl;
+    parfile.width(12); parfile << "PROT_DBS:"; for (int s=0; s<6; s++) { parfile.width(12); parfile<<PROT_DBS[s]; } parfile << endl;
+    parfile.width(12); parfile << "PROT_DBNSIGMA:"; parfile.width(12); parfile << PROT_DBNSIGMA << endl;
 
+    
     parfile << "\n # Pi + " << endl;
     parfile << "\n # Delta Beta Assuming Pi + Min/Max" << endl;
-    parfile.width(12); parfile << "PIP_DBMIN:"; for (int s=0; s<6; s++) { parfile.width(12); parfile<<PIP_DBMIN[s]; } parfile << endl;
-    parfile.width(12); parfile << "PIP_DBMAX:"; for (int s=0; s<6; s++) { parfile.width(12); parfile<<PIP_DBMAX[s]; } parfile << endl;
+    parfile.width(12); parfile << "PIP_DBM:"; for (int s=0; s<6; s++) { parfile.width(12); parfile<<PIP_DBM[s]; } parfile << endl;
+    parfile.width(12); parfile << "PIP_DBS:"; for (int s=0; s<6; s++) { parfile.width(12); parfile<<PIP_DBS[s]; } parfile << endl;
+    parfile.width(12); parfile << "PIP_DBNSIGMA:"; parfile.width(12); parfile << PIP_DBNSIGMA<< endl;
 
     parfile << "\n # Pi - " << endl;
     parfile << "\n # Delta Beta Assuming Pi - Min/Max" << endl;
-    parfile.width(12); parfile << "PIM_DBMIN:"; for (int s=0; s<6; s++) { parfile.width(12); parfile<<PIM_DBMIN[s]; } parfile << endl;
-    parfile.width(12); parfile << "PIM_DBMAX:"; for (int s=0; s<6; s++) { parfile.width(12); parfile<<PIM_DBMAX[s]; } parfile << endl;
+    parfile.width(12); parfile << "PIM_DBM:"; for (int s=0; s<6; s++) { parfile.width(12); parfile<<PIM_DBM[s]; } parfile << endl;
+    parfile.width(12); parfile << "PIM_DBS:"; for (int s=0; s<6; s++) { parfile.width(12); parfile<<PIM_DBS[s]; } parfile << endl;
+    parfile.width(12); parfile << "PIM_DBNSIGMA:"; parfile.width(12); parfile << PIM_DBNSIGMA << endl;
 
     
     parfile.close();
@@ -312,10 +325,31 @@ double hpars::dc_left(double y)
 
 double hpars::dc_right(double y)
 {
-        double slope = 1/tan(0.5*to_radians*DCR1FIDA);
-        return (DCR1FIDH + slope*y);
-
+    double slope = 1/tan(0.5*to_radians*DCR1FIDA);
+    return (DCR1FIDH + slope*y);
+    
 }
+
+double hpars::dbeta_min(int s, int pid)
+{
+    if (pid == 2212) { return PROT_DBM[s] - PROT_DBNSIGMA*PROT_DBS[s]; }
+    if (pid == 211)  { return PIP_DBM[s] - PIP_DBNSIGMA*PIP_DBS[s]; }
+    if (pid == -211) { return PIM_DBM[s] - PIM_DBNSIGMA*PIM_DBS[s]; }
+    
+    return 0.00;
+    
+}
+
+double hpars::dbeta_max(int s, int pid)
+{
+    if (pid == 2212) { return PROT_DBM[s] + PROT_DBNSIGMA*PROT_DBS[s]; }
+    if (pid == 211)  { return PIP_DBM[s] + PIP_DBNSIGMA*PIP_DBS[s]; }
+    if (pid == -211) { return PIM_DBM[s] + PIM_DBNSIGMA*PIM_DBS[s]; }
+    
+    return 0.00;
+    
+}
+
 
 
 

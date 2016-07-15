@@ -5,8 +5,8 @@
  
  */
 /////////////////////////////////////////////
-#ifndef EPARS_CXX
-#define EPARS_CXX
+#ifndef epars_CXX
+#define epars_CXX
 
 // c++ includes
 #include <cmath>
@@ -204,5 +204,119 @@ double epars::cc_min(double rphi)
 {
     return CCFIDA-CCFIDB*sqrt(1-rphi*rphi/360);
 }
+
+// ------------------- Hadrons ------------------
+
+
+hpars::hpars()
+{
+    // Initialize Default Values
+    for (int s=0; s<6; s++)
+    {
+        PROT_DBMIN[s] = -0.05; PROT_DBMAX[s] = 0.05;
+        PIP_DBMIN[s] = -0.05;  PIP_DBMAX[s] = 0.05;
+        PIM_DBMIN[s] = -0.05;  PIM_DBMAX[s] = 0.05;
+        DVZMIN[s] = -2.0;      DVZMAX[s] = 2.0;
+    }
+    
+    DCR1FIDH  = 22.0; DCR1FIDA = 60.0;
+    
+}
+
+hpars::~hpars()
+{
+    // Nothing to destroy.
+}
+
+void hpars::load(string fname)
+{
+    ifstream parfile(fname.c_str());
+    
+    string line;
+    double value;
+    
+    // Get information from parameters file.
+    while(getline(parfile,line))
+    {
+        istringstream cuts(line);
+        
+        while(!cuts.eof())
+        {
+            string buffer;
+            cuts >> buffer;
+            
+            if (buffer == "DVZMIN:")    { for (int s=0; s<6; s++) cuts >> DVZMIN[s]; }
+            else if (buffer == "DVZMAX:"){ for (int s=0; s<6; s++) cuts >> DVZMAX[s]; }
+            else if (buffer == "DCR1FIDA:"){ cuts >> DCR1FIDA; }
+            else if (buffer == "DCR1FIDH:"){ cuts >> DCR1FIDH; }
+            else if (buffer == "PROT_DBMIN:"){ for (int s=0; s<6; s++) cuts >> PROT_DBMIN[s]; }
+            else if (buffer == "PROT_DBMAX:"){ for (int s=0; s<6; s++) cuts >> PROT_DBMAX[s]; }
+            else if (buffer == "PIP_DBMIN:"){ for (int s=0; s<6; s++) cuts >> PIP_DBMIN[s]; }
+            else if (buffer == "PIP_DBMAX:"){ for (int s=0; s<6; s++) cuts >> PIP_DBMAX[s]; }
+            else if (buffer == "PIM_DBMIN:"){ for (int s=0; s<6; s++) cuts >> PIM_DBMIN[s]; }
+            else if (buffer == "PIM_DBMAX:"){ for (int s=0; s<6; s++) cuts >> PIM_DBMAX[s]; }
+
+            }
+    }
+    
+    parfile.close();
+}
+
+void hpars::save(string fname)
+{
+    // Writing time and date into file
+    time_t rawtime;
+    struct tm * timeinfo;
+    time (&rawtime);
+    timeinfo = localtime (&rawtime);
+    
+    ofstream parfile;
+    parfile.open(fname.c_str());
+    
+    parfile << "\n # Parameter File " << fname << " Updated at " << asctime(timeinfo) << endl;
+    parfile << "\n # All Hadrons " << endl;
+    parfile << "\n # Z-Vertex Difference Between Electron and Hadron Limits " << endl;
+    parfile.width(12); parfile << "DVZMIN:"; for (int s=0; s<6; s++) { parfile.width(12); parfile<<DVZMIN[s]; } parfile << endl;
+    parfile.width(12); parfile << "DVZMAX:"; for (int s=0; s<6; s++) { parfile.width(12); parfile<<DVZMAX[s]; } parfile << endl;
+    
+    parfile << "\n # Drift Chamber Region 1 Fiducial Height and Angle " << endl;
+    parfile.width(12); parfile << "DCR1FIDH:"; parfile.width(12); parfile << DCR1FIDH << endl;
+    parfile.width(12); parfile << "DCR1FIDA:"; parfile.width(12); parfile << DCR1FIDA << endl;
+    
+    parfile << "\n # Protons " << endl;
+    parfile << "\n # Delta Beta Assuming Proton Min/Max" << endl;
+    parfile.width(12); parfile << "PROT_DBMIN:"; for (int s=0; s<6; s++) { parfile.width(12); parfile<<PROT_DBMIN[s]; } parfile << endl;
+    parfile.width(12); parfile << "PROT_DBMAX:"; for (int s=0; s<6; s++) { parfile.width(12); parfile<<PROT_DBMAX[s]; } parfile << endl;
+
+    parfile << "\n # Pi + " << endl;
+    parfile << "\n # Delta Beta Assuming Pi + Min/Max" << endl;
+    parfile.width(12); parfile << "PIP_DBMIN:"; for (int s=0; s<6; s++) { parfile.width(12); parfile<<PIP_DBMIN[s]; } parfile << endl;
+    parfile.width(12); parfile << "PIP_DBMAX:"; for (int s=0; s<6; s++) { parfile.width(12); parfile<<PIP_DBMAX[s]; } parfile << endl;
+
+    parfile << "\n # Pi - " << endl;
+    parfile << "\n # Delta Beta Assuming Pi - Min/Max" << endl;
+    parfile.width(12); parfile << "PIM_DBMIN:"; for (int s=0; s<6; s++) { parfile.width(12); parfile<<PIM_DBMIN[s]; } parfile << endl;
+    parfile.width(12); parfile << "PIM_DBMAX:"; for (int s=0; s<6; s++) { parfile.width(12); parfile<<PIM_DBMAX[s]; } parfile << endl;
+
+    
+    parfile.close();
+}
+
+double hpars::dc_left(double y)
+{
+
+        double slope = 1/tan(0.5*to_radians*DCR1FIDA);
+        return (DCR1FIDH - slope*y);
+
+}
+
+double hpars::dc_right(double y)
+{
+        double slope = 1/tan(0.5*to_radians*DCR1FIDA);
+        return (DCR1FIDH + slope*y);
+
+}
+
+
 
 #endif

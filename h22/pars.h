@@ -60,4 +60,32 @@ public:
     double cc_min(double);
 };
 
+class hpars
+{
+    public:
+        hpars();
+        ~hpars();
+    
+    // ---------- All Hadrons -------------
+    double DVZMIN[6], DVZMAX[6];    //! Left and Right limit for Electron VZ - Hadron VZ
+    double DCR1FIDH, DCR1FIDA;  //! DC Region 1 Fid. Cuts
+    
+    // ---------- Protons --------------
+    double PROT_DBMIN[6], PROT_DBMAX[6];
+    
+    // ---------- Pi + --------------
+    double PIP_DBMIN[6], PIP_DBMAX[6];
+    
+    // ---------- Pi - --------------
+    double PIM_DBMIN[6], PIM_DBMAX[6];
+    
+    
+    // member functions
+    void load(string);
+    void save(string);
+    
+    double dc_left(double);   //! ( event.tl1_y[i] )
+    double dc_right(double);
+};
+
 #endif

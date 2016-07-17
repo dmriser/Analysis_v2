@@ -63,6 +63,11 @@ h22Options::h22Options()
     args["DATASET"].type = 1;
     args["DATASET"].name = "Type of data";
     args["DATASET"].help = "Type of data - default e1f";
+
+    args["OUT"].args = "out.root";
+    args["OUT"].type = 1;
+    args["OUT"].name = "Output Root File";
+    args["OUT"].help = "Output Root File";
     
 }
 

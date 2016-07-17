@@ -7,5 +7,5 @@ env.Append(CCFLAGS = ['-g'])
 #env.Append(CPPPATH = ['/u/home/dmriser/include/'], LIBPATH = ['/u/home/dmriser/lib/'],LIBS = ['h22'])
 env.Append(CPPPATH = ['/usr/local/include/'], LIBPATH = ['/usr/local/lib/'],LIBS = ['h22'])
 
-
+env.Program('template','template.cxx')
 env.Program('test','test.cxx')

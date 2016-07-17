@@ -80,7 +80,7 @@ bool ParticleFilter::has_electron(h22Event event)
                         if (event.ec_sect[0] > 0 && event.dc_sect[0] > 0 && event.cc_sect[0] > 0 && corr.good_sc_paddle(event,0)) //! Particle hit all major detector systems
                             if (event.rot_dc1x(0) > eid.dc_left(event.rot_dc1y(0),1) && event.rot_dc1x(0) > eid.dc_right(event.rot_dc1y(0),1)) //! DCR1 Fid
                                 if (event.tl3_x[0] > eid.dc_left(event.tl3_y[0],3) && event.tl3_x[0] > eid.dc_right(event.tl3_y[0],3))//! DCR3 Fid
-                                    if (event.etot[0]/event.p[0] > eid.ec_samp_min(event.p[0],event.ec_sect[0]) && event.etot[0]/event.p[0] < eid.ec_samp_max(event.p[0],event.ec_sect[0]))//! Ec Sampling
+                                    if (event.etot[0]/event.p[0] > eid.ec_samp_min(event.p[0],event.ec_sect[0]-1) && event.etot[0]/event.p[0] < eid.ec_samp_max(event.p[0],event.ec_sect[0]-1))//! Ec Sampling
                                     {
                                         TVector3 uvw = event.uvw(0); //! Getting U, V, W Coords. for Particle 0
                                         int s=event.ec_sect[0]-1;
@@ -116,7 +116,7 @@ int ParticleFilter::getByPID(h22Event event, int pid)
                             if (event.ec_sect[0] > 0 && event.dc_sect[0] > 0 && event.cc_sect[0] > 0 && corr.good_sc_paddle(event,0)) //! Particle hit all major detector systems
                                 if (event.rot_dc1x(0) > eid.dc_left(event.rot_dc1y(0),1) && event.rot_dc1x(0) > eid.dc_right(event.rot_dc1y(0),1)) //! DCR1 Fid
                                     if (event.tl3_x[0] > eid.dc_left(event.tl3_y[0],3) && event.tl3_x[0] > eid.dc_right(event.tl3_y[0],3))//! DCR3 Fid
-                                        if (event.etot[0]/event.p[0] > eid.ec_samp_min(event.p[0],event.ec_sect[0]) && event.etot[0]/event.p[0] < eid.ec_samp_max(event.p[0],event.ec_sect[0]))//! Ec Sampling
+                                        if (event.etot[0]/event.p[0] > eid.ec_samp_min(event.p[0],event.ec_sect[0]-1) && event.etot[0]/event.p[0] < eid.ec_samp_max(event.p[0],event.ec_sect[0]-1))//! Ec Sampling
                                         {
                                             TVector3 uvw = event.uvw(0); //! Getting U, V, W Coords. for Particle 0
                                             int s=event.ec_sect[0]-1;
@@ -265,7 +265,7 @@ std::map<std::string, bool> ParticleFilter::eid_map(h22Event event)
     }
     
     if (event.ec_ei[0] > eid.ECEDEPMIN) ec_edep_pass = true;
-    if (event.etot[0]/event.p[0] > eid.ec_samp_min(event.p[0],event.ec_sect[0]) && event.etot[0]/event.p[0] < eid.ec_samp_max(event.p[0],event.ec_sect[0])) ec_sampling_pass = true;
+    if (event.etot[0]/event.p[0] > eid.ec_samp_min(event.p[0],event.ec_sect[0]-1) && event.etot[0]/event.p[0] < eid.ec_samp_max(event.p[0],event.ec_sect[0]-1)) ec_sampling_pass = true;
     if (corr.vz(event,0,runno,MC) > eid.VZMIN && corr.vz(event,0,runno,MC) < eid.VZMAX) vz_pass = true;
     if (event.rot_dc1x(0) > eid.dc_left(event.rot_dc1y(0),1) && event.rot_dc1x(0) > eid.dc_right(event.rot_dc1y(0),1)) dcr1_fid_pass = true;
     if (event.tl3_x[0] > eid.dc_left(event.tl3_y[0],3) && event.tl3_x[0] > eid.dc_right(event.tl3_y[0],3)) dcr3_fid_pass = true;

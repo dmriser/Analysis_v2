@@ -139,19 +139,19 @@ int ParticleFilter::getByPID(h22Event event, int pid)
             double start_time = corr.electron_sct(event,0,runno,MC) - event.sc_r[0]/speed_of_light;
             
             if (event.q[ipart] > 0)
-                if (dvz > hid.dvz_min(sector) && dvz < hid.dvz_max(sector))
+                if (dvz > hid.DVZMIN && dvz < hid.DVZMAX)
                     if (event.rot_dc1x(ipart) > hid.dc_left(event.rot_dc1y(ipart)) && event.rot_dc1x(ipart) > hid.dc_right(event.rot_dc1y(ipart)))
                     {
                         double beta  = (event.sc_r[ipart]/(corr.hadron_sct(event,ipart,runno,MC)-start_time))/speed_of_light;
-                        double dbeta = beta - event.p[ipart]/(event.p[ipart]*event.p[ipart] + pid_to_mass(pid)*pid_to_mass(pid));
-                        if (dbeta > hid.dbeta_min(sector,pid) && dbeta < hid.dbeta_max(sector,pid)) particles.push_back(ipart);
+                        double dbeta = event.p[ipart]/sqrt(event.p[ipart]*event.p[ipart] + pid_to_mass(pid)*pid_to_mass(pid)) - beta;
+                        if ( dbeta > hid.PIP_DBMIN[sector] && dbeta < hid.PIP_DBMAX[sector] ) particles.push_back(ipart);
                     }
         }
         
         int candidate = -123;
         
         // Take fastest pi+
-        if (particles.size() > 1)
+        if (particles.size() > 0)
         {
             candidate = particles[0];
             for (int i=1; i<particles.size(); i++)
@@ -174,19 +174,19 @@ int ParticleFilter::getByPID(h22Event event, int pid)
             double start_time = corr.electron_sct(event,0,runno,MC) - event.sc_r[0]/speed_of_light;
             
             if (event.q[ipart] < 0)
-                if (dvz > hid.dvz_min(sector) && dvz < hid.dvz_max(sector))
+                if (dvz > hid.DVZMIN && dvz < hid.DVZMAX)
                     if (event.rot_dc1x(ipart) > hid.dc_left(event.rot_dc1y(ipart)) && event.rot_dc1x(ipart) > hid.dc_right(event.rot_dc1y(ipart)))
                     {
                         double beta  = (event.sc_r[ipart]/(corr.hadron_sct(event,ipart,runno,MC)-start_time))/speed_of_light;
-                        double dbeta = beta - event.p[ipart]/(event.p[ipart]*event.p[ipart] + pid_to_mass(pid)*pid_to_mass(pid));
-                        if (dbeta > hid.dbeta_min(sector,pid) && dbeta < hid.dbeta_max(sector,pid)) particles.push_back(ipart);
+                        double dbeta = event.p[ipart]/sqrt(event.p[ipart]*event.p[ipart] + pid_to_mass(pid)*pid_to_mass(pid)) - beta;
+                        if (dbeta > hid.PIM_DBMIN[sector] && dbeta < hid.PIM_DBMAX[sector] ) particles.push_back(ipart);
                     }
         }
         
         int candidate = -123;
         
         // Take fastest pi-
-        if (particles.size() > 1)
+        if (particles.size() > 0)
         {
             candidate = particles[0];
             for (int i=1; i<particles.size(); i++)
@@ -210,19 +210,19 @@ int ParticleFilter::getByPID(h22Event event, int pid)
             double start_time = corr.electron_sct(event,0,runno,MC) - event.sc_r[0]/speed_of_light;
             
             if (event.q[ipart] > 0)
-                if (dvz > hid.dvz_min(sector) && dvz < hid.dvz_max(sector))
+                if (dvz > hid.DVZMIN && dvz < hid.DVZMAX)
                     if (event.rot_dc1x(ipart) > hid.dc_left(event.rot_dc1y(ipart)) && event.rot_dc1x(ipart) > hid.dc_right(event.rot_dc1y(ipart)))
                     {
                         double beta  = (event.sc_r[ipart]/(corr.hadron_sct(event,ipart,runno,MC)-start_time))/speed_of_light;
-                        double dbeta = beta - event.p[ipart]/(event.p[ipart]*event.p[ipart] + pid_to_mass(pid)*pid_to_mass(pid));
-                        if (dbeta > hid.dbeta_min(sector,pid) && dbeta < hid.dbeta_max(sector,pid)) particles.push_back(ipart);
+                        double dbeta = event.p[ipart]/sqrt(event.p[ipart]*event.p[ipart] + pid_to_mass(pid)*pid_to_mass(pid)) - beta;
+                        if (dbeta > hid.PROT_DBMIN[sector] && dbeta < hid.PROT_DBMAX[sector] ) particles.push_back(ipart);
                     }
         }
         
         int candidate = -123;
         
         // Take slowest proton
-        if (particles.size() > 1)
+        if (particles.size() > 0)
         {
             candidate = particles[0];
             for (int i=1; i<particles.size(); i++)
@@ -301,25 +301,25 @@ std::map<std::string, bool> ParticleFilter::hid_map(h22Event event, int ipart)
     int sector   = event.dc_sect[ipart]-1;
     double dvz   = corr.vz(event,0,runno,MC) - corr.vz(event,ipart,runno,MC);
     double beta  = (event.sc_r[ipart]/(corr.hadron_sct(event,ipart,runno,MC)-start_time))/speed_of_light;
-    double dbeta_pim  = beta - event.p[ipart]/(event.p[ipart]*event.p[ipart] + pid_to_mass(-211)*pid_to_mass(-211));
-    double dbeta_pip  = beta - event.p[ipart]/(event.p[ipart]*event.p[ipart] + pid_to_mass(211)*pid_to_mass(211));
-    double dbeta_prot = beta - event.p[ipart]/(event.p[ipart]*event.p[ipart] + pid_to_mass(2212)*pid_to_mass(2212));
+    double dbeta_pim  = event.p[ipart]/sqrt(event.p[ipart]*event.p[ipart] + pid_to_mass(-211)*pid_to_mass(-211)) - beta;
+    double dbeta_pip  = event.p[ipart]/sqrt(event.p[ipart]*event.p[ipart] + pid_to_mass(211)*pid_to_mass(211))   - beta;
+    double dbeta_prot = event.p[ipart]/sqrt(event.p[ipart]*event.p[ipart] + pid_to_mass(2212)*pid_to_mass(2212)) - beta;
     
     if (event.q[ipart] < 0)
     {
         if (corr.good_sc_paddle(event,ipart)) { pim_qc = true; }
-        if (dvz > hid.dvz_min(sector) && dvz < hid.dvz_max(sector)) { pim_dvz = true; }
+        if (dvz > hid.DVZMIN && dvz < hid.DVZMAX ) { pim_dvz = true; }
         if (event.rot_dc1x(ipart) > hid.dc_left(event.rot_dc1y(ipart)) && event.rot_dc1x(ipart) > hid.dc_right(event.rot_dc1y(ipart))) { pim_dcfid = true; }
-        if (dbeta_pim > hid.dbeta_min(sector,-211) && dbeta_pim < hid.dbeta_max(sector,-211)) { pim_dbeta = true; }
+        if (dbeta_pim > hid.PIM_DBMIN[sector] && dbeta_pim < hid.PIM_DBMAX[sector]) { pim_dbeta = true; }
     }
     
     if (event.q[ipart] > 0)
     {
         if (corr.good_sc_paddle(event,ipart)) { pip_qc = true; prot_qc = true; }
-        if (dvz > hid.dvz_min(sector) && dvz < hid.dvz_max(sector)) { pip_dvz = true; prot_dvz = true;}
+        if (dvz > hid.DVZMIN && dvz < hid.DVZMAX) { pip_dvz = true; prot_dvz = true;}
         if (event.rot_dc1x(ipart) > hid.dc_left(event.rot_dc1y(ipart)) && event.rot_dc1x(ipart) > hid.dc_right(event.rot_dc1y(ipart))) { pip_dcfid = true; prot_dcfid = true; }
-        if (dbeta_pip > hid.dbeta_min(sector,211) && dbeta_pip < hid.dbeta_max(sector,211)) { pip_dbeta = true; }
-        if (dbeta_prot > hid.dbeta_min(sector,2212) && dbeta_prot < hid.dbeta_max(sector,2212)) { prot_dbeta = true; }
+        if (dbeta_pip  > hid.PIP_DBMIN[sector]  && dbeta_pip  < hid.PIP_DBMAX[sector] ) { pip_dbeta  = true; }
+        if (dbeta_prot > hid.PROT_DBMIN[sector] && dbeta_prot < hid.PROT_DBMAX[sector]) { prot_dbeta = true; }
     }
     
     std::map<std::string, bool> results;

@@ -84,12 +84,10 @@ int main(int argc, char * argv[])
         // keep runno up to date
         if (runno != fReader->runno() ) { runno = fReader->runno(); filter.set_info(runno,opts.args["MC"].arg); std::cout << runno << std::endl;}
         
-        int e_index = filter.getByPID(event,11);
-        if (e_index > -123) { pass++; }
-        else fail++;
-    
-        if (e_index > -123)
+
+        if (filter.has_electron(event))
         {
+            pass++;
             int pip_index  = filter.getByPID(event,211);
             int pim_index  = filter.getByPID(event,-211);
             int prot_index = filter.getByPID(event,2212);
@@ -118,6 +116,9 @@ int main(int argc, char * argv[])
                 if ( !hid_map["PIM_DCFID"] ) pim_dcfid++;
             }
         }
+        
+        //! No Electron
+        else { fail++; }
         
         std::map<std::string,bool> eid_map = filter.eid_map(event);
 
@@ -163,7 +164,6 @@ int main(int argc, char * argv[])
     std::cout << "  Pi-: " << pim_dbeta << std::endl;
     
     std::cout << "Pi+: " << pip << "Pi-: " << pim << "Prot: " << prot << std::endl;
-    std::cout << "Ending run number: " << runno << std::endl;
     
     return 0;
 }

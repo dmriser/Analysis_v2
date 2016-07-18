@@ -26,6 +26,7 @@ using namespace std;
 #include "TFile.h"
 #include "TH1.h"
 #include "TH2.h"
+#include "TLine.h"
 #include "TStopwatch.h"
 
 int main(int argc, char * argv[])
@@ -210,11 +211,14 @@ int main(int argc, char * argv[])
         if ( (int)iev%(int)opts.args["PRINT"].arg == 0) cout << "\r done " << iev << " of " << nev << flush;
     }
     
+    //  Performance readout
     double loop_time  = timer.RealTime();
     double event_rate = (double)nev/loop_time;
     cout << " Event loop finished in " << loop_time << " seconds w/ rate " << event_rate << " events/sec " << endl;
     
     out.Write();
     out.Close();
+    
+    
     
 }

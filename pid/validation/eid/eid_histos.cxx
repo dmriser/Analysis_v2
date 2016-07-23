@@ -24,6 +24,8 @@ using namespace std;
 #include "ParticleFilter.h"
 
 // root includes
+#include "TCanvas.h"
+#include "TF1.h"
 #include "TFile.h"
 #include "TH1.h"
 #include "TH2.h"
@@ -183,6 +185,8 @@ int main(int argc, char * argv[])
     
     cout << " Event loop finished in " << loop_time << " seconds w/ rate " << event_rate << " events/sec " << endl;
     
+    // Saving histograms
     out.Write();
     out.Close();
+
 }

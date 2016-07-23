@@ -97,7 +97,7 @@ int main(int argc, char * argv[])
             h2_p_db_prot[c][s]   = new TH2F(Form("h2_p_db_prot_%s_%d",cut[c].c_str(),s), Form(" #Delta #beta vs P (prot) %s Sector %d ",cut[c].c_str(),s),100,0.5,5,100,-0.6,0.2);
             h2_p_db_pip[c][s]    = new TH2F(Form("h2_p_db_pip_%s_%d",cut[c].c_str(),s), Form(" #Delta #beta vs P (#pi+) %s Sector %d ",cut[c].c_str(),s), 100,0.5,5,100,-0.2,0.6);
             h2_p_db_pim[c][s]    = new TH2F(Form("h2_p_db_pim_%s_%d",cut[c].c_str(),s), Form(" #Delta #beta vs P (#pi-) %s Sector %d ",cut[c].c_str(),s), 100,0.5,5,100,-0.2,0.2);
-
+            
         }
     
     // Keep track of time.
@@ -105,7 +105,7 @@ int main(int argc, char * argv[])
     timer.Reset();
     timer.Start();
     
-    for (int iev=0; iev<nev; iev++)
+    for (long int iev=0; iev<nev; iev++)
     {
         fReader.GetEntry(iev);
         h22Event event = fReader.GetEvent();
@@ -122,6 +122,12 @@ int main(int argc, char * argv[])
             {
                 double beta = (event.sc_r[ipart]/(corr.hadron_sct(event,ipart,runno,GSIM)-start_time))/speed_of_light;
                 int sector  = event.dc_sect[ipart];
+                
+                // Doing this cut
+                map<string,bool> results = filter.hid_map(event, ipart);
+                
+                if (results["PROT_DVZ"])   { h1_dvz[1][0]->Fill(corr.vz(event,0,runno,GSIM)-corr.vz(event,ipart,runno,GSIM)); h1_dvz[1][sector]->Fill(corr.vz(event,0,runno,GSIM)-corr.vz(event,ipart,runno,GSIM)); }
+                if (results["PROT_DCFID"]) { h2_dcr1[1][0]->Fill(event.rot_dc1x(ipart), event.rot_dc1y(ipart)); h2_dcr1[1][sector]->Fill(event.rot_dc1x(ipart), event.rot_dc1y(ipart)); }
                 
                 //! Fill Raw
                 h1_dvz[0][0]  ->Fill(corr.vz(event,0,runno,GSIM) - corr.vz(event,ipart,runno,GSIM));
@@ -141,6 +147,17 @@ int main(int argc, char * argv[])
                     h2_p_db_pip[0][sector] ->Fill(event.p[ipart],(event.p[ipart]/sqrt(event.p[ipart]*event.p[ipart] + pid_to_mass(211)*pid_to_mass(211)))-beta);
                     h2_p_beta_prot[0][sector]->Fill(event.p[ipart],beta);
                     h2_p_beta_pip[0][sector] ->Fill(event.p[ipart],beta);
+                    
+                    if (results["PROT_DBETA"]) { h2_p_db_prot[1][0]->Fill(event.p[ipart],(event.p[ipart]/sqrt(event.p[ipart]*event.p[ipart] + pid_to_mass(2212)*pid_to_mass(2212)))-beta);}
+                    if (results["PIP_DBETA"])  { h2_p_db_pip[1][0]->Fill(event.p[ipart],(event.p[ipart]/sqrt(event.p[ipart]*event.p[ipart] + pid_to_mass(211)*pid_to_mass(211)))-beta); }
+                    if (results["PROT_DBETA"]) { h2_p_beta_prot[1][0]->Fill(event.p[ipart],beta);}
+                    if (results["PIP_DBETA"])  { h2_p_beta_pip[1][0] ->Fill(event.p[ipart],beta);}
+                    
+                    if (results["PROT_DBETA"]) { h2_p_db_prot[1][sector]->Fill(event.p[ipart],(event.p[ipart]/sqrt(event.p[ipart]*event.p[ipart] + pid_to_mass(2212)*pid_to_mass(2212)))-beta);}
+                    if (results["PIP_DBETA"])  { h2_p_db_pip[1][sector]->Fill(event.p[ipart],(event.p[ipart]/sqrt(event.p[ipart]*event.p[ipart] + pid_to_mass(211)*pid_to_mass(211)))-beta); }
+                    if (results["PROT_DBETA"]) { h2_p_beta_prot[1][sector]->Fill(event.p[ipart],beta);}
+                    if (results["PIP_DBETA"])  { h2_p_beta_pip[1][sector] ->Fill(event.p[ipart],beta);}
+                    
                 }
                 
                 if (event.q[ipart] < 0)
@@ -149,9 +166,17 @@ int main(int argc, char * argv[])
                     h2_p_beta_pim[0][0] ->Fill(event.p[ipart],beta);
                     h2_p_db_pim[0][sector]   ->Fill(event.p[ipart],(event.p[ipart]/sqrt(event.p[ipart]*event.p[ipart] + pid_to_mass(-211)*pid_to_mass(-211)))-beta);
                     h2_p_beta_pim[0][sector] ->Fill(event.p[ipart],beta);
+                    
+                    if (results["PIM_DBETA"]){ h2_p_db_pim[1][0]     ->Fill(event.p[ipart],(event.p[ipart]/sqrt(event.p[ipart]*event.p[ipart] + pid_to_mass(-211)*pid_to_mass(-211)))-beta); }
+                    if (results["PIM_DBETA"]){ h2_p_beta_pim[1][0]   ->Fill(event.p[ipart],beta); }
+                    if (results["PIM_DBETA"]){ h2_p_db_pim[1][sector]->Fill(event.p[ipart],(event.p[ipart]/sqrt(event.p[ipart]*event.p[ipart] + pid_to_mass(-211)*pid_to_mass(-211)))-beta); }
+                    if (results["PIM_DBETA"]){ h2_p_beta_pim[1][sector]->Fill(event.p[ipart],beta); }
+                    
                 }
                 
+                
             }
+            
             
             // Doing All Cuts Passed
             int prot_index = filter.getByPID(event,2212);
@@ -171,9 +196,9 @@ int main(int argc, char * argv[])
                 h2_p_beta_prot[2][0]      ->Fill(event.p[prot_index],beta);
                 h2_p_db_prot[2][sector]   ->Fill(event.p[prot_index],(event.p[prot_index]/sqrt(event.p[prot_index]*event.p[prot_index] + pid_to_mass(2212)*pid_to_mass(2212)))-beta);
                 h2_p_beta_prot[2][sector] ->Fill(event.p[prot_index],beta);
-
+                
             }
-
+            
             if (pip_index > -123)
             {
                 double beta = (event.sc_r[pip_index]/(corr.hadron_sct(event,pip_index,runno,GSIM)-start_time))/speed_of_light;
@@ -188,7 +213,7 @@ int main(int argc, char * argv[])
                 h2_p_db_pip[2][sector]    ->Fill(event.p[pip_index],(event.p[pip_index]/sqrt(event.p[pip_index]*event.p[pip_index] + pid_to_mass(211)*pid_to_mass(211)))-beta);
                 h2_p_beta_pip[2][sector]  ->Fill(event.p[pip_index],beta);
             }
-
+            
             if (pim_index > -123)
             {
                 double beta = (event.sc_r[pim_index]/(corr.hadron_sct(event,pim_index,runno,GSIM)-start_time))/speed_of_light;

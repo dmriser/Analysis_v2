@@ -185,22 +185,26 @@ int h22Reader::runno()
 {
     // default case
  
-    string e1f_file = fchain->GetCurrentFile()->GetName();
-    string eg1_file = e1f_file;
+    string e1f_file     = fchain->GetCurrentFile()->GetName();
+    string e1f_file_alt = e1f_file;
+    string eg1_file     = e1f_file;
     
-    size_t pos_e1f = e1f_file.find("clas_");
-    size_t pos_eg1 = eg1_file.find("root22_");
+    size_t pos_e1f     = e1f_file.find("clas_");
+    size_t pos_e1f_alt = e1f_file.find("run_");
+    size_t pos_eg1     = eg1_file.find("root22_");
     
-    string srun_e1f = e1f_file.substr(pos_e1f+6,5);
-    string srun_eg1 = eg1_file.substr(pos_eg1+7,5);
+    string srun_e1f     = e1f_file.substr(pos_e1f+6,5);
+    string srun_e1f_alt = e1f_file.substr(pos_e1f_alt+4,5);
+    string srun_eg1     = eg1_file.substr(pos_eg1+7,5);
     
-    int e1f_run = atoi( srun_e1f.c_str() );
-    int eg1_run = atoi( srun_eg1.c_str() );
+    int e1f_run     = atoi( srun_e1f.c_str() );
+    int e1f_run_alt = atoi( srun_e1f_alt.c_str() );
+    int eg1_run     = atoi( srun_eg1.c_str() );
 
-//    std::cout << "e1f: " << e1f_run << " eg1: " << eg1_run << std::endl;
-    
     if (e1f_run == 0 && eg1_run != 0) return eg1_run;
-    if (e1f_run != 0 && eg1_run == 0) return e1f_run;
+    if (e1f_run != 0 && eg1_run == 0 && e1f_run_alt == 0) return e1f_run;
+    if (e1f_run == 0 && eg1_run == 0 && e1f_run_alt != 0) return e1f_run_alt;
+
     else return 0;
     
     /*

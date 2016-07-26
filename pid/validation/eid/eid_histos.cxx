@@ -184,9 +184,82 @@ int main(int argc, char * argv[])
     double event_rate = (double)nev/loop_time;
     
     cout << " Event loop finished in " << loop_time << " seconds w/ rate " << event_rate << " events/sec " << endl;
+
+    TCanvas * c1 = new TCanvas("c1","",800,800);
+    
+    epars epars;
+    epars.load(eparfile);
+    TLine line;
+    line.SetLineStyle(3);
+    line.SetLineWidth(2);
+    line.SetLineColor(kRed);
+    
+    // Z-Vertex Plot
+    h1_vz[0][0]->SetFillColorAlpha(kRed,0.5);
+    h1_vz[1][0]->SetFillColorAlpha(kGreen,0.5);
+    h1_vz[2][0]->SetFillColorAlpha(kBlue-3,0.5);
+    h1_vz[0][0]->Draw();
+    h1_vz[1][0]->Draw("same");
+    h1_vz[2][0]->Draw("same");
+    line.DrawLine(epars.VZMIN,0,epars.VZMIN,h1_vz[0][0]->GetMaximum());
+    line.DrawLine(epars.VZMAX,0,epars.VZMAX,h1_vz[0][0]->GetMaximum());
+    c1->Print("img/z_vertex_all.pdf");
+
+    // Z-Vertex Each
+    c1->Clear();
+    c1->Divide(3,2);
+    
+    for (int s=1; s<7; s++)
+    {
+        c1->cd(s);
+        h1_vz[0][s]->SetFillColorAlpha(kRed,0.5);
+        h1_vz[1][s]->SetFillColorAlpha(kGreen,0.5);
+        h1_vz[2][s]->SetFillColorAlpha(kBlue-3,0.5);
+        h1_vz[0][s]->Draw();
+        h1_vz[1][s]->Draw("same");
+        h1_vz[2][s]->Draw("same");
+        line.DrawLine(epars.VZMIN,0,epars.VZMIN,h1_vz[0][s]->GetMaximum());
+        line.DrawLine(epars.VZMAX,0,epars.VZMAX,h1_vz[0][s]->GetMaximum());
+    }
+    c1->Print("img/z_vertex_each.pdf");
+    
+    // Number of CC Photoelectrons All
+    c1->Clear();
+    h1_nphe[0][0]->SetFillColorAlpha(kRed,0.5);
+    h1_nphe[1][0]->SetFillColorAlpha(kGreen,0.5);
+    h1_nphe[2][0]->SetFillColorAlpha(kBlue-3,0.5);
+    h1_nphe[0][0]->Draw();
+    h1_nphe[1][0]->Draw("same");
+    h1_nphe[2][0]->Draw("same");
+    line.DrawLine(epars.CCNPHE,0,epars.CCNPHE,h1_nphe[0][0]->GetMaximum());
+    c1->Print("img/cc_nphe_all.pdf");
+    
+    // Number of CC Photoelectrons Each
+    c1->Clear();
+    c1->Divide(3,2);
+    
+    for (int s=1; s<7; s++)
+    {
+        c1->cd(s);
+        h1_nphe[0][s]->SetFillColorAlpha(kRed,0.5);
+        h1_nphe[1][s]->SetFillColorAlpha(kGreen,0.5);
+        h1_nphe[2][s]->SetFillColorAlpha(kBlue-3,0.5);
+        h1_nphe[0][s]->Draw();
+        h1_nphe[1][s]->Draw("same");
+        h1_nphe[2][s]->Draw("same");
+        line.DrawLine(epars.CCNPHE,0,epars.CCNPHE,h1_nphe[0][s]->GetMaximum());
+    }
+    c1->Print("img/cc_nphe_each.pdf");
+    
+    // EC Fid. Cuts All
+    c1->Clear();
+    h2_ec_uvw[0][0]->Draw();
+    h2_ec_uvw[2][0]->Draw("colzsame");
+    c1->Print("img/ec_fid_all.pdf");
     
     // Saving histograms
     out.Write();
     out.Close();
 
+    
 }

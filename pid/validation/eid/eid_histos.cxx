@@ -189,20 +189,32 @@ int main(int argc, char * argv[])
     
     epars epars;
     epars.load(eparfile);
+
     TLine line;
-    line.SetLineStyle(3);
-    line.SetLineWidth(2);
+    line.SetLineStyle(9);
+    line.SetLineWidth(4);
     line.SetLineColor(kRed);
+
+    TLatex latex;
+    latex.SetNDC();
+    latex.SetTextFont(32);
+    latex.SetTextSize(0.05);
     
     // Z-Vertex Plot
-    h1_vz[0][0]->SetFillColorAlpha(kRed,0.5);
-    h1_vz[1][0]->SetFillColorAlpha(kGreen,0.5);
-    h1_vz[2][0]->SetFillColorAlpha(kBlue-3,0.5);
+    //    h1_vz[0][0]->SetFillColorAlpha(kRed,0.5);
+    h1_vz[1][0]->SetFillColorAlpha(kOrange,0.25);
+    h1_vz[2][0]->SetFillColorAlpha(kGreen,0.25);
     h1_vz[0][0]->Draw();
     h1_vz[1][0]->Draw("same");
     h1_vz[2][0]->Draw("same");
     line.DrawLine(epars.VZMIN,0,epars.VZMIN,h1_vz[0][0]->GetMaximum());
     line.DrawLine(epars.VZMAX,0,epars.VZMAX,h1_vz[0][0]->GetMaximum());
+    latex.SetTextColor(kBlack);
+    latex.DrawLatex(0.1, 0.75," #rightarrow all neg. tracks ");
+    latex.SetTextColor(kOrange);
+    latex.DrawLatex(0.1, 0.8," #rightarrow this cut ");
+    latex.SetTextColor(kGreen);
+    latex.DrawLatex(0.1, 0.85," #rightarrow all pass ");
     c1->Print("img/z_vertex_all.pdf");
 
     // Z-Vertex Each
@@ -212,9 +224,9 @@ int main(int argc, char * argv[])
     for (int s=1; s<7; s++)
     {
         c1->cd(s);
-        h1_vz[0][s]->SetFillColorAlpha(kRed,0.5);
-        h1_vz[1][s]->SetFillColorAlpha(kGreen,0.5);
-        h1_vz[2][s]->SetFillColorAlpha(kBlue-3,0.5);
+	//        h1_vz[0][s]->SetFillColorAlpha(kRed,0.5);
+        h1_vz[1][s]->SetFillColorAlpha(kBlue+1,0.25);
+        h1_vz[2][s]->SetFillColorAlpha(kCyan,0.25);
         h1_vz[0][s]->Draw();
         h1_vz[1][s]->Draw("same");
         h1_vz[2][s]->Draw("same");
@@ -225,9 +237,9 @@ int main(int argc, char * argv[])
     
     // Number of CC Photoelectrons All
     c1->Clear();
-    h1_nphe[0][0]->SetFillColorAlpha(kRed,0.5);
-    h1_nphe[1][0]->SetFillColorAlpha(kGreen,0.5);
-    h1_nphe[2][0]->SetFillColorAlpha(kBlue-3,0.5);
+    //    h1_nphe[0][0]->SetFillColorAlpha(kRed,0.5);
+    h1_nphe[1][0]->SetFillColorAlpha(kBlue-1,0.25);
+    h1_nphe[2][0]->SetFillColorAlpha(kCyan,0.25);
     h1_nphe[0][0]->Draw();
     h1_nphe[1][0]->Draw("same");
     h1_nphe[2][0]->Draw("same");
@@ -241,9 +253,9 @@ int main(int argc, char * argv[])
     for (int s=1; s<7; s++)
     {
         c1->cd(s);
-        h1_nphe[0][s]->SetFillColorAlpha(kRed,0.5);
-        h1_nphe[1][s]->SetFillColorAlpha(kGreen,0.5);
-        h1_nphe[2][s]->SetFillColorAlpha(kBlue-3,0.5);
+	//        h1_nphe[0][s]->SetFillColorAlpha(kRed,0.5);
+        h1_nphe[1][s]->SetFillColorAlpha(kBlue-1,0.25);
+        h1_nphe[2][s]->SetFillColorAlpha(kCyan,0.25);
         h1_nphe[0][s]->Draw();
         h1_nphe[1][s]->Draw("same");
         h1_nphe[2][s]->Draw("same");

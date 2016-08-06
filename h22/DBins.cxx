@@ -20,6 +20,11 @@ using namespace std;
 // my includes
 #include "DBins.h"
 
+DBins::DBins()
+{
+  // Creation Story here.
+}
+
 DBins::~DBins()
 {
   // Total Destruction
@@ -33,6 +38,14 @@ DBins::DBins(int bn, double bmin, double bmax)
   kWidth = (kMax-kMin)/(kNumber-1);
 
   for (int b=0; b<kNumber; b++) kBins.push_back( kMin + b*kWidth );
+}
+
+void DBins::operator=(const DBins * newBins)
+{
+  kNumber = newBins->kNumber;
+  kMin = newBins->kMin;
+  kMax = newBins->kMax;
+  refresh();
 }
 
 void DBins::refresh()

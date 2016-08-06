@@ -11,11 +11,13 @@
 
 // c++ includes
 #include <iostream>
+#include <vector>
 using namespace std;
 
 // my includes from h22 library
 #include "CommonTools.h"
 #include "Corrections.h"
+#include "ElasticPackage.h"
 #include "h22Event.h"
 #include "h22Option.h"
 #include "h22Reader.h"
@@ -28,17 +30,22 @@ using namespace std;
 class Analysis : public h22Reader
 {
 public:
-  Analysis(TChain*);
+  Analysis();
   ~Analysis();
 
+  ParticleFilter filter; 
+  ElasticEvent elasticEvent; 
+
   // Returns Number of Events ( Just a test ) 
+  void add_files(vector<string>);
+  void init();
+  void loop();
   int events();
 };
 
-Analysis::Analysis(TChain* t) : h22Reader(0)
+Analysis::Analysis() : h22Reader(0)
 {
-  fchain = t;
-  //  Init();
+  
 }
 
 Analysis::~Analysis()
@@ -46,9 +53,27 @@ Analysis::~Analysis()
   //  fchain->Delete();
 }
 
+void Analysis::add_files(vector<string> files)
+{
+  for (int ifile=0; ifile < files.size(); ifile++) AddFile(files[ifile]);
+}
+
 int Analysis::events()
 {
   return fchain->GetEntries();
+}
+
+void Analysis::init()
+{
+  Init();
+}
+
+void Analysis::loop()
+{
+
+  // Event loop
+  elasticEvent.set_w_max( 1.08 );
+  
 }
 
 int main(int argc, char * argv[])
@@ -57,14 +82,12 @@ int main(int argc, char * argv[])
     // Setup Options
     h22Options opts;
     opts.set(argc,argv);
-    int GSIM     = opts.args["MC"].arg;
+
     
-    // Setup Reader
-    h22Reader fReader(GSIM);
-    for (auto it=opts.ifiles.begin(); it<opts.ifiles.end(); it++) { fReader.AddFile(*it); }
-
-    Analysis tester( fReader.fchain );
-
+    
+    Analysis tester;
+    tester.add_files(opts.ifiles);
+    
     cout << tester.events() << endl;
     
     return 0;

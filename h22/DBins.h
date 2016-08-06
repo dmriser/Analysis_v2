@@ -38,7 +38,8 @@ class DBins
   // Member functions 
  public:
   void refresh();
-
+  void operator=(const DBins *);
+  
   // Setters
   void set_min(double);
   void set_max(double);

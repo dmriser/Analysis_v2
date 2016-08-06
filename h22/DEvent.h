@@ -41,8 +41,8 @@ class DEvent
   void set_beam_energy(double);
   void set_target_mass(double);
   void refresh();
+  void print();
   
 };
-
 
 #endif

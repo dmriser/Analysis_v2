@@ -15,6 +15,7 @@
 
 // c++ includes
 #include <iostream>
+using namespace std;
 
 // root includes
 #include "TLorentzVector.h"
@@ -81,6 +82,13 @@ void DEvent::set_target_mass(double m)
 {
   target.SetE(m);
   refresh();
+}
+
+void DEvent::print()
+{
+  cout.width(8); cout << QQ;
+  cout.width(8); cout << W;
+  cout.width(8); cout << MM2 << endl;
 }
 
 #endif

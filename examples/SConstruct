@@ -10,3 +10,4 @@ env.Append(CPPPATH = ['/usr/local/include/'], LIBPATH = ['/usr/local/lib/'],LIBS
 env.Program('template','template.cxx')
 env.Program('test','test.cxx')
 env.Program('rho_pid','rho_pid.cxx')
+env.Program('inherit','inheritance.cxx')

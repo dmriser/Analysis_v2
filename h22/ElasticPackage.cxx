@@ -22,11 +22,13 @@
 
 //c++ includes 
 #include <iostream>
+using namespace std;
 
 // my includes 
 #include "DBins.h"
 #include "DEvent.h"
 #include "ElasticPackage.h"
+#include "h22Event.h"
 
 /////////////////////////////////////////////////////////
 /*
@@ -48,7 +50,7 @@ ElasticBins::~ElasticBins()
 
 ElasticBins::ElasticBins(DBins theta, DBins phi, DBins mom)
 {
-  thetaBins = theta; phiBins = phi; pBins = mom;
+  thetaBins = theta; phiBins = phi; pBins = mom; 
 }
 
 ElasticBins::ElasticBins(int nx, double xmin, double xmax, int ny, double ymin, double ymax, int nz, double zmin, double zmax)
@@ -98,5 +100,40 @@ bool ElasticEvent::passes()
 
   return false;
 }
+
+/////////////////////////////////////////////////////////
+/*
+  
+  ElasticHistograms
+
+*/
+/////////////////////////////////////////////////////////
+
+ElasticHistograms::ElasticHistograms()
+{
+  // Nothing to do. 
+}
+
+ElasticHistograms::~ElasticHistograms()
+{
+  // Nothing to do. 
+}
+
+void ElasticHistograms::close(string)
+{
+  // Create, write, and close TFile for root output. 
+}
+
+void ElasticHistograms::init()
+{
+  // Initialize the histograms we defined in the ElasticPackage.h ElasticHistogram section.
+  string sect[7] = {"all","s1","s2","s3","s4","s5","s6"};
+  for (int s=0; s<7; s++)
+    {
+      h1_w[s] = new TH1F(Form("h1_w_%s",sect[s].c_str()),Form(" w for %s",sect[s].c_str()),100,0,5);
+    }
+}
+
+
 
 #endif

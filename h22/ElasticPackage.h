@@ -26,8 +26,11 @@
 // my includes 
 #include "DBins.h"
 #include "DEvent.h"
+#include "h22Event.h"
 
 // root includes
+#include "TH1.h"
+#include "TH2.h"
 #include "TLorentzVector.h"
 
 /////////////////////////////////////////////
@@ -70,7 +73,7 @@ class ElasticBins
 */
 /////////////////////////////////////////////
 
-class ElasticEvent : public DEvent
+class ElasticEvent : public DEvent 
 {
  public:
  ElasticEvent();
@@ -81,10 +84,42 @@ class ElasticEvent : public DEvent
   
   // Datatypes
  public:
-  double W_Max;
-  bool passes();
-  void set_w_max(double W){ W_Max = W;}
+ double W_Max;
+ bool passes();
+ void set_w_max(double W){ W_Max = W;}
   
+};
+
+/////////////////////////////////////////////
+/*
+  
+  ElasticHistograms 
+
+*/
+/////////////////////////////////////////////
+
+class ElasticHistograms
+{
+ public:
+  ElasticHistograms();
+  ~ElasticHistograms();
+
+  ElasticHistograms(ElasticBins);
+  
+  // Datatypes 
+ public:
+  ElasticBins bins;
+
+  TH1F * h1_w[7]; /** Final State Invariant Mass (7 Spaces for all hits and for Sectors 1-6) */
+
+  // Methods
+  void close(std::string); /** Save histograms to file */
+  void draw();
+  void dump(std::string); /** Dumping all histograms into .pdf file specified by name */
+  void fill(int, h22Event, ElasticEvent); /** Filling histograms requires electron index, the event, and the elastic event */
+  void init();
+  void set_errors();
+
 };
 
 #endif

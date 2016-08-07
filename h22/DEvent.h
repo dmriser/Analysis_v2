@@ -25,7 +25,7 @@ class DEvent
   DEvent();
   ~DEvent();
 
-  DEvent(TLorentzVector);
+  DEvent(TLorentzVector); /** Declare with TLorentzVector of final state electron */
   
   // Datatypes
  public:

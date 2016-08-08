@@ -80,6 +80,11 @@ ElasticEvent::ElasticEvent()
   // Not sure what needs to be done here. 
 }
 
+ElasticEvent::~ElasticEvent()
+{
+  // Not sure what needs to be done here. 
+}
+
 ElasticEvent::ElasticEvent(TLorentzVector x) : DEvent(x){
   // Nothing to do here 
 }
@@ -134,6 +139,35 @@ void ElasticHistograms::init()
     }
 }
 
+void ElasticHistograms::fill(int index, h22Event event, ElasticEvent elasticEvent)
+{
+  // Fill all histograms
+  if (1)
+    {
+      int s = event.dc_sect[index];
 
+      h1_w[0]->Fill(elasticEvent.W);
+      h1_w[s]->Fill(elasticEvent.W);
+    
+    }
+}
+
+/////////////////////////////////////////////////////////
+/*
+  
+  ElasticAnalysis
+
+*/
+/////////////////////////////////////////////////////////
+
+ElasticAnalysis::ElasticAnalysis()
+{
+  // To do 
+}
+
+ElasticAnalysis::~ElasticAnalysis()
+{
+  // To do 
+}
 
 #endif

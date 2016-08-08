@@ -22,11 +22,13 @@
 
 //c++ includes 
 #include <iostream>
+#include <vector>
 
 // my includes 
 #include "DBins.h"
 #include "DEvent.h"
 #include "h22Event.h"
+#include "h22Reader.h"
 
 // root includes
 #include "TH1.h"
@@ -120,6 +122,34 @@ class ElasticHistograms
   void init();
   void set_errors();
 
+};
+
+/////////////////////////////////////////////
+/*
+  
+  ElasticAnalysis 
+
+*/
+/////////////////////////////////////////////
+
+class ElasticAnalysis
+{
+ public:
+  ElasticAnalysis();
+  ~ElasticAnalysis();
+
+  // Datatypes
+  ElasticBins bins; 
+  ElasticHistograms histos; 
+  h22Reader * fReader[2]; /** Data & Monte Carlo */
+
+  // Member Functions
+  void add_files(int, std::vector<std::string>);
+  void close(std::string);
+  void run();
+  void init();
+
+  
 };
 
 #endif

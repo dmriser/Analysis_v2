@@ -16,7 +16,6 @@
 // c++ includes
 #include <iostream>
 #include <map>
-#include <vector>
 
 // my includes
 
@@ -37,7 +36,7 @@ class DInformation
   ~DInformation();
 
   // Datatypes
-  std::vector<std::map<int, DInfo>> info;
+  std::map<int, DInfo> info;
 
   // Methods
   void load(std::string);

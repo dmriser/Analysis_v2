@@ -16,6 +16,7 @@ using namespace std;
 // my includes from h22 library
 #include "CommonTools.h"
 #include "Corrections.h"
+#include "DInformation.h"
 #include "h22Event.h"
 #include "h22Option.h"
 #include "h22Reader.h"
@@ -45,7 +46,7 @@ int main(int argc, char * argv[])
     h22Reader fReader(GSIM);
     for (auto it=opts.ifiles.begin(); it<opts.ifiles.end(); it++) { fReader.AddFile(*it); }
     fReader.Init();
-    
+
     // If you ask for more the loop will analyze garbage
     nev = smallest(nev, fReader.GetEntries());
     
@@ -53,6 +54,8 @@ int main(int argc, char * argv[])
     int runno = fReader.runno();
     
     // Setting up PID and Corrections
+    DInformation runs;
+    runs.load("/Users/dmriser/Work/analysis/runs.info");
     ParticleFilter filter(eparfile);
     filter.set_info(GSIM, runno);
     Corrections corr;
@@ -60,6 +63,7 @@ int main(int argc, char * argv[])
     // Example of physics
     int elastic_candidates = 0;
     int sidis_candidates   = 0;
+    int electrons = 0;
     
     // Keep track of time.
     TStopwatch timer;
@@ -72,12 +76,15 @@ int main(int argc, char * argv[])
         h22Event event = fReader.GetEvent();
         
         // keeping track of run number and making sure particle filter knows about it as well.
-        if ( runno != fReader.runno() ){ runno = fReader.runno(); filter.set_info(GSIM, runno); }
-        
+        if ( runno != fReader.runno() ){ runno = fReader.runno(); filter.set_info(GSIM, runno); cout << runs.info[runno].dN << endl; }
+
+	
         // Load up hadrons if we've electron.
         if (filter.has_electron(event))
         {
-            // Example Elastic Event Candidate
+	  electrons++;
+	  
+	  // Example Elastic Event Candidate
             int prot_index = filter.getByPID(event,2212);
             int pip_index  = filter.getByPID(event,211);
             int pim_index  = filter.getByPID(event,-211);
@@ -91,12 +98,9 @@ int main(int argc, char * argv[])
         if ( (int)iev%(int)opts.args["PRINT"].arg == 0) cout << "\r done " << iev << " of " << nev << flush;
     }
     
-    // If you changed anything in the parfiles
-    epars.save(eparfile);
-    hpars.save(hparfile);
-
     cout << "\n Found " << elastic_candidates << " candidate elastic events " << endl;
     cout << " Found " << sidis_candidates << " candidate sidis events " << endl;
+    cout << " Found " << electrons << " electrons " << endl;
 
     double loop_time  = timer.RealTime();
     double event_rate = (double)nev/loop_time;

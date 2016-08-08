@@ -19,7 +19,6 @@
 #include <fstream>
 #include <sstream>
 #include <map>
-#include <vector>
 using namespace std;
 
 // my includes
@@ -66,9 +65,10 @@ void DInformation::load(string db_file)
 	      i++;
 	    }
 	  
-	  map<int, DInfo> current;
-	  current[incoming_info.runno] = incoming_info;
-	  info.push_back(current);
+	  info[incoming_info.runno].runno = incoming_info.runno; 
+	  info[incoming_info.runno].dQ = incoming_info.dQ;
+	  info[incoming_info.runno].dN = incoming_info.dN; 
+
 	}
     }
 }

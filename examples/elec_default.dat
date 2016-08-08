@@ -1,0 +1,42 @@
+
+ # Parameter File elec_default.dat Updated at Mon Aug  8 13:57:57 2016
+
+
+ # EC Sampling Fraction Cuts Ap^3 + Bp^2 + Cp + D 
+      ECSSA:           0           0           0           0           0           0
+      ECSSB:           0           0           0           0           0           0
+      ECSSC:           0           0           0           0           0           0
+      ECSSD:           0           0           0           0           0           0
+      ECSMA:           0           0           0           0           0           0
+      ECSMB:           0           0           0           0           0           0
+      ECSMC:           0           0           0           0           0           0
+      ECSMD:           0           0           0           0           0           0
+  ECSNSIGMA:           3           3           3           3           3           3
+
+ # EC Geometric Cuts U, V, W Coordinates 
+     ECUMIN:          70          70          70          70          70          70
+     ECVMIN:           0           0           0           0           0           0
+     ECWMIN:           0           0           0           0           0           0
+     ECUMAX:         400         400         400         400         400         400
+     ECVMAX:         362         362         362         362         362         362
+     ECWMAX:         395         395         395         395         395         395
+
+ # EC Inner - Minimum Energy Deposited 
+  ECEDEPMIN:        0.05
+
+ # Z-Vertex of Track Bounds  
+      VZMIN:    -27.7302
+      VZMAX:    -22.6864
+
+ # Number of Photoelectrons in Cherenkov Counter (x10)
+     CCNPHE:          25
+
+ # Cherenkov Counter Fid. Cuts A - B sqrt(1-rphi^2/360)
+     CCFIDA:          46
+     CCFIDB:          35
+
+ # Drift Chamber Region 1/3 Fiducial Height and Angle 
+   DCR1FIDH:          22
+   DCR1FIDA:          60
+   DCR3FIDH:          80
+   DCR3FIDA:          49

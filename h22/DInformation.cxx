@@ -15,6 +15,7 @@
 #define dinfo_cxx
 
 // c++ includes
+#include <cstdlib>
 #include <iostream>
 #include <fstream>
 #include <sstream>

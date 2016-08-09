@@ -133,10 +133,24 @@ void ElasticHistograms::init()
 {
   // Initialize the histograms we defined in the ElasticPackage.h ElasticHistogram section.
   string sect[7] = {"all","s1","s2","s3","s4","s5","s6"};
-  for (int s=0; s<7; s++)
+  string type[2] = {"data","gsim"};
+
+  for (int t=0; t<2; t++)
+    for (int s=0; s<7; s++)
+      {
+	h1_w[t][s]   = new TH1F(Form("h1_w_%s_%s",type[t].c_str(),sect[s].c_str()),Form(" w for %s %s ",type[t].c_str(),sect[s].c_str()),100,0.7,1.2);
+	//	h2_rec[t][s] = new TH2F(Form(),Form(),phiBins.number(),phiBins.min(),phiBins.max(),thetaBins.number(),thetaBins.min(),thetaBins.max());
+      }
+
+  /*
+  // Initialize histograms which depend on external binning parameters 
+  for (int b=0; b<pBins.number(); b++)
     {
-      h1_w[s] = new TH1F(Form("h1_w_%s",sect[s].c_str()),Form(" w for %s",sect[s].c_str()),100,0,5);
+      TH1F * h = new TH1F();
+      h1_w_by_p.push_back(h);
     }
+  */
+  
 }
 
 void ElasticHistograms::fill(int index, h22Event event, ElasticEvent elasticEvent)
@@ -146,10 +160,15 @@ void ElasticHistograms::fill(int index, h22Event event, ElasticEvent elasticEven
     {
       int s = event.dc_sect[index];
 
-      h1_w[0]->Fill(elasticEvent.W);
-      h1_w[s]->Fill(elasticEvent.W);
+      h1_w[index][0]->Fill(elasticEvent.W);
+      h1_w[index][s]->Fill(elasticEvent.W);
     
     }
+}
+
+void ElasticHistograms::set_bins(ElasticBins this_junk)
+{
+  bins = this_junk;
 }
 
 /////////////////////////////////////////////////////////
@@ -168,6 +187,11 @@ ElasticAnalysis::ElasticAnalysis()
 ElasticAnalysis::~ElasticAnalysis()
 {
   // To do 
+}
+
+void ElasticAnalysis::add_files(int index, vector<string> files)
+{
+  for (int i=0; i<files.size(); i++) fReader[index]->AddFile(files[i]);
 }
 
 #endif

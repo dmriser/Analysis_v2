@@ -17,6 +17,8 @@ using namespace std;
 #include "CommonTools.h"
 #include "Corrections.h"
 #include "DInformation.h"
+#include "Dumper.h"
+#include "ElasticPackage.h"
 #include "h22Event.h"
 #include "h22Option.h"
 #include "h22Reader.h"
@@ -24,6 +26,8 @@ using namespace std;
 #include "ParticleFilter.h"
 
 // root includes
+#include "TH1.h"
+#include "TLorentzVector.h"
 #include "TStopwatch.h"
 
 int main(int argc, char * argv[])
@@ -69,6 +73,10 @@ int main(int argc, char * argv[])
     TStopwatch timer;
     timer.Reset();
     timer.Start();
+
+    // Testing dumper class
+    HistogramDumper dumper;
+    TH1F * h1_w = new TH1F("h1_w"," Invariant Mass Final State (GeV)",100,0.7,1.2);
     
     for (int iev=0; iev<nev; iev++)
     {
@@ -83,6 +91,11 @@ int main(int argc, char * argv[])
         if (filter.has_electron(event))
         {
 	  electrons++;
+	  
+	  TLorentzVector elec(event.cx[0]*event.p[0], event.cy[0]*event.p[0],
+			      event.cz[0]*event.p[0], event.p[0]);
+	  ElasticEvent elasticEvent(elec);
+	  h1_w->Fill(elasticEvent.W);
 	  
 	  // Example Elastic Event Candidate
             int prot_index = filter.getByPID(event,2212);
@@ -106,5 +119,7 @@ int main(int argc, char * argv[])
     double event_rate = (double)nev/loop_time;
     
     cout << " Event loop finished in " << loop_time << " seconds w/ rate " << event_rate << " events/sec " << endl;
-    
+
+    dumper.dump(h1_w);
+
 }

@@ -33,6 +33,7 @@ class HistogramDumper
   // Member functions
  public:
   void dump(TH1F *);
+  void dump(TH1D *);
   
 };
 

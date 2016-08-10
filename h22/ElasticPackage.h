@@ -113,7 +113,9 @@ class ElasticHistograms
   // Datatypes 
  public:
   ElasticBins bins;
-
+  DBins w_histo_bins;
+  DBins qq_histo_bins;
+  
   // Binned By Outside Variables
   /** The binning is done by ElasticBins, first vector is sectors and second is the binning scheme */
   std::vector<std::vector<TH1F*> > h1_hits_by_phi;
@@ -139,6 +141,7 @@ class ElasticHistograms
   void init();
   void set_errors();
   void set_bins(ElasticBins);
+  void set_histo_bins(DBins, DBins); /** Pass in w histo bins and qq histo bins */
 };
 
 /////////////////////////////////////////////

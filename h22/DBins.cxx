@@ -13,6 +13,7 @@
 #define dbins_cxx
 
 // c++ includes
+#include <cmath>
 #include <iostream>
 #include <vector>
 using namespace std;
@@ -38,6 +39,15 @@ DBins::DBins(int bn, double bmin, double bmax)
   kWidth = (kMax-kMin)/(kNumber-1);
 
   for (int b=0; b<kNumber; b++) kBins.push_back( kMin + b*kWidth );
+}
+
+int DBins::find_bin(double value)
+{
+
+  int bin = floor((value-kMin)/kWidth);
+
+  if (bin > -1 && bin < kNumber) return bin;
+  else return -123;
 }
 
 void DBins::operator=(const DBins * newBins)

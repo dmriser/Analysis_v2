@@ -47,6 +47,7 @@ class DBins
 
   // Getters
   int number(){ return kNumber; }
+  int find_bin(double);
   double min(){ return kMin; }
   double max(){ return kMax; }
   double width(){ return kWidth; }

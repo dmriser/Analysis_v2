@@ -116,7 +116,8 @@ bool ElasticEvent::passes()
 
 ElasticHistograms::ElasticHistograms()
 {
-  // Nothing to do. 
+  w_histo_bins  = DBins(100,0.8,1.3);
+  qq_histo_bins = DBins(100,0.0,5.5); 
 }
 
 ElasticHistograms::~ElasticHistograms()
@@ -129,10 +130,113 @@ void ElasticHistograms::close(string)
   // Create, write, and close TFile for root output. 
 }
 
+void ElasticHistograms::set_histo_bins(DBins w, DBins qq)
+{
+  w_histo_bins  = w;
+  qq_histo_bins = qq;
+}
+
 void ElasticHistograms::init()
 {
   // Initialize the histograms we defined in the ElasticPackage.h ElasticHistogram section.
   string sect[7] = {"all","s1","s2","s3","s4","s5","s6"};
+
+  // w for pBins
+  for (int s=0; s<7; s++) {
+    vector<TH1F*> v;
+    for (int b=0; b<(bins.pBins.number()+1); b++)
+      {
+	string name  = Form("h1_w_by_p_%d_%s",b,sect[s].c_str());
+	string title = Form("W for bin %d of %s",b,sect[s].c_str());
+	v.push_back( new TH1F(name.c_str(), title.c_str(), w_histo_bins.number(), w_histo_bins.min(), w_histo_bins.max()) );
+      }
+    h1_w_by_p.push_back(v);
+  }
+
+  // Q^2 for pBins
+  for (int s=0; s<7; s++) {
+    vector<TH1F*> v;
+    for (int b=0; b<(bins.pBins.number()+1); b++)
+      {
+	string name  = Form("h1_qq_by_p_%d_%s",b,sect[s].c_str());
+	string title = Form("Q^2 for bin %d of %s",b,sect[s].c_str());
+	v.push_back( new TH1F(name.c_str(), title.c_str(), qq_histo_bins.number(), qq_histo_bins.min(), qq_histo_bins.max()) );
+      }
+    h1_qq_by_p.push_back(v);
+  }
+
+  // hits for phi bins 
+  for (int s=0; s<7; s++) {
+    vector<TH1F*> v;
+    for (int b=0; b<(bins.pBins.number()+1); b++)
+      {
+	string name  = Form("h1_hits_by_phi_%d_%s",b,sect[s].c_str());
+	string title = Form("Hits for bin %d of %s",b,sect[s].c_str());
+	v.push_back( new TH1F(name.c_str(), title.c_str(), bins.thetaBins.number(), bins.thetaBins.min(), bins.thetaBins.max()) );
+      }
+    h1_hits_by_phi.push_back(v);
+  }
+
+  // reconstructed hits for phi bins 
+  for (int s=0; s<7; s++) {
+    vector<TH1F*> v;
+    for (int b=0; b<(bins.pBins.number()+1); b++)
+      {
+	string name  = Form("h1_rec_by_phi_%d_%s",b,sect[s].c_str());
+	string title = Form("Reconstructed hits for bin %d of %s",b,sect[s].c_str());
+	v.push_back( new TH1F(name.c_str(), title.c_str(), bins.thetaBins.number(), bins.thetaBins.min(), bins.thetaBins.max()) );
+      }
+    h1_rec_by_phi.push_back(v);
+  }
+
+  // gen for phi bins 
+  for (int s=0; s<7; s++) {
+    vector<TH1F*> v;
+    for (int b=0; b<(bins.pBins.number()+1); b++)
+      {
+	string name  = Form("h1_gen_by_phi_%d_%s",b,sect[s].c_str());
+	string title = Form("Generated for bin %d of %s",b,sect[s].c_str());
+	v.push_back( new TH1F(name.c_str(), title.c_str(), bins.thetaBins.number(), bins.thetaBins.min(), bins.thetaBins.max()) );
+      }
+    h1_gen_by_phi.push_back(v);
+  }
+
+
+  // hits for p bins 
+  for (int s=0; s<7; s++) {
+    vector<TH1F*> v;
+    for (int b=0; b<(bins.pBins.number()+1); b++)
+      {
+	string name  = Form("h1_hits_by_p_%d_%s",b,sect[s].c_str());
+	string title = Form("Hits for bin %d of %s",b,sect[s].c_str());
+	v.push_back( new TH1F(name.c_str(), title.c_str(), bins.thetaBins.number(), bins.thetaBins.min(), bins.thetaBins.max()) );
+      }
+    h1_hits_by_p.push_back(v);
+  }
+
+  // reconstructed hits for phi bins 
+  for (int s=0; s<7; s++) {
+    vector<TH1F*> v;
+    for (int b=0; b<(bins.pBins.number()+1); b++)
+      {
+	string name  = Form("h1_rec_by_p_%d_%s",b,sect[s].c_str());
+	string title = Form("Reconstructed hits for bin %d of %s",b,sect[s].c_str());
+	v.push_back( new TH1F(name.c_str(), title.c_str(), bins.thetaBins.number(), bins.thetaBins.min(), bins.thetaBins.max()) );
+      }
+    h1_rec_by_p.push_back(v);
+  }
+
+  // gen for phi bins 
+  for (int s=0; s<7; s++) {
+    vector<TH1F*> v;
+    for (int b=0; b<(bins.pBins.number()+1); b++)
+      {
+	string name  = Form("h1_gen_by_p_%d_%s",b,sect[s].c_str());
+	string title = Form("Generated for bin %d of %s",b,sect[s].c_str());
+	v.push_back( new TH1F(name.c_str(), title.c_str(), bins.thetaBins.number(), bins.thetaBins.min(), bins.thetaBins.max()) );
+      }
+    h1_gen_by_p.push_back(v);
+  }
   
 }
 

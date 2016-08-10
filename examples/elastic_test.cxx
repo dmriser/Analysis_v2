@@ -29,7 +29,7 @@ int main(int argc, char * argv[])
 
   // Instantiate the analysis class with your bins 
   ElasticAnalysis analysis(bins);
-
+    
   //  analysis.add_files(0, files);
   //  analysis.init();
   //  analysis.run();

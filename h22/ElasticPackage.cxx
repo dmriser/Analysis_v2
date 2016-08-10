@@ -55,9 +55,9 @@ ElasticBins::ElasticBins(DBins theta, DBins phi, DBins mom)
 
 ElasticBins::ElasticBins(int nx, double xmin, double xmax, int ny, double ymin, double ymax, int nz, double zmin, double zmax)
 {
-  thetaBins = new DBins(nx, xmin, xmax);
-  phiBins   = new DBins(ny, ymin, ymax);
-  pBins     = new DBins(nz, zmin, zmax);
+  thetaBins = DBins(nx, xmin, xmax);
+  phiBins   = DBins(ny, ymin, ymax);
+  pBins     = DBins(nz, zmin, zmax);
 }
 
 void ElasticBins::set(int nx, double xmin, double xmax, int ny, double ymin, double ymax, int nz, double zmin, double zmax)
@@ -133,35 +133,15 @@ void ElasticHistograms::init()
 {
   // Initialize the histograms we defined in the ElasticPackage.h ElasticHistogram section.
   string sect[7] = {"all","s1","s2","s3","s4","s5","s6"};
-  string type[2] = {"data","gsim"};
-
-  for (int t=0; t<2; t++)
-    for (int s=0; s<7; s++)
-      {
-	h1_w[t][s]   = new TH1F(Form("h1_w_%s_%s",type[t].c_str(),sect[s].c_str()),Form(" w for %s %s ",type[t].c_str(),sect[s].c_str()),100,0.7,1.2);
-	//	h2_rec[t][s] = new TH2F(Form(),Form(),phiBins.number(),phiBins.min(),phiBins.max(),thetaBins.number(),thetaBins.min(),thetaBins.max());
-      }
-
-  /*
-  // Initialize histograms which depend on external binning parameters 
-  for (int b=0; b<pBins.number(); b++)
-    {
-      TH1F * h = new TH1F();
-      h1_w_by_p.push_back(h);
-    }
-  */
   
 }
 
-void ElasticHistograms::fill(int index, h22Event event, ElasticEvent elasticEvent)
+void ElasticHistograms::fill(int index, double w_cut, h22Event event, ElasticEvent elasticEvent)
 {
   // Fill all histograms
-  if (1)
+  if (index == 0 && elasticEvent.W < w_cut)
     {
       int s = event.dc_sect[index];
-
-      h1_w[index][0]->Fill(elasticEvent.W);
-      h1_w[index][s]->Fill(elasticEvent.W);
     
     }
 }
@@ -187,6 +167,16 @@ ElasticAnalysis::ElasticAnalysis()
 ElasticAnalysis::~ElasticAnalysis()
 {
   // To do 
+}
+
+ElasticAnalysis::ElasticAnalysis(ElasticBins b)
+{
+  bins = b;
+}
+
+void ElasticAnalysis::set_bins(ElasticBins b)
+{
+  bins = b;
 }
 
 void ElasticAnalysis::add_files(int index, vector<string> files)

@@ -87,6 +87,8 @@ class ElasticEvent : public DEvent
   // Datatypes
  public:
  double W_Max;
+
+ // Member Functions 
  bool passes();
  void set_w_max(double W){ W_Max = W;}
   
@@ -106,39 +108,37 @@ class ElasticHistograms
   ElasticHistograms();
   ~ElasticHistograms();
 
-  ElasticHistograms(ElasticBins);
+  ElasticHistograms(ElasticBins); /** Pass in elastic binning scheme */
   
   // Datatypes 
  public:
   ElasticBins bins;
 
-  // 1-D 
-  TH1F * h1_w[2][7]; /** Final State Invariant Mass (7 Spaces for all hits and for Sectors 1-6) */
-  TH1F * h1_xs[7];
-  TH1F * h1_xs_ratio[7];
-  TH1F * h1_xs_model[2];
-
   // Binned By Outside Variables
-  std::vector<TH1F*> h1_w_by_p;
-  std::vector<TH1F*> h1_xs_by_phi;
-  std::vector<TH1F*> h1_xs_by_p; 
-  std::vector<TH1F*> h1_xs_ratio_by_phi;
-  std::vector<TH1F*> h1_xs_ratio_by_p; 
-  
-  // 2-D
-  TH2F * h2_acc[7];
-  TH2F * h2_rec[2][7];
-  TH2F * h2_gen[7];
-  
+  /** The binning is done by ElasticBins, first vector is sectors and second is the binning scheme */
+  std::vector<std::vector<TH1F*> > h1_hits_by_phi;
+  std::vector<std::vector<TH1F*> > h1_rec_by_phi;
+  std::vector<std::vector<TH1F*> > h1_gen_by_phi;
+  std::vector<std::vector<TH1F*> > h1_hits_by_p;
+  std::vector<std::vector<TH1F*> > h1_rec_by_p;
+  std::vector<std::vector<TH1F*> > h1_gen_by_p;
+  std::vector<std::vector<TH1F*> > h1_acc_by_phi;
+  std::vector<std::vector<TH1F*> > h1_acc_by_p;
+  std::vector<std::vector<TH1F*> > h1_xs_by_phi;
+  std::vector<std::vector<TH1F*> > h1_xs_by_p; 
+  std::vector<std::vector<TH1F*> > h1_xs_ratio_by_phi;
+  std::vector<std::vector<TH1F*> > h1_xs_ratio_by_p; 
+  std::vector<std::vector<TH1F*> > h1_w_by_p;
+  std::vector<std::vector<TH1F*> > h1_qq_by_p;
+    
   // Methods
   void close(std::string); /** Save histograms to file */
   void draw();
   void dump(std::string); /** Dumping all histograms into .pdf file specified by name */
-  void fill(int, h22Event, ElasticEvent); /** Filling histograms requires electron index, the event, and the elastic event */
+  void fill(int, double, h22Event, ElasticEvent); /** Filling histograms requires electron index, the event, and the elastic event */
   void init();
   void set_errors();
   void set_bins(ElasticBins);
-
 };
 
 /////////////////////////////////////////////
@@ -155,6 +155,8 @@ class ElasticAnalysis
   ElasticAnalysis();
   ~ElasticAnalysis();
 
+  ElasticAnalysis(ElasticBins);
+  
   // Datatypes
   ElasticBins bins; 
   ElasticHistograms histos; 
@@ -165,7 +167,7 @@ class ElasticAnalysis
   void close(std::string);
   void run();
   void init();
-  
+  void set_bins(ElasticBins);
 };
 
 #endif

@@ -173,4 +173,35 @@ class ElasticAnalysis
   void set_bins(ElasticBins);
 };
 
+/////////////////////////////////////////////
+/*
+  
+  ElasticModel 
+
+*/
+/////////////////////////////////////////////
+
+class ElasticModel
+{
+ public:
+  ElasticModel();
+  ~ElasticModel();
+
+  // Datatypes
+ private:
+  float beam_energy; 
+  float target_frac_length;
+  float w_cut; 
+
+  // Member Functions 
+ public:
+  void set_beam_energy(double);
+  void set_target_frac_length(double);
+  void set_w_cut(double);
+
+  double xs(double);
+  double rad_xs(double);
+};
+
+
 #endif

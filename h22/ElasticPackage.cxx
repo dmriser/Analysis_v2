@@ -288,4 +288,58 @@ void ElasticAnalysis::add_files(int index, vector<string> files)
   for (int i=0; i<files.size(); i++) fReader[index]->AddFile(files[i]);
 }
 
+
+/////////////////////////////////////////////////////////
+/*
+  
+  ElasticModel
+
+*/
+/////////////////////////////////////////////////////////
+
+
+extern"C"{
+  float elas_(float*,float*);
+  float elasrad_(float*,float*,float*,float*);
+}
+
+ElasticModel::ElasticModel()
+{
+  // Nothing to do here.
+}
+
+ElasticModel::~ElasticModel()
+{
+  // Nothing to do here.
+}
+
+void ElasticModel::set_beam_energy(double temp_energy)
+{
+  beam_energy = (float) temp_energy;
+}
+
+void ElasticModel::set_target_frac_length(double temp_length)
+{
+  target_frac_length = (float) temp_length;
+}
+
+void ElasticModel::set_w_cut(double temp_cut)
+{
+  w_cut = (float) temp_cut;
+}
+
+double ElasticModel::xs(double theta)
+{
+  float fTheta  = (float) theta;
+  double xs = elas_(&beam_energy, &fTheta);
+  return xs;
+}
+
+double ElasticModel::rad_xs(double theta)
+{
+  float fTheta  = (float) theta;
+  double xs = elasrad_(&beam_energy, &fTheta, &target_frac_length, &w_cut);
+  return xs;
+}
+
 #endif

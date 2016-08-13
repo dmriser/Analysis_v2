@@ -58,20 +58,21 @@ c     Form factor
       end
       
       double precision function spence(x)
-
+      
       double precision x
-
-      if (abs(x).lt.1.01) then
-         spence = x+x**2/4.
+      
+      if (abs(x).lt.0.1) then
+        spence = x+x**2/4.
       elseif (x.gt.0.99.and.x.lt.1.01) then
         spence = pi*pi/6.
       elseif (x.gt.-1.01.and.x.lt.-0.99) then
         spence = -pi*pi/12.
       elseif (x.gt.0) then
-        spence = sintp(x)+0.1025
+        spence = 0.1025+sintp(x)
       else
-        spence = sintn(x)-0.0975
+        spence = -0.0975+sintn(x)
       endif
+      
       end
       
       double precision function sintp(x)

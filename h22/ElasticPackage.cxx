@@ -297,7 +297,7 @@ void ElasticAnalysis::add_files(int index, vector<string> files)
 */
 /////////////////////////////////////////////////////////
 
-
+/*
 extern"C"{
   float elas_(float*,float*);
   float elasrad_(float*,float*,float*,float*);
@@ -341,5 +341,6 @@ double ElasticModel::rad_xs(double theta)
   double xs = elasrad_(&beam_energy, &fTheta, &target_frac_length, &w_cut);
   return xs;
 }
+*/
 
 #endif

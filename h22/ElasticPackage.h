@@ -180,7 +180,7 @@ class ElasticAnalysis
 
 */
 /////////////////////////////////////////////
-
+/*
 class ElasticModel
 {
  public:
@@ -202,6 +202,6 @@ class ElasticModel
   double xs(double);
   double rad_xs(double);
 };
-
+*/
 
 #endif

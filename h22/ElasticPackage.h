@@ -13,7 +13,6 @@
   > ElasticHistograms 
   > ElasticModel 
 
-
 */
 //////////////////////////////////////////////
 

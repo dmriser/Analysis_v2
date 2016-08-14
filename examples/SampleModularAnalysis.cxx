@@ -21,20 +21,18 @@ SampleSelection::SampleSelection()
 {
   set_name(" Sample Selection ");
 
-  /*
-  ChargeCut * negative;  
+
+  ChargeCut * negative = new ChargeCut();  
   negative->set_max(0);
   negative->set_min(-2);
   add_cut( negative );
-  */
 
-  DCut * cut; 
-  //  cut->set_name("cut");
-  cut->set_max(30.1);
-  cut->set_min(28.1);
-  add_cut( cut );
-  
-  //  enable_all();
+  MomentumCut * hi_mom = new MomentumCut();  
+  hi_mom->set_max(10);
+  hi_mom->set_min(4);
+  add_cut( hi_mom );
+
+  enable_all();
 }
 
 SampleSelection::~SampleSelection()
@@ -79,7 +77,7 @@ void SampleAnalysis::loop()
       selection.passes(event, 0); //! Calling this returns bool but we are just using the call to increment cut pass 
     }
 
-  //  selection.summarize();
+  selection.summarize();
   
 }
 

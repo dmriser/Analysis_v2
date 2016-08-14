@@ -53,7 +53,7 @@ bool DCut::passes(h22Event event, int index)
 
 ChargeCut::ChargeCut()
 {
-  set_name(" Charge Cut ");
+  set_name("Charge Cut");
 }
 
 ChargeCut::~ChargeCut()
@@ -64,9 +64,34 @@ ChargeCut::~ChargeCut()
 /** Simply checking if the particle is negative */
 bool ChargeCut::passes(h22Event event, int index)
 {
-  cout << " Inside ChargeCut::passes " << endl; 
-
   if ( event.q[index] > min() && event.q[index] < max() ) { n_pass++; return true; }
+  else { n_fail++; }
+  
+  return false; 
+}
+
+
+///////////////////////////////////////////////////////////////
+/*
+
+  MomentumCut 
+
+*/
+///////////////////////////////////////////////////////////////
+
+MomentumCut::MomentumCut()
+{
+  set_name("Momentum Cut");
+}
+
+MomentumCut::~MomentumCut()
+{
+
+}
+
+bool MomentumCut::passes(h22Event event, int index)
+{
+  if ( event.p[index] > min() && event.p[index] < max() ) { n_pass++; return true; }
   else { n_fail++; }
   
   return false; 

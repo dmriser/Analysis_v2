@@ -80,5 +80,23 @@ class ChargeCut : public DCut
 
 };
 
+/////////////////////////////////////////////////////////////////////
+/*
+
+  MomentumCut 
+
+ */
+/////////////////////////////////////////////////////////////////////
+
+class MomentumCut : public DCut 
+{
+ public:
+  MomentumCut();
+  ~MomentumCut();
+
+  bool passes(h22Event, int);
+
+};
+
 
 #endif

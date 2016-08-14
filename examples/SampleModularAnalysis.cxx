@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <map>
 using namespace std;
 
 // My Includes 
@@ -20,11 +21,20 @@ SampleSelection::SampleSelection()
 {
   set_name(" Sample Selection ");
 
-  ChargeCut negative;
-  negative.set_max(0);
-  negative.set_min(-2);
+  /*
+  ChargeCut * negative;  
+  negative->set_max(0);
+  negative->set_min(-2);
   add_cut( negative );
+  */
+
+  DCut * cut; 
+  //  cut->set_name("cut");
+  cut->set_max(30.1);
+  cut->set_min(28.1);
+  add_cut( cut );
   
+  //  enable_all();
 }
 
 SampleSelection::~SampleSelection()
@@ -66,8 +76,10 @@ void SampleAnalysis::loop()
     {
       GetEntry(ievent);
       h22Event event = GetEvent();
-      if (selection.passes(event, 0)) cout << " - " << endl;
+      selection.passes(event, 0); //! Calling this returns bool but we are just using the call to increment cut pass 
     }
+
+  //  selection.summarize();
   
 }
 

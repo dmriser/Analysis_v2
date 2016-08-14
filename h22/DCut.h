@@ -33,10 +33,11 @@ class DCut
   DCut();
   ~DCut();
 
+  int n_pass, n_fail;
+  
   // Data Types
  private:
   bool is_enabled;
-  int n_pass, n_fail;
   double min_value, max_value;
   std::string cut_name;
   

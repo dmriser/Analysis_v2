@@ -37,7 +37,13 @@ bool DSelection::passes(h22Event event, int index)
 {
   // Loop over the cuts we have and make sure all pass.
   bool status = true;
-  for (int icut=0; icut<cuts.size(); icut++) { if ( cuts[icut].is_on() && !cuts[icut].passes(event, index) ) { status = false; } }
+  
+  vector<DCut*>::iterator it;
+  for (it = cuts.begin(); it!=cuts.end(); it++)
+    {
+      if ( (*it)->is_on() && !(*it)->passes(event, index) ) { status = false; }
+    }
+
   return status;
 }
 
@@ -47,12 +53,20 @@ map<string, double> DSelection::cut_pass_fraction()
   map<string, double> results;
   for (int icut=0; icut<cuts.size(); icut++)
     {
-      results[cuts[icut].name()] = (double) cuts[icut].number_pass()/cuts[icut].number_fail();
+      results[cuts[icut]->name()] = (double) cuts[icut]->number_pass()/(cuts[icut]->number_fail()+cuts[icut]->number_pass());
     }
   
   return results; 
 }
   
-
+void DSelection::summarize()
+{
+  for (int icut=0; icut<cuts.size(); icut++)
+    {
+      cout.width(15); cout << cuts[icut]->name();
+      cout.width(8);  cout << cuts[icut]->number_pass();
+      cout.width(8);  cout << cuts[icut]->number_fail() << endl;
+    }
+}
 
 #endif

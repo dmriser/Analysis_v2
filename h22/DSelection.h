@@ -30,14 +30,15 @@ class DSelection
 
  private:
   std::string selection_name; 
-  std::vector<DCut> cuts;
+  std::vector<DCut*> cuts;
 
  public:
-  void add_cut(DCut this_cut){ cuts.push_back(this_cut); }
+  void add_cut(DCut *this_cut){ cuts.push_back(this_cut); }
   void set_name(std::string n){ selection_name = n;}
-  void enable_all() { for(int i=0; i<cuts.size(); i++) { cuts[i].enable();  } }
-  void disable_all(){ for(int i=0; i<cuts.size(); i++) { cuts[i].disable(); } }
-
+  void enable_all() { for(int i=0; i<cuts.size(); i++) { cuts[i]->enable();  } }
+  void disable_all(){ for(int i=0; i<cuts.size(); i++) { cuts[i]->disable(); } }
+  void summarize();
+  
   bool passes(h22Event, int); //! Passed down to the DCuts 
   std::map<std::string, double> cut_pass_fraction(); 
   

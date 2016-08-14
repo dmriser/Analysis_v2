@@ -35,10 +35,13 @@ DCut::~DCut()
 
 }
 
+
 bool DCut::passes(h22Event event, int index)
 {
+  cout << " Inside DCut::passes " << endl; 
   return true;
 }
+
 
 ///////////////////////////////////////////////////////////////
 /*
@@ -61,7 +64,11 @@ ChargeCut::~ChargeCut()
 /** Simply checking if the particle is negative */
 bool ChargeCut::passes(h22Event event, int index)
 {
-  if ( event.q[index] > min() && event.q[index] < max() ) return true;
+  cout << " Inside ChargeCut::passes " << endl; 
+
+  if ( event.q[index] > min() && event.q[index] < max() ) { n_pass++; return true; }
+  else { n_fail++; }
+  
   return false; 
 }
 

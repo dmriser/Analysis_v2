@@ -33,7 +33,36 @@ SampleSelection::SampleSelection()
   hi_mom->set_min(4);
   add_cut( hi_mom );
 
-  enable_all();
+  ECUCut * ecu = new ECUCut();
+  ecu->set_max(450);
+  ecu->set_min(50);
+  add_cut( ecu );
+
+  ECUCut * ecu2 = new ECUCut();
+  ecu2->set_max(300);
+  ecu2->set_min(50);
+  ecu2->set_name("EC-U Tighter Cut");
+  add_cut( ecu2 );
+
+  ECVCut * ecv = new ECVCut();
+  ecv->set_max(60);
+  ecv->set_min(40);
+  ecv->disable();
+  add_cut( ecv );
+
+  ECWCut * ecw = new ECWCut();
+  ecw->set_max(100);
+  ecw->set_min(0);
+  ecw->disable();
+  add_cut( ecw );
+
+  SampFracCut * sf_cut = new SampFracCut();
+  sf_cut->set_max(0.4);
+  sf_cut->set_min(0.05);
+  add_cut( sf_cut );
+  
+  
+  //  enable_all();
 }
 
 SampleSelection::~SampleSelection()
@@ -75,7 +104,8 @@ void SampleAnalysis::loop()
     {
       GetEntry(ievent);
       DEvent event( GetEvent() );
-      selection.passes(event, 0); //! Calling this returns bool but we are just using the call to increment cut pass 
+      if ( selection.passes(event, 0)) cout << " We Passed! " << endl;
+
     }
 
   selection.summarize();

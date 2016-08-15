@@ -32,7 +32,7 @@ DSelection::DSelection()
 DSelection::~DSelection()
 {
   // Destroy
-  for (vector<DCut*>::iterator it=cuts.begin(); it!=cuts.end(); it++ ) delete *it; 
+  //  for (vector<DCut*>::iterator it=cuts.begin(); it!=cuts.end(); it++ ) delete *it; 
 
 
 }

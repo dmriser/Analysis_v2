@@ -70,7 +70,7 @@ bool ChargeCut::passes(DEvent event, int index)
   return false; 
 }
 
-
+ 
 ///////////////////////////////////////////////////////////////
 /*
 
@@ -92,6 +92,103 @@ MomentumCut::~MomentumCut()
 bool MomentumCut::passes(DEvent event, int index)
 {
   if ( event.tracks.p[index] > min() && event.tracks.p[index] < max() ) { n_pass++; return true; }
+  else { n_fail++; }
+  
+  return false; 
+}
+ 
+ 
+///////////////////////////////////////////////////////////////
+/*
+
+  Sampling Fraction Cut 
+
+*/
+///////////////////////////////////////////////////////////////
+
+SampFracCut::SampFracCut()
+{
+  set_name("Samp Frac Cut");
+}
+
+SampFracCut::~SampFracCut()
+{
+
+}
+
+bool SampFracCut::passes(DEvent event, int index)
+{
+  double samp = event.tracks.etot[index]/event.tracks.p[index];
+  if (samp > min() && samp < max()){ n_pass++; return true; } 
+  return false;
+}
+
+///////////////////////////////////////////////////////////////
+/*
+
+  EC U, V, W Cuts 
+
+*/
+///////////////////////////////////////////////////////////////
+
+ECUCut::ECUCut()
+{
+  set_name("EC-U Cut");
+}
+
+ECUCut::~ECUCut()
+{
+
+}
+
+bool ECUCut::passes(DEvent event, int index)
+{
+
+  double u = event.tracks.uvw(index).X();
+    
+  if ( u > min() && u < max() ) { n_pass++; return true; }
+  else { n_fail++; }
+  
+  return false; 
+}
+
+ECVCut::ECVCut()
+{
+  set_name("EC-V Cut");
+}
+
+ECVCut::~ECVCut()
+{
+
+}
+
+bool ECVCut::passes(DEvent event, int index)
+{
+
+  double v = event.tracks.uvw(index).Y();
+    
+  if ( v > min() && v < max() ) { n_pass++; return true; }
+  else { n_fail++; }
+  
+  return false; 
+}
+
+ECWCut::ECWCut()
+{
+  set_name("EC-W Cut");
+}
+
+ECWCut::~ECWCut()
+{
+
+}
+
+bool ECWCut::passes(DEvent event, int index)
+{
+
+  double w = event.tracks.uvw(index).Z();
+    
+  if ( w > min() && w < max() ) { n_pass++; return true; }
   else { n_fail++; }
   
   return false; 

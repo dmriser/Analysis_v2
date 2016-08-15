@@ -92,16 +92,16 @@ ElasticEvent::ElasticEvent(TLorentzVector x) : DEvent(x){
 ElasticEvent::ElasticEvent(TLorentzVector kPrime, TLorentzVector pPrime)
 {
   // We need to manually calculate the kinematics for the case of final state electron and proton given.
-  QQ  = -1*(beam-kPrime).Mag2();
-  W   = ((beam-kPrime) + target).Mag();
+  qq  = -1*(beam-kPrime).Mag2();
+  w   = ((beam-kPrime) + target).Mag();
   
   TLorentzVector missing = (beam+target) - (kPrime+pPrime);
-  MM2 = missing.E()*missing.E() - missing.P()*missing.P();
+  mm2 = missing.E()*missing.E() - missing.P()*missing.P();
 }
 
 bool ElasticEvent::passes()
 {
-  if (W < W_Max) return true;
+  if (w < W_Max) return true;
 
   return false;
 }
@@ -243,7 +243,7 @@ void ElasticHistograms::init()
 void ElasticHistograms::fill(int index, double w_cut, h22Event event, ElasticEvent elasticEvent)
 {
   // Fill all histograms
-  if (index == 0 && elasticEvent.W < w_cut)
+  if (index == 0 && elasticEvent.w < w_cut)
     {
       int s = event.dc_sect[index];
     

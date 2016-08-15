@@ -25,7 +25,7 @@
 #include <iostream>
 
 // my includes
-#include "h22Event.h"
+#include "DEvent.h"
 
 class DCut
 {
@@ -58,7 +58,7 @@ class DCut
   
   std::string name(){ return cut_name; }
   
-  virtual bool passes(h22Event, int); /** Pass in the event, and the particle index of interest */
+  virtual bool passes(DEvent, int); /** Pass in the event, and the particle index of interest */
 
 };
 
@@ -76,7 +76,7 @@ class ChargeCut : public DCut
   ChargeCut();
   ~ChargeCut();
 
-  bool passes(h22Event, int);
+  bool passes(DEvent, int);
 
 };
 
@@ -94,7 +94,7 @@ class MomentumCut : public DCut
   MomentumCut();
   ~MomentumCut();
 
-  bool passes(h22Event, int);
+  bool passes(DEvent, int);
 
 };
 

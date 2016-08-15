@@ -95,7 +95,7 @@ int main(int argc, char * argv[])
 	  TLorentzVector elec(event.cx[0]*event.p[0], event.cy[0]*event.p[0],
 			      event.cz[0]*event.p[0], event.p[0]);
 	  ElasticEvent elasticEvent(elec);
-	  h1_w->Fill(elasticEvent.W);
+	  h1_w->Fill(elasticEvent.w);
 	  
 	  // Example Elastic Event Candidate
             int prot_index = filter.getByPID(event,2212);

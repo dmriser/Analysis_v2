@@ -21,6 +21,7 @@
 
 // my includes
 #include "DCut.h"
+#include "DEvent.h"
 
 class DSelection
 {
@@ -39,7 +40,7 @@ class DSelection
   void disable_all(){ for(int i=0; i<cuts.size(); i++) { cuts[i]->disable(); } }
   void summarize();
   
-  bool passes(h22Event, int); //! Passed down to the DCuts 
+  bool passes(DEvent, int); //! Passed down to the DCuts 
   std::map<std::string, double> cut_pass_fraction(); 
   
 };

@@ -5,6 +5,7 @@ using namespace std;
 
 // My Includes 
 #include "DCut.h"
+#include "DEvent.h"
 #include "DSelection.h"
 #include "h22Reader.h"
 #include "h22Event.h"
@@ -73,7 +74,7 @@ void SampleAnalysis::loop()
   for (int ievent=0; ievent< fchain->GetEntries(); ievent++)
     {
       GetEntry(ievent);
-      h22Event event = GetEvent();
+      DEvent event( GetEvent() );
       selection.passes(event, 0); //! Calling this returns bool but we are just using the call to increment cut pass 
     }
 

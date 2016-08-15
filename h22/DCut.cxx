@@ -20,7 +20,7 @@ using std::string;
 
 // my includes 
 #include "DCut.h"
-#include "h22Event.h"
+#include "DEvent.h"
 
 DCut::DCut()
 {
@@ -36,7 +36,7 @@ DCut::~DCut()
 }
 
 
-bool DCut::passes(h22Event event, int index)
+bool DCut::passes(DEvent event, int index)
 {
   cout << " Inside DCut::passes " << endl; 
   return true;
@@ -62,9 +62,9 @@ ChargeCut::~ChargeCut()
 }
 
 /** Simply checking if the particle is negative */
-bool ChargeCut::passes(h22Event event, int index)
+bool ChargeCut::passes(DEvent event, int index)
 {
-  if ( event.q[index] > min() && event.q[index] < max() ) { n_pass++; return true; }
+  if ( event.tracks.q[index] > min() && event.tracks.q[index] < max() ) { n_pass++; return true; }
   else { n_fail++; }
   
   return false; 
@@ -89,9 +89,9 @@ MomentumCut::~MomentumCut()
 
 }
 
-bool MomentumCut::passes(h22Event event, int index)
+bool MomentumCut::passes(DEvent event, int index)
 {
-  if ( event.p[index] > min() && event.p[index] < max() ) { n_pass++; return true; }
+  if ( event.tracks.p[index] > min() && event.tracks.p[index] < max() ) { n_pass++; return true; }
   else { n_fail++; }
   
   return false; 

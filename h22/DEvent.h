@@ -15,6 +15,9 @@
 // c++ includes
 #include <iostream>
 
+// my includes
+#include "h22Event.h"
+
 // root includes
 #include "TLorentzVector.h"
 
@@ -26,13 +29,17 @@ class DEvent
   ~DEvent();
 
   DEvent(TLorentzVector); /** Declare with TLorentzVector of final state electron */
+  DEvent(h22Event); /** Declare with an event, later set the electron index and the kinematics are calculated */
   
   // Datatypes
  public:
-  double QQ, MM2, W; 
+  int e_index; 
+  double qq, mm2, w; 
   TLorentzVector target;
   TLorentzVector beam;
   TLorentzVector electron;
+
+  h22Event tracks; 
   
   // Member Functions
   void set_beam(TLorentzVector);
@@ -40,6 +47,8 @@ class DEvent
   void set_electron(TLorentzVector);
   void set_beam_energy(double);
   void set_target_mass(double);
+  void set_e_index(int);
+  void set_event(h22Event ev){ tracks = ev; }
   void refresh();
   void print();
   

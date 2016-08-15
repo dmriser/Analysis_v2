@@ -23,21 +23,30 @@ using namespace std;
 // my includes
 #include "CommonTools.h"
 #include "DEvent.h"
+#include "h22Event.h"
 
 DEvent::DEvent()
 {
-  W = 0.0; QQ = 0.0; MM2 = 0.0;
+  w = 0.0; qq = 0.0; mm2 = 0.0;
   beam   = TLorentzVector(0,0,5.498,5.498);
   target = TLorentzVector(0,0,0,proton_mass);
+  e_index = -123; 
 }
 
 DEvent::DEvent(TLorentzVector kPrime)
 {
-  W = 0.0; QQ = 0.0; MM2 = 0.0;
+  w = 0.0; qq = 0.0; mm2 = 0.0;
   beam     = TLorentzVector(0,0,5.498,5.498);
   target   = TLorentzVector(0,0,0,proton_mass);
-  electron = kPrime;  
+  electron = kPrime;
+  e_index = -123; 
   refresh();
+}
+
+DEvent::DEvent(h22Event event)
+{
+  tracks = event;
+  e_index = -123;
 }
 
 DEvent::~DEvent()
@@ -50,9 +59,19 @@ void DEvent::refresh()
   TLorentzVector q      = beam-electron;
   TLorentzVector hadron = target + q; 
 
-  QQ = -1*q.Mag2();
-  W  = hadron.Mag();
-  MM2 = hadron.E()*hadron.E()-hadron.P()*hadron.P();
+  qq  = -1*q.Mag2();
+  w   = hadron.Mag();
+  mm2 = hadron.E()*hadron.E()-hadron.P()*hadron.P();
+}
+
+void DEvent::set_e_index(int index)
+{
+  e_index = index;
+  electron = TLorentzVector( tracks.p[e_index]*tracks.cx[e_index],
+			     tracks.p[e_index]*tracks.cy[e_index],
+			     tracks.p[e_index]*tracks.cz[e_index],
+			     tracks.p[e_index]);
+  refresh();
 }
 
 void DEvent::set_electron(TLorentzVector v)
@@ -86,9 +105,9 @@ void DEvent::set_target_mass(double m)
 
 void DEvent::print()
 {
-  cout.width(8); cout << QQ;
-  cout.width(8); cout << W;
-  cout.width(8); cout << MM2 << endl;
+  cout.width(8); cout << qq;
+  cout.width(8); cout << w;
+  cout.width(8); cout << mm2 << endl;
 }
 
 #endif

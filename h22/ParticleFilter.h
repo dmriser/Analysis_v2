@@ -20,7 +20,7 @@
 // my includes
 #include "Corrections.h"
 #include "h22Event.h"
-#include "pars.h"
+#include "Pars.h"
 
 // root includes
 

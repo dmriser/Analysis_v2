@@ -45,6 +45,9 @@ DEvent::DEvent(TLorentzVector kPrime)
 
 DEvent::DEvent(h22Event event)
 {
+  w = 0.0; qq = 0.0; mm2 = 0.0;
+  beam     = TLorentzVector(0,0,5.498,5.498);
+  target   = TLorentzVector(0,0,0,proton_mass);
   tracks = event;
   e_index = -123;
 }
@@ -105,9 +108,9 @@ void DEvent::set_target_mass(double m)
 
 void DEvent::print()
 {
-  cout.width(8); cout << qq;
-  cout.width(8); cout << w;
-  cout.width(8); cout << mm2 << endl;
+  cout.width(12); cout << qq;
+  cout.width(12); cout << w;
+  cout.width(12); cout << mm2 << endl;
 }
 
 #endif

@@ -131,5 +131,4 @@ int main(int argc, char * argv[])
     c1->cd(2);
     h1_de->Draw();
     c1->Print("rho_pid.pdf");
-
 }

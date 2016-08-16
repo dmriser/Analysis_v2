@@ -238,4 +238,23 @@ class VirtualityCut : public DCut
 };
 
 
+/////////////////////////////////////////////////////////////////////
+/*
+
+  Missing Mass Cut 
+
+ */
+/////////////////////////////////////////////////////////////////////
+
+class MissingMassCut : public DCut 
+{
+ public:
+  MissingMassCut();
+  ~MissingMassCut();
+
+  bool passes(DEvent, int);
+
+};
+
+
 #endif

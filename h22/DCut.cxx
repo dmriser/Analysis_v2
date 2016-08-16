@@ -303,4 +303,33 @@ bool VirtualityCut::passes(DEvent event, int index)
 }
 
 
+///////////////////////////////////////////////////////////////
+/*
+
+  Virtuality Cut 
+
+*/
+///////////////////////////////////////////////////////////////
+
+
+MissingMassCut::MissingMassCut()
+{
+  set_name("Missing Mass Cut");
+}
+
+MissingMassCut::~MissingMassCut()
+{
+
+}
+
+bool MissingMassCut::passes(DEvent event, int index)
+{
+
+  if ( event.mm2 > min() && event.mm2 < max()) { n_pass++; return true; }
+  else { n_fail++; }
+  
+  return false; 
+}
+
+
 #endif

@@ -18,7 +18,7 @@ using namespace std;
 
 // my includes
 #include "CommonTools.h"
-#include "pars.h"
+#include "Pars.h"
 
 
 epars::epars()

@@ -61,15 +61,20 @@ SampleSelection::SampleSelection()
   sf_cut->set_min(0.05);
   add_cut( sf_cut );
   
-  
-  //  enable_all();
+  WCut * w_cut = new WCut();
+  w_cut->set_max(1.1);
+  w_cut->set_min(0.8);
+  add_cut( w_cut );
+
+  // DSelection::enable_all() loops over the cuts and turns them all on
+  // by calling DCut::enable()
+  enable_all();
 }
 
 SampleSelection::~SampleSelection()
 {
 
 }
-
 
 // This Analysis 
 class SampleAnalysis : public h22Reader
@@ -104,7 +109,9 @@ void SampleAnalysis::loop()
     {
       GetEntry(ievent);
       DEvent event( GetEvent() );
-      if ( selection.passes(event, 0)) cout << " We Passed! " << endl;
+      event.set_e_index(0);
+      event.print();      
+      selection.passes(event, 0);
 
     }
 

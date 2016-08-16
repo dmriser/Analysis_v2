@@ -194,5 +194,113 @@ bool ECWCut::passes(DEvent event, int index)
   return false; 
 }
 
+///////////////////////////////////////////////////////////////
+/*
+
+  Z-Vertex Cut 
+
+*/
+///////////////////////////////////////////////////////////////
+
+ZVertexCut::ZVertexCut()
+{
+  set_name("Z-Vertex Cut");
+}
+
+ZVertexCut::~ZVertexCut()
+{
+
+}
+
+bool ZVertexCut::passes(DEvent event, int index)
+{
+
+  if ( event.tracks.vz[index] > min() && event.tracks.vz[index] < max() ) { n_pass++; return true; }
+  else { n_fail++; }
+  
+  return false; 
+}
+
+///////////////////////////////////////////////////////////////
+/*
+
+  EC Edep Inner Cut 
+
+*/
+///////////////////////////////////////////////////////////////
+
+ECEdepInnerCut::ECEdepInnerCut()
+{
+  set_name("EC Edep Inner Cut");
+}
+
+ECEdepInnerCut::~ECEdepInnerCut()
+{
+
+}
+
+bool ECEdepInnerCut::passes(DEvent event, int index)
+{
+
+  if ( event.tracks.ec_ei[index] > min() ) { n_pass++; return true; }
+  else { n_fail++; }
+  
+  return false; 
+}
+
+///////////////////////////////////////////////////////////////
+/*
+
+  W Cut 
+
+*/
+///////////////////////////////////////////////////////////////
+
+WCut::WCut()
+{
+  set_name("W Cut");
+}
+
+WCut::~WCut()
+{
+
+}
+
+bool WCut::passes(DEvent event, int index)
+{
+
+  if ( event.w > min() && event.w < max()) { n_pass++; return true; }
+  else { n_fail++; }
+  
+  return false; 
+}
+
+///////////////////////////////////////////////////////////////
+/*
+
+  Virtuality Cut 
+
+*/
+///////////////////////////////////////////////////////////////
+
+VirtualityCut::VirtualityCut()
+{
+  set_name("Virtuality Cut");
+}
+
+VirtualityCut::~VirtualityCut()
+{
+
+}
+
+bool VirtualityCut::passes(DEvent event, int index)
+{
+
+  if ( event.qq > min() && event.qq < max()) { n_pass++; return true; }
+  else { n_fail++; }
+  
+  return false; 
+}
+
 
 #endif

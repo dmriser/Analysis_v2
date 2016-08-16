@@ -32,9 +32,7 @@ DSelection::DSelection()
 DSelection::~DSelection()
 {
   // Destroy
-  //  for (vector<DCut*>::iterator it=cuts.begin(); it!=cuts.end(); it++ ) delete *it; 
-
-
+  for (vector<DCut*>::iterator it=cuts.begin(); it!=cuts.end(); it++ ) delete *it; 
 }
 
 bool DSelection::passes(DEvent event, int index)

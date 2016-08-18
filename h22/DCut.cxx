@@ -42,6 +42,10 @@ bool DCut::passes(DEvent event, int index)
   return true;
 }
 
+bool DCut::applies(DEvent event, int index)
+{
+  return true;
+}
 
 ///////////////////////////////////////////////////////////////
 /*
@@ -106,9 +110,18 @@ bool MomentumCut::passes(DEvent event, int index)
 */
 ///////////////////////////////////////////////////////////////
 
-SampFracCut::SampFracCut()
+SampFracCut::SampFracCut(int s)
 {
-  set_name("Samp Frac Cut");
+  sector = s; 
+
+  min = 0; max = 0;
+  am = 0; as = 0;
+  bm = 0; bs = 0;
+  cm = 0; cs = 0;
+  dm = 0; ds = 0;
+  nsigma = 0;
+  
+  set_name(Form("Samp Frac Cut %d",s));
 }
 
 SampFracCut::~SampFracCut()
@@ -119,7 +132,18 @@ SampFracCut::~SampFracCut()
 bool SampFracCut::passes(DEvent event, int index)
 {
   double samp = event.tracks.etot[index]/event.tracks.p[index];
-  if (samp > min() && samp < max()){ n_pass++; return true; } 
+
+  min = (am-nsigma*as)*pow(event.tracks.p[index],3) +  (bm-nsigma*bs)*pow(event.tracks.p[index],2) + (cm-nsigma*cs)*event.tracks.p[index] +  (dm-nsigma*ds); 
+  max = (am+nsigma*as)*pow(event.tracks.p[index],3) +  (bm+nsigma*bs)*pow(event.tracks.p[index],2) + (cm+nsigma*cs)*event.tracks.p[index] +  (dm+nsigma*ds); 
+  
+  if (samp > min && samp < max){ n_pass++; return true; } 
+  else { n_fail++; return false; } 
+}
+
+bool SampFracCut::applies(DEvent event, int index)
+{
+  int s = event.tracks.dc_sect[index];
+  if (s == sector) return true;
   return false;
 }
 

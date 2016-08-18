@@ -43,7 +43,7 @@ bool DSelection::passes(DEvent event, int index)
   vector<DCut*>::iterator it;
   for (it = cuts.begin(); it!=cuts.end(); it++)
     {
-      if ( (*it)->is_on() && !(*it)->passes(event, index) ) { status = false; }
+      if ( (*it)->is_on() && (*it)->applies(event, index) && !(*it)->passes(event, index)) { status = false; }
     }
 
   return status;
@@ -63,12 +63,20 @@ map<string, double> DSelection::cut_pass_fraction()
   
 void DSelection::summarize()
 {
+
+  cout << "<--------------------- DSelector Summary ------------------------->" << endl; 
+  cout.width(20); cout << "Cut Name";
+  cout.width(8);  cout << "Pass"; 
+  cout.width(8);  cout << "Total" << endl;
+  
+
   for (int icut=0; icut<cuts.size(); icut++)
     {
-      cout.width(15); cout << cuts[icut]->name();
+      cout.width(20); cout << cuts[icut]->name();
       cout.width(8);  cout << cuts[icut]->number_pass();
-      cout.width(8);  cout << cuts[icut]->number_fail() << endl;
+      cout.width(8);  cout << cuts[icut]->number_fail() + cuts[icut]->number_pass() << endl;
     }
+  cout << "<---------------------------------------------------------------->" << endl; 
 }
 
 #endif

@@ -38,6 +38,8 @@ class DSelection
   void set_name(std::string n){ selection_name = n;}
   void enable_all() { for(int i=0; i<cuts.size(); i++) { cuts[i]->enable();  } }
   void disable_all(){ for(int i=0; i<cuts.size(); i++) { cuts[i]->disable(); } }
+  void disable_by_name(std::string target){ for(int i=0; i<cuts.size(); i++) { if(cuts[i]->name() == target) { cuts[i]->disable(); break; }}}
+  void enable_by_name(std::string target) { for(int i=0; i<cuts.size(); i++) { if(cuts[i]->name() == target) { cuts[i]->enable(); break; }}}
   void summarize();
   
   bool passes(DEvent, int); //! Passed down to the DCuts 

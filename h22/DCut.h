@@ -58,6 +58,7 @@ class DCut
   
   std::string name(){ return cut_name; }
   
+  virtual bool applies(DEvent, int); /** Pass in the event, and the particle index of interest */
   virtual bool passes(DEvent, int); /** Pass in the event, and the particle index of interest */
 
 };
@@ -110,9 +111,12 @@ class MomentumCut : public DCut
 class SampFracCut : public DCut 
 {
  public:
-  SampFracCut();
+  SampFracCut(int);
   ~SampFracCut();
 
+  int sector; 
+  double am, as, bm, bs, cm, cs, dm, ds, nsigma, min, max;
+  bool applies(DEvent, int);
   bool passes(DEvent, int);
 };
 

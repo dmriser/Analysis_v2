@@ -14,11 +14,13 @@
 
 // c++ includes 
 #include <iostream>
+#include <cmath>
 using std::cout;
 using std::endl;
 using std::string; 
 
-// my includes 
+// my includes
+#include "CommonTools.h"
 #include "DCut.h"
 #include "DEvent.h"
 
@@ -248,6 +250,33 @@ bool ZVertexCut::passes(DEvent event, int index)
 ///////////////////////////////////////////////////////////////
 /*
 
+  CC Fid Cut
+
+*/
+///////////////////////////////////////////////////////////////
+
+CCFiducialCut::CCFiducialCut()
+{
+  a = 0; b = 0;
+  set_name("CC Fid Cut"); 
+}
+
+CCFiducialCut::~CCFiducialCut()
+{
+
+}
+
+bool CCFiducialCut::passes(DEvent event, int index)
+{
+  set_min(a - b*sqrt(1 - pow(event.tracks.rphi(index),2)/360));
+    
+  if ( event.tracks.theta_cc(index) > min() ) { n_pass++; return true; }
+  else                                        { n_fail++; return false;}
+}
+
+///////////////////////////////////////////////////////////////
+/*
+
   EC Edep Inner Cut 
 
 */
@@ -270,6 +299,70 @@ bool ECEdepInnerCut::passes(DEvent event, int index)
   else { n_fail++; }
   
   return false; 
+}
+
+
+///////////////////////////////////////////////////////////////
+/*
+
+  DCR1FiducialCut 
+
+*/
+///////////////////////////////////////////////////////////////
+
+DCR1FiducialCut::DCR1FiducialCut()
+{
+  angle = 0; height = 0;
+  set_name("DC Region 1 Fid Cut");
+}
+
+
+DCR1FiducialCut::~DCR1FiducialCut()
+{
+
+}
+
+bool DCR1FiducialCut::passes(DEvent event, int index)
+{
+
+  double slope = 1/tan(0.5*to_radians*angle);
+  double left  = (height - slope*event.tracks.rot_dc1y(index));
+  double right = (height + slope*event.tracks.rot_dc1y(index));
+  
+  if (event.tracks.rot_dc1x(index) > left && event.tracks.rot_dc1x(index) > right) { n_pass++; return true; }
+  else { n_fail++; return false; }
+}
+
+
+///////////////////////////////////////////////////////////////
+/*
+
+  DCR3FiducialCut 
+
+*/
+///////////////////////////////////////////////////////////////
+
+DCR3FiducialCut::DCR3FiducialCut()
+{
+  angle = 0; height = 0;
+  set_name("DC Region 3 Fid Cut");
+}
+
+
+DCR3FiducialCut::~DCR3FiducialCut()
+{
+
+}
+
+bool DCR3FiducialCut::passes(DEvent event, int index)
+{
+
+  double slope = 1/tan(0.5*to_radians*angle);
+  double left  = (height - slope*event.tracks.tl3_y[index]);
+  double right = (height + slope*event.tracks.tl3_y[index]);
+  
+  if (event.tracks.tl3_x[index] > left && event.tracks.tl3_x[index] > right) { n_pass++; return true; }
+  else { n_fail++; return false; }
 }
 
 ///////////////////////////////////////////////////////////////

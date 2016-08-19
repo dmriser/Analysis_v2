@@ -47,7 +47,9 @@ void SampleAnalysis::loop()
 {
 
   ElectronSelector sel("epars.dat"); 
-
+  sel.disable_all();
+  sel.enable_by_name("EC-U Cut");
+  
   //sel.set_runno( fReader->runno() );
   //sel.set_mc_status( false );
   sel.set_info( fReader->runno(), false);

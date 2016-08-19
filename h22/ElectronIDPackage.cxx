@@ -124,6 +124,9 @@ void ElectronSelector::init()
 
   // Call cut constructors 
   negativity_cut = new ChargeCut();
+  cc_fid_cut     = new CCFiducialCut();
+  dcr1_fid_cut   = new DCR1FiducialCut();
+  dcr3_fid_cut   = new DCR3FiducialCut();
   edep_cut       = new ECEdepInnerCut();
   ecu_cut        = new ECUCut();
   ecv_cut        = new ECVCut();
@@ -139,6 +142,15 @@ void ElectronSelector::init()
   // Set limits on cuts from parameters 
   negativity_cut->set_min(-1.1);
   negativity_cut->set_max(-0.9);
+
+  cc_fid_cut->a = pars.CCFIDA;
+  cc_fid_cut->b = pars.CCFIDB; 
+
+  dcr1_fid_cut->height = pars.DCR1FIDH;
+  dcr1_fid_cut->angle  = pars.DCR1FIDA; 
+  dcr3_fid_cut->height = pars.DCR3FIDH;
+  dcr3_fid_cut->angle  = pars.DCR3FIDA; 
+
   edep_cut->set_min( pars.ECEDEPMIN );
   ecu_cut->set_min( pars.ECUMIN[0] );
   ecu_cut->set_max( pars.ECUMAX[0] ); 
@@ -212,6 +224,9 @@ void ElectronSelector::init()
 
   // Push back the cuts 
   add_cut( negativity_cut );
+  add_cut( cc_fid_cut );
+  add_cut( dcr1_fid_cut );
+  add_cut( dcr3_fid_cut );
   add_cut( edep_cut );
   add_cut( ecu_cut );
   add_cut( ecv_cut );

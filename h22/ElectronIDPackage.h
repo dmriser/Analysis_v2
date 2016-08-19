@@ -139,6 +139,9 @@ class ElectronSelector : public DSelection
   
   // Cuts
   ChargeCut * negativity_cut; /** defined in DCut.h, generic cut used to pick negative, positive, neutral particles */
+  CCFiducialCut * cc_fid_cut;
+  DCR1FiducialCut * dcr1_fid_cut;
+  DCR3FiducialCut * dcr3_fid_cut;
   ECEdepInnerCut * edep_cut; 
   ECUCut * ecu_cut;
   ECVCut * ecv_cut;

@@ -52,7 +52,8 @@ class DCut
   
   int number_pass(){ return n_pass; }
   int number_fail(){ return n_fail; }
-
+  int number_total(){ return n_pass+n_fail; }
+  
   double min(){ return min_value; }
   double max(){ return max_value; }
   
@@ -193,6 +194,25 @@ class ZVertexCut : public DCut
 /////////////////////////////////////////////////////////////////////
 /*
 
+  CC Fid Cut 
+
+ */
+/////////////////////////////////////////////////////////////////////
+
+class CCFiducialCut : public DCut 
+{
+ public:
+  CCFiducialCut();
+  ~CCFiducialCut();
+
+  double a, b; 
+  bool passes(DEvent, int);
+
+};
+
+/////////////////////////////////////////////////////////////////////
+/*
+
   EC Energy Deposition Inner Cut 
 
  */
@@ -203,6 +223,46 @@ class ECEdepInnerCut : public DCut
  public:
   ECEdepInnerCut();
   ~ECEdepInnerCut();
+  bool passes(DEvent, int);
+
+};
+
+/////////////////////////////////////////////////////////////////////
+/*
+
+  DCR1FiducialCut
+
+ */
+/////////////////////////////////////////////////////////////////////
+
+class DCR1FiducialCut : public DCut 
+{
+ public:
+  DCR1FiducialCut();
+  ~DCR1FiducialCut();
+
+  double angle, height; 
+
+  bool passes(DEvent, int);
+
+};
+
+/////////////////////////////////////////////////////////////////////
+/*
+
+  DCR1FiducialCut
+
+ */
+/////////////////////////////////////////////////////////////////////
+
+class DCR3FiducialCut : public DCut 
+{
+ public:
+  DCR3FiducialCut();
+  ~DCR3FiducialCut();
+
+  double angle, height; 
+  
   bool passes(DEvent, int);
 
 };

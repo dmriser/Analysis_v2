@@ -155,6 +155,7 @@ class ElectronSelector : public DSelection
   ZVertexCut * vz_cut;
 
   // Member Functions 
+  bool passes(DEvent, int);
   void set_parfile(std::string s){ parameter_file = s; init(); }
   void set_info(int r, bool m){ runno = r; mc_status = m; }
   void set_runno(int r){ runno = r; }

@@ -29,7 +29,6 @@ class DSelection
   DSelection();
   ~DSelection();
 
- private:
   std::string selection_name; 
   std::vector<DCut*> cuts;
 
@@ -42,7 +41,7 @@ class DSelection
   void enable_by_name(std::string target) { for(int i=0; i<cuts.size(); i++) { if(cuts[i]->name() == target) { cuts[i]->enable(); break; }}}
   void summarize();
   
-  bool passes(DEvent, int); //! Passed down to the DCuts 
+  virtual bool passes(DEvent, int); /** I am making this virtual in the event that we need to change something before asking if the events pass (vertex correction ect.) */ 
   std::map<std::string, double> cut_pass_fraction(); 
   
 };

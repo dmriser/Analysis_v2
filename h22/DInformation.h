@@ -21,9 +21,8 @@
 
 // root includes
 
-class DInfo
+struct DInfo
 {
- public:
   int runno;
   int dQ;
   int dN; 

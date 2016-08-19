@@ -116,6 +116,23 @@ ElectronSelector::ElectronSelector(string file)
   init();
 }
 
+bool ElectronSelector::passes(DEvent event, int index)
+{
+  // Loop over the cuts we have and make sure all pass.
+  bool status = true;
+
+  // Here we need to set the vertex correctly and do any other correction. 
+  // event.tracks.vz[index] = corr.vz(event.tracks,index,runno,mc_status); // corr is an instance of Corrections 
+  
+  vector<DCut*>::iterator it;
+  for (it = cuts.begin(); it!=cuts.end(); it++)
+    {
+      if ( (*it)->is_on() && (*it)->applies(event, index) && !(*it)->passes(event, index)) { status = false; }
+    }
+
+  return status;
+}
+
 void ElectronSelector::init()
 {
 

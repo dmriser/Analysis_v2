@@ -55,7 +55,8 @@ int main(int argc, char * argv[])
     nev = smallest(nev, fReader.GetEntries());
     
     // Setting important constants
-    int runno = fReader.runno();
+    //    int runno = fReader.runno();
+    int runno = 0;
     
     // Setting up PID and Corrections
     DInformation runs;
@@ -84,7 +85,13 @@ int main(int argc, char * argv[])
         h22Event event = fReader.GetEvent();
         
         // keeping track of run number and making sure particle filter knows about it as well.
-        if ( runno != fReader.runno() ){ runno = fReader.runno(); filter.set_info(GSIM, runno); cout << runs.info[runno].dN << endl; }
+        if ( runno != fReader.runno() )
+	  {
+	    runno = fReader.runno();
+	    filter.set_info(GSIM, runno);
+	    cout.width(12); cout << runno; 
+	    cout.width(12); cout << runs.info[runno].dN << endl;
+	  }
 
 	
         // Load up hadrons if we've electron.

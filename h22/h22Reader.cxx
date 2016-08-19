@@ -27,7 +27,7 @@ using namespace std;
 #include <TString.h>
 #include <TChain.h>
 #include <TFile.h>
-
+#include <TRegexp.h>
 
 h22Reader::h22Reader(int mc) 
 {
@@ -183,8 +183,16 @@ string h22Reader::GetFilenameChunk(int stringStart, int stringLen)
 
 int h22Reader::runno()
 {
-    // default case
- 
+
+  TString filename = fchain->GetFile()->GetName(); 
+  TRegexp runno_regex("[1-9][0-9][0-9][0-9][0-9]");
+  TString srunno = filename( runno_regex );
+  int runno = srunno.Atoi();
+
+  return runno; 
+  //return runno;
+  // default case
+  /* 
     string e1f_file     = fchain->GetCurrentFile()->GetName();
     string e1f_file_alt = e1f_file;
     string eg1_file     = e1f_file;
@@ -211,7 +219,8 @@ int h22Reader::runno()
     if (e1f_run == 0 && eg1_run == 0 && e1f_run_alt == 0 and skim_run != 0) return skim_run;
     
     else return 0;
-    
+  */
+  
     /*
      int run = 0;
 

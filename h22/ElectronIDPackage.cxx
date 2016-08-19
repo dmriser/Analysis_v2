@@ -224,8 +224,6 @@ void ElectronSelector::init()
   add_cut( sf_s6_cut );
   add_cut( vz_cut );
   
-  summarize(); 
-  
 }
 
 

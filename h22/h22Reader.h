@@ -112,22 +112,19 @@ public :
    TBranch        *b_mcvz;   //!
    TBranch        *b_mctof;   //!
 
+ public:
    h22Reader(int);
    ~h22Reader();
    void Init();
-
    void AddFile(TString);
    int GetEntries(){return fchain->GetEntries(); }
-
    h22Event GetEvent(){return event;}
-
-    std::string GetFilename(){return fchain->GetCurrentFile()->GetName();}
-    std::string GetFilenameChunk(int,int);
-
-    void AddList(std::string, int);
-    void AddList(std::string, int, int);
+   std::string GetFilename(){return fchain->GetCurrentFile()->GetName();}
+   std::string GetFilenameChunk(int,int);
+   void AddList(std::string, int);
+   void AddList(std::string, int, int);
    void GetEntry(int ien){fchain->GetEntry(ien);}
-    int runno();
-
+   int runno();
+   
 };
 #endif

@@ -13,21 +13,23 @@ using namespace std;
 
 
 // This Analysis 
-class SampleAnalysis : public h22Reader
+class SampleAnalysis 
 {
 public:
   SampleAnalysis();
   ~SampleAnalysis();
 
 public:
+  h22Reader * fReader; 
   void loop();
-    
+  void add_file(string); 
 };
 
-SampleAnalysis::SampleAnalysis() : h22Reader(0)
+SampleAnalysis::SampleAnalysis()
 {
   // Nothing to do.
-  Init();
+  fReader = new h22Reader(0);
+  fReader->Init();
 }
 
 SampleAnalysis::~SampleAnalysis()
@@ -35,22 +37,28 @@ SampleAnalysis::~SampleAnalysis()
   // Nothing to do. 
 }
 
+void SampleAnalysis::add_file(string file)
+{
+  fReader->AddFile(file); 
+  //  cout << " Added file with runno " << fReader->runno() << endl; 
+}
+
 void SampleAnalysis::loop()
 {
 
   ElectronSelector sel("epars.dat"); 
-  //  sel.set_runno( runno() );
-  sel.set_mc_status( false );
 
-  cout << " Selector created. " << endl;
-
-  int n_electrons = 0;
+  //sel.set_runno( fReader->runno() );
+  //sel.set_mc_status( false );
+  sel.set_info( fReader->runno(), false);
   
+  int n_electrons = 0;
+
   // Loop over events. 
-  for (int ievent=0; ievent< fchain->GetEntries(); ievent++)
+  for (int ievent=0; ievent< fReader->GetEntries(); ievent++)
     {
-      GetEntry(ievent);
-      DEvent event( GetEvent() );
+      fReader->GetEntry(ievent);
+      DEvent event( fReader->GetEvent() );
       if (sel.passes(event, 0)) n_electrons++; // Increments the counters 
       
     }
@@ -67,8 +75,7 @@ int main(int argc, char * argv[])
   
   SampleAnalysis analysis;
   
-  for (int iarg=1; iarg<argc; iarg++) { analysis.AddFile(argv[iarg]); } 
-
+  for (int iarg=1; iarg<argc; iarg++) { analysis.add_file(argv[iarg]); } 
   analysis.loop();
   
   return 0;

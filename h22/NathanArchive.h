@@ -13,7 +13,7 @@ class NathanEIDWrapper
   NathanEIDWrapper();
   ~NathanEIDWrapper();
 
-  int runno; 
+  int runno, vz_strict, ec_sf_strict, ec_edep_strict, cc_theta_strict, ec_uvw_strict, dc_r1_strict, dc_r3_strict, cc_phi_strict, cc_fid_strict; 
   bool GSIM; 
   
   void set_info(int, bool); /** Pass in run number and monte carlo status */

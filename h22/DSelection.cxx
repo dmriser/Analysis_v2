@@ -64,17 +64,28 @@ map<string, double> DSelection::cut_pass_fraction()
 void DSelection::summarize()
 {
 
-  cout << "<--------------------- DSelector Summary ------------------------->" << endl; 
+  cout << "<--------------------- DSelector Summary ------------------------>" << endl; 
   cout.width(20); cout << "Cut Name";
-  cout.width(8);  cout << "Pass"; 
-  cout.width(8);  cout << "Total" << endl;
+  cout.width(12);  cout << "Pass";
+  cout.width(12);  cout << "Frac"; 
+  cout.width(12);  cout << "Total" << endl;
   
 
   for (int icut=0; icut<cuts.size(); icut++)
     {
-      cout.width(20); cout << cuts[icut]->name();
-      cout.width(8);  cout << cuts[icut]->number_pass();
-      cout.width(8);  cout << cuts[icut]->number_fail() + cuts[icut]->number_pass() << endl;
+      if ( cuts[icut]->is_on() ) {
+	cout.width(20); cout << cuts[icut]->name();
+	cout.width(12);  cout << cuts[icut]->number_pass();
+	cout.width(12);  cout << (float) cuts[icut]->number_pass()/cuts[icut]->number_total();
+	cout.width(12);  cout << cuts[icut]->number_total() << endl;
+      }
+
+      else
+	{
+	  cout.width(20); cout << cuts[icut]->name();
+	  cout.width(12); cout << " Disabled " << endl;
+	}
+
     }
   cout << "<---------------------------------------------------------------->" << endl; 
 }

@@ -149,12 +149,14 @@ void ElectronSelector::init()
   ecu_cut        = new ECUCut();
   ecv_cut        = new ECVCut();
   ecw_cut        = new ECWCut();
+  nphe_cut       = new NPheCut();
   sf_s1_cut      = new SampFracCut(1);
   sf_s2_cut      = new SampFracCut(2);
   sf_s3_cut      = new SampFracCut(3);
   sf_s4_cut      = new SampFracCut(4);
   sf_s5_cut      = new SampFracCut(5);
   sf_s6_cut      = new SampFracCut(6);
+  qc_cut         = new TrackQualityCut();
   vz_cut         = new ZVertexCut();
 
   // Set limits on cuts from parameters 
@@ -177,6 +179,8 @@ void ElectronSelector::init()
   ecw_cut->set_min( pars.ECWMIN[0] );
   ecw_cut->set_max( pars.ECWMAX[0] ); 
 
+  nphe_cut->set_min( pars.CCNPHE );
+  
   sf_s1_cut->am     = pars.ECSMA[0];
   sf_s1_cut->bm     = pars.ECSMB[0]; 
   sf_s1_cut->cm     = pars.ECSMC[0];
@@ -236,7 +240,7 @@ void ElectronSelector::init()
   sf_s6_cut->cs     = pars.ECSSA[5];
   sf_s6_cut->ds     = pars.ECSSA[5];
   sf_s6_cut->nsigma = pars.ECSNSIGMA[5];
-  
+
   vz_cut->set_min( pars.VZMIN );
   vz_cut->set_max( pars.VZMAX );
 
@@ -249,12 +253,14 @@ void ElectronSelector::init()
   add_cut( ecu_cut );
   add_cut( ecv_cut );
   add_cut( ecw_cut );
+  add_cut( nphe_cut );
   add_cut( sf_s1_cut );
   add_cut( sf_s2_cut );
   add_cut( sf_s3_cut );
   add_cut( sf_s4_cut );
   add_cut( sf_s5_cut );
   add_cut( sf_s6_cut );
+  add_cut( qc_cut );
   add_cut( vz_cut );
   
 }

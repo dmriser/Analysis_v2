@@ -76,6 +76,33 @@ bool ChargeCut::passes(DEvent event, int index)
   return false; 
 }
 
+///////////////////////////////////////////////////////////////
+/*
+
+  Track Quality Cut 
+
+*/
+///////////////////////////////////////////////////////////////
+
+TrackQualityCut::TrackQualityCut()
+{
+  set_name("Track Quality Cut");
+}
+
+TrackQualityCut::~TrackQualityCut()
+{
+  // Nothing to do 
+}
+
+/** Simply checking if the particle is negative */
+bool TrackQualityCut::passes(DEvent event, int index)
+{
+  if ( event.tracks.cc_sect[index] > 0 && event.tracks.dc_sect[index] > 0 && event.tracks.ec_sect[index] > 0 ) { n_pass++; return true; }
+  else { n_fail++; }
+  
+  return false; 
+}
+
  
 ///////////////////////////////////////////////////////////////
 /*
@@ -98,6 +125,33 @@ MomentumCut::~MomentumCut()
 bool MomentumCut::passes(DEvent event, int index)
 {
   if ( event.tracks.p[index] > min() && event.tracks.p[index] < max() ) { n_pass++; return true; }
+  else { n_fail++; }
+  
+  return false; 
+}
+ 
+ 
+///////////////////////////////////////////////////////////////
+/*
+
+  Number of Photoelectrons Cut 
+
+*/
+///////////////////////////////////////////////////////////////
+
+NPheCut::NPheCut()
+{
+  set_name("NPhe Cut");
+}
+
+NPheCut::~NPheCut()
+{
+
+}
+
+bool NPheCut::passes(DEvent event, int index)
+{
+  if ( event.tracks.nphe[index] > min() ) { n_pass++; return true; }
   else { n_fail++; }
   
   return false; 

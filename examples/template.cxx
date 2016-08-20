@@ -1,5 +1,6 @@
 ////////////////////////////////////////
 /*
+
  David Riser, University of Connecticut
  
  July 17, 2016
@@ -22,7 +23,7 @@ using namespace std;
 #include "h22Event.h"
 #include "h22Option.h"
 #include "h22Reader.h"
-#include "pars.h"
+#include "Pars.h"
 #include "ParticleFilter.h"
 #include "NathanArchive.h"
 
@@ -67,13 +68,15 @@ int main(int argc, char * argv[])
     Corrections corr;
 
     NathanEIDWrapper nathan; 
+    nathan.ec_sf_strict    = -2;
+    nathan.cc_theta_strict = -2; 
     
     // Example of physics
     int elastic_candidates = 0;
     int sidis_candidates   = 0;
     int electrons = 0;
     int nathan_electrons = 0;
-    int agreements;
+    int agreements = 0;
     
     // Keep track of time.
     TStopwatch timer;

@@ -105,7 +105,7 @@ class ElectronIDHistograms
   // Member Functions 
  public:
   void draw();
-  void fill(h22Event);
+  void fill(DEvent);
   void init(); /** initialize histograms, must be done */
   void set_name(std::string n) { output_name = n; };
   void write_and_close(); /** writes root file named by output_name */
@@ -146,12 +146,14 @@ class ElectronSelector : public DSelection
   ECUCut * ecu_cut;
   ECVCut * ecv_cut;
   ECWCut * ecw_cut; 
+  NPheCut * nphe_cut; 
   SampFracCut * sf_s1_cut;
   SampFracCut * sf_s2_cut;
   SampFracCut * sf_s3_cut;
   SampFracCut * sf_s4_cut;
   SampFracCut * sf_s5_cut;
   SampFracCut * sf_s6_cut;
+  TrackQualityCut * qc_cut;
   ZVertexCut * vz_cut;
 
   // Member Functions 

@@ -18,6 +18,12 @@ using namespace std;
 NathanEIDWrapper::NathanEIDWrapper()
 {
   // Nothing to do 
+  runno = 0;
+  vz_strict = 0;
+  cc_fid_strict = 0;   cc_phi_strict = 0;  cc_theta_strict = 0;
+  dc_r1_strict = 0;   dc_r3_strict = 0;
+  ec_edep_strict = 0;   ec_uvw_strict = 0;  ec_sf_strict = 0;
+
 }
 
 NathanEIDWrapper::~NathanEIDWrapper()
@@ -35,8 +41,8 @@ int NathanEIDWrapper::get_electron(h22Event event)
   // Please note opposite GSIM convention in this function. In Nathan's code bool GSIM = 0 means the file is GSIM 
   int e_index = eID(event.gpart, event.q, event.p, event.cc_sect, event.sc_sect, event.ec_sect, event.dc_sect, event.cx, event.cy,
 		    event.cz, event.tl1_x, event.tl1_y, event.tl3_x, event.tl3_y, event.tl3_z, event.tl3_cx, event.tl3_cy, event.tl3_cz,
-		    0, event.vz, event.vy, event.vx, 0, !GSIM, event.etot, 0, event.ec_ei, event.ech_x, event.ech_y, event.ech_z, 0,
-		    event.cc_segm, 0, 0, 0, 0, event.sc_pd, 0);
+		    vz_strict, event.vz, event.vy, event.vx, ec_sf_strict, !GSIM, event.etot, ec_edep_strict, event.ec_ei, event.ech_x, event.ech_y, event.ech_z, cc_theta_strict,
+		    event.cc_segm, ec_uvw_strict, dc_r1_strict, dc_r3_strict, cc_phi_strict, event.sc_pd, cc_fid_strict);
   return e_index;
 }
 

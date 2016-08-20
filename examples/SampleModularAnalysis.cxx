@@ -47,8 +47,8 @@ void SampleAnalysis::loop()
 {
 
   ElectronSelector sel("epars.dat"); 
-  sel.disable_all();
-  sel.enable_by_name("EC-U Cut");
+  sel.enable_all();
+  sel.disable_by_name("Samp Frac Cut 5");
   
   //sel.set_runno( fReader->runno() );
   //sel.set_mc_status( false );

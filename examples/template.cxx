@@ -24,6 +24,7 @@ using namespace std;
 #include "h22Reader.h"
 #include "pars.h"
 #include "ParticleFilter.h"
+#include "NathanArchive.h"
 
 // root includes
 #include "TH1.h"
@@ -64,11 +65,15 @@ int main(int argc, char * argv[])
     ParticleFilter filter(eparfile);
     filter.set_info(GSIM, runno);
     Corrections corr;
+
+    NathanEIDWrapper nathan; 
     
     // Example of physics
     int elastic_candidates = 0;
     int sidis_candidates   = 0;
     int electrons = 0;
+    int nathan_electrons = 0;
+    int agreements;
     
     // Keep track of time.
     TStopwatch timer;
@@ -77,7 +82,7 @@ int main(int argc, char * argv[])
 
     // Testing dumper class
     HistogramDumper dumper;
-    TH1F * h1_w = new TH1F("h1_w"," Invariant Mass Final State (GeV)",100,0.7,1.2);
+    TH1F * h1_w = new TH1F("h1_w"," Invariant Mass Final State (GeV)",100,0.7,3.2);
     
     for (int iev=0; iev<nev; iev++)
     {
@@ -89,15 +94,20 @@ int main(int argc, char * argv[])
 	  {
 	    runno = fReader.runno();
 	    filter.set_info(GSIM, runno);
+	    nathan.set_info(runno, GSIM);
 	    cout.width(12); cout << runno; 
 	    cout.width(12); cout << runs.info[runno].dN << endl;
 	  }
 
+	int e_index = nathan.get_electron(event);
+	if (e_index > -123) nathan_electrons++;  
 	
         // Load up hadrons if we've electron.
         if (filter.has_electron(event))
         {
 	  electrons++;
+
+	  if (e_index > -123) agreements++;  
 	  
 	  TLorentzVector elec(event.cx[0]*event.p[0], event.cy[0]*event.p[0],
 			      event.cz[0]*event.p[0], event.p[0]);
@@ -121,7 +131,9 @@ int main(int argc, char * argv[])
     cout << "\n Found " << elastic_candidates << " candidate elastic events " << endl;
     cout << " Found " << sidis_candidates << " candidate sidis events " << endl;
     cout << " Found " << electrons << " electrons " << endl;
-
+    cout << " Nathan found " << nathan_electrons << " electrons " << endl;
+    cout << " We agree on " << agreements << endl;  
+    
     double loop_time  = timer.RealTime();
     double event_rate = (double)nev/loop_time;
     

@@ -121,8 +121,9 @@ bool ElectronSelector::passes(DEvent event, int index)
   // Loop over the cuts we have and make sure all pass.
   bool status = true;
 
-  // Here we need to set the vertex correctly and do any other correction. 
-  // event.tracks.vz[index] = corr.vz(event.tracks,index,runno,mc_status); // corr is an instance of Corrections 
+  // Here we need to set the vertex correctly and do any other correction. This keeps the Corrections object out of DCut and DSelector base class.
+  event.tracks.vz[index] = corr.vz(event.tracks,index,runno,mc_status); // corr is an instance of Corrections 
+  if ( !corr.good_sc_paddle(event.tracks, index) ) { return false; }
   
   vector<DCut*>::iterator it;
   for (it = cuts.begin(); it!=cuts.end(); it++)

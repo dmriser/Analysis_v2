@@ -60,6 +60,24 @@ map<string, double> DSelection::cut_pass_fraction()
   return results; 
 }
 
+void DSelection::enable_by_regex(string regex)
+{
+  
+  for (int icut=0; icut<cuts.size(); icut++)
+    {
+      if (cuts[icut]->name().find(regex) != std::string::npos) { cuts[icut]->enable(); }  
+    }
+}
+
+void DSelection::disable_by_regex(string regex)
+{
+  
+  for (int icut=0; icut<cuts.size(); icut++)
+    {
+      if (cuts[icut]->name().find(regex) != std::string::npos) { cuts[icut]->disable(); }  
+    }
+}
+
 void DSelection::summarize()
 {
 

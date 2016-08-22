@@ -34,6 +34,8 @@ using namespace std;
 #include "h22Reader.h"
 
 // root includes
+#include "TF1.h"
+#include "TGraphErrors.h"
 #include "TH1.h"
 #include "TH2.h"
 #include "TVector3.h"
@@ -45,6 +47,125 @@ using namespace std;
   
 */
 /////////////////////////////////////////////////////////
+
+ElectronIDManager::ElectronIDManager() : h22Reader(0)
+{
+  // Initialize Everything
+  GSIM = 0;
+  parfile = "";
+}
+
+ElectronIDManager::~ElectronIDManager()
+{
+
+}
+
+void ElectronIDManager::init()
+{
+  int starting_runno = runno();
+  if (starting_runno < 37000 || starting_runno > 39000) { GSIM = 1; }
+  Init();
+  selector.set_info(starting_runno, GSIM);
+  selector.set_parfile(parfile); 
+}
+
+void ElectronIDManager::calculate_values()
+{
+  /** For this cut to work it's better to use some basic identification before 
+      applying the gaussian fits in each bin.  Being used below is the standard 
+      electron selector, but with most cuts disabled. 
+
+   */
+  
+  selector.enable_all();
+  selector.disable_by_regex("Samp Frac");
+  
+  // Physical Parameters
+  double P_MIN  = 0.5;
+  double P_MAX  = 2.80;
+  int P_BINS    = 100;
+  const int N_SLICES = P_BINS;
+  double P_STEP = (P_MAX-P_MIN)/(N_SLICES-1);
+
+  TH1D * h1_slice[6][N_SLICES];
+  TH2F * h2_ec_sampling[6];
+
+  TF1 * f_gauss = new TF1("f_gauss","gaus",0.25,0.45);
+  TF1 * f_mean_pol3[6];
+  TF1 * f_sigma_pol3[6];
+
+  TGraphErrors * g_mean[6];
+  TGraphErrors * g_sigma[6];
+
+  double mean[N_SLICES];
+  double sigma[N_SLICES];
+  double mean_e[N_SLICES];
+  double sigma_e[N_SLICES];
+  double x[N_SLICES];
+  double dx[N_SLICES];
+
+  // For passing to TGraph constructor
+  for (int b=0; b<N_SLICES; b++) {x[b] = (double) b*P_STEP + P_MIN; dx[b] = 0.0;}
+
+  for (int s=0; s<6; s++)
+    {
+      h2_ec_sampling[s] = new TH2F(Form("h2_ec_sampling_%d",s),Form("EC Sampling Fraction Sector %d",s+1),P_BINS,P_MIN,P_MAX,100,0.05,0.5);
+    }
+
+  int nev = GetEntries();
+  for (int iev=0; iev<nev; iev++)
+    {
+      GetEntry(iev);
+      DEvent event(GetEvent());
+      if ( selector.passes(event, 0) ) { int sector = -1+event.tracks.dc_sect[0];  h2_ec_sampling[sector]->Fill(event.tracks.p[0],event.tracks.etot[0]/event.tracks.p[0]); }
+    }
+
+  // Do the fitting and slicing
+  for (int s=0; s<6; s++)
+    {
+      for (int b=0; b<N_SLICES; b++)
+	{
+	  string name       = Form("h1_slice_%d_%d",s,b);
+	  h1_slice[s][b]    = new TH1D(name.c_str(),name.c_str(),100,0.05,0.5);
+	  h2_ec_sampling[s] ->ProjectionY(name.c_str(),b+1,b+2);
+	  h1_slice[s][b]    ->Fit("f_gauss","RQ");
+
+	  mean[b]    = f_gauss->GetParameter(1);
+	  sigma[b]   = f_gauss->GetParameter(2);
+	  mean_e[b]  = f_gauss->GetParError(1);
+	  sigma_e[b] = f_gauss->GetParError(2);
+	}
+
+      f_mean_pol3[s]  = new TF1(Form("f_mean_pol3_%d",s),"pol3",0,N_SLICES);
+      f_sigma_pol3[s] = new TF1(Form("f_sigma_pol3_%d",s),"pol3",0,N_SLICES);
+      g_mean[s]       = new TGraphErrors(N_SLICES,x,mean,dx,mean_e);
+      g_sigma[s]      = new TGraphErrors(N_SLICES,x,sigma,dx,sigma_e);
+      g_mean[s]  ->Fit(Form("f_mean_pol3_%d",s),"RQ");
+      g_sigma[s] ->Fit(Form("f_sigma_pol3_%d",s),"RQ");
+    }
+
+  cout << " Printing EC parameters to " << parfile << endl; 
+  
+  // Writing Parameters to File
+  for (int s=0; s<6; s++)
+    {
+      pars.ECSSA[s] = f_sigma_pol3[s]->GetParameter(3);
+      pars.ECSSB[s] = f_sigma_pol3[s]->GetParameter(2);
+      pars.ECSSC[s] = f_sigma_pol3[s]->GetParameter(1);
+      pars.ECSSD[s] = f_sigma_pol3[s]->GetParameter(0);
+
+      pars.ECSMA[s] = f_mean_pol3[s]->GetParameter(3);
+      pars.ECSMB[s] = f_mean_pol3[s]->GetParameter(2);
+      pars.ECSMC[s] = f_mean_pol3[s]->GetParameter(1);
+      pars.ECSMD[s] = f_mean_pol3[s]->GetParameter(0);
+
+      pars.ECSNSIGMA[s] = 2.50;
+    }
+  
+  pars.save(parfile);
+  selector.summarize();
+  
+}
 
 /////////////////////////////////////////////////////////
 /*
@@ -75,7 +196,7 @@ ElectronIDHistograms::ElectronIDHistograms(string out, string par)
 
 ElectronIDHistograms::~ElectronIDHistograms()
 {
-
+  cout << " histograms destroyed " << endl; 
 }
 
 void ElectronIDHistograms::init()
@@ -100,7 +221,7 @@ void ElectronIDHistograms::init()
       }  
 
   // Setting up ElectronSelector 
-  selector = ElectronSelector(parfile);
+  selector.set_parfile(parfile);
   selector.set_info(runno, mc_status);
   
 }
@@ -132,7 +253,7 @@ void ElectronIDHistograms::fill(DEvent event, int c_index)
 		h1_ecv[0][s]   ->Fill(uvw.Y());
 		h1_ecw[0][s]   ->Fill(uvw.Z());
 
-		h2_ec_sampling[0][s] ->Fill(event.tracks.etot[ipart]/event.tracks.p[ipart], event.tracks.p[ipart]);
+		h2_ec_sampling[0][s] ->Fill(event.tracks.p[ipart], event.tracks.etot[ipart]/event.tracks.p[ipart]);
 		h2_ec_uvw[0][s]      ->Fill(event.tracks.ech_x[ipart], event.tracks.ech_y[ipart]);
 		h2_dcr1[0][s]        ->Fill(event.tracks.rot_dc1x(ipart), event.tracks.rot_dc1y(ipart));
 		h2_dcr3[0][s]        ->Fill(event.tracks.tl3_x[ipart], event.tracks.tl3_y[ipart]);
@@ -145,7 +266,7 @@ void ElectronIDHistograms::fill(DEvent event, int c_index)
 		h1_ecv[0][0]   ->Fill(uvw.Y());
 		h1_ecw[0][0]   ->Fill(uvw.Z());
 
-		h2_ec_sampling[0][0] ->Fill(event.tracks.etot[ipart]/event.tracks.p[ipart], event.tracks.p[ipart]);
+		h2_ec_sampling[0][0] ->Fill(event.tracks.p[ipart], event.tracks.etot[ipart]/event.tracks.p[ipart]);
 		h2_ec_uvw[0][0]      ->Fill(event.tracks.ech_x[ipart], event.tracks.ech_y[ipart]);
 		h2_dcr1[0][0]        ->Fill(event.tracks.rot_dc1x(ipart), event.tracks.rot_dc1y(ipart));
 		h2_dcr3[0][0]        ->Fill(event.tracks.tl3_x[ipart], event.tracks.tl3_y[ipart]);
@@ -158,21 +279,155 @@ void ElectronIDHistograms::fill(DEvent event, int c_index)
     case 1:
       {
 	
-      }
+	for (int ipart=0; ipart<event.tracks.gpart; ipart++) {
+	  if (selector.qc_cut->passes(event, ipart) && selector.negativity_cut->passes(event, ipart))
+	    {
+	      int s        = event.tracks.dc_sect[ipart]; 
+	      TVector3 uvw = event.tracks.uvw(ipart);
+	      
+	      if (selector.cc_fid_cut->passes(event, ipart))
+		{
+		  h2_cc[1][0] ->Fill(event.tracks.rphi(ipart), event.tracks.theta_cc(ipart));
+		  h2_cc[1][s] ->Fill(event.tracks.rphi(ipart), event.tracks.theta_cc(ipart));
+		}
+	      
+	      if (selector.dcr1_fid_cut->passes(event, ipart))
+	      {
+		h2_dcr1[1][0] ->Fill(event.tracks.rot_dc1x(ipart), event.tracks.rot_dc1y(ipart));
+		h2_dcr1[1][s] ->Fill(event.tracks.rot_dc1x(ipart), event.tracks.rot_dc1y(ipart));
+	      }
+	      
+	      if (selector.dcr3_fid_cut->passes(event, ipart))
+		{
+		  h2_dcr3[1][0] ->Fill(event.tracks.tl3_x[ipart], event.tracks.tl3_y[ipart]);
+		  h2_dcr3[1][s] ->Fill(event.tracks.tl3_x[ipart], event.tracks.tl3_y[ipart]);
+		}
+	      
+	      if (selector.edep_cut->passes(event, ipart))
+		{
+		  h1_ec_in[1][0] ->Fill(event.tracks.ec_ei[ipart]);
+		  h1_ec_in[1][s] ->Fill(event.tracks.ec_ei[ipart]);
+		}    
+	      
+	      if (selector.ecu_cut->passes(event, ipart))
+		{
+		h1_ecu[1][0] ->Fill(uvw.X());
+		h1_ecu[1][s] ->Fill(uvw.X());
+		}     
+	      
+	      if (selector.ecv_cut->passes(event, ipart))
+		{
+		  h1_ecv[1][0] ->Fill(uvw.Y());
+		  h1_ecv[1][s] ->Fill(uvw.Y());
+		}     
+	      
+	      if (selector.ecw_cut->passes(event, ipart))
+		{
+		  h1_ecw[1][0] ->Fill(uvw.Z());
+		  h1_ecw[1][s] ->Fill(uvw.Z());
+		}     
+	      
+	      if (selector.ecu_cut->passes(event, ipart) && selector.ecv_cut->passes(event, ipart) && selector.ecw_cut->passes(event, ipart))
+		{
+		  h2_ec_uvw[1][0] ->Fill(event.tracks.ech_x[ipart], event.tracks.ech_y[ipart]);
+		  h2_ec_uvw[1][s] ->Fill(event.tracks.ech_x[ipart], event.tracks.ech_y[ipart]);
+		}
+	      
+	      if (selector.nphe_cut->passes(event, ipart))
+		{
+		  h1_nphe[1][0] ->Fill(event.tracks.nphe[ipart]/10);
+		  h1_nphe[1][s] ->Fill(event.tracks.nphe[ipart]/10);
+		}    
+	      
+	      if (selector.sf_s1_cut->applies(event, ipart) && selector.sf_s1_cut->passes(event, ipart))
+		{
+		  h2_ec_sampling[1][0] ->Fill(event.tracks.p[ipart],event.tracks.etot[ipart]/event.tracks.p[ipart]);
+		  h2_ec_sampling[1][1] ->Fill(event.tracks.p[ipart],event.tracks.etot[ipart]/event.tracks.p[ipart]);
+		}
+	      
+	      if (selector.sf_s2_cut->applies(event, ipart) && selector.sf_s2_cut->passes(event, ipart))
+		{
+		  h2_ec_sampling[1][0] ->Fill(event.tracks.p[ipart],event.tracks.etot[ipart]/event.tracks.p[ipart]);
+		  h2_ec_sampling[1][2] ->Fill(event.tracks.p[ipart],event.tracks.etot[ipart]/event.tracks.p[ipart]);
+		}
 
-      // ElectronSelector returns true for event 
-    case 2:
-      {
-	
+	      if (selector.sf_s3_cut->applies(event, ipart) && selector.sf_s3_cut->passes(event, ipart))
+		{
+		  h2_ec_sampling[1][0] ->Fill(event.tracks.p[ipart],event.tracks.etot[ipart]/event.tracks.p[ipart]);
+		  h2_ec_sampling[1][3] ->Fill(event.tracks.p[ipart],event.tracks.etot[ipart]/event.tracks.p[ipart]);
+		}
+
+	      if (selector.sf_s4_cut->applies(event, ipart) && selector.sf_s4_cut->passes(event, ipart))
+		{
+		  h2_ec_sampling[1][0] ->Fill(event.tracks.p[ipart],event.tracks.etot[ipart]/event.tracks.p[ipart]);
+		  h2_ec_sampling[1][4] ->Fill(event.tracks.p[ipart],event.tracks.etot[ipart]/event.tracks.p[ipart]);
+		}
+
+	      if (selector.sf_s5_cut->applies(event, ipart) && selector.sf_s5_cut->passes(event, ipart))
+		{
+		  h2_ec_sampling[1][0] ->Fill(event.tracks.p[ipart],event.tracks.etot[ipart]/event.tracks.p[ipart]);
+		  h2_ec_sampling[1][5] ->Fill(event.tracks.p[ipart],event.tracks.etot[ipart]/event.tracks.p[ipart]);
+		}
+
+	      if (selector.sf_s6_cut->applies(event, ipart) && selector.sf_s6_cut->passes(event, ipart))
+		{
+		  h2_ec_sampling[1][0] ->Fill(event.tracks.p[ipart],event.tracks.etot[ipart]/event.tracks.p[ipart]);
+		  h2_ec_sampling[1][6] ->Fill(event.tracks.p[ipart],event.tracks.etot[ipart]/event.tracks.p[ipart]);
+		}
+	      
+	      if (selector.vz_cut->passes(event, ipart))
+		{
+		  h1_vz[1][0] ->Fill(corr.vz(event.tracks, ipart, runno, mc_status)); 
+		  h1_vz[1][s] ->Fill(corr.vz(event.tracks, ipart, runno, mc_status)); 
+		}      
+	    } 
+	}
       }
       
+	// ElectronSelector returns true for event 
+    case 2:
+      {
+	for (int ipart=0; ipart<event.tracks.gpart; ipart++) 
+	  {
+	    if (selector.passes(event, ipart))
+	      {
+		int s        = event.tracks.dc_sect[ipart]; 
+		TVector3 uvw = event.tracks.uvw(ipart);
+		
+		h1_nphe[2][s]  ->Fill(event.tracks.nphe[ipart]/10);
+		h1_vz[2][s]    ->Fill(corr.vz(event.tracks, ipart, runno, mc_status)); // This needs to be the correced vz, but I dont want to include corrections class in here 
+		h1_ec_in[2][s] ->Fill(event.tracks.ec_ei[ipart]);
+		h1_ecu[2][s]   ->Fill(uvw.X());
+		h1_ecv[2][s]   ->Fill(uvw.Y());
+		h1_ecw[2][s]   ->Fill(uvw.Z());
+
+		h2_ec_sampling[2][s] ->Fill(event.tracks.p[ipart],event.tracks.etot[ipart]/event.tracks.p[ipart]);
+		h2_ec_uvw[2][s]      ->Fill(event.tracks.ech_x[ipart], event.tracks.ech_y[ipart]);
+		h2_dcr1[2][s]        ->Fill(event.tracks.rot_dc1x(ipart), event.tracks.rot_dc1y(ipart));
+		h2_dcr3[2][s]        ->Fill(event.tracks.tl3_x[ipart], event.tracks.tl3_y[ipart]);
+		h2_cc[2][s]          ->Fill(event.tracks.rphi(ipart), event.tracks.theta_cc(ipart));
+		
+		h1_nphe[2][0]  ->Fill(event.tracks.nphe[ipart]/10);
+		h1_vz[2][0]    ->Fill(corr.vz(event.tracks, ipart, runno, mc_status)); // This needs to be the correced vz, but I dont want to include corrections class in here 
+		h1_ec_in[2][0] ->Fill(event.tracks.ec_ei[ipart]);
+		h1_ecu[2][0]   ->Fill(uvw.X());
+		h1_ecv[2][0]   ->Fill(uvw.Y());
+		h1_ecw[2][0]   ->Fill(uvw.Z());
+
+		h2_ec_sampling[2][0] ->Fill(event.tracks.p[ipart], event.tracks.etot[ipart]/event.tracks.p[ipart]);
+		h2_ec_uvw[2][0]      ->Fill(event.tracks.ech_x[ipart], event.tracks.ech_y[ipart]);
+		h2_dcr1[2][0]        ->Fill(event.tracks.rot_dc1x(ipart), event.tracks.rot_dc1y(ipart));
+		h2_dcr3[2][0]        ->Fill(event.tracks.tl3_x[ipart], event.tracks.tl3_y[ipart]);
+		h2_cc[2][0]          ->Fill(event.tracks.rphi(ipart), event.tracks.theta_cc(ipart));
+	      }
+	  }
+      }
     }
-  
 }
 
 void ElectronIDHistograms::write_and_close()
 {
-  TFile f(output_name.c_str(),"recreate");
+  TFile f(Form("%s.root",output_name.c_str()),"recreate");
  
   //! Saving 
   for (int c=0; c<3; c++)
@@ -213,7 +468,7 @@ ElectronSelector::ElectronSelector()
 
 ElectronSelector::~ElectronSelector()
 {
-
+  //  cout << " selector destroyed " << endl; 
 }
 
 ElectronSelector::ElectronSelector(string file)
@@ -294,19 +549,20 @@ void ElectronSelector::init()
   sf_s1_cut->cm     = pars.ECSMC[0];
   sf_s1_cut->dm     = pars.ECSMD[0]; 
   sf_s1_cut->as     = pars.ECSSA[0];
-  sf_s1_cut->bs     = pars.ECSSA[0];
-  sf_s1_cut->cs     = pars.ECSSA[0];
-  sf_s1_cut->ds     = pars.ECSSA[0];
+  sf_s1_cut->bs     = pars.ECSSB[0];
+  sf_s1_cut->cs     = pars.ECSSC[0];
+  sf_s1_cut->ds     = pars.ECSSD[0];
   sf_s1_cut->nsigma = pars.ECSNSIGMA[0];
 
+  
   sf_s2_cut->am     = pars.ECSMA[1];
   sf_s2_cut->bm     = pars.ECSMB[1]; 
   sf_s2_cut->cm     = pars.ECSMC[1];
   sf_s2_cut->dm     = pars.ECSMD[1]; 
   sf_s2_cut->as     = pars.ECSSA[1];
-  sf_s2_cut->bs     = pars.ECSSA[1];
-  sf_s2_cut->cs     = pars.ECSSA[1];
-  sf_s2_cut->ds     = pars.ECSSA[1];
+  sf_s2_cut->bs     = pars.ECSSB[1];
+  sf_s2_cut->cs     = pars.ECSSC[1];
+  sf_s2_cut->ds     = pars.ECSSD[1];
   sf_s2_cut->nsigma = pars.ECSNSIGMA[1];
 
   sf_s3_cut->am     = pars.ECSMA[2];
@@ -314,9 +570,9 @@ void ElectronSelector::init()
   sf_s3_cut->cm     = pars.ECSMC[2];
   sf_s3_cut->dm     = pars.ECSMD[2]; 
   sf_s3_cut->as     = pars.ECSSA[2];
-  sf_s3_cut->bs     = pars.ECSSA[2];
-  sf_s3_cut->cs     = pars.ECSSA[2];
-  sf_s3_cut->ds     = pars.ECSSA[2];
+  sf_s3_cut->bs     = pars.ECSSB[2];
+  sf_s3_cut->cs     = pars.ECSSC[2];
+  sf_s3_cut->ds     = pars.ECSSD[2];
   sf_s3_cut->nsigma = pars.ECSNSIGMA[2];
 
   sf_s4_cut->am     = pars.ECSMA[3];
@@ -324,9 +580,9 @@ void ElectronSelector::init()
   sf_s4_cut->cm     = pars.ECSMC[3];
   sf_s4_cut->dm     = pars.ECSMD[3]; 
   sf_s4_cut->as     = pars.ECSSA[3];
-  sf_s4_cut->bs     = pars.ECSSA[3];
-  sf_s4_cut->cs     = pars.ECSSA[3];
-  sf_s4_cut->ds     = pars.ECSSA[3];
+  sf_s4_cut->bs     = pars.ECSSB[3];
+  sf_s4_cut->cs     = pars.ECSSC[3];
+  sf_s4_cut->ds     = pars.ECSSD[3];
   sf_s4_cut->nsigma = pars.ECSNSIGMA[3];
 
   sf_s5_cut->am     = pars.ECSMA[4];
@@ -334,9 +590,9 @@ void ElectronSelector::init()
   sf_s5_cut->cm     = pars.ECSMC[4];
   sf_s5_cut->dm     = pars.ECSMD[4]; 
   sf_s5_cut->as     = pars.ECSSA[4];
-  sf_s5_cut->bs     = pars.ECSSA[4];
-  sf_s5_cut->cs     = pars.ECSSA[4];
-  sf_s5_cut->ds     = pars.ECSSA[4];
+  sf_s5_cut->bs     = pars.ECSSB[4];
+  sf_s5_cut->cs     = pars.ECSSC[4];
+  sf_s5_cut->ds     = pars.ECSSD[4];
   sf_s5_cut->nsigma = pars.ECSNSIGMA[4];
 
   sf_s6_cut->am     = pars.ECSMA[5];
@@ -344,9 +600,9 @@ void ElectronSelector::init()
   sf_s6_cut->cm     = pars.ECSMC[5];
   sf_s6_cut->dm     = pars.ECSMD[5]; 
   sf_s6_cut->as     = pars.ECSSA[5];
-  sf_s6_cut->bs     = pars.ECSSA[5];
-  sf_s6_cut->cs     = pars.ECSSA[5];
-  sf_s6_cut->ds     = pars.ECSSA[5];
+  sf_s6_cut->bs     = pars.ECSSB[5];
+  sf_s6_cut->cs     = pars.ECSSC[5];
+  sf_s6_cut->ds     = pars.ECSSD[5];
   sf_s6_cut->nsigma = pars.ECSNSIGMA[5];
 
   vz_cut->set_min( pars.VZMIN );

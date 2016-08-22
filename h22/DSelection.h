@@ -39,6 +39,8 @@ class DSelection
   void disable_all(){ for(int i=0; i<cuts.size(); i++) { cuts[i]->disable(); } }
   void disable_by_name(std::string target){ for(int i=0; i<cuts.size(); i++) { if(cuts[i]->name() == target) { cuts[i]->disable(); break; }}}
   void enable_by_name(std::string target) { for(int i=0; i<cuts.size(); i++) { if(cuts[i]->name() == target) { cuts[i]->enable(); break; }}}
+  void disable_by_regex(std::string);
+  void enable_by_regex(std::string);
   void summarize();
   
   virtual bool passes(DEvent, int); /** I am making this virtual in the event that we need to change something before asking if the events pass (vertex correction ect.) */ 

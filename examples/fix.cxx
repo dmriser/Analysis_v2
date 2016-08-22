@@ -1,16 +1,19 @@
 #include <iostream>
 using namespace std; 
 
-#include "h22Reader.h"
+#include "ElectronIDPackage.h"
 
 int main(int argc, char * argv[])
 {
 
-  h22Reader fReader(0);
-  fReader.AddFile( argv[1] ); 
-  fReader.Init();
-  cout << fReader.runno() << endl; 
+  if ( argc < 2 ) { exit(0); } 
 
+  ElectronIDManager eid; 
+  
+  for (int iarg=1; iarg<argc; iarg++) { eid.AddFile(argv[iarg]); }
+  eid.set_parfile("test_pars.dat");
+  eid.init();
+  eid.calculate_values();
   
   return 0;
 }

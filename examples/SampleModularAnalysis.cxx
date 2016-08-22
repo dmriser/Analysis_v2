@@ -46,9 +46,8 @@ void SampleAnalysis::add_file(string file)
 void SampleAnalysis::loop()
 {
 
-  ElectronSelector sel("epars.dat"); 
+  ElectronSelector sel("test_pars.dat"); 
   sel.enable_all();
-  sel.disable_by_name("Samp Frac Cut 5");
   
   //sel.set_runno( fReader->runno() );
   //sel.set_mc_status( false );
@@ -61,8 +60,7 @@ void SampleAnalysis::loop()
     {
       fReader->GetEntry(ievent);
       DEvent event( fReader->GetEvent() );
-      if (sel.passes(event, 0)) n_electrons++; // Increments the counters 
-      
+      if (sel.passes(event, 0)) n_electrons++; // Increments the counters       
     }
 
   sel.summarize();

@@ -40,6 +40,8 @@ DCut::~DCut()
 
 bool DCut::passes(DEvent event, int index)
 {
+  if ( !is_enabled ){ return false; } 
+
   cout << " Inside DCut::passes " << endl; 
   return true;
 }
@@ -191,7 +193,7 @@ bool SampFracCut::passes(DEvent event, int index)
 
   min = (am-nsigma*as)*pow(event.tracks.p[index],3) +  (bm-nsigma*bs)*pow(event.tracks.p[index],2) + (cm-nsigma*cs)*event.tracks.p[index] +  (dm-nsigma*ds); 
   max = (am+nsigma*as)*pow(event.tracks.p[index],3) +  (bm+nsigma*bs)*pow(event.tracks.p[index],2) + (cm+nsigma*cs)*event.tracks.p[index] +  (dm+nsigma*ds); 
-  
+
   if (samp > min && samp < max){ n_pass++; return true; } 
   else { n_fail++; return false; } 
 }

@@ -72,7 +72,7 @@ int main(int argc, char * argv[])
     TF1 * f_gauss = new TF1("f_gauss","gaus",0.25,0.45);
     TF1 * f_mean_pol3[6];
     TF1 * f_sigma_pol3[6];
-    
+	
     TGraphErrors * g_mean[6];
     TGraphErrors * g_sigma[6];
     
@@ -159,8 +159,7 @@ int main(int argc, char * argv[])
         
         pars.ECSNSIGMA[s] = 2.50;
     }
-    
-    
+
     // Writing out
     TCanvas * c1 = new TCanvas("c1", "", 1200, 400);
     c1->Divide(3,1);

@@ -102,28 +102,6 @@ class ElectronSelector : public DSelection
 /////////////////////////////////////////////////////////
 /*
 
-  ElectronIDManager 
-  
-*/
-/////////////////////////////////////////////////////////
-
-class ElectronIDManager : public h22Reader
-{
- public:
-  ElectronIDManager();
-  ~ElectronIDManager();
-
-  ElectronIDManager(int);
-
-  // Data Members
-  Corrections corr; 
-  epars pars; 
-  
-};
-
-/////////////////////////////////////////////////////////
-/*
-
   ElectronIDHistograms 
   
 */
@@ -174,6 +152,32 @@ class ElectronIDHistograms
   void set_info(int r, bool mc){ runno = r; mc_status = mc; }
   void write_and_close(); /** writes root file named by output_name */
   
+};
+
+/////////////////////////////////////////////////////////
+/*
+
+  ElectronIDManager 
+  
+*/
+/////////////////////////////////////////////////////////
+
+class ElectronIDManager : public h22Reader
+{
+ public:
+  ElectronIDManager();
+  ~ElectronIDManager();
+
+  // Data Members
+  std::string parfile; 
+
+  ElectronSelector selector;
+  epars pars;
+  
+  // Member Functions 
+  void calculate_values();
+  void init();
+  void set_parfile(std::string s){ parfile = s; }
 };
 
 #endif 

@@ -22,7 +22,7 @@
 #include "CommonTools.h"
 #include "Corrections.h"
 #include "h22Event.h"
-#include "pars.h"
+#include "Pars.h"
 #include "ParticleFilter.h"
 
 // root includes

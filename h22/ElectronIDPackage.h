@@ -48,73 +48,6 @@
 /////////////////////////////////////////////////////////
 /*
 
-  ElectronIDManager 
-  
-*/
-/////////////////////////////////////////////////////////
-
-class ElectronIDManager : public h22Reader
-{
- public:
-  ElectronIDManager();
-  ~ElectronIDManager();
-
-  ElectronIDManager(int);
-
-  // Data Members
-  Corrections corr; 
-  epars pars; 
-  
-};
-
-/////////////////////////////////////////////////////////
-/*
-
-  ElectronIDHistograms 
-  
-*/
-/////////////////////////////////////////////////////////
-
-class ElectronIDHistograms
-{
- public:
-  ElectronIDHistograms();
-  ~ElectronIDHistograms();
-
-  // Data Members
-  std::string cut[3]; /** holds names of cuts used throughout */
-  std::string output_name; /** name for writing out histograms to file */
-
-  // <----> Histograms <----> 
-  // [3][7] = [0:Raw, 1:Passed This, 2:Passed All][0:All Sectors, 1-6:Sector Number]
-  // 1-D
-  TH1F * h1_nphe[3][7];
-  TH1F * h1_vz[3][7];
-  TH1F * h1_ecu[3][7];
-  TH1F * h1_ecv[3][7];
-  TH1F * h1_ecw[3][7];
-  TH1F * h1_ec_in[3][7];
-
-  // 2-D
-  TH2F * h2_ec_sampling[3][7];
-  TH2F * h2_ec_uvw[3][7];
-  TH2F * h2_dcr1[3][7];
-  TH2F * h2_dcr3[3][7];
-  TH2F * h2_cc[3][7];
-
-  // Member Functions 
- public:
-  void draw();
-  void fill(DEvent);
-  void init(); /** initialize histograms, must be done */
-  void set_name(std::string n) { output_name = n; };
-  void write_and_close(); /** writes root file named by output_name */
-  
-};
-
-/////////////////////////////////////////////////////////
-/*
-
   ElectronSelector : DSelection 
   
 */
@@ -163,6 +96,83 @@ class ElectronSelector : public DSelection
   void set_runno(int r){ runno = r; }
   void set_mc_status(bool m){ mc_status = m; }
   void init();
+  
+};
+
+/////////////////////////////////////////////////////////
+/*
+
+  ElectronIDManager 
+  
+*/
+/////////////////////////////////////////////////////////
+
+class ElectronIDManager : public h22Reader
+{
+ public:
+  ElectronIDManager();
+  ~ElectronIDManager();
+
+  ElectronIDManager(int);
+
+  // Data Members
+  Corrections corr; 
+  epars pars; 
+  
+};
+
+/////////////////////////////////////////////////////////
+/*
+
+  ElectronIDHistograms 
+  
+*/
+/////////////////////////////////////////////////////////
+
+class ElectronIDHistograms
+{
+ public:
+  ElectronIDHistograms();
+  ~ElectronIDHistograms();
+  ElectronIDHistograms(std::string, std::string); // Pass in name, parfile
+
+
+  // Data Members
+  int runno;
+  bool mc_status;
+  std::string parfile;
+  std::string cut[3]; /** holds names of cuts used throughout */
+  std::string output_name; /** name for writing out histograms to file */
+
+  Corrections corr; 
+  ElectronSelector selector; 
+  
+  // <----> Histograms <----> 
+  // [3][7] = [0:Raw, 1:Passed This, 2:Passed All][0:All Sectors, 1-6:Sector Number]
+  // 1-D
+  TH1F * h1_nphe[3][7];
+  TH1F * h1_vz[3][7];
+  TH1F * h1_ecu[3][7];
+  TH1F * h1_ecv[3][7];
+  TH1F * h1_ecw[3][7];
+  TH1F * h1_ec_in[3][7];
+
+  // 2-D
+  TH2F * h2_ec_sampling[3][7];
+  TH2F * h2_ec_uvw[3][7];
+  TH2F * h2_dcr1[3][7];
+  TH2F * h2_dcr3[3][7];
+  TH2F * h2_cc[3][7];
+
+  // Member Functions 
+ public:
+  void draw();
+  void fill(DEvent, int); /**> Pass in the event, and the cut index (none, passed this, passed all) */
+  void init(); /** initialize histograms, must be done */
+  void set_name(std::string n) { output_name = n; };
+  void set_parfile(std::string pf) { parfile = pf; }
+  void set_info(int r, bool mc){ runno = r; mc_status = mc; }
+  void write_and_close(); /** writes root file named by output_name */
   
 };
 

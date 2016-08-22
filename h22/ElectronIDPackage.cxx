@@ -36,6 +36,7 @@ using namespace std;
 // root includes
 #include "TH1.h"
 #include "TH2.h"
+#include "TVector3.h"
 
 /////////////////////////////////////////////////////////
 /*
@@ -55,6 +56,18 @@ using namespace std;
 
 ElectronIDHistograms::ElectronIDHistograms()
 {
+  cut[0] = "raw";
+  cut[1] = "this";
+  cut[2] = "all";
+
+  output_name = "eid";
+  parfile     = "epars.dat";
+  
+}
+
+ElectronIDHistograms::ElectronIDHistograms(string out, string par)
+{
+  output_name = out; parfile = par;
   cut[0] = "raw";
   cut[1] = "this";
   cut[2] = "all";
@@ -85,8 +98,103 @@ void ElectronIDHistograms::init()
 	h2_dcr3[c][s]        = new TH2F(Form("h2_dcr3_%s_%d",cut[c].c_str(),s),Form(" DC Region 3 Fid. %s Sector %d ",cut[c].c_str(),s),     100,20,500,100,-500,500);
 	h2_cc[c][s]          = new TH2F(Form("h2_cc_%s_%d",cut[c].c_str(),s),Form(" Cherenkov Counter Fid. %s Sector %d ",cut[c].c_str(),s), 100,-30,30,100,10,60);
       }  
+
+  // Setting up ElectronSelector 
+  selector = ElectronSelector(parfile);
+  selector.set_info(runno, mc_status);
+  
 }
 
+void ElectronIDHistograms::fill(DEvent event, int c_index)
+{
+  // c index contains the cut index 0:None, 1:Passes this cut, 2:Passes all cuts 
+
+  selector.set_info(runno, mc_status);
+  
+  switch( c_index )
+    {
+      // No Cuts ( all negative tracks )
+    case 0:
+      {
+	
+	for (int ipart=0; ipart<event.tracks.gpart; ipart++)
+	  {
+
+	    if (selector.qc_cut->passes(event, ipart))
+	      {
+		int s        = event.tracks.dc_sect[ipart]; 
+		TVector3 uvw = event.tracks.uvw(ipart);
+		
+		h1_nphe[0][s]  ->Fill(event.tracks.nphe[ipart]/10);
+		h1_vz[0][s]    ->Fill(corr.vz(event.tracks, ipart, runno, mc_status)); // This needs to be the correced vz, but I dont want to include corrections class in here 
+		h1_ec_in[0][s] ->Fill(event.tracks.ec_ei[ipart]);
+		h1_ecu[0][s]   ->Fill(uvw.X());
+		h1_ecv[0][s]   ->Fill(uvw.Y());
+		h1_ecw[0][s]   ->Fill(uvw.Z());
+
+		h2_ec_sampling[0][s] ->Fill(event.tracks.etot[ipart]/event.tracks.p[ipart], event.tracks.p[ipart]);
+		h2_ec_uvw[0][s]      ->Fill(event.tracks.ech_x[ipart], event.tracks.ech_y[ipart]);
+		h2_dcr1[0][s]        ->Fill(event.tracks.rot_dc1x(ipart), event.tracks.rot_dc1y(ipart));
+		h2_dcr3[0][s]        ->Fill(event.tracks.tl3_x[ipart], event.tracks.tl3_y[ipart]);
+		h2_cc[0][s]          ->Fill(event.tracks.rphi(ipart), event.tracks.theta_cc(ipart));
+		
+		h1_nphe[0][0]  ->Fill(event.tracks.nphe[ipart]/10);
+		h1_vz[0][0]    ->Fill(corr.vz(event.tracks, ipart, runno, mc_status)); // This needs to be the correced vz, but I dont want to include corrections class in here 
+		h1_ec_in[0][0] ->Fill(event.tracks.ec_ei[ipart]);
+		h1_ecu[0][0]   ->Fill(uvw.X());
+		h1_ecv[0][0]   ->Fill(uvw.Y());
+		h1_ecw[0][0]   ->Fill(uvw.Z());
+
+		h2_ec_sampling[0][0] ->Fill(event.tracks.etot[ipart]/event.tracks.p[ipart], event.tracks.p[ipart]);
+		h2_ec_uvw[0][0]      ->Fill(event.tracks.ech_x[ipart], event.tracks.ech_y[ipart]);
+		h2_dcr1[0][0]        ->Fill(event.tracks.rot_dc1x(ipart), event.tracks.rot_dc1y(ipart));
+		h2_dcr3[0][0]        ->Fill(event.tracks.tl3_x[ipart], event.tracks.tl3_y[ipart]);
+		h2_cc[0][0]          ->Fill(event.tracks.rphi(ipart), event.tracks.theta_cc(ipart));
+	    }
+	  }
+      }
+
+      // Passes this cut 
+    case 1:
+      {
+	
+      }
+
+      // ElectronSelector returns true for event 
+    case 2:
+      {
+	
+      }
+      
+    }
+  
+}
+
+void ElectronIDHistograms::write_and_close()
+{
+  TFile f(output_name.c_str(),"recreate");
+ 
+  //! Saving 
+  for (int c=0; c<3; c++)
+    for (int s=0; s<7; s++)
+      {
+	h1_nphe[c][s]  ->Write();
+	h1_vz[c][s]    ->Write();
+	h1_ec_in[c][s] ->Write();
+	h1_ecu[c][s]   ->Write();
+	h1_ecv[c][s]   ->Write();
+	h1_ecw[c][s]   ->Write();
+	
+	h2_ec_sampling[c][s] ->Write();
+	h2_ec_uvw[c][s]      ->Write();
+	h2_dcr1[c][s]        ->Write();
+	h2_dcr3[c][s]        ->Write();
+	h2_cc[c][s]          ->Write();
+      }
+
+  f.Write();
+  f.Close();
+}
 
 /////////////////////////////////////////////////////////
 /*

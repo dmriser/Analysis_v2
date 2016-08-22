@@ -23,7 +23,6 @@ using namespace std;
 #include "DEvent.h"
 #include "DSelection.h"
 
-
 DSelection::DSelection()
 {
   // Setup 
@@ -60,7 +59,7 @@ map<string, double> DSelection::cut_pass_fraction()
   
   return results; 
 }
-  
+
 void DSelection::summarize()
 {
 

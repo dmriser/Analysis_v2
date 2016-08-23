@@ -145,7 +145,7 @@ class ElectronIDHistograms
   // Member Functions 
  public:
   void draw();
-  void fill(DEvent, int); /**> Pass in the event, and the cut index (none, passed this, passed all) */
+  void fill(DEvent); /**> Pass in the event, and the cut index (none, passed this, passed all) */
   void init(); /** initialize histograms, must be done */
   void set_name(std::string n) { output_name = n; };
   void set_parfile(std::string pf) { parfile = pf; }
@@ -170,7 +170,7 @@ class ElectronIDManager : public h22Reader
 
   // Data Members
   std::string parfile; 
-
+  
   ElectronSelector selector;
   epars pars;
   

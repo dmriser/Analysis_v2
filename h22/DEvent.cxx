@@ -81,6 +81,7 @@ void DEvent::set_e_index(int index)
 void DEvent::set_electron(TLorentzVector v)
 {
   electron = v;
+  refresh();
 }
 
 void DEvent::set_beam(TLorentzVector v)

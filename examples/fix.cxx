@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector> 
 #include <fstream>
+#include <cstdlib>
 using namespace std; 
 
 #include "DBins.h"
@@ -9,13 +10,15 @@ using namespace std;
 
 int main(int argc, char * argv[])
 {
-
+  int n_files = 1;
+  if (argc > 1) { n_files = atoi(argv[1]);}  
+  
   ifstream mc_list("mc.dat");      vector<string> mc_files;
   ifstream data_list("data.dat");  vector<string> data_files;
 
-  string line; 
-  while( getline(mc_list, line) )  { mc_files.push_back(line);   }  mc_list.close();
-  while( getline(data_list, line) ){ data_files.push_back(line); }  data_list.close();
+  string line; int ifile = 0; 
+  while( getline(mc_list, line) && ifile < n_files)  { mc_files.push_back(line);   ifile++; }  mc_list.close();  ifile = 0;
+  while( getline(data_list, line) && ifile < n_files){ data_files.push_back(line); ifile++; }  data_list.close();
 
   // Binning Scheme 
   DBins xBins(10, 0.05, 1.05);
@@ -45,11 +48,14 @@ int main(int argc, char * argv[])
   manager.loop(0);
   manager.loop(1);
   manager.dis_selector.summarize(); 
-
+  manager.histos.save();
+  
   if (manager.eid_version == 1) {
     manager.eid[0].summarize();
     manager.eid[1].summarize(); 
   }
+
+
   
   return 0;
 }

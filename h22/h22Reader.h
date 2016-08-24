@@ -113,8 +113,9 @@ public :
    TBranch        *b_mctof;   //!
 
  public:
-   h22Reader(int);
+   h22Reader();
    ~h22Reader();
+   h22Reader(int);
    void Init();
    void AddFile(TString);
    int GetEntries(){return fchain->GetEntries(); }

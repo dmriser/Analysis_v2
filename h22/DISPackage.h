@@ -18,7 +18,11 @@
 
 // my includes
 #include "DBins.h"
+#include "DCut.h"
 #include "DEvent.h"
+#include "DSelection.h"
+#include "ELectronIDPackage.h"
+#include "NathanArchive.h"
 
 //  root includes
 #include "TH1.h"
@@ -64,7 +68,44 @@ class DISHistograms
   void fill(DEvent, int); /** Pass in the event and the type data or monte carlo */
   void init();
   void set_bins(DBins x, DBins qq, DBins w){ xBins = x; qqBins = qq; wBins = w; }
+  void save();
   
 };
+
+////////////////////////////////////////////////////////////////////////
+/*
+
+  DISManager 
+
+*/
+////////////////////////////////////////////////////////////////////////
+
+class DISManager
+{
+ public:
+  DISManager();
+  ~DISManager();
+
+  // Data Types
+  int eid_version; 
+  std::string parfile[2]; 
+  std::string outfile;
+  
+  DBins xBins, qqBins, wBins; 
+  DISHistograms histos; 
+  DSelection disCriteria; 
+  ElectronSelector eid[2];
+  h22Reader reader[2];
+  NathanEIDWrapper nathan; 
+  VirtualityCut * qq_cut;
+  WCut * w_cut; 
+
+  // Member Functions
+  void add_files(std::vector<std::string>, int);
+  void init();
+  void set_bins(DBins x, DBins qq, DBins w){ xBins = x; qqBins = qq; wBins = w; }
+  
+};
+
 
 #endif

@@ -29,6 +29,12 @@ using namespace std;
 #include <TFile.h>
 #include <TRegexp.h>
 
+h22Reader::h22Reader() 
+{
+  GSIM   = -1;
+  fchain = new TChain("h22");
+}
+
 h22Reader::h22Reader(int mc) 
 {
   GSIM   = mc;
@@ -107,11 +113,20 @@ void h22Reader::AddFile(string _fname)
 /**< Init() must be run once to link the branches of the TChain to the h22Event class members*/
 void h22Reader::Init()
 {
-   // Set branch addresses and branch pointers
+
+  // Try to set GSIM automagically 
+  if ( GetEntries() > 0 ) {
+    if ( runno() > 37000 && runno() < 39000 ) GSIM = 0;
+    else if ( runno() > 50000 && runno() < 60000 ) GSIM = 0; 
+    else GSIM = 1;
+  } 
+
+  else { cout << " Warning: h22Reader::GSIM not set before Init() routine called, defaulting to GSIM = 0 " << endl; }
+  
+  // Set branch addresses and branch pointers
    fchain->SetBranchAddress("evntid", &event.evntid, &b_evntid);
    fchain->SetBranchAddress("ihel", &event.ihel, &b_ihel);
    fchain->SetBranchAddress("q_l", &event.q_l, &b_q_l);
-   //   fchain->SetBranchAddress("tr_time", &event.tr_time, &b_tr_time);
    fchain->SetBranchAddress("gpart", &event.gpart, &b_gpart);
    fchain->SetBranchAddress("q", event.q, &b_q);
    fchain->SetBranchAddress("p", event.p, &b_p);
@@ -190,57 +205,6 @@ int h22Reader::runno()
   int runno = srunno.Atoi();
 
   return runno; 
-  //return runno;
-  // default case
-  /* 
-    string e1f_file     = fchain->GetCurrentFile()->GetName();
-    string e1f_file_alt = e1f_file;
-    string eg1_file     = e1f_file;
-    string skim_file    = e1f_file;
-    
-    size_t pos_e1f     = e1f_file.find("clas_");
-    size_t pos_e1f_alt = e1f_file.find("run_");
-    size_t pos_eg1     = eg1_file.find("root22_");
-    size_t pos_skim    = e1f_file.find("3");
-    
-    string srun_e1f     = e1f_file.substr(pos_e1f+6,5);
-    string srun_e1f_alt = e1f_file.substr(pos_e1f_alt+4,5);
-    string srun_eg1     = eg1_file.substr(pos_eg1+7,5);
-    string srun_skim    = e1f_file.substr(pos_skim,5);
-    
-    int e1f_run     = atoi( srun_e1f.c_str() );
-    int e1f_run_alt = atoi( srun_e1f_alt.c_str() );
-    int eg1_run     = atoi( srun_eg1.c_str() );
-    int skim_run    = atoi( srun_skim.c_str() ); 
-    
-    if (e1f_run == 0 && eg1_run != 0) return eg1_run;
-    if (e1f_run != 0 && eg1_run == 0 && e1f_run_alt == 0) return e1f_run;
-    if (e1f_run == 0 && eg1_run == 0 && e1f_run_alt != 0) return e1f_run_alt;
-    if (e1f_run == 0 && eg1_run == 0 && e1f_run_alt == 0 and skim_run != 0) return skim_run;
-    
-    else return 0;
-  */
-  
-    /*
-     int run = 0;
-
-    string file = fchain->GetCurrentFile()->GetName();
-    size_t pos  = file.rfind("_");
-    string srun = file.substr(pos+2,5);
-    run = atoi( srun.c_str() );
-    
-    // Try checking if eg1 naming scheme
-    if (run == 0)
-    {
-        pos  = file.find("_");
-        srun = file.substr(pos+1,5);
-        run  = atoi( srun.c_str() );
-    }
-     return run;
-
-     */
-
-
 }
 
 #endif

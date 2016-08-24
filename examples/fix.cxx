@@ -1,56 +1,55 @@
 #include <iostream>
+#include <vector> 
+#include <fstream>
 using namespace std; 
 
 #include "DBins.h"
-#include "DEvent.h"
 #include "DISPackage.h"
 #include "Dumper.h"
-#include "h22Reader.h"
-#include "NathanArchive.h"
 
 int main(int argc, char * argv[])
 {
-  if (argc < 2) exit(0); 
 
-  // GSIM should set itself 
-  h22Reader reader; 
-  for (int iarg=1; iarg<argc; iarg++) reader.AddFile( argv[iarg] );
-  reader.Init();
+  ifstream mc_list("mc.dat");      vector<string> mc_files;
+  ifstream data_list("data.dat");  vector<string> data_files;
 
-  DISHistograms histos; 
-  DBins xBins(50, 0.01, 1.1);
-  DBins qqBins(50, 1, 5);
-  DBins wBins(10, 1, 5);
-  histos.set_bins(xBins, qqBins, wBins);
-  histos.init();
+  string line; 
+  while( getline(mc_list, line) )  { mc_files.push_back(line);   }  mc_list.close();
+  while( getline(data_list, line) ){ data_files.push_back(line); }  data_list.close();
 
-  int runno = reader.runno();
-  NathanEIDWrapper nathan; 
-  nathan.set_info(runno,reader.GSIM);
+  // Binning Scheme 
+  DBins xBins(10, 0.05, 1.05);
+  DBins qqBins(10, 0.5, 6.0); 
+  DBins wBins(10, 0.5, 6.0); 
+
+  DISManager manager; 
+  manager.add_files(data_files, 0);
+  manager.add_files(mc_files,   1);
+  manager.parfile[0] = "epars.dat";
+  manager.parfile[1] = "epars.dat"; 
+  manager.outfile = "fix.root";
+  manager.eid_version = 0; 
   
-  for (int ientry=0; ientry<reader.GetEntries(); ientry++) 
-    {
-      reader.GetEntry(ientry);
-      if (runno != reader.runno()){ runno = reader.runno(); nathan.set_info(runno, reader.GSIM); } 
-      DEvent event( reader.GetEvent() );
-      int e_index = nathan.get_electron(event.tracks);
-      
-      // We got one! 
-      if (e_index > -123)
-	{
-	  event.set_e_index(e_index);
-	  histos.fill(event, reader.GSIM);
-	}
+  manager.set_bins(xBins, qqBins, wBins);
+  manager.qq_cut->set_min(1.0);
+  manager.qq_cut->set_max(50.0);
+  manager.w_cut ->set_min(1.0);
+  manager.w_cut ->set_max(50.0);  
+  manager.init();
+  
+  cout << " Length of lists: data=" << manager.reader[0].GetEntries() << " mc=" << manager.reader[1].GetEntries() << endl; 
+  cout << " Detected information from readers : " << endl;
+  cout << " Reader 0 - Type: " << manager.reader[0].GSIM << " Run Number " << manager.reader[0].runno() << endl;
+  cout << " Reader 1 - Type: " << manager.reader[1].GSIM << " Run Number " << manager.reader[1].runno() << endl; 
 
-      if (ientry%1000 == 0) { cout << "\r done " << ientry << flush; }
-    }
+  manager.loop(0);
+  manager.loop(1);
+  manager.dis_selector.summarize(); 
 
-  // Dump Histograms 
-  HistogramDumper my_dump; 
-  for (int s=0; s<7; s++)  { my_dump.dump(histos.h1_hits_x_by_qq[s][0]); } 
-
-  histos.output_name = "fix.root"; 
-  histos.save();
+  if (manager.eid_version == 1) {
+    manager.eid[0].summarize();
+    manager.eid[1].summarize(); 
+  }
   
   return 0;
 }

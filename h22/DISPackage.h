@@ -93,7 +93,7 @@ class DISManager
   
   DBins xBins, qqBins, wBins; 
   DISHistograms histos; 
-  DSelection disCriteria; 
+  DSelection dis_selector; 
   ElectronSelector eid[2];
   h22Reader reader[2];
   NathanEIDWrapper nathan; 
@@ -104,6 +104,7 @@ class DISManager
   void add_files(std::vector<std::string>, int);
   void init();
   void set_bins(DBins x, DBins qq, DBins w){ xBins = x; qqBins = qq; wBins = w; }
+  void loop(int); 
   
 };
 

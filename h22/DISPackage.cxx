@@ -321,7 +321,11 @@ DISManager::DISManager()
   parfile[0]  = "unset";
   parfile[1]  = "unset";
 
-  eid_version = 0; 
+  eid_version = 0;
+  
+  qq_cut = new VirtualityCut();
+  w_cut = new WCut(); 
+
 }
 
 DISManager::~DISManager()
@@ -353,16 +357,58 @@ void DISManager::init()
   eid[1].set_parfile( parfile[1] );
   eid[0].set_info(reader[0].runno(), reader[0].GSIM);
   eid[1].set_info(reader[1].runno(), reader[1].GSIM);
-  eid[0].init();
-  eid[1].init();
+  //  eid[0].init();
+  //  eid[1].init();
 
   // Setting up Electron ID from Nathan, needs to be updated while running. 
   nathan.set_info(reader[0].runno(), reader[0].GSIM);
+
+  // Adding Cuts 
+  dis_selector.add_cut( qq_cut );
+  dis_selector.add_cut( w_cut );
+  
 }
 
 void DISManager::add_files(vector<string> files, int index)
 {
-  for (int ifile=0; ifile<files.size(); ifile++) reader[index].AddFile(ifile);
+  for (int ifile=0; ifile<files.size(); ifile++) reader[index].AddFile(files[ifile]);
+}
+
+void DISManager::loop(int index)
+{
+  // General Setup 
+  int nev = reader[index].GetEntries(); 
+  int runno = reader[index].runno(); 
+  
+  if (eid_version == 0) { 
+    for (int iev=0; iev<nev; iev++)
+      {
+	reader[index].GetEntry(iev); 
+	DEvent event( reader[index].GetEvent() );
+	if (runno != reader[index].runno()) { runno = reader[index].runno(); nathan.set_info(runno, reader[index].GSIM); }
+	int e_index = nathan.get_electron(event.tracks); 
+	if (e_index > -123) {
+	  event.set_e_index(e_index);
+	  if (dis_selector.passes(event, e_index)) histos.fill(event, index);
+	}
+      }
+  }
+
+  else
+    {
+      for (int iev=0; iev<nev; iev++)
+	{
+	  reader[index].GetEntry(iev); 
+	  DEvent event( reader[index].GetEvent() );
+	  if (runno != reader[index].runno()) { runno = reader[index].runno(); eid[index].set_info(runno, reader[index].GSIM); }
+	  if (eid[index].passes(event, 0))
+	    {
+	      event.set_e_index(0);
+	      if (dis_selector.passes(event, 0)) histos.fill(event, index);
+	    }
+	}
+    }
+  
 }
 
 #endif

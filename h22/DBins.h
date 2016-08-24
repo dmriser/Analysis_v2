@@ -39,7 +39,8 @@ class DBins
  public:
   void refresh();
   void operator=(const DBins *);
-  
+  void operator=(DBins);
+    
   // Setters
   void set_min(double);
   void set_max(double);
@@ -51,6 +52,7 @@ class DBins
   double min(){ return kMin; }
   double max(){ return kMax; }
   double width(){ return kWidth; }
+  double bin_center(int);
   std::vector<double> get_bins(){ return kBins; } 
   
 };

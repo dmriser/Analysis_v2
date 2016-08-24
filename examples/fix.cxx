@@ -1,19 +1,29 @@
 #include <iostream>
 using namespace std; 
 
-#include "ElectronIDPackage.h"
+#include "DBins.h"
 
 int main(int argc, char * argv[])
 {
 
-  if ( argc < 2 ) { exit(0); } 
+  DBins firstBins(100, 34, 53);
+  DBins secondBins; 
+  secondBins = firstBins;
 
-  ElectronIDManager eid; 
+  cout << " First Bins: " << firstBins.number() << " " << firstBins.min() << " " << firstBins.max() << endl;
+  cout << " Second Bins: " << secondBins.number() << " " << secondBins.min() << " " << secondBins.max() << endl; 
+
+  secondBins.set_number(20);
+  secondBins.set_min(10);
+  secondBins.set_max(11);
   
-  for (int iarg=1; iarg<argc; iarg++) { eid.AddFile(argv[iarg]); }
-  eid.set_parfile("test_pars.dat");
-  eid.init();
-  eid.calculate_values();
+  cout << " First Bins: " << firstBins.number() << " " << firstBins.min() << " " << firstBins.max() << endl;
+  cout << " Second Bins: " << secondBins.number() << " " << secondBins.min() << " " << secondBins.max() << " " << secondBins.width() << endl; 
+
+  secondBins.refresh();
+  
+  cout << " First Bins: " << firstBins.number() << " " << firstBins.min() << " " << firstBins.max() << endl;
+  cout << " Second Bins: " << secondBins.number() << " " << secondBins.min() << " " << secondBins.max() << " " << secondBins.width() << endl; 
   
   return 0;
 }

@@ -34,7 +34,7 @@ class DEvent
   // Datatypes
  public:
   int e_index; 
-  double qq, mm2, w; 
+  double qq, mm2, x, w; 
   TLorentzVector target;
   TLorentzVector beam;
   TLorentzVector electron;

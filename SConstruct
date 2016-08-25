@@ -4,9 +4,9 @@ import os, glob
 
 env = Environment(ENV = {'PATH':os.environ['PATH']})
 env.ParseConfig("root-config --glibs --cflags")
-env.Append(CCFLAGS = ['-g','-lgfortran'])
-env['STATIC_AND_SHARED_OBJECTS_ARE_THE_SAME']=1
+env.Append(CCFLAGS = ['-g'])
 
 h22_sources  = glob.glob('h22/*.cxx')
-#h22_sources += glob.glob('models/elastic/*.o')
+h22_sources += glob.glob('momCorr/*.cxx')	
+
 env.SharedLibrary('lib/h22',h22_sources)

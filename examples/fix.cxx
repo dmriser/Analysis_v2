@@ -7,9 +7,12 @@ using namespace std;
 #include "DBins.h"
 #include "DISPackage.h"
 #include "Dumper.h"
+#include "MomCorr.h"
 
 int main(int argc, char * argv[])
 {
+  MomCorr_e1f momCorr("/Users/dmriser/Work/analysis/momCorr/"); 
+  
   int n_files = 1;
   if (argc > 1) { n_files = atoi(argv[1]);}  
   

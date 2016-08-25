@@ -45,6 +45,7 @@ h22Reader::~h22Reader()
 {
   fchain->Delete();
 }
+
 /**< AddList takes the name of a text file and adds an integer nfiles from that list to the current TChain */
 void h22Reader::AddList(string _file, int nfiles)
 {

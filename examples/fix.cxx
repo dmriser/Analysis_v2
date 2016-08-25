@@ -23,14 +23,14 @@ int main(int argc, char * argv[])
   // Binning Scheme 
   DBins xBins(10, 0.05, 1.05);
   DBins qqBins(10, 0.5, 6.0); 
-  DBins wBins(10, 0.5, 6.0); 
+  DBins wBins(4, 0.5, 6.0); 
 
   DISManager manager; 
   manager.add_files(data_files, 0);
   manager.add_files(mc_files,   1);
   manager.parfile[0] = "epars.dat";
   manager.parfile[1] = "epars.dat"; 
-  manager.outfile = "fix.root";
+  manager.outfile = "fix";
   manager.eid_version = 0; 
   
   manager.set_bins(xBins, qqBins, wBins);
@@ -48,6 +48,7 @@ int main(int argc, char * argv[])
   manager.loop(0);
   manager.loop(1);
   manager.dis_selector.summarize(); 
+  manager.histos.draw();
   manager.histos.save();
   
   if (manager.eid_version == 1) {

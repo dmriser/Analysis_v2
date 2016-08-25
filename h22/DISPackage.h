@@ -77,6 +77,7 @@ class DISHistograms
   std::vector<std::vector<TH1F*> > h1_xs_qq_by_w;
   
   // Member Functions
+  void draw();
   void fill(DEvent, int); /** Pass in the event and the type data or monte carlo */
   void fill_gen(DEvent); /** Just pass in the generated event */
   void init();

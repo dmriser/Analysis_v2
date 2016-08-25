@@ -27,9 +27,12 @@ using namespace std;
 #include "NathanArchive.h"
 
 //  root includes
+#include "TCanvas.h"
 #include "TFile.h"
 #include "TH1.h"
+#include "TLatex.h"
 #include "TLorentzVector.h"
+#include "TStyle.h"
 
 ////////////////////////////////////////////////////////////////////////
 /*
@@ -465,9 +468,164 @@ void DISHistograms::fill_gen(DEvent event)
   
 }
 
+void DISHistograms::draw()
+{
+  // Draw Histograms 
+  TCanvas * canvas = new TCanvas("canvas","",1200,800);
+
+  // Standard
+  gStyle->SetOptStat(0);
+  gStyle->SetOptFit(0);
+  gStyle->SetOptTitle(0);
+
+  // Latex Writer
+  TLatex lab;
+  lab.SetNDC();
+  lab.SetTextFont(22);
+  
+  canvas->Print( Form("%s.pdf[",output_name.c_str()) );
+  canvas->Clear();
+
+  int can_size = floor(sqrt(h1_hits_x_by_qq[0].size()));
+  
+  // Hits x-by-qq
+  for (int s=0; s<7; s++)
+    {
+      canvas->Divide(can_size+1, can_size);
+      for (int b=0; b<h1_hits_x_by_qq[s].size()-1; b++)
+	{
+	  canvas->cd(b+1);
+
+	  double qq_start = qqBins.min() + (b-1)*qqBins.width();
+	  double qq_end   = qqBins.min() + b*qqBins.width();
+	  if (b == 0) { qq_start = qqBins.min(); qq_end = qqBins.max(); }
+
+	  h1_hits_x_by_qq[s][b]->SetMarkerStyle(8);
+	  h1_hits_x_by_qq[s][b]->Draw("PE");
+	  lab.DrawLatex(0.3, 0.02, Form(" Hits (x): Sector %d Bin %d ",s,b));
+	  lab.DrawLatex(0.25, 0.925, Form(" Q^{2} (%.2f #rightarrow %.2f) GeV^{2}/c^{2} ",qq_start, qq_end));
+	}
+
+      canvas->Print( Form("%s.pdf",output_name.c_str()) );
+      canvas->Clear();
+    }
+
+  // Rec. x-by-qq
+  for (int s=0; s<7; s++)
+    {
+      canvas->Divide(can_size+1, can_size);
+      for (int b=0; b<h1_rec_x_by_qq[s].size()-1; b++)
+	{
+	  canvas->cd(b+1);
+
+	  double qq_start = qqBins.min() + (b-1)*qqBins.width();
+	  double qq_end   = qqBins.min() + b*qqBins.width();
+	  if (b == 0) { qq_start = qqBins.min(); qq_end = qqBins.max(); }
+
+	  h1_rec_x_by_qq[s][b]->SetMarkerStyle(8);
+	  h1_rec_x_by_qq[s][b]->Draw("PE");
+	  lab.DrawLatex(0.3, 0.02, Form(" Rec (x): Sector %d Bin %d ",s,b));
+	  lab.DrawLatex(0.25, 0.925, Form(" Q^{2} (%.2f #rightarrow %.2f) GeV^{2}/c^{2} ",qq_start, qq_end));
+	}
+
+      canvas->Print( Form("%s.pdf",output_name.c_str()) );
+      canvas->Clear();
+    }
+
+  // Gen x-by-qq
+  for (int s=0; s<7; s++)
+    {
+      canvas->Divide(can_size+1, can_size);
+      for (int b=0; b<h1_gen_x_by_qq[s].size()-1; b++)
+	{
+	  canvas->cd(b+1);
+
+	  double qq_start = qqBins.min() + (b-1)*qqBins.width();
+	  double qq_end   = qqBins.min() + b*qqBins.width();
+	  if (b == 0) { qq_start = qqBins.min(); qq_end = qqBins.max(); }
+
+	  h1_gen_x_by_qq[s][b]->SetMarkerStyle(8);
+	  h1_gen_x_by_qq[s][b]->Draw("PE");
+	  lab.DrawLatex(0.3, 0.02, Form(" Gen (x): Sector %d Bin %d ",s,b));
+	  lab.DrawLatex(0.25, 0.925, Form(" Q^{2} (%.2f #rightarrow %.2f) GeV^{2}/c^{2} ",qq_start, qq_end));
+	}
+
+      canvas->Print( Form("%s.pdf",output_name.c_str()) );
+      canvas->Clear();
+    }
+
+  // Acc x-by-qq
+  for (int s=0; s<7; s++)
+    {
+      canvas->Divide(can_size+1, can_size);
+      for (int b=0; b<h1_acc_x_by_qq[s].size()-1; b++)
+	{
+	  canvas->cd(b+1);
+
+	  double qq_start = qqBins.min() + (b-1)*qqBins.width();
+	  double qq_end   = qqBins.min() + b*qqBins.width();
+	  if (b == 0) { qq_start = qqBins.min(); qq_end = qqBins.max(); }
+
+	  h1_acc_x_by_qq[s][b]->SetMarkerStyle(8);
+	  h1_acc_x_by_qq[s][b]->Draw("PE");
+	  lab.DrawLatex(0.3, 0.02, Form(" Acc (x): Sector %d Bin %d ",s,b));
+	  lab.DrawLatex(0.25, 0.925, Form(" Q^{2} (%.2f #rightarrow %.2f) GeV^{2}/c^{2} ",qq_start, qq_end));
+	}
+
+      canvas->Print( Form("%s.pdf",output_name.c_str()) );
+      canvas->Clear();
+    }
+
+  // Raw XS x-by-qq
+  for (int s=0; s<7; s++)
+    {
+      canvas->Divide(can_size+1, can_size);
+      for (int b=0; b<h1_rxs_x_by_qq[s].size()-1; b++)
+	{
+	  canvas->cd(b+1);
+
+	  double qq_start = qqBins.min() + (b-1)*qqBins.width();
+	  double qq_end   = qqBins.min() + b*qqBins.width();
+	  if (b == 0) { qq_start = qqBins.min(); qq_end = qqBins.max(); }
+
+	  h1_rxs_x_by_qq[s][b]->SetMarkerStyle(8);
+	  h1_rxs_x_by_qq[s][b]->Draw("PE");
+	  lab.DrawLatex(0.3, 0.02, Form(" #sigma_{raw} (x): Sector %d Bin %d ",s,b));
+	  lab.DrawLatex(0.25, 0.925, Form(" Q^{2} (%.2f #rightarrow %.2f) GeV^{2}/c^{2} ",qq_start, qq_end));
+	}
+
+      canvas->Print( Form("%s.pdf",output_name.c_str()) );
+      canvas->Clear();
+    }
+
+  // xs x-by-qq
+  for (int s=0; s<7; s++)
+    {
+      canvas->Divide(can_size+1, can_size);
+      for (int b=0; b<h1_xs_x_by_qq[s].size()-1; b++)
+	{
+	  canvas->cd(b+1);
+
+	  double qq_start = qqBins.min() + (b-1)*qqBins.width();
+	  double qq_end   = qqBins.min() + b*qqBins.width();
+	  if (b == 0) { qq_start = qqBins.min(); qq_end = qqBins.max(); }
+
+	  h1_xs_x_by_qq[s][b]->SetMarkerStyle(8);
+	  h1_xs_x_by_qq[s][b]->Draw("PE");
+	  lab.DrawLatex(0.3, 0.02, Form(" #sigma (x): Sector %d Bin %d ",s,b));
+	  lab.DrawLatex(0.25, 0.925, Form(" Q^{2} (%.2f #rightarrow %.2f) GeV^{2}/c^{2} ",qq_start, qq_end));
+	}
+
+      canvas->Print( Form("%s.pdf",output_name.c_str()) );
+      canvas->Clear();
+    }
+
+  canvas->Print( Form("%s.pdf]",output_name.c_str()) );
+}
+
 void DISHistograms::save()
 {
-  TFile out(output_name.c_str(),"recreate");
+  TFile out(Form("%s.root",output_name.c_str()),"recreate");
 
   for (int s=0; s<7; s++)
     {
@@ -532,6 +690,9 @@ DISManager::DISManager()
   qq_cut = new VirtualityCut();
   w_cut = new WCut(); 
 
+  xBins  = DBins(100,0,1);
+  qqBins = DBins(100,0,6);
+  wBins  = DBins(100,0,6);
 }
 
 DISManager::~DISManager()

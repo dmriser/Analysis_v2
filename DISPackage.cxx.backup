@@ -21,7 +21,6 @@ using namespace std;
 #include "DBins.h"
 #include "DCut.h"
 #include "DEvent.h"
-#include "DInformation.h"
 #include "DISPackage.h"
 #include "DSelection.h"
 #include "ElectronIDPackage.h"
@@ -33,9 +32,7 @@ using namespace std;
 #include "TH1.h"
 #include "TLatex.h"
 #include "TLorentzVector.h"
-#include "TRegexp.h"
 #include "TStyle.h"
-#include "TString.h"
 
 ////////////////////////////////////////////////////////////////////////
 /*
@@ -689,7 +686,6 @@ DISManager::DISManager()
   parfile[1]  = "unset";
 
   eid_version = 0;
-  fcup_charge = 0.00; 
   
   qq_cut = new VirtualityCut();
   w_cut = new WCut(); 
@@ -697,8 +693,6 @@ DISManager::DISManager()
   xBins  = DBins(100,0,1);
   qqBins = DBins(100,0,6);
   wBins  = DBins(100,0,6);
-
-  infofile = "unset";
 }
 
 DISManager::~DISManager()
@@ -706,43 +700,13 @@ DISManager::~DISManager()
   // Destruir todo. 
 }
 
-void DISManager::get_charge(vector<string> files)
-{
-  cout << " Getting charge from database file. " << endl;
-
-  if ( !info.has_information() ){
-    cout << " Error opening database for load! " << endl;
-    return;
-  } 
-  
-  TRegexp regex("[1-9][0-9][0-9][0-9][0-9]");
-
-  cout.width(12); cout << " runno: ";
-  cout.width(12); cout << " charge: ";
-  cout.width(12); cout << " tot charge: ";
-  cout.width(12); cout << " events: " << endl;
-  
-  for (int f=0; f<files.size(); f++)
-    {
-      TString file(files[f]);
-      TString srunno = file(regex);
-      int runno      = srunno.Atoi();
-      double charge  = (double) info.info[runno].dQ/info.info[runno].daq_scale;
-      fcup_charge    += charge;
-      cout.width(12); cout << runno;
-      cout.width(12); cout << charge;
-      cout.width(12); cout << fcup_charge;
-      cout.width(12); cout << info.info[runno].dN << endl; 
-    }
-}
-
 void DISManager::init()
 {
   // Warning for not setting parameters.  
-  if (parfile[0] == "unset" || parfile[1] == "unset" || outfile == "unset" || infofile == "unset")
+  if (parfile[0] == "unset" || parfile[1] == "unset" || outfile == "unset")
     {
       cout << " Warning: Not all parameters have been set before initializing! " << endl;
-      cout << " parfile[0] = " << parfile[0] << " parfile[1] = " << parfile[1] << " outfile = " << outfile << " infofile = " << infofile << endl;  
+      cout << " parfile[0] = " << parfile[0] << " parfile[1] = " << parfile[1] << " outfile = " << outfile << endl;  
     }
 
   reader[0].Init();
@@ -767,9 +731,7 @@ void DISManager::init()
   // Adding Cuts 
   dis_selector.add_cut( qq_cut );
   dis_selector.add_cut( w_cut );
-
-  // Loading information for runs
-  info.load(infofile);
+  
 }
 
 void DISManager::add_files(vector<string> files, int index)
@@ -783,8 +745,6 @@ void DISManager::loop(int index)
   int nev = reader[index].GetEntries(); 
   int runno = reader[index].runno(); 
   
-  cout << " Starting DISManager::loop() for index " << index << " with " << nev << " entries, using eid version " << eid_version << endl;  
-
   if (eid_version == 0) { 
     for (int iev=0; iev<nev; iev++)
       {

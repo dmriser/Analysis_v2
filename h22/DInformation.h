@@ -26,6 +26,8 @@ struct DInfo
   int runno;
   int dQ;
   int dN; 
+  int daq_scale; 
+  double beam_energy;
 };
 
 class DInformation

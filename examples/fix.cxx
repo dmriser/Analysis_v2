@@ -31,6 +31,7 @@ int main(int argc, char * argv[])
   manager.parfile[0] = "epars.dat";
   manager.parfile[1] = "epars.dat"; 
   manager.outfile = "fix";
+  manager.infofile = "runs.info";
   manager.eid_version = 0; 
   
   manager.set_bins(xBins, qqBins, wBins);
@@ -48,6 +49,7 @@ int main(int argc, char * argv[])
   manager.loop(0);
   manager.loop(1);
   manager.dis_selector.summarize(); 
+  manager.get_charge(data_files); 
   manager.histos.draw();
   manager.histos.save();
   
@@ -56,7 +58,7 @@ int main(int argc, char * argv[])
     manager.eid[1].summarize(); 
   }
 
-
+  cout << " Total charge in (uC): " << manager.fcup_charge << endl; 
   
   return 0;
 }

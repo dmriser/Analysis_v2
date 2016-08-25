@@ -20,8 +20,9 @@
 #include "DBins.h"
 #include "DCut.h"
 #include "DEvent.h"
+#include "DInformation.h"
 #include "DSelection.h"
-#include "ELectronIDPackage.h"
+#include "ElectronIDPackage.h"
 #include "NathanArchive.h"
 
 //  root includes
@@ -101,11 +102,14 @@ class DISManager
   ~DISManager();
 
   // Data Types
-  int eid_version; 
+  int eid_version;
+  double fcup_charge; 
   std::string parfile[2]; 
   std::string outfile;
+  std::string infofile; 
   
   DBins xBins, qqBins, wBins; 
+  DInformation info; 
   DISHistograms histos; 
   DSelection dis_selector; 
   ElectronSelector eid[2];
@@ -119,7 +123,8 @@ class DISManager
   void init();
   void set_bins(DBins x, DBins qq, DBins w){ xBins = x; qqBins = qq; wBins = w; }
   void loop(int); 
-  
+  void do_xs();
+  void get_charge(std::vector<std::string>);
 };
 
 

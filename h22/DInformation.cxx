@@ -61,6 +61,10 @@ void DInformation::load(string db_file)
 		  incoming_info.dQ = atoi(buffer.c_str());
 		case 2:
 		  incoming_info.dN = atoi(buffer.c_str());
+		case 3:
+		  incoming_info.daq_scale = atoi(buffer.c_str());
+		case 4:
+		  incoming_info.beam_energy = atof(buffer.c_str());
 		}
 
 	      i++;
@@ -68,7 +72,9 @@ void DInformation::load(string db_file)
 	  
 	  info[incoming_info.runno].runno = incoming_info.runno; 
 	  info[incoming_info.runno].dQ = incoming_info.dQ;
-	  info[incoming_info.runno].dN = incoming_info.dN; 
+	  info[incoming_info.runno].dN = incoming_info.dN;
+	  info[incoming_info.runno].daq_scale = incoming_info.daq_scale;
+	  info[incoming_info.runno].beam_energy = incoming_info.beam_energy; 
 
 	}
     }

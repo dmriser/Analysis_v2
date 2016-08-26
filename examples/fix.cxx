@@ -24,9 +24,9 @@ int main(int argc, char * argv[])
   while( getline(data_list, line) && ifile < n_files){ data_files.push_back(line); ifile++; }  data_list.close();
 
   // Binning Scheme 
-  DBins xBins(10, 0.05, 1.05);
-  DBins qqBins(10, 0.5, 6.0); 
-  DBins wBins(4, 0.5, 6.0); 
+  DBins xBins(35, 0.05, 1.05);
+  DBins qqBins(35, 0.5, 6.0); 
+  DBins wBins(2, 0.5, 6.0); 
 
   DISManager manager; 
   manager.add_files(data_files, 0);

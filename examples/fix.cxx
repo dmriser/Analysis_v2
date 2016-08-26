@@ -24,9 +24,8 @@ int main(int argc, char * argv[])
   while( getline(data_list, line) && ifile < n_files){ data_files.push_back(line); ifile++; }  data_list.close();
 
   // Binning Scheme 
-  DBins xBins(35, 0.05, 1.05);
-  DBins qqBins(35, 0.5, 6.0); 
-  DBins wBins(2, 0.5, 6.0); 
+  DBins xBins(40, 0.05, 1.05);
+  DBins qqBins(10, 1.0, 5.0); 
 
   DISManager manager; 
   manager.add_files(data_files, 0);
@@ -37,10 +36,10 @@ int main(int argc, char * argv[])
   manager.infofile = "runs.info";
   manager.eid_version = 0; 
   
-  manager.set_bins(xBins, qqBins, wBins);
+  manager.set_bins(xBins, qqBins);
   manager.qq_cut->set_min(1.0);
   manager.qq_cut->set_max(50.0);
-  manager.w_cut ->set_min(1.0);
+  manager.w_cut ->set_min(2.05);
   manager.w_cut ->set_max(50.0);  
   manager.init();
   
@@ -53,6 +52,7 @@ int main(int argc, char * argv[])
   manager.loop(1);
   manager.dis_selector.summarize(); 
   manager.get_charge(data_files); 
+  manager.do_xs();
   manager.histos.draw();
   manager.histos.save();
   

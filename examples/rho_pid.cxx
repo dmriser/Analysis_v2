@@ -48,7 +48,8 @@ int main(int argc, char * argv[])
 
     // Setup Reader
     h22Reader fReader(GSIM);
-    for (auto it=opts.ifiles.begin(); it<opts.ifiles.end(); it++) { fReader.AddFile(*it); }
+    vector<string>::iterator it; 
+    for (it=opts.ifiles.begin(); it<opts.ifiles.end(); it++) { fReader.AddFile(*it); }
     fReader.Init();
 
     // If you ask for more the loop will analyze garbage

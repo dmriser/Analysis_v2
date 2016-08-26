@@ -7,15 +7,10 @@ int main()
 {
 
   DBinsAsymmetric b;
-  b.add_bin(0.00);
-  b.add_bin(1.00);
-  b.add_bin(2.05);
-  b.add_bin(4.50);
-  b.add_bin(4.607);
-  b.add_bin(5.0);
-  b.add_bin(6.40);
-  b.add_bin(9.60);
-  b.add_bin(123.2340);
+  b.add_bin_edge(0.00);
+  b.add_bin_edge(1.00);
+  b.add_bin_edge(2.05);
+  b.add_bin_edge(123.2340);
 
   cout << " Found " << b.number() << " bins. " << endl;
   cout.width(12); cout << " Min ";

@@ -46,7 +46,7 @@ class DISHistograms
   std::string output_name;
   std::string sect[7];
   
-  DBins xBins; DBins qqBins; DBins wBins; 
+  DBins xBins; DBins qqBins; 
 
   // Histograms
   std::vector<std::vector<TH1F*> > h1_gen_x_by_qq;
@@ -55,7 +55,8 @@ class DISHistograms
   std::vector<std::vector<TH1F*> > h1_acc_x_by_qq;
   std::vector<std::vector<TH1F*> > h1_rxs_x_by_qq;
   std::vector<std::vector<TH1F*> > h1_xs_x_by_qq;
-  
+
+  /*
   std::vector<std::vector<TH1F*> > h1_gen_x_by_w;
   std::vector<std::vector<TH1F*> > h1_rec_x_by_w;
   std::vector<std::vector<TH1F*> > h1_hits_x_by_w;
@@ -76,13 +77,14 @@ class DISHistograms
   std::vector<std::vector<TH1F*> > h1_acc_qq_by_w;
   std::vector<std::vector<TH1F*> > h1_rxs_qq_by_w;
   std::vector<std::vector<TH1F*> > h1_xs_qq_by_w;
+  */
   
   // Member Functions
   void draw();
   void fill(DEvent, int); /** Pass in the event and the type data or monte carlo */
   void fill_gen(DEvent); /** Just pass in the generated event */
   void init();
-  void set_bins(DBins x, DBins qq, DBins w){ xBins = x; qqBins = qq; wBins = w; }
+  void set_bins(DBins x, DBins qq){ xBins = x; qqBins = qq; }
   void save();
   
 };
@@ -108,7 +110,7 @@ class DISManager
   std::string outfile;
   std::string infofile; 
   
-  DBins xBins, qqBins, wBins; 
+  DBins xBins, qqBins; 
   DInformation info; 
   DISHistograms histos; 
   DSelection dis_selector; 
@@ -121,7 +123,7 @@ class DISManager
   // Member Functions
   void add_files(std::vector<std::string>, int);
   void init();
-  void set_bins(DBins x, DBins qq, DBins w){ xBins = x; qqBins = qq; wBins = w; }
+  void set_bins(DBins x, DBins qq){ xBins = x; qqBins = qq; }
   void loop(int); 
   void do_xs();
   void get_charge(std::vector<std::string>);

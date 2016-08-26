@@ -70,7 +70,7 @@ void DISHistograms::init()
   // Generated Events for x-by-qq
   for (int s=0; s<7; s++) {
     vector<TH1F*> v;
-    for (int b=0; b<(xBins.number()+1); b++)
+    for (int b=0; b<(qqBins.number()+1); b++)
       {
 	string name  = Form("h1_gen_x_by_qq_%d_%s",b,sect[s].c_str());
 	string title = Form("gen x-by-qq for bin %d of %s",b,sect[s].c_str());
@@ -82,7 +82,7 @@ void DISHistograms::init()
   // Reconstructed Events for x-by-qq
   for (int s=0; s<7; s++) {
     vector<TH1F*> v;
-    for (int b=0; b<(xBins.number()+1); b++)
+    for (int b=0; b<(qqBins.number()+1); b++)
       {
 	string name  = Form("h1_rec_x_by_qq_%d_%s",b,sect[s].c_str());
 	string title = Form("rec x-by-qq for bin %d of %s",b,sect[s].c_str());
@@ -94,7 +94,7 @@ void DISHistograms::init()
   // Data Events for x-by-qq
   for (int s=0; s<7; s++) {
     vector<TH1F*> v;
-    for (int b=0; b<(xBins.number()+1); b++)
+    for (int b=0; b<(qqBins.number()+1); b++)
       {
 	string name  = Form("h1_hits_x_by_qq_%d_%s",b,sect[s].c_str());
 	string title = Form("hits x-by-qq for bin %d of %s",b,sect[s].c_str());
@@ -106,7 +106,7 @@ void DISHistograms::init()
   // Acceptance for x-by-qq
   for (int s=0; s<7; s++) {
     vector<TH1F*> v;
-    for (int b=0; b<(xBins.number()+1); b++)
+    for (int b=0; b<(qqBins.number()+1); b++)
       {
 	string name  = Form("h1_acc_x_by_qq_%d_%s",b,sect[s].c_str());
 	string title = Form("Acc. x-by-qq for bin %d of %s",b,sect[s].c_str());
@@ -118,7 +118,7 @@ void DISHistograms::init()
   // rxs for x-by-qq
   for (int s=0; s<7; s++) {
     vector<TH1F*> v;
-    for (int b=0; b<(xBins.number()+1); b++)
+    for (int b=0; b<(qqBins.number()+1); b++)
       {
 	string name  = Form("h1_rxs_x_by_qq_%d_%s",b,sect[s].c_str());
 	string title = Form("rxs x-by-qq for bin %d of %s",b,sect[s].c_str());
@@ -130,7 +130,7 @@ void DISHistograms::init()
   // xs for x-by-qq
   for (int s=0; s<7; s++) {
     vector<TH1F*> v;
-    for (int b=0; b<(xBins.number()+1); b++)
+    for (int b=0; b<(qqBins.number()+1); b++)
       {
 	string name  = Form("h1_xs_x_by_qq_%d_%s",b,sect[s].c_str());
 	string title = Form("xs x-by-qq for bin %d of %s",b,sect[s].c_str());
@@ -139,6 +139,7 @@ void DISHistograms::init()
     h1_xs_x_by_qq.push_back(v);
   }
 
+  /*
   // Generated Events for x-by-w
   for (int s=0; s<7; s++) {
     vector<TH1F*> v;
@@ -359,6 +360,7 @@ void DISHistograms::init()
       }
     h1_xs_qq_by_w.push_back(v);
   }
+  */
 }
 
 void DISHistograms::fill(DEvent event, int index)
@@ -368,11 +370,10 @@ void DISHistograms::fill(DEvent event, int index)
   int s = event.tracks.dc_sect[event.e_index];
   int xbin  = 1+xBins .find_bin( event.x );
   int qqbin = 1+qqBins.find_bin( event.qq);
-  int wbin  = 1+wBins .find_bin( event.w );
 
   // Protect agaisnt Seg fault 
-  if (xbin < 0 || qqbin < 0 || wbin < 0) return;
-  if (xbin >= xBins.number() || qqbin >= qqBins.number() || wbin >= wBins.number()) return; 
+  if (xbin < 0 || qqbin < 0 ) return;
+  if (xbin >= xBins.number() || qqbin >= qqBins.number()) return; 
 
   // Monte Carlo 
   if (index == 1) {
@@ -381,7 +382,7 @@ void DISHistograms::fill(DEvent event, int index)
     h1_rec_x_by_qq[s][0]     ->Fill(event.x);
     h1_rec_x_by_qq[s][qqbin] ->Fill(event.x);
 
-
+    /*
     h1_rec_x_by_w[0][0]    ->Fill(event.x);
     h1_rec_x_by_w[0][wbin]    ->Fill(event.x);
     h1_rec_x_by_w[s][0]    ->Fill(event.x);
@@ -396,7 +397,7 @@ void DISHistograms::fill(DEvent event, int index)
     h1_rec_qq_by_w[0][wbin]    ->Fill(event.qq);
     h1_rec_qq_by_w[s][0]    ->Fill(event.qq);
     h1_rec_qq_by_w[s][wbin] ->Fill(event.qq);
-
+    */
   }
 
   // Data Events
@@ -405,7 +406,7 @@ void DISHistograms::fill(DEvent event, int index)
     h1_hits_x_by_qq[0][qqbin]     ->Fill(event.x);
     h1_hits_x_by_qq[s][0]     ->Fill(event.x);
     h1_hits_x_by_qq[s][qqbin] ->Fill(event.x);
-
+    /*
     h1_hits_x_by_w[0][0]    ->Fill(event.x);
     h1_hits_x_by_w[0][wbin]    ->Fill(event.x);
     h1_hits_x_by_w[s][0]    ->Fill(event.x);
@@ -420,6 +421,7 @@ void DISHistograms::fill(DEvent event, int index)
     h1_hits_qq_by_w[0][wbin]    ->Fill(event.qq);
     h1_hits_qq_by_w[s][0]    ->Fill(event.qq);
     h1_hits_qq_by_w[s][wbin] ->Fill(event.qq);
+    */
   }
 
 }
@@ -443,17 +445,16 @@ void DISHistograms::fill_gen(DEvent event)
   int s = floor(event.tracks.mcphi[e_index]/60) +1; 
   int xbin  = 1+xBins .find_bin( event.x );
   int qqbin = 1+qqBins.find_bin( event.qq);
-  int wbin  = 1+wBins .find_bin( event.w );
 
   // Protect agaisnt Seg fault 
-  if (xbin < 0 || qqbin < 0 || wbin < 0) return;
-  if (xbin >= xBins.number() || qqbin >= qqBins.number() || wbin >= wBins.number()) return; 
+  if (xbin < 0 || qqbin < 0 ) return;
+  if (xbin >= xBins.number() || qqbin >= qqBins.number() ) return;
 
   h1_gen_x_by_qq[0][0]     ->Fill(event.x);
   h1_gen_x_by_qq[0][qqbin] ->Fill(event.x);
   h1_gen_x_by_qq[s][0]     ->Fill(event.x);
   h1_gen_x_by_qq[s][qqbin] ->Fill(event.x);
-  
+  /*
   h1_gen_x_by_w[0][0]    ->Fill(event.x);
   h1_gen_x_by_w[0][wbin] ->Fill(event.x);
   h1_gen_x_by_w[s][0]    ->Fill(event.x);
@@ -468,7 +469,7 @@ void DISHistograms::fill_gen(DEvent event)
   h1_gen_qq_by_w[0][wbin] ->Fill(event.qq);
   h1_gen_qq_by_w[s][0]    ->Fill(event.qq);
   h1_gen_qq_by_w[s][wbin] ->Fill(event.qq);
-  
+  */
 }
 
 void DISHistograms::draw()
@@ -632,6 +633,7 @@ void DISHistograms::save()
 
   for (int s=0; s<7; s++)
     {
+      /*
       for (int b=0; b<=xBins.number(); b++)
 	{
 	  h1_hits_qq_by_x[s][b] ->Write();
@@ -641,7 +643,7 @@ void DISHistograms::save()
 	  h1_rxs_qq_by_x[s][b] ->Write();
 	  h1_xs_qq_by_x[s][b] ->Write();
 	}
-      
+      */
       for (int b=0; b<=qqBins.number(); b++)
 	{
 	  h1_hits_x_by_qq[s][b] ->Write();
@@ -651,7 +653,7 @@ void DISHistograms::save()
 	  h1_rxs_x_by_qq[s][b] ->Write();
 	  h1_xs_x_by_qq[s][b] ->Write();
 	}
-
+      /*
       for (int b=0; b<=wBins.number(); b++)
 	{
 	  h1_hits_x_by_w[s][b]  ->Write();
@@ -667,6 +669,7 @@ void DISHistograms::save()
 	  h1_rec_qq_by_w[s][b]  ->Write();
 	  h1_gen_qq_by_w[s][b]  ->Write();
 	}
+      */
     }
 
   out.Write();
@@ -696,7 +699,6 @@ DISManager::DISManager()
 
   xBins  = DBins(100,0,1);
   qqBins = DBins(100,0,6);
-  wBins  = DBins(100,0,6);
 
   infofile = "unset";
 }
@@ -752,7 +754,7 @@ void DISManager::init()
   
   // Setup Histograms
   histos.output_name = outfile; 
-  histos.set_bins(xBins, qqBins, wBins);
+  histos.set_bins(xBins, qqBins);
   histos.init();
 
   // Setting up ElectronSelector 
@@ -775,6 +777,44 @@ void DISManager::init()
 void DISManager::add_files(vector<string> files, int index)
 {
   for (int ifile=0; ifile<files.size(); ifile++) reader[index].AddFile(files[ifile]);
+}
+
+void DISManager::do_xs()
+{
+  string sect[7] = {"all","s1","s2","s3","s4","s5","s6"};
+
+  // Doing Cross Section
+  for (int s=0; s<7; s++)
+    {
+      for (int b=0; b<qqBins.number(); b++)
+	{
+	  histos.h1_hits_x_by_qq[s][b] ->Sumw2();
+	  histos.h1_rec_x_by_qq[s][b]  ->Sumw2();
+	  histos.h1_gen_x_by_qq[s][b]  ->Sumw2();
+
+	  string name  = Form("h1_acc_x_by_qq_%d_%s",b,sect[s].c_str());
+	  string title = Form("Acc. for x-by-qq Bin %d Sector %s",b,sect[s].c_str());
+	  histos.h1_acc_x_by_qq[s][b] = (TH1F*) histos.h1_rec_x_by_qq[s][b]->Clone();
+	  histos.h1_acc_x_by_qq[s][b]->Divide( histos.h1_gen_x_by_qq[s][b] ); 
+	  histos.h1_acc_x_by_qq[s][b]->SetTitle(title.c_str());
+	  histos.h1_acc_x_by_qq[s][b]->SetName(name.c_str());
+
+	  name  = Form("h1_rxs_x_by_qq_%d_%s",b,sect[s].c_str());
+	  title = Form("rxs for x-by-qq Bin %d Sector %s",b,sect[s].c_str());
+	  histos.h1_rxs_x_by_qq[s][b] = (TH1F*) histos.h1_hits_x_by_qq[s][b]->Clone();
+	  histos.h1_rxs_x_by_qq[s][b]->Divide( histos.h1_acc_x_by_qq[s][b] ); 
+	  histos.h1_rxs_x_by_qq[s][b]->SetTitle(title.c_str());
+	  histos.h1_rxs_x_by_qq[s][b]->SetName(name.c_str());
+
+	  name  = Form("h1_xs_x_by_qq_%d_%s",b,sect[s].c_str());
+	  title = Form("xs for x-by-qq Bin %d Sector %s",b,sect[s].c_str());
+	  histos.h1_xs_x_by_qq[s][b] = (TH1F*) histos.h1_rxs_x_by_qq[s][b]->Clone();
+	  histos.h1_xs_x_by_qq[s][b]->SetTitle(title.c_str());
+	  histos.h1_xs_x_by_qq[s][b]->SetName(name.c_str());
+	}
+    }
+  
+  
 }
 
 void DISManager::loop(int index)

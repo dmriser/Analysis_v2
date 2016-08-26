@@ -96,4 +96,73 @@ double DBins::bin_center(int ibin)
   
 }
 
+////////////////////////////////////////////////////////////////////////
+/*
+
+  DBinsAsymmetric 
+
+*/
+////////////////////////////////////////////////////////////////////////
+
+DBinsAsymmetric::DBinsAsymmetric()
+{
+  // Starting up 
+}
+
+DBinsAsymmetric::~DBinsAsymmetric()
+{
+  // Destroy 
+}
+
+int DBinsAsymmetric::find_bin(double value)
+{
+  
+  for (int ibin=0; ibin<bins.size(); ibin++)
+    {
+      if (value > bins[ibin] && value < bins[ibin+1]) return ibin;  
+    }
+
+  return -123;
+}
+
+double DBinsAsymmetric::width(int b)
+{
+  if (b > bins.size()) {
+    cout << " Warning: Trying to access bins that exceed length of DBinsAsymmetric::number()! " << endl;
+    return -123;
+  }
+
+  return (bins[b+1]-bins[b]);
+}
+
+double DBinsAsymmetric::center(int b)
+{
+  if (b > bins.size()) {
+    cout << " Warning: Trying to access bins that exceed length of DBinsAsymmetric::number()! " << endl;
+    return -123;
+  }
+
+  return bins[b]+(bins[b+1]-bins[b])/2;
+}
+
+double DBinsAsymmetric::min(int b)
+{
+  if (b > bins.size()) {
+    cout << " Warning: Trying to access bins that exceed length of DBinsAsymmetric::number()! " << endl;
+    return -123;
+  }
+
+  return (bins[b]);
+}
+
+double DBinsAsymmetric::max(int b)
+{
+  if (b > bins.size()) {
+    cout << " Warning: Trying to access bins that exceed length of DBinsAsymmetric::number()! " << endl;
+    return -123;
+  }
+
+  return (bins[b+1]);
+}
+
 #endif

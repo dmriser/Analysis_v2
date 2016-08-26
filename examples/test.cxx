@@ -36,8 +36,9 @@ int main(int argc, char * argv[])
     
     // Setup Reader
     h22Reader * fReader = new h22Reader(opts.args["MC"].arg);
-    
-    for (auto it=opts.ifiles.begin(); it<opts.ifiles.end(); it++) { fReader->AddFile(*it); }
+
+    vector<string>::iterator it; 
+    for (it=opts.ifiles.begin(); it<opts.ifiles.end(); it++) { fReader->AddFile(*it); }
     fReader->Init();
     
     // Setup particle filter

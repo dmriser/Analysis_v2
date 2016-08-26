@@ -57,4 +57,25 @@ class DBins
   
 };
 
+// For making asymmetric binning schemes 
+class DBinsAsymmetric
+{
+ public:
+  DBinsAsymmetric();
+  ~DBinsAsymmetric();
+
+  std::vector<double> bins;
+
+  int find_bin(double);
+  int number(){ return bins.size()-1; }
+
+  void add_bin_edge(double bin){ bins.push_back(bin); } 
+
+  double width(int);
+  double center(int);
+  double min(int);
+  double max(int);
+  
+};
+
 #endif

@@ -1,0 +1,42 @@
+
+ # Parameter File epars.dat Updated at Mon Aug 22 15:32:21 2016
+
+
+ # EC Sampling Fraction Cuts Ap^3 + Bp^2 + Cp + D 
+      ECSSA: -0.00127364   0.0082708  0.00512073-0.000192583 0.000917614 -0.00307302
+      ECSSB:     0.01502  -0.0343503  -0.0164378   0.0088732  0.00328416   0.0236757
+      ECSSC:  -0.0463738   0.0363299  0.00309874   -0.033011  -0.0284489  -0.0625923
+      ECSSD:   0.0716745   0.0455824   0.0515523   0.0704631   0.0688831   0.0856816
+      ECSMA:  0.00408263  -0.0108529 -0.00148523  -0.0042917 -0.00316001 0.000873359
+      ECSMB:  -0.0241205   0.0474359  0.00542216   0.0163869   0.0130418  -0.0107335
+      ECSMC:   0.0664552  -0.0341052   0.0225001  0.00576432   0.0051239   0.0520554
+      ECSMD:    0.240334    0.320074    0.279132    0.275583     0.26852    0.237536
+  ECSNSIGMA:         2.5         2.5         2.5         2.5         2.5         2.5
+
+ # EC Geometric Cuts U, V, W Coordinates 
+     ECUMIN:          70          70          70          70          70          70
+     ECVMIN:           0           0           0           0           0           0
+     ECWMIN:           0           0           0           0           0           0
+     ECUMAX:         400         400         400         400         400         400
+     ECVMAX:         362         362         362         362         362         362
+     ECWMAX:         395         395         395         395         395         395
+
+ # EC Inner - Minimum Energy Deposited 
+  ECEDEPMIN:        0.05
+
+ # Z-Vertex of Track Bounds  
+      VZMIN:    -27.7302
+      VZMAX:    -22.6864
+
+ # Number of Photoelectrons in Cherenkov Counter (x10)
+     CCNPHE:          25
+
+ # Cherenkov Counter Fid. Cuts A - B sqrt(1-rphi^2/360)
+     CCFIDA:          46
+     CCFIDB:          35
+
+ # Drift Chamber Region 1/3 Fiducial Height and Angle 
+   DCR1FIDH:          22
+   DCR1FIDA:          60
+   DCR3FIDH:          80
+   DCR3FIDA:          49

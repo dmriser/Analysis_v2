@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <iostream>
 using std::string; 
+
 #include "TROOT.h"
 #include "TLorentzVector.h"
 #include "MomCorr.h"
@@ -48,7 +49,7 @@ void MomCorr_e1f::read_theta_par() {
     sprintf(file, "%s/angles_s%d.out",path.c_str(),s);
     FILE *fp = fopen(&file[0], "r");
     if (fp) {
-      fprintf(stdout, "Theta Correction sector %d\n", s);
+      //      fprintf(stdout, "Theta Correction sector %d\n", s);
       for (Int_t j=0; j<ThetaC_n; j++) {
 	Double_t x, y;
 	Double_t a1,a2,a3;
@@ -60,7 +61,7 @@ void MomCorr_e1f::read_theta_par() {
 	  c0_theta[bin][s-1] = a1;
 	  c1_theta[bin][s-1] = a2; 
 	  c2_theta[bin][s-1] = a3;
-	  fprintf(stdout, "%6.2f     %12.8f  %12.8f  %12.8f \n", x, c0_theta[bin][s-1], c1_theta[bin][s-1], c2_theta[bin][s-1]);
+	  //	  fprintf(stdout, "%6.2f     %12.8f  %12.8f  %12.8f \n", x, c0_theta[bin][s-1], c1_theta[bin][s-1], c2_theta[bin][s-1]);
 	}
 
       }
@@ -71,6 +72,8 @@ void MomCorr_e1f::read_theta_par() {
       fprintf(stdout, "===>>> WARNING: Cannot read angle correction from file: %s\n", file);
 
   }
+  fprintf(stdout,"--> MomCorr theta parameters loaded. ");
+  
 }
 
 void MomCorr_e1f::read_mom_par() {
@@ -89,7 +92,7 @@ void MomCorr_e1f::read_mom_par() {
       sprintf(file, "%s/momentum2_s%d_c%d.out", path.c_str(),s, k);
       FILE *fp = fopen(&file[0], "r");
       if (fp) {
-	fprintf(stdout, "  Reading Parameter c%d\n", k);
+	//	fprintf(stdout, "  Reading Parameter c%d\n", k);
 	for (Int_t j=0; j<MomC_T_n; j++) {
 	  Double_t x1, y;
 	  Double_t a1,a2,a3,a4;
@@ -104,14 +107,14 @@ void MomCorr_e1f::read_mom_par() {
 	      c0_mom[bin][s-1][1] = a2; 
 	      c0_mom[bin][s-1][2] = a3;
 	      c0_mom[bin][s-1][3] = a4;
-	      fprintf(stdout, "%6.2f     %12.8f  %12.8f  %12.8f  %12.8f \n", x1, c0_mom[bin][s-1][0], c0_mom[bin][s-1][1], c0_mom[bin][s-1][2], c0_mom[bin][s-1][3]);
+	      //	      fprintf(stdout, "%6.2f     %12.8f  %12.8f  %12.8f  %12.8f \n", x1, c0_mom[bin][s-1][0], c0_mom[bin][s-1][1], c0_mom[bin][s-1][2], c0_mom[bin][s-1][3]);
 	    }
 	    else if (k==1) {
 	      c1_mom[bin][s-1][0] = a1;
 	      c1_mom[bin][s-1][1] = a2; 
 	      c1_mom[bin][s-1][2] = a3;
 	      c1_mom[bin][s-1][3] = a4;
-	      fprintf(stdout, "%6.2f     %12.8f  %12.8f  %12.8f  %12.8f \n", x1, c1_mom[bin][s-1][0], c1_mom[bin][s-1][1], c1_mom[bin][s-1][2], c1_mom[bin][s-1][3]);
+	      //	      fprintf(stdout, "%6.2f     %12.8f  %12.8f  %12.8f  %12.8f \n", x1, c1_mom[bin][s-1][0], c1_mom[bin][s-1][1], c1_mom[bin][s-1][2], c1_mom[bin][s-1][3]);
 	    }
 	  }
 
@@ -125,7 +128,7 @@ void MomCorr_e1f::read_mom_par() {
 
 
   }
-
+  fprintf(stdout,"--> MomCorr p parameters loaded. ");
 }
 
 void MomCorr_e1f::read_mom_pip_par() {

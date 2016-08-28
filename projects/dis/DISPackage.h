@@ -46,7 +46,7 @@ class DISHistograms
   std::string output_name;
   std::string sect[7];
   
-  DBins xBins; DBins qqBins; 
+  DBins xBins, qqBins; 
 
   // Histograms
   std::vector<std::vector<TH1F*> > h1_gen_x_by_qq;
@@ -109,6 +109,7 @@ class DISManager
   std::string parfile[2]; 
   std::string outfile;
   std::string infofile; 
+  std::string momcorr_path;
   
   DBins xBins, qqBins; 
   DInformation info; 

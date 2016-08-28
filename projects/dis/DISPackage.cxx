@@ -26,6 +26,7 @@ using namespace std;
 #include "DSelection.h"
 #include "ElectronIDPackage.h"
 #include "NathanArchive.h"
+#include "MomCorr.h"
 
 //  root includes
 #include "TCanvas.h"
@@ -624,6 +625,33 @@ void DISHistograms::draw()
       canvas->Clear();
     }
 
+  // rec & hits x-by-qq
+  for (int s=0; s<7; s++)
+    {
+      canvas->Divide(can_size+1, can_size);
+      for (int b=0; b<h1_rec_x_by_qq[s].size()-1; b++)
+	{
+	  canvas->cd(b+1);
+
+	  double qq_start = qqBins.min() + (b-1)*qqBins.width();
+	  double qq_end   = qqBins.min() + b*qqBins.width();
+	  if (b == 0) { qq_start = qqBins.min(); qq_end = qqBins.max(); }
+
+	  h1_rec_x_by_qq[s][b]->SetFillStyle(3004);
+	  h1_rec_x_by_qq[s][b]->SetFillColorAlpha(kRed,1.0);
+	  h1_rec_x_by_qq[s][b]->SetLineColor(kRed);
+	  h1_hits_x_by_qq[s][b]->Scale( 1/h1_hits_x_by_qq[s][b]->Integral() );
+	  h1_rec_x_by_qq[s][b]->Scale( 1/h1_rec_x_by_qq[s][b]->Integral() );
+	  h1_hits_x_by_qq[s][b]->Draw();
+	  h1_rec_x_by_qq[s][b]->Draw("HISTsame");
+	  lab.DrawLatex(0.3, 0.02, Form(" Hits & Rec Sector %d Bin %d ",s,b));
+	  lab.DrawLatex(0.25, 0.925, Form(" Q^{2} (%.2f #rightarrow %.2f) GeV^{2}/c^{2} ",qq_start, qq_end));
+	}
+
+      canvas->Print( Form("%s.pdf",output_name.c_str()) );
+      canvas->Clear();
+    }
+
   canvas->Print( Form("%s.pdf]",output_name.c_str()) );
 }
 
@@ -690,7 +718,8 @@ DISManager::DISManager()
   outfile     = "unset";
   parfile[0]  = "unset";
   parfile[1]  = "unset";
-
+  momcorr_path = "unset";
+  
   eid_version = 0;
   fcup_charge = 0.00; 
   
@@ -822,6 +851,8 @@ void DISManager::loop(int index)
   // General Setup 
   int nev = reader[index].GetEntries(); 
   int runno = reader[index].runno(); 
+
+  MomCorr_e1f momcorr(momcorr_path);
   
   cout << " Starting DISManager::loop() for index " << index << " with " << nev << " entries, using eid version " << eid_version << endl;  
 
@@ -839,7 +870,16 @@ void DISManager::loop(int index)
 	
 	int e_index = nathan.get_electron(event.tracks); 
 	if (e_index > -123) {
+	  
+ 	  TLorentzVector electron(event.tracks.p[e_index]*event.tracks.cx[e_index],
+				  event.tracks.p[e_index]*event.tracks.cy[e_index],
+				  event.tracks.p[e_index]*event.tracks.cz[e_index],
+				  event.tracks.p[e_index]);
+
+	  if (index == 0) { electron = momcorr.PcorN(electron, -1, 11); }
 	  event.set_e_index(e_index);
+	  event.set_electron(electron);
+	  
 	  if (dis_selector.passes(event, e_index)) histos.fill(event, index);
 	}
       }
@@ -860,7 +900,16 @@ void DISManager::loop(int index)
 	  
 	  if (eid[index].passes(event, 0))
 	    {
+	      // Doing Mom Corrections 
+	      TLorentzVector electron(event.tracks.p[0]*event.tracks.cx[0],
+				      event.tracks.p[0]*event.tracks.cy[0],
+				      event.tracks.p[0]*event.tracks.cz[0],
+				      event.tracks.p[0]);
+	      
+	      if (index == 0) { electron = momcorr.PcorN(electron, -1, 11); }
 	      event.set_e_index(0);
+	      event.set_electron(electron);
+
 	      if (dis_selector.passes(event, 0)) histos.fill(event, index);
 	    }
 	}

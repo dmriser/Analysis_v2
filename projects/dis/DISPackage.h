@@ -139,6 +139,8 @@ class DISManager
   void get_charge(std::vector<std::string>);
   void print_table(); 
 
+  int find_qq_bin(double,double);
+  int find_x_bin(double);
 };
 
 

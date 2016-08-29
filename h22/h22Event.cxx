@@ -20,6 +20,7 @@ using namespace std;
 
 // root includes
 #include "TVector3.h"
+#include "TLorentzVector.h"
 
 // my includes
 #include "h22Event.h"
@@ -55,6 +56,19 @@ double h22Event::mcrphi(int ipart)
     if (rphi > 330.00) rphi -= 360.00;
     rphi = rphi - 60*floor((rphi+30)/60);
     return rphi;
+}
+
+TLorentzVector h22Event::gen_particle(int pid)
+{
+  for (int ipart=0; ipart<gpart; ipart++)
+    {
+      if (mcid[ipart] == pid) {
+	return TLorentzVector(mcpx(ipart), mcpy(ipart), mcpz(ipart), mcp[ipart]);
+      }
+    }
+  
+  cout << " WARNING: GEN PARTICLE NOT FOUND! " << endl; 
+  return TLorentzVector(0,0,1000,1000); 
 }
 
 void h22Event::printEvent()

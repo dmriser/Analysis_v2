@@ -126,7 +126,7 @@ class DLineBins
   // Data Types
  private:
   int kUnderflow, kOverflow, kNumber; 
-  vector<DBin> bins; 
+  std::vector<DBin> bins; 
   
   
   // Member Functions 
@@ -152,7 +152,7 @@ class DPlaneBins
 
  private:
   DLineBins edge_bins;
-  vector<DLineBins> bins; 
+  std::vector<DLineBins> bins; 
 
  public:
   void SetEdgeBins(DLineBins b){ edge_bins = b; }

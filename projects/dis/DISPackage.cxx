@@ -911,16 +911,11 @@ void DISManager::loop(int index)
 	// Do generated for MC 
 	if (index == 1) {
 	  //	  histos.fill_gen(event);
-	  int gen_index = 0; 
-	  for (int ip=0; ip<event.tracks.gpart; ++ip){ if (event.tracks.mcid[ip] == 11) gen_index = ip; break; }
-	  TLorentzVector genElectron(event.tracks.mcpx(gen_index),event.tracks.mcpy(gen_index),event.tracks.mcpz(gen_index),event.tracks.mcp[gen_index]); 
-	  event.set_electron(genElectron); 
-	  int xb = -1, qqb = -1;
-	  for (int ibin=0; ibin<n_x_bins; ibin++){ if (event.x > xLims[ibin] && event.x < xLims[ibin+1]) { xb = ibin; break; } }
-	  
-	  if (xb > -1)
-	    for (int ibin=0; ibin<n_qq_bins; ibin++){ if (event.qq > qqLims[xb][ibin] && event.qq < qqLims[xb][ibin+1]) { qqb = ibin; break; } }
-	  
+
+	  //	  event.set_electron( event.tracks.gen_particle(11) );
+	  event.set_electron( TLorentzVector(event.tracks.mcpx(0), event.tracks.mcpy(0), event.tracks.mcpz(0), event.tracks.mcp[0])); 
+	  int xb  = find_x_bin(event.x);
+	  int qqb = find_qq_bin(event.x, event.qq); 
 	  if (xb > -1 && qqb > -1 ) gen[xb][qqb]++; 
 	}
 	
@@ -942,24 +937,15 @@ void DISManager::loop(int index)
 
 	    // Assigning this event to a bin. 
 	    if (index == 0) {
-	      int xb = -1, qqb = -1;
-	      for (int ibin=0; ibin<n_x_bins; ibin++){ if (event.x > xLims[ibin] && event.x < xLims[ibin+1]) { xb = ibin; break; } }
-
-	      if (xb > -1)
-		for (int ibin=0; ibin<n_qq_bins; ibin++){ if (event.qq > qqLims[xb][ibin] && event.qq < qqLims[xb][ibin+1]) { qqb = ibin; break; } }
-
+	      int xb  = find_x_bin(event.x);
+	      int qqb = find_qq_bin(event.x, event.qq); 
 	      if (xb > -1 && qqb > -1 ) hits[xb][qqb]++; 
 	    }
 	    
 	    else {
-	      int xb = -1, qqb = -1;
-	      for (int ibin=0; ibin<n_x_bins; ibin++){ if (event.x > xLims[ibin] && event.x < xLims[ibin+1]) { xb = ibin; break; } }
-	      
-	      if (xb > -1)
-		for (int ibin=0; ibin<n_qq_bins; ibin++){ if (event.qq > qqLims[xb][ibin] && event.qq < qqLims[xb][ibin+1]) { qqb = ibin; break; } }
-	      
+	      int xb  = find_x_bin(event.x);
+	      int qqb = find_qq_bin(event.x, event.qq); 
 	      if (xb > -1 && qqb > -1 ) rec[xb][qqb]++; 
-	      
 	    }
 	  }
 	}
@@ -1000,48 +986,52 @@ void DISManager::loop(int index)
 
 void DISManager::print_table()
 {
-  cout << " Hits " << endl; 
-  for (int i=0; i<n_x_bins; i++)
-    {
-      for (int j=0; j<n_qq_bins; j++)
-	{
-	  cout.width(8); cout << hits[i][j];
-	}
-      cout << endl; 
-    }
-
-  cout << " Reconstructed " << endl; 
-  for (int i=0; i<n_x_bins; i++)
-    {
-      for (int j=0; j<n_qq_bins; j++)
-	{
-	  cout.width(8); cout << rec[i][j];
-	}
-      cout << endl; 
-    }
-
-  cout << " Generated " << endl; 
-  for (int i=0; i<n_x_bins; i++)
-    {
-      for (int j=0; j<n_qq_bins; j++)
-	{
-	  cout.width(8); cout << gen[i][j];
-	}
-      cout << endl; 
-    }
-
-  cout << " Acceptance " << endl; 
+  // Calculating Acc. 
   for (int i=0; i<n_x_bins; i++)
     {
       for (int j=0; j<n_qq_bins; j++)
 	{
 	  acc[i][j] = (double) rec[i][j]/gen[i][j];
-	  cout.width(12); cout << acc[i][j];
 	}
       cout << endl; 
     }
 
+  cout << " Results: " << endl; 
+  cout.width(12); cout << " x-bin cent ";
+  cout.width(12); cout << " qq-bin cent ";
+  cout.width(12); cout << " hits ";
+  cout.width(12); cout << " rec ";
+  cout.width(12); cout << " gen ";
+  cout.width(12); cout << " acc " << endl;
+
+  for (int i=0; i<n_x_bins; i++)
+    {
+      for (int j=0; j<n_qq_bins; j++)
+	{
+	  cout.width(12); cout << double((xLims[i+1]-xLims[i])/2 + xLims[i]);
+	  cout.width(12); cout << double((qqLims[i][j+1]-qqLims[i][j])/2 + qqLims[i][j]); 
+	  cout.width(12); cout << hits[i][j];
+	  cout.width(12); cout << rec[i][j];
+	  cout.width(12); cout << gen[i][j];
+	  cout.width(12); cout << acc[i][j] << endl;
+	}
+      cout << endl; 
+    }
+}
+
+int DISManager::find_x_bin(double x)
+{
+  for (int i=0; i<n_x_bins; i++) { if ( x > xLims[i] && x < xLims[i+1] ) return i; }
+  return -123;
+}
+
+int DISManager::find_qq_bin(double x, double qq)
+{
+  int xb = find_x_bin(x);
+  if (xb < 0) return -123;
   
+  for (int i=0; i<n_qq_bins; i++) { if ( qq > qqLims[xb][i] && qq < qqLims[xb][i+1] ) return i; }
+  return -123;
 }
 
 #endif

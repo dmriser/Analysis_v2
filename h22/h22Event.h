@@ -16,7 +16,9 @@
 #define h22Event_h
 
 #include <TROOT.h>
+#include "TLorentzVector.h"
 #include "TVector3.h"
+
 
 /**
  * h22Event class is the basis for the h22Reader class as well as ParticleFilter class.
@@ -113,7 +115,8 @@ class h22Event
    double mcrphi(int);   //! MC version of above   
    double theta(int);    //! Polar angle of track
    TVector3 uvw(int);    //! EC Coordinates U, V, W returned as U = vector.X(), V = vector.Y(), W = vector.Z() 
-    
+   TLorentzVector gen_particle(int);
+   
     double rot_dc1x(int);
     double rot_dc1y(int);
     

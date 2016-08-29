@@ -110,8 +110,16 @@ class DISManager
   std::string outfile;
   std::string infofile; 
   std::string momcorr_path;
+
+  // Don't really want to do this but DPlaneBins isn't working yet 
+  const static int n_x_bins = 5, n_qq_bins = 2; 
+  int hits[n_x_bins][n_qq_bins], rec[n_x_bins][n_qq_bins], gen[n_x_bins][n_qq_bins];
+  double acc[n_x_bins][n_qq_bins]; 
+  
+  double xLims[n_x_bins+1], qqLims[n_x_bins][n_qq_bins+1]; 
   
   DBins xBins, qqBins; 
+  DPlaneBins x_qq_bins; 
   DInformation info; 
   DISHistograms histos; 
   DSelection dis_selector; 
@@ -119,6 +127,7 @@ class DISManager
   h22Reader reader[2];
   NathanEIDWrapper nathan; 
   VirtualityCut * qq_cut;
+  YCut * y_cut;
   WCut * w_cut; 
 
   // Member Functions
@@ -128,6 +137,8 @@ class DISManager
   void loop(int); 
   void do_xs();
   void get_charge(std::vector<std::string>);
+  void print_table(); 
+
 };
 
 

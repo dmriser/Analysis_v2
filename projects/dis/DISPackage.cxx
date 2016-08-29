@@ -724,12 +724,56 @@ DISManager::DISManager()
   fcup_charge = 0.00; 
   
   qq_cut = new VirtualityCut();
-  w_cut = new WCut(); 
+  w_cut = new WCut();
+  y_cut = new YCut(); 
 
   xBins  = DBins(100,0,1);
   qqBins = DBins(100,0,6);
 
   infofile = "unset";
+
+  // Really don't want to do this.  
+  xLims[0] = 0.1;
+  xLims[1] = 0.2;
+  xLims[2] = 0.3;
+  xLims[3] = 0.4;
+  xLims[4] = 0.5; 
+  xLims[5] = 0.6; 
+
+  // For x - 0.1-0.2
+  qqLims[0][0] = 1.0;
+  qqLims[0][1] = 1.3;
+  qqLims[0][2] = 5.0; 
+
+  // For x = 0.2-0.3 
+  qqLims[1][0] = 1.0;
+  qqLims[1][1] = 1.7;
+  qqLims[1][2] = 5.0; 
+
+  // For x = 0.3-0.4
+  qqLims[2][0] = 1.0;
+  qqLims[2][1] = 2.2;
+  qqLims[2][2] = 5.0; 
+
+  // For x = 0.4-0.5
+  qqLims[3][0] = 1.0;
+  qqLims[3][1] = 2.9;
+  qqLims[3][2] = 5.0; 
+
+  // For x = 0.5-0.6
+  qqLims[4][0] = 1.0;
+  qqLims[4][1] = 5.0;
+  qqLims[4][2] = 99.0; 
+
+  for (int ixbin=0; ixbin<n_x_bins; ixbin++)
+    for (int iqqbin=0; iqqbin<n_qq_bins; iqqbin++)
+      {
+	hits[ixbin][iqqbin] = 0;
+	rec[ixbin][iqqbin]  = 0;
+	gen[ixbin][iqqbin]  = 0;
+	acc[ixbin][iqqbin]  = 0.0;
+      }
+  
 }
 
 DISManager::~DISManager()
@@ -798,6 +842,7 @@ void DISManager::init()
   // Adding Cuts 
   dis_selector.add_cut( qq_cut );
   dis_selector.add_cut( w_cut );
+  dis_selector.add_cut( y_cut );
 
   // Loading information for runs
   info.load(infofile);
@@ -865,8 +910,20 @@ void DISManager::loop(int index)
 
 	// Do generated for MC 
 	if (index == 1) {
-	  histos.fill_gen(event);
+	  //	  histos.fill_gen(event);
+	  int gen_index = 0; 
+	  for (int ip=0; ip<event.tracks.gpart; ++ip){ if (event.tracks.mcid[ip] == 11) gen_index = ip; break; }
+	  TLorentzVector genElectron(event.tracks.mcpx(gen_index),event.tracks.mcpy(gen_index),event.tracks.mcpz(gen_index),event.tracks.mcp[gen_index]); 
+	  event.set_electron(genElectron); 
+	  int xb = -1, qqb = -1;
+	  for (int ibin=0; ibin<n_x_bins; ibin++){ if (event.x > xLims[ibin] && event.x < xLims[ibin+1]) { xb = ibin; break; } }
+	  
+	  if (xb > -1)
+	    for (int ibin=0; ibin<n_qq_bins; ibin++){ if (event.qq > qqLims[xb][ibin] && event.qq < qqLims[xb][ibin+1]) { qqb = ibin; break; } }
+	  
+	  if (xb > -1 && qqb > -1 ) gen[xb][qqb]++; 
 	}
+	
 	
 	int e_index = nathan.get_electron(event.tracks); 
 	if (e_index > -123) {
@@ -880,7 +937,31 @@ void DISManager::loop(int index)
 	  event.set_e_index(e_index);
 	  event.set_electron(electron);
 	  
-	  if (dis_selector.passes(event, e_index)) histos.fill(event, index);
+	  if (dis_selector.passes(event, e_index)) {
+	    //	    histos.fill(event, index);
+
+	    // Assigning this event to a bin. 
+	    if (index == 0) {
+	      int xb = -1, qqb = -1;
+	      for (int ibin=0; ibin<n_x_bins; ibin++){ if (event.x > xLims[ibin] && event.x < xLims[ibin+1]) { xb = ibin; break; } }
+
+	      if (xb > -1)
+		for (int ibin=0; ibin<n_qq_bins; ibin++){ if (event.qq > qqLims[xb][ibin] && event.qq < qqLims[xb][ibin+1]) { qqb = ibin; break; } }
+
+	      if (xb > -1 && qqb > -1 ) hits[xb][qqb]++; 
+	    }
+	    
+	    else {
+	      int xb = -1, qqb = -1;
+	      for (int ibin=0; ibin<n_x_bins; ibin++){ if (event.x > xLims[ibin] && event.x < xLims[ibin+1]) { xb = ibin; break; } }
+	      
+	      if (xb > -1)
+		for (int ibin=0; ibin<n_qq_bins; ibin++){ if (event.qq > qqLims[xb][ibin] && event.qq < qqLims[xb][ibin+1]) { qqb = ibin; break; } }
+	      
+	      if (xb > -1 && qqb > -1 ) rec[xb][qqb]++; 
+	      
+	    }
+	  }
 	}
       }
   }
@@ -914,6 +995,52 @@ void DISManager::loop(int index)
 	    }
 	}
     }
+  
+}
+
+void DISManager::print_table()
+{
+  cout << " Hits " << endl; 
+  for (int i=0; i<n_x_bins; i++)
+    {
+      for (int j=0; j<n_qq_bins; j++)
+	{
+	  cout.width(8); cout << hits[i][j];
+	}
+      cout << endl; 
+    }
+
+  cout << " Reconstructed " << endl; 
+  for (int i=0; i<n_x_bins; i++)
+    {
+      for (int j=0; j<n_qq_bins; j++)
+	{
+	  cout.width(8); cout << rec[i][j];
+	}
+      cout << endl; 
+    }
+
+  cout << " Generated " << endl; 
+  for (int i=0; i<n_x_bins; i++)
+    {
+      for (int j=0; j<n_qq_bins; j++)
+	{
+	  cout.width(8); cout << gen[i][j];
+	}
+      cout << endl; 
+    }
+
+  cout << " Acceptance " << endl; 
+  for (int i=0; i<n_x_bins; i++)
+    {
+      for (int j=0; j<n_qq_bins; j++)
+	{
+	  acc[i][j] = (double) rec[i][j]/gen[i][j];
+	  cout.width(12); cout << acc[i][j];
+	}
+      cout << endl; 
+    }
+
   
 }
 

@@ -39,6 +39,8 @@ int main(int argc, char * argv[])
   manager.qq_cut->set_max(50.0);
   manager.w_cut ->set_min(2.05);
   manager.w_cut ->set_max(50.0);  
+  manager.y_cut ->set_min(-0.01);
+  manager.y_cut ->set_max(0.85);  
   manager.init();
   
   cout << " Length of lists: data=" << manager.reader[0].GetEntries() << " mc=" << manager.reader[1].GetEntries() << endl; 
@@ -51,15 +53,17 @@ int main(int argc, char * argv[])
   manager.dis_selector.summarize(); 
   manager.get_charge(data_files); 
   manager.do_xs();
-  manager.histos.draw();
-  manager.histos.save();
-  
+  //  manager.histos.draw();
+  //  manager.histos.save();
+
   if (manager.eid_version == 1) {
     manager.eid[0].summarize();
     manager.eid[1].summarize(); 
   }
 
   cout << " Total charge in (uC): " << manager.fcup_charge << endl; 
+
+  manager.print_table(); 
   
   return 0;
 }

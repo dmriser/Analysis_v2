@@ -356,5 +356,23 @@ class MissingMassCut : public DCut
 
 };
 
+/////////////////////////////////////////////////////////////////////
+/*
+
+  Inelasticity Cut 
+
+ */
+/////////////////////////////////////////////////////////////////////
+
+class YCut : public DCut 
+{
+ public:
+  YCut();
+  ~YCut();
+
+  bool passes(DEvent, int);
+
+};
+
 
 #endif

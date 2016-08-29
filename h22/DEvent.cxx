@@ -27,7 +27,7 @@ using namespace std;
 
 DEvent::DEvent()
 {
-  w = 0.0; qq = 0.0; mm2 = 0.0; x = 0.0;
+  w = 0.0; qq = 0.0; mm2 = 0.0; x = 0.0; y = 0.0; 
   beam   = TLorentzVector(0,0,5.498,5.498);
   target = TLorentzVector(0,0,0,proton_mass);
   e_index = -123; 
@@ -35,7 +35,7 @@ DEvent::DEvent()
 
 DEvent::DEvent(TLorentzVector kPrime)
 {
-  w = 0.0; qq = 0.0; mm2 = 0.0; x = 0.0; 
+  w = 0.0; qq = 0.0; mm2 = 0.0; x = 0.0; y = 0.0; 
   beam     = TLorentzVector(0,0,5.498,5.498);
   target   = TLorentzVector(0,0,0,proton_mass);
   electron = kPrime;
@@ -45,7 +45,7 @@ DEvent::DEvent(TLorentzVector kPrime)
 
 DEvent::DEvent(h22Event event)
 {
-  w = 0.0; qq = 0.0; mm2 = 0.0; x = 0.0; 
+  w = 0.0; qq = 0.0; mm2 = 0.0; x = 0.0; y = 0.0; 
   beam     = TLorentzVector(0,0,5.498,5.498);
   target   = TLorentzVector(0,0,0,proton_mass);
   tracks = event;
@@ -66,6 +66,7 @@ void DEvent::refresh()
   w   = hadron.Mag();
   mm2 = hadron.E()*hadron.E()-hadron.P()*hadron.P();
   x   = qq/(2*target.E()*q.E());
+  y   = 1 - (electron.E()/beam.E()); 
 }
 
 void DEvent::set_e_index(int index)
@@ -113,6 +114,7 @@ void DEvent::print()
   cout.width(12); cout << qq;
   cout.width(12); cout << w;
   cout.width(12); cout << x;
+  cout.width(12); cout << y;
   cout.width(12); cout << mm2 << endl;
 }
 

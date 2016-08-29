@@ -505,4 +505,34 @@ bool MissingMassCut::passes(DEvent event, int index)
 }
 
 
+
+///////////////////////////////////////////////////////////////
+/*
+
+  Inelasticity Cut 
+
+*/
+///////////////////////////////////////////////////////////////
+
+
+YCut::YCut()
+{
+  set_name("Inelasticity Cut");
+}
+
+YCut::~YCut()
+{
+
+}
+
+bool YCut::passes(DEvent event, int index)
+{
+
+  if ( event.y < max() && event.y > min()) { n_pass++; return true; }
+  else { n_fail++; }
+  
+  return false; 
+}
+
+
 #endif

@@ -165,4 +165,142 @@ double DBinsAsymmetric::max(int b)
   return (bins[b+1]);
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////
+/*
+
+  DBin
+
+*/
+////////////////////////////////////////////////////////////////////////////////////////////////
+
+DBin::DBin()
+{
+  Clear(); 
+}
+
+DBin::~DBin()
+{
+
+}
+
+void DBin::Clear()
+{
+  kWidth = 0;
+  kFills = 0;  
+  kMin = 0;
+  kMax = 0;
+  kSysError = 0;
+  kStatError = 0;
+  kScale = 1.00; 
+}
+
+void DBin::Refresh()
+{
+  kWidth = kMax-kMin;
+}
+
+void DBin::CalcStatError()
+{
+  kStatError = sqrt(kFills);
+}
+
+void DBin::Print()
+{
+  cout.width(8); cout << kFills; 
+}
+////////////////////////////////////////////////////////////////////////////////
+/*
+
+  DLineBins 
+
+*/
+////////////////////////////////////////////////////////////////////////////////
+
+DLineBins::DLineBins()
+{
+  kNumber = 0; 
+}
+
+DLineBins::~DLineBins()
+{
+
+}
+
+int DLineBins::FindBin(double val)
+{
+  for (int i=0; i<bins.size(); i++)
+    {
+      if ( val > bins[i].GetMin() && val < bins[i].GetMax() ) return i; 
+    }
+
+  return -123;   
+}
+
+void DLineBins::Fill(double val)
+{
+  
+    for (int i=0; i<bins.size(); ++i) {
+      if ( val > bins[i].GetMin() && val < bins[i].GetMax() ) { bins[i].Fill(); return; }
+    }
+
+    if (val < bins[0].GetMin())       { kUnderflow++; return; }
+    if (val > bins[kNumber].GetMax()) { kOverflow++;  return; }
+
+}  
+
+void DLineBins::Print()
+{
+  vector<DBin>::iterator it; 
+  for (it = bins.begin(); it != bins.end(); ++it)
+    {
+      (*it).Print(); 
+    }
+  cout << endl; 
+  
+}
+
+////////////////////////////////////////////////////////////////////////////////////
+/*
+
+  DPlaneBins 
+
+*/
+////////////////////////////////////////////////////////////////////////////////////
+
+DPlaneBins::DPlaneBins()
+{
+
+}
+
+DPlaneBins::~DPlaneBins()
+{
+
+}
+
+void DPlaneBins::AddLineBins(DLineBins inBins)
+{
+  if (bins.size() == edge_bins.GetNumber()){ cout << " Cannot add other LineBins, edge bins are at limit. " << endl; return; } 
+  bins.push_back(inBins); 
+}
+
+void DPlaneBins::Fill(double x, double y)
+{
+  int edge_index = edge_bins.FindBin(x); 
+
+  if (edge_index > -1 && edge_index < edge_bins.GetNumber())
+    {
+      bins[edge_index].Fill(y);
+    }
+}
+
+void DPlaneBins::Print()
+{
+
+  for (int i=0; i<edge_bins.GetNumber(); i++)
+    {
+      bins[i].Print(); 
+    }
+  
+}
+
 #endif

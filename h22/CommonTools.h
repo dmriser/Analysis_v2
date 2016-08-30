@@ -23,7 +23,8 @@
 #define pi 3.14159265359
 #define to_degrees 57.2957795131
 #define to_radians 0.01745329251
-
+#define cm_to_barn 1e24
+#define cm_to_outhouse 1e30
 //! Masses in GeV
 #define  proton_mass     0.93827203
 #define  neutron_mass    0.93956536

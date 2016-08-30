@@ -18,6 +18,7 @@
 using namespace std; 
 
 // my includes
+#include "CommonTools.h"
 #include "DBins.h"
 #include "DCut.h"
 #include "DEvent.h"
@@ -772,6 +773,9 @@ DISManager::DISManager()
 	rec[ixbin][iqqbin]  = 0;
 	gen[ixbin][iqqbin]  = 0;
 	acc[ixbin][iqqbin]  = 0.0;
+	xs[ixbin][iqqbin]   = 0.0;
+	corr_hits[ixbin][iqqbin]      = 0.0;
+	data_mc_ratio[ixbin][iqqbin]  = 0.0;
       }
   
 }
@@ -986,23 +990,42 @@ void DISManager::loop(int index)
 
 void DISManager::print_table()
 {
-  // Calculating Acc. 
+  // Calculating things.
+  int data_max = 0;
+  int mc_max = 0; 
+
+  // Getting max of each. 
+  for (int i=0; i<n_x_bins; i++)
+    {
+      for (int j=0; j<n_qq_bins; j++)
+	{
+	  if (hits[i][j] > data_max) data_max = hits[i][j];
+	  if (rec[i][j]  > mc_max)     mc_max = rec[i][j]; 
+	}
+    }
+  
+  // Calculating Acceptance. 
   for (int i=0; i<n_x_bins; i++)
     {
       for (int j=0; j<n_qq_bins; j++)
 	{
 	  acc[i][j] = (double) rec[i][j]/gen[i][j];
+	  data_mc_ratio[i][j] = (double) ( (double) hits[i][j]/data_max)/( (double) rec[i][j]/mc_max);
+	  corr_hits[i][j]     = (double) hits[i][j]/acc[i][j];
+	  xs[i][j] = cm_to_outhouse*(electron_c*hydrogen_molar_weight/(avogadro*hydrogen_density))*corr_hits[i][j]/((xLims[i+1]-xLims[i])*(qqLims[i][j+1]-qqLims[i][j]));
 	}
-      cout << endl; 
     }
 
-  cout << " Results: " << endl; 
+  cout << "----->  Results: <-----" << endl; 
   cout.width(12); cout << " x-bin cent ";
   cout.width(12); cout << " qq-bin cent ";
   cout.width(12); cout << " hits ";
   cout.width(12); cout << " rec ";
   cout.width(12); cout << " gen ";
-  cout.width(12); cout << " acc " << endl;
+  cout.width(12); cout << " acc ";
+  cout.width(12); cout << " corr hits ";
+  cout.width(12); cout << " xs ";
+  cout.width(12); cout << " data/mc " << endl;
 
   for (int i=0; i<n_x_bins; i++)
     {
@@ -1013,9 +1036,11 @@ void DISManager::print_table()
 	  cout.width(12); cout << hits[i][j];
 	  cout.width(12); cout << rec[i][j];
 	  cout.width(12); cout << gen[i][j];
-	  cout.width(12); cout << acc[i][j] << endl;
+	  cout.width(12); cout << acc[i][j];
+	  cout.width(12); cout << corr_hits[i][j];
+	  cout.width(12); cout << xs[i][j];
+	  cout.width(12); cout << data_mc_ratio[i][j] << endl;
 	}
-      cout << endl; 
     }
 }
 

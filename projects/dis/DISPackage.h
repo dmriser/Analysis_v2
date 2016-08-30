@@ -114,7 +114,7 @@ class DISManager
   // Don't really want to do this but DPlaneBins isn't working yet 
   const static int n_x_bins = 5, n_qq_bins = 2; 
   int hits[n_x_bins][n_qq_bins], rec[n_x_bins][n_qq_bins], gen[n_x_bins][n_qq_bins];
-  double acc[n_x_bins][n_qq_bins]; 
+  double acc[n_x_bins][n_qq_bins], data_mc_ratio[n_x_bins][n_qq_bins], corr_hits[n_x_bins][n_qq_bins], xs[n_x_bins][n_qq_bins]; 
   
   double xLims[n_x_bins+1], qqLims[n_x_bins][n_qq_bins+1]; 
   

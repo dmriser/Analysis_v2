@@ -11,41 +11,40 @@ int main()
   cout << " Bin Example! " << endl; 
 
   TRandom3 * rand = new TRandom3(); 
-  
-  DLineBins ebins; 
-  ebins.AddBin( DBin(0, 1) );
-  ebins.AddBin( DBin(1, 2) );
-  ebins.AddBin( DBin(2, 3) );
-  
-  DLineBins bins0; 
-  bins0.AddBin( DBin(0.01, 4.0) );
-  bins0.AddBin( DBin(4.0, 8.2) );
-  bins0.AddBin( DBin(8.2, 12.5) );
-  
-  DLineBins bins1; 
-  bins1.AddBin( DBin(0.01, 0.05) );
-  bins1.AddBin( DBin(0.05, 12.2) );
-  bins1.AddBin( DBin(12.2, 12.5) );
-  
-  DLineBins bins2; 
-  bins2.AddBin( DBin(0.01, 0.05) );
-  bins2.AddBin( DBin(0.05, 12.2) );
-  bins2.AddBin( DBin(12.2, 12.5) );
 
-  DPlaneBins planeBins; 
-  planeBins.SetEdgeBins(ebins); 
-  planeBins.AddLineBins(bins0);
-  planeBins.AddLineBins(bins1);
-  planeBins.AddLineBins(bins2); 
-  
-  for (int i=0; i<1000; i++)
-    {
-      planeBins.Fill( 0.5, rand->Gaus(6.0, 6.0) );
-      planeBins.Fill( 1.5, rand->Gaus(6.0, 6.0) );
-      planeBins.Fill( 2.5, rand->Gaus(6.0, 6.0) );
-    }
+  // Testing out new constructor 
+  DLineBins xBins(50, 0, 0.6); 
 
-  planeBins.Print(); 
+  // Do a little test fill 
+  for (int i=0; i<10000; i++){
+    xBins.Fill( rand->Uniform(1) );
+  }
+
+  // Old Bins 
+  xBins.Print(); 
+  
+  // Do an asymmetric rebinning of the xBins into 2 big bins. 
+  vector<double> xLimits;
+  xLimits.push_back(0.1);
+  xLimits.push_back(0.2);
+  xLimits.push_back(0.4);
+  xLimits.push_back(0.6); 
+  int n_x_rebins = xLimits.size()-1; 
+
+  // Get the new bins
+  DLineBins newXBins = xBins.Rebin(n_x_rebins, xLimits); 
+  newXBins.Print(); 
+
+  // Try to break the machine by doing another rebin
+  vector<double> newXLimits;
+  newXLimits.push_back(0.1);
+  newXLimits.push_back(0.35);
+  newXLimits.push_back(0.6); 
+  int n_new_x_rebins = newXLimits.size()-1; 
+
+
+  DLineBins newerXBins = newXBins.Rebin(n_new_x_rebins, newXLimits); 
+  newerXBins.Print();
   
   return 0;
 }

@@ -96,6 +96,7 @@ class DBin
  public:
   void Clear(); 
   void Refresh(); 
+  void SetFills(int n){ kFills = n; }
   void SetMin(double min){ kMin = min; Refresh(); }
   void SetMax(double max){ kMax = max; Refresh(); }
   void SetStatError(double err){ kStatError = err; }
@@ -113,16 +114,22 @@ class DBin
   double GetStatError(){ return kStatError; }
   double GetScale(){ return kScale; }
   double GetContent(){ return double(kScale*kFills); }
-  
+
+  DBin operator+(DBin&);
+  DBin operator+=(DBin&);
+  DBin operator/(DBin&);
 };
 
-// Line of DBin Object Pointers 
+// Line of DBin Objects 
 class DLineBins
 {
  public:
   DLineBins();
   ~DLineBins();
 
+  // Option to have symmetric bins generated for you
+  DLineBins(int, double, double); /** (kNumber, kMin, kMax) */
+  
   // Data Types
  private:
   int kUnderflow, kOverflow, kNumber; 
@@ -135,12 +142,14 @@ class DLineBins
   void Clear(){ kUnderflow=0; kOverflow=0; kNumber=0; for(int i=0; i<bins.size(); i++) bins[i].Clear(); }
   void Fill(double); 
   void Refresh(){ for(int i=0; i<bins.size(); i++) bins[i].Refresh(); }
-  void Print(); 
+  void Print();
   int FindBin(double);
   DBin GetBin(int i){ return bins[i]; }
   int GetNumber(){ return kNumber; } 
   int GetUnderflow(){ return kUnderflow; }
   int GetOverflow(){ return kOverflow; }
+
+  DLineBins Rebin(int, std::vector<double>); /** Pass in number of bins and limits as string of doubles. */
 };
 
 // Plane of Bins

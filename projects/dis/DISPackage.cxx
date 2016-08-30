@@ -766,16 +766,17 @@ DISManager::DISManager()
   qqLims[4][1] = 5.0;
   qqLims[4][2] = 99.0; 
 
-  for (int ixbin=0; ixbin<n_x_bins; ixbin++)
-    for (int iqqbin=0; iqqbin<n_qq_bins; iqqbin++)
-      {
-	hits[ixbin][iqqbin] = 0;
-	rec[ixbin][iqqbin]  = 0;
-	gen[ixbin][iqqbin]  = 0;
-	acc[ixbin][iqqbin]  = 0.0;
-	xs[ixbin][iqqbin]   = 0.0;
-	corr_hits[ixbin][iqqbin]      = 0.0;
-	data_mc_ratio[ixbin][iqqbin]  = 0.0;
+  for (int s=0; s<7; s++) 
+    for (int ixbin=0; ixbin<n_x_bins; ixbin++)
+      for (int iqqbin=0; iqqbin<n_qq_bins; iqqbin++)
+	{
+	  hits[s][ixbin][iqqbin] = 0;
+	  rec[s][ixbin][iqqbin]  = 0;
+	  gen[s][ixbin][iqqbin]  = 0;
+	  acc[s][ixbin][iqqbin]  = 0.0;
+	  xs[s][ixbin][iqqbin]   = 0.0;
+	  corr_hits[s][ixbin][iqqbin]      = 0.0;
+	  data_mc_ratio[s][ixbin][iqqbin]  = 0.0;
       }
   
 }
@@ -918,11 +919,11 @@ void DISManager::loop(int index)
 
 	  //	  event.set_electron( event.tracks.gen_particle(11) );
 	  event.set_electron( TLorentzVector(event.tracks.mcpx(0), event.tracks.mcpy(0), event.tracks.mcpz(0), event.tracks.mcp[0])); 
-	  int xb  = find_x_bin(event.x);
-	  int qqb = find_qq_bin(event.x, event.qq); 
-	  if (xb > -1 && qqb > -1 ) gen[xb][qqb]++; 
+	  int xb     = find_x_bin(event.x);
+	  int qqb    = find_qq_bin(event.x, event.qq); 
+	  int mcsect = floor(event.tracks.mcphi[0]/60.0) +1; 
+	  if (xb > -1 && qqb > -1 && mcsect > 0) { gen[0][xb][qqb]++; gen[mcsect][xb][qqb]++; }
 	}
-	
 	
 	int e_index = nathan.get_electron(event.tracks); 
 	if (e_index > -123) {
@@ -943,13 +944,15 @@ void DISManager::loop(int index)
 	    if (index == 0) {
 	      int xb  = find_x_bin(event.x);
 	      int qqb = find_qq_bin(event.x, event.qq); 
-	      if (xb > -1 && qqb > -1 ) hits[xb][qqb]++; 
+	      int sect = event.tracks.dc_sect[e_index]; 
+	      if (xb > -1 && qqb > -1 && sect > 0) { hits[0][xb][qqb]++; hits[sect][xb][qqb]++; }
 	    }
 	    
 	    else {
 	      int xb  = find_x_bin(event.x);
 	      int qqb = find_qq_bin(event.x, event.qq); 
-	      if (xb > -1 && qqb > -1 ) rec[xb][qqb]++; 
+	      int sect = event.tracks.dc_sect[e_index]; 
+	      if (xb > -1 && qqb > -1 && sect > 0) { rec[0][xb][qqb]++; rec[sect][xb][qqb]++; }
 	    }
 	  }
 	}
@@ -991,57 +994,66 @@ void DISManager::loop(int index)
 void DISManager::print_table()
 {
   // Calculating things.
-  int data_max = 0;
-  int mc_max = 0; 
+  int data_max[7] = {0,0,0,0,0,0,0};
+  int mc_max[7]   = {0,0,0,0,0,0,0}; 
 
-  // Getting max of each. 
-  for (int i=0; i<n_x_bins; i++)
-    {
-      for (int j=0; j<n_qq_bins; j++)
-	{
-	  if (hits[i][j] > data_max) data_max = hits[i][j];
-	  if (rec[i][j]  > mc_max)     mc_max = rec[i][j]; 
-	}
-    }
+  // Getting max of each.
+  for (int s=0; s<7; s++)
+    for (int i=0; i<n_x_bins; i++)
+      {
+	for (int j=0; j<n_qq_bins; j++)
+	  {
+	    if (hits[s][i][j] > data_max[s]) data_max[s] = hits[s][i][j];
+	    if (rec[s][i][j]  > mc_max[s])     mc_max[s] = rec[s][i][j]; 
+	  }
+      }
   
   // Calculating Acceptance. 
-  for (int i=0; i<n_x_bins; i++)
-    {
-      for (int j=0; j<n_qq_bins; j++)
-	{
-	  acc[i][j] = (double) rec[i][j]/gen[i][j];
-	  data_mc_ratio[i][j] = (double) ( (double) hits[i][j]/data_max)/( (double) rec[i][j]/mc_max);
-	  corr_hits[i][j]     = (double) hits[i][j]/acc[i][j];
-	  xs[i][j] = cm_to_outhouse*(electron_c*hydrogen_molar_weight/(avogadro*hydrogen_density))*corr_hits[i][j]/((xLims[i+1]-xLims[i])*(qqLims[i][j+1]-qqLims[i][j]));
-	}
-    }
-
+  for (int s=0; s<7; s++)
+    for (int i=0; i<n_x_bins; i++)
+      {
+	for (int j=0; j<n_qq_bins; j++)
+	  {
+	    acc[s][i][j] = (double) rec[s][i][j]/gen[s][i][j];
+	    data_mc_ratio[s][i][j] = (double) ( (double) hits[s][i][j]/data_max[s])/( (double) rec[s][i][j]/mc_max[s]);
+	    corr_hits[s][i][j]     = (double) hits[s][i][j]/acc[s][i][j];
+	    xs[s][i][j] = cm_to_outhouse*(electron_c*hydrogen_molar_weight/(avogadro*hydrogen_density))*corr_hits[s][i][j]/((xLims[i+1]-xLims[i])*(qqLims[i][j+1]-qqLims[i][j]));
+	  }
+      }
+  
   cout << "----->  Results: <-----" << endl; 
-  cout.width(12); cout << " x-bin cent ";
-  cout.width(12); cout << " qq-bin cent ";
-  cout.width(12); cout << " hits ";
-  cout.width(12); cout << " rec ";
-  cout.width(12); cout << " gen ";
-  cout.width(12); cout << " acc ";
-  cout.width(12); cout << " corr hits ";
+  cout.width(8); cout << "sect";
+  cout.width(8); cout << "x left";
+  cout.width(8); cout << "x right";
+  cout.width(8); cout << "qq left";
+  cout.width(8); cout << "qq right"; 
+  cout.width(8); cout << "raw hits";
+  cout.width(8); cout << "rec";
+  cout.width(8); cout << "gen";
+  cout.width(12); cout << "acc";
+  cout.width(12); cout << "corr hit";
   cout.width(12); cout << " xs ";
-  cout.width(12); cout << " data/mc " << endl;
+  cout.width(12); cout << "data/mc" << endl;
 
-  for (int i=0; i<n_x_bins; i++)
-    {
-      for (int j=0; j<n_qq_bins; j++)
-	{
-	  cout.width(12); cout << double((xLims[i+1]-xLims[i])/2 + xLims[i]);
-	  cout.width(12); cout << double((qqLims[i][j+1]-qqLims[i][j])/2 + qqLims[i][j]); 
-	  cout.width(12); cout << hits[i][j];
-	  cout.width(12); cout << rec[i][j];
-	  cout.width(12); cout << gen[i][j];
-	  cout.width(12); cout << acc[i][j];
-	  cout.width(12); cout << corr_hits[i][j];
-	  cout.width(12); cout << xs[i][j];
-	  cout.width(12); cout << data_mc_ratio[i][j] << endl;
-	}
-    }
+  for (int s=0; s<7; s++) 
+    for (int i=0; i<n_x_bins; i++)
+      {
+	for (int j=0; j<n_qq_bins; j++)
+	  {
+	    cout.width(8); cout << s;
+	    cout.width(8); cout << xLims[i];
+	    cout.width(8); cout << xLims[i+1];
+	    cout.width(8); cout << qqLims[i][j];
+	    cout.width(8); cout << qqLims[i][j+1]; 
+	    cout.width(8); cout << hits[s][i][j];
+	    cout.width(8); cout << rec[s][i][j];
+	    cout.width(8); cout << gen[s][i][j];
+	    cout.width(12); cout << acc[s][i][j];
+	    cout.width(12); cout << corr_hits[s][i][j];
+	    cout.width(12); cout << xs[s][i][j];
+	    cout.width(12); cout << data_mc_ratio[s][i][j] << endl;
+	  }
+      }
 }
 
 int DISManager::find_x_bin(double x)

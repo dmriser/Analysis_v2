@@ -24,6 +24,7 @@ using namespace std;
 DBins::DBins()
 {
   // Creation Story here.
+  cout << " DBins are now outdated, please switch to DLineBins. " << endl; 
 }
 
 DBins::~DBins()
@@ -33,6 +34,8 @@ DBins::~DBins()
 
 DBins::DBins(int bn, double bmin, double bmax)
 {
+  cout << " DBins are now outdated, please switch to DLineBins. " << endl;
+    
   kNumber = bn;
   kMin = bmin;
   kMax = bmax;
@@ -94,75 +97,6 @@ double DBins::bin_center(int ibin)
   // Bins are all the same size 
   return kWidth/2 + kBins[ibin];
   
-}
-
-////////////////////////////////////////////////////////////////////////
-/*
-
-  DBinsAsymmetric 
-
-*/
-////////////////////////////////////////////////////////////////////////
-
-DBinsAsymmetric::DBinsAsymmetric()
-{
-  // Starting up 
-}
-
-DBinsAsymmetric::~DBinsAsymmetric()
-{
-  // Destroy 
-}
-
-int DBinsAsymmetric::find_bin(double value)
-{
-  
-  for (int ibin=0; ibin<bins.size(); ibin++)
-    {
-      if (value > bins[ibin] && value < bins[ibin+1]) return ibin;  
-    }
-
-  return -123;
-}
-
-double DBinsAsymmetric::width(int b)
-{
-  if (b > bins.size()) {
-    cout << " Warning: Trying to access bins that exceed length of DBinsAsymmetric::number()! " << endl;
-    return -123;
-  }
-
-  return (bins[b+1]-bins[b]);
-}
-
-double DBinsAsymmetric::center(int b)
-{
-  if (b > bins.size()) {
-    cout << " Warning: Trying to access bins that exceed length of DBinsAsymmetric::number()! " << endl;
-    return -123;
-  }
-
-  return bins[b]+(bins[b+1]-bins[b])/2;
-}
-
-double DBinsAsymmetric::min(int b)
-{
-  if (b > bins.size()) {
-    cout << " Warning: Trying to access bins that exceed length of DBinsAsymmetric::number()! " << endl;
-    return -123;
-  }
-
-  return (bins[b]);
-}
-
-double DBinsAsymmetric::max(int b)
-{
-  if (b > bins.size()) {
-    cout << " Warning: Trying to access bins that exceed length of DBinsAsymmetric::number()! " << endl;
-    return -123;
-  }
-
-  return (bins[b+1]);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -251,6 +185,8 @@ DBin DBin::operator+=(DBin& bin)
 
 DBin DBin::operator/(DBin& bin)
 {
+  // This is on the todo list. Going to set errors = (a/b)*sqrt((a+b)/(a*b))
+  // Not sure if this is ok. 
   DBin result;
   return result; 
 }
@@ -290,6 +226,21 @@ DLineBins::DLineBins(int numBins, double binMin, double binMax)
 
     // Adding the bin to our Line 
     AddBin(aBin);
+  }
+  
+}
+
+DLineBins::DLineBins(int numBins, vector<double> limits)
+{
+  // Generates bins based on your input limits.
+  if (numBins+1 != limits.size()){ cout << " Aborting DLineBins for bin number / limit mismatch! " << endl; return; }
+
+  // Add the bins. 
+  for (int ibin=0; ibin<numBins; ibin++){
+    DBin this_bin;
+    this_bin.SetMin(limits[ibin]);
+    this_bin.SetMax(limits[ibin+1]);
+    AddBin(this_bin);
   }
   
 }

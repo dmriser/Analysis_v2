@@ -57,27 +57,6 @@ class DBins
   
 };
 
-// For making asymmetric binning schemes 
-class DBinsAsymmetric
-{
- public:
-  DBinsAsymmetric();
-  ~DBinsAsymmetric();
-
-  std::vector<double> bins;
-
-  int find_bin(double);
-  int number(){ return bins.size()-1; }
-
-  void add_bin_edge(double bin){ bins.push_back(bin); } 
-
-  double width(int);
-  double center(int);
-  double min(int);
-  double max(int);
-  
-};
-
 // Generic Bin Class 
 class DBin
 {
@@ -129,6 +108,9 @@ class DLineBins
 
   // Option to have symmetric bins generated for you
   DLineBins(int, double, double); /** (kNumber, kMin, kMax) */
+
+  // Option to pass in number of bins and their limits.
+  DLineBins(int, std::vector<double>);
   
   // Data Types
  private:

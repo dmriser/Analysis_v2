@@ -201,6 +201,7 @@ DBin DBin::operator/(DBin& bin)
 
 DLineBins::DLineBins()
 {
+  stat_rebin_threshold = 0.1; 
   kNumber = 0; 
 }
 
@@ -315,7 +316,7 @@ DLineBins DLineBins::Rebin(int numBins, vector<double> limits)
     } 
   }
   
-  cout << " Starting at old bin " << first_bin << endl; 
+  //  cout << " Starting at old bin " << first_bin << endl; 
   
   // Loop over the remaining bins and stop when we pass the end of the new bin limits. 
   for (int b=first_bin; b<bins.size(); b++){
@@ -325,7 +326,7 @@ DLineBins DLineBins::Rebin(int numBins, vector<double> limits)
 
     // We finished filling the new bin, move to next.
     if (bins[b].GetMin() > limits[rebin_index+1]){
-      cout << " Finishing new bin " << rebin_index << endl; 
+      //  cout << " Finishing new bin " << rebin_index << endl; 
       rebins.AddBin(this_bin);
       rebin_index++;
        
@@ -337,7 +338,7 @@ DLineBins DLineBins::Rebin(int numBins, vector<double> limits)
 
     // Old bin is within the current new bin, add old bin contents to it. 
     this_bin += bins[b]; 
-    cout << " Summing on old bin " << b << " into new bin " << rebin_index << " with old limits " << bins[b].GetMin() << " to " << bins[b].GetMax() << " new " << limits[rebin_index] << " to " << limits[rebin_index+1] << endl; 
+    //    cout << " Summing on old bin " << b << " into new bin " << rebin_index << " with old limits " << bins[b].GetMin() << " to " << bins[b].GetMax() << " new " << limits[rebin_index] << " to " << limits[rebin_index+1] << endl; 
     
     // We are on the last bin, push it back 
     if (b+1 == bins.size()){ rebins.AddBin(this_bin); } 
@@ -352,9 +353,6 @@ DLineBins DLineBins::StatisticalRebin(int numBins)
 
   if (numBins > bins.size()) { cout << " Error in DLineBins::StatisticalRebin()... target number exceeds bins.size() " << endl; return results; }
   if (bins.size()/numBins < 5) { cout << " Warning: DLineBins::StatisticalRebin()... Outcome unlikely good, increase ratio of old bins to new bins. " << endl; } 
-
-  // Threshold is for considering bin "close enough".  Calculated as a percent difference between content and desired content.
-  double threshold = 0.05; 
   
   // Totaling bin content in all bins. 
   long int total = 0;
@@ -369,12 +367,12 @@ DLineBins DLineBins::StatisticalRebin(int numBins)
   DBin this_bin;
   this_bin.SetMin(bins.front().GetMin());
 
-  cout << " Starting Statistical Rebin, target is " << target << endl; 
+  //  cout << " Starting Statistical Rebin, target is " << target << endl; 
   
   for (int ibin=0; ibin<bins.size(); ibin++) {
     // We passed the optimal point. 
     if (running_total > target) {
-      cout << " Writing into rebin " << rebin_index << " for passing it with " << running_total << " entries on bin " << ibin << endl; 
+      //      cout << " Writing into rebin " << rebin_index << " for passing it with " << running_total << " entries on bin " << ibin << endl; 
       this_bin.SetMax( bins[ibin].GetMax() );
       this_bin.Refresh();
       this_bin.SetFills( running_total );
@@ -386,8 +384,8 @@ DLineBins DLineBins::StatisticalRebin(int numBins)
     }
     
     // We are within threshold, add the new bin. 
-    if  ( (double) ((double)(target-running_total)/(double)(target)) < threshold ) {
-      cout << " Writing into rebin " << rebin_index << " for coming in threshold with " << running_total << " entries on bin " << ibin << endl; 
+    if  ( (double) ((double)(target-running_total)/(double)(target)) < stat_rebin_threshold ) {
+      //      cout << " Writing into rebin " << rebin_index << " for coming in threshold with " << running_total << " entries on bin " << ibin << endl; 
       this_bin.SetMax( bins[ibin].GetMax() );
       this_bin.Refresh();
       this_bin.SetFills( running_total );
@@ -430,8 +428,10 @@ DLineBins DLineBins::operator+(DLineBins& lineBins){
   // The "every line bin same" is exactly what we have for a TH2 histogram. 
   // I may revisit this later, if my salary goes up. 
   for (int ibin=0; ibin<this->GetNumber(); ibin++){
-    DBin this_bin = lineBins.GetBin(ibin)+this->GetBin(ibin); 
-    results.AddBin( lineBins.GetBin(ibin) ); 
+    DBin bin_a; bin_a = lineBins.GetBin(ibin);
+    DBin bin_b; bin_b = this->GetBin(ibin);
+    DBin this_bin = bin_a + bin_b;
+    results.AddBin( this_bin ); 
   } 
   
   return results; 
@@ -449,7 +449,9 @@ DLineBins DLineBins::operator+=(DLineBins& lineBins){
   // The "every line bin same" is exactly what we have for a TH2 histogram. 
   // I may revisit this later, if my salary goes up. 
   for (int ibin=0; ibin<this->GetNumber(); ibin++){
-    DBin this_bin = this->GetBin(ibin) + lineBins.GetBin(ibin); 
+    DBin bin_a = this->GetBin(ibin);
+    DBin bin_b = lineBins.GetBin(ibin); 
+    DBin this_bin = bin_a + bin_b; 
     this->AddBin( this_bin ); 
   } 
   
@@ -483,7 +485,7 @@ void DPlaneBins::AddLineBins(DLineBins inBins)
 void DPlaneBins::Fill(double x, double y)
 {
   int edge_index = edge_bins.FindBin(x); 
-  edge_bins.Fill(x); 
+  if (edge_index > -1) { edge_bins.Fill(x); }
   
   if (edge_index > -1 && edge_index < edge_bins.GetNumber())
     {
@@ -494,7 +496,7 @@ void DPlaneBins::Fill(double x, double y)
 void DPlaneBins::Print()
 {
 
-  for (int i=0; i<edge_bins.GetNumber(); i++)
+  for (int i=0; i<bins.size(); i++)
     {
       bins[i].Print(); 
     }
@@ -504,10 +506,10 @@ void DPlaneBins::Print()
 DPlaneBins DPlaneBins::StatisticalRebin(int numEdgeBins, int numBinsPerLine){
   DPlaneBins result;
 
-  if (numEdgeBins > edge_bins.size() ) { cout << " Error: DPlaneBins::StatisticalRebin() Number of final edge bins less than original number. " << endl; return result; }
+  if (numEdgeBins > edge_bins.GetNumber() ) { cout << " Error: DPlaneBins::StatisticalRebin() Number of final edge bins less than original number. " << endl; return result; }
 
   for (int b=0; b<bins.size(); b++) 
-    if (numBinsPerLine > bins[b].size() ) { cout << " Error: DPlaneBins::StatisticalRebin() Number of final line bins less than original number. " << endl; return result; }
+    if (numBinsPerLine > bins[b].GetNumber() ) { cout << " Error: DPlaneBins::StatisticalRebin() Number of final line bins less than original number. " << endl; return result; }
 
   // First do the edge bins
   DLineBins edge_result = edge_bins.StatisticalRebin( numEdgeBins ); 
@@ -516,21 +518,31 @@ DPlaneBins DPlaneBins::StatisticalRebin(int numEdgeBins, int numBinsPerLine){
   // Now we need to start adding line bins together and rebinning them.
   // edge_result now has new kMin and kMax parameters for each bin, we
   // can use them to combine our lines. 
-  int edge_bin_index = 0; 
+  int edge_bin_index  = 0; 
   DLineBins this_line = bins[0]; 
   this_line.Clear();
   
   for (int ibin=0; ibin<edge_bins.GetNumber(); ibin++) {
 
     // Stop adding bins together. 
-    if (edge_bins[ibin].GetMax() > edge_result[edge_bin_index].GetMax()) {
+    if (edge_bins.GetBin(ibin).GetMax() > edge_result.GetBin(edge_bin_index).GetMax()) {
       edge_bin_index++; 
-      this_line = this_line.StatisticalRebin(numBinsPerLine);
-      result.AddLineBins( this_line );
+      DLineBins this_new_line = this_line.StatisticalRebin(numBinsPerLine);
+      result.AddLineBins( this_new_line );
       this_line.Clear();
     }
 
-    this_line += bins[ibin];
+    // We're at the last, just add remaning lines. 
+    if (edge_bin_index == numEdgeBins-1) {
+      for (int jbin=ibin; jbin<edge_bins.GetNumber(); jbin++) {
+	this_line = this_line + bins[jbin];
+      }
+      result.AddLineBins(this_line.StatisticalRebin(numBinsPerLine)); 
+      break; 
+    }
+
+    //  Add lines to the current total
+    this_line = this_line+bins[ibin];
     
   }
   

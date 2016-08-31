@@ -115,6 +115,7 @@ class DLineBins
   // Data Types
  private:
   int kUnderflow, kOverflow, kNumber; 
+  double stat_rebin_threshold; 
   std::vector<DBin> bins; 
   
   
@@ -125,9 +126,10 @@ class DLineBins
   void Fill(double); 
   void Refresh(){ for(int i=0; i<bins.size(); i++) bins[i].Refresh(); }
   void Print();
+  void SetStatRebinThreshold(double x){ stat_rebin_threshold = x; } 
   int FindBin(double);
   DBin GetBin(int i){ return bins[i]; }
-  int GetNumber(){ return kNumber; } 
+  int GetNumber(){ return bins.size(); } 
   int GetUnderflow(){ return kUnderflow; }
   int GetOverflow(){ return kOverflow; }
 
@@ -164,6 +166,9 @@ class DPlaneBins
   void Fill(double, double);
   void Print();
 
+  DLineBins GetEdgeBins(){ return edge_bins; }
+  DLineBins GetLineBins(int l){ return bins[l]; }
+  
   DPlaneBins StatisticalRebin(int, int); /**< Pass in the number of final edge bins, number of final bins in each line. */
 };
 

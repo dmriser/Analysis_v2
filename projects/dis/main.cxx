@@ -16,11 +16,15 @@ int main(int argc, char * argv[])
   options.args["MACHINE"].args = "MAC";
   options.args["MACHINE"].type = 1;
   options.args["MACHINE"].name = "Machine being used";
-  options.args["N"].arg        = 1; 
+  options.args["N"].arg        = 1;
+  options.args["N"].name       = "Number of files"; 
+  options.args["EID_VERSION"].arg  = 0;
+  options.args["EID_VERSION"].type = 0;
+  options.args["EID_VERSION"].name = "EID Version";
   options.set(argc,argv);
   
   int n_files = options.args["N"].arg;
-
+  
   ifstream mc_list;   vector<string> mc_files;
   ifstream data_list; vector<string> data_files;
   
@@ -49,7 +53,7 @@ int main(int argc, char * argv[])
   manager.infofile = "runs.info";
   if (options.args["MACHINE"].args == "MAC") { manager.momcorr_path = "/Users/dmriser/Work/analysis/momCorr/"; }
   else { manager.momcorr_path = "/u/home/dmriser/mydoc/analysis/root_scripts/Analysis_v2/momCorr/"; }
-  manager.eid_version = 0; 
+  manager.eid_version = int(options.args["EIDVERSION"].arg); 
   
   manager.set_bins(xBins, qqBins);
   manager.qq_cut->set_min(1.0);

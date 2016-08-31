@@ -7,7 +7,9 @@ set NLIBS    = `ls -l lib/*.so | wc -l`
 set NHEADERS = `ls -l */*.h | wc -l`
 
 # moving to dest
-cp lib/*.so /u/home/dmriser/lib/
-cp */*.h /u/home/dmriser/include/
+cp lib/*.so $h22libs/lib/
+cp */*.h    $h22libs/include/
+cp models/pbmodel/*.hh $h22libs/include/
+cp models/pbmodel/*.so $h22libs/lib/
 
 echo " >> Finished! Installed $NLIBS libraries and $NHEADERS header files! "

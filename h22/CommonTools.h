@@ -19,6 +19,7 @@
 // C++ headers
 #include <iostream>
 #include <sstream>
+#include <cmath>
 
 #define pi 3.14159265359
 #define to_degrees 57.2957795131
@@ -94,6 +95,11 @@ inline int smallest(int a, int b)
 {
     if (a < b) return a;
     else return b;
+}
+
+inline double convert_x_qq_to_w(double x, double qq)
+{
+  return sqrt(pow(proton_mass,2) + (qq/x)*(1-x));
 }
 
 #endif

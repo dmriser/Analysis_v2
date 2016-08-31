@@ -93,7 +93,8 @@ class DBin
   double GetStatError(){ return kStatError; }
   double GetScale(){ return kScale; }
   double GetContent(){ return double(kScale*kFills); }
-
+  double GetCenter(){ return double(kMax - kMin/2); }
+  
   DBin operator+(DBin&);
   DBin operator+=(DBin&);
   DBin operator/(DBin&);

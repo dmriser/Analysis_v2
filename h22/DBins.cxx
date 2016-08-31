@@ -346,6 +346,116 @@ DLineBins DLineBins::Rebin(int numBins, vector<double> limits)
   return rebins; 
 }
 
+DLineBins DLineBins::StatisticalRebin(int numBins)
+{
+  DLineBins results; 
+
+  if (numBins > bins.size()) { cout << " Error in DLineBins::StatisticalRebin()... target number exceeds bins.size() " << endl; return results; }
+  if (bins.size()/numBins < 5) { cout << " Warning: DLineBins::StatisticalRebin()... Outcome unlikely good, increase ratio of old bins to new bins. " << endl; } 
+
+  // Threshold is for considering bin "close enough".  Calculated as a percent difference between content and desired content.
+  double threshold = 0.05; 
+  
+  // Totaling bin content in all bins. 
+  long int total = 0;
+  for (int ibin=0; ibin<bins.size(); ibin++){ total += bins[ibin].GetFills(); } 
+
+  // Setting target number of entries in each bin.
+  int target        = (int) total/numBins; 
+  int running_total = 0; 
+  int rebin_index   = 0; 
+  
+  // Start looping on bins and creating new.
+  DBin this_bin;
+  this_bin.SetMin(bins.front().GetMin());
+
+  cout << " Starting Statistical Rebin, target is " << target << endl; 
+  
+  for (int ibin=0; ibin<bins.size(); ibin++) {
+    // We passed the optimal point. 
+    if (running_total > target) {
+      cout << " Writing into rebin " << rebin_index << " for passing it with " << running_total << " entries on bin " << ibin << endl; 
+      this_bin.SetMax( bins[ibin].GetMax() );
+      this_bin.Refresh();
+      this_bin.SetFills( running_total );
+      results.AddBin(this_bin);
+      running_total = 0;
+      rebin_index++;
+      this_bin.Clear();
+      this_bin.SetMin( bins[ibin].GetMax() );
+    }
+    
+    // We are within threshold, add the new bin. 
+    if  ( (double) ((double)(target-running_total)/(double)(target)) < threshold ) {
+      cout << " Writing into rebin " << rebin_index << " for coming in threshold with " << running_total << " entries on bin " << ibin << endl; 
+      this_bin.SetMax( bins[ibin].GetMax() );
+      this_bin.Refresh();
+      this_bin.SetFills( running_total );
+      results.AddBin(this_bin);
+      running_total = 0;
+      rebin_index++;
+      this_bin.Clear();
+      this_bin.SetMin( bins[ibin].GetMax() );
+    }
+    
+    
+    // If we are on our last bin, just add the remainder.
+    if (rebin_index == numBins-1) {
+      for (int jbin=ibin; jbin<bins.size(); jbin++){
+	running_total += bins[jbin].GetFills();
+      }
+      this_bin.SetMax( bins.back().GetMax() );
+      this_bin.Refresh();
+      this_bin.SetFills( running_total ); 
+      results.AddBin(this_bin);
+      break; 
+    }
+    
+    // Add the bin contents to the running total 
+    running_total += bins[ibin].GetFills();
+    
+  }
+  
+  return results; 
+}
+
+DLineBins DLineBins::operator+(DLineBins& lineBins){
+  DLineBins results;
+
+  if (this->GetNumber() != lineBins.GetNumber()) { cout << " Error: DLineBins operator+()... Cannot add DLineBins with different lenghts! " << endl; return results; } 
+
+  // Go adding bin by bin. This is naive, we should actually check the bin
+  // boundaries and then search for the correct mapping between our 2 bins. 
+  // This method is fine as long as every line bin is identical before rebinning.
+  // The "every line bin same" is exactly what we have for a TH2 histogram. 
+  // I may revisit this later, if my salary goes up. 
+  for (int ibin=0; ibin<this->GetNumber(); ibin++){
+    DBin this_bin = lineBins.GetBin(ibin)+this->GetBin(ibin); 
+    results.AddBin( lineBins.GetBin(ibin) ); 
+  } 
+  
+  return results; 
+}
+
+
+DLineBins DLineBins::operator+=(DLineBins& lineBins){
+
+  DLineBins results; 
+  if (this->GetNumber() != lineBins.GetNumber()) { cout << " Error: DLineBins operator+()... Cannot add DLineBins with different lenghts! " << endl; return results; } 
+
+  // Go adding bin by bin. This is naive, we should actually check the bin
+  // boundaries and then search for the correct mapping between our 2 bins. 
+  // This method is fine as long as every line bin is identical before rebinning.
+  // The "every line bin same" is exactly what we have for a TH2 histogram. 
+  // I may revisit this later, if my salary goes up. 
+  for (int ibin=0; ibin<this->GetNumber(); ibin++){
+    DBin this_bin = this->GetBin(ibin) + lineBins.GetBin(ibin); 
+    this->AddBin( this_bin ); 
+  } 
+  
+  return *this; 
+}
+
 ////////////////////////////////////////////////////////////////////////////////////
 /*
 
@@ -373,7 +483,8 @@ void DPlaneBins::AddLineBins(DLineBins inBins)
 void DPlaneBins::Fill(double x, double y)
 {
   int edge_index = edge_bins.FindBin(x); 
-
+  edge_bins.Fill(x); 
+  
   if (edge_index > -1 && edge_index < edge_bins.GetNumber())
     {
       bins[edge_index].Fill(y);
@@ -388,6 +499,42 @@ void DPlaneBins::Print()
       bins[i].Print(); 
     }
   
+}
+
+DPlaneBins DPlaneBins::StatisticalRebin(int numEdgeBins, int numBinsPerLine){
+  DPlaneBins result;
+
+  if (numEdgeBins > edge_bins.size() ) { cout << " Error: DPlaneBins::StatisticalRebin() Number of final edge bins less than original number. " << endl; return result; }
+
+  for (int b=0; b<bins.size(); b++) 
+    if (numBinsPerLine > bins[b].size() ) { cout << " Error: DPlaneBins::StatisticalRebin() Number of final line bins less than original number. " << endl; return result; }
+
+  // First do the edge bins
+  DLineBins edge_result = edge_bins.StatisticalRebin( numEdgeBins ); 
+  result.SetEdgeBins( edge_result );
+
+  // Now we need to start adding line bins together and rebinning them.
+  // edge_result now has new kMin and kMax parameters for each bin, we
+  // can use them to combine our lines. 
+  int edge_bin_index = 0; 
+  DLineBins this_line = bins[0]; 
+  this_line.Clear();
+  
+  for (int ibin=0; ibin<edge_bins.GetNumber(); ibin++) {
+
+    // Stop adding bins together. 
+    if (edge_bins[ibin].GetMax() > edge_result[edge_bin_index].GetMax()) {
+      edge_bin_index++; 
+      this_line = this_line.StatisticalRebin(numBinsPerLine);
+      result.AddLineBins( this_line );
+      this_line.Clear();
+    }
+
+    this_line += bins[ibin];
+    
+  }
+  
+  return result; 
 }
 
 #endif

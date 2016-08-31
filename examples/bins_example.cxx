@@ -42,7 +42,7 @@ int main()
   cout.width(12); cout << " bin "; 
   cout.width(12); cout << " width "; 
   cout.width(12); cout << " min ";
-  cout.width(12); cout << " max "<< endl;
+  cout.width(12); cout << " max " << endl;
   
   for (int ibin=0; ibin<emptyNewXBins.GetNumber(); ibin++) {
     cout.width(12); cout << ibin; 
@@ -60,6 +60,38 @@ int main()
 
   DLineBins newerXBins = newXBins.Rebin(n_new_x_rebins, newXLimits); 
   newerXBins.Print();
+
+  // Setup new bins for testing of Statistical Rebinning 
+  DLineBins yBins(20, -5, 5);
+
+  for (int i=0; i<1000; i++) {
+    yBins.Fill( rand->Gaus(0, 1.5) );
+  }
+
+  cout << " Statistical Rebin.. " << endl; 
+  DLineBins newYBins = yBins.StatisticalRebin(4); 
+  yBins.Print();
+  newYBins.Print();
+
+
+  // Testing DPlaneBins 
+  DPlaneBins ab_plane;
+  DLineBins a_bins(5, 0, 1); 
+  DLineBins b_bins(10, 0, 1); 
+
+  ab_plane.SetEdgeBins( a_bins );
+  ab_plane.AddLineBins( b_bins );
+  ab_plane.AddLineBins( b_bins );
+  ab_plane.AddLineBins( b_bins );
+  ab_plane.AddLineBins( b_bins );
+  ab_plane.AddLineBins( b_bins );
+
+  for (int i=0; i<1000; i++){
+    ab_plane.Fill(rand->Gaus(0.5, 0.1),rand->Gaus(0.5, 0.1)); 
+  } 
+  
+  cout << " DPlaneBins " << endl; 
+  ab_plane.Print();
   
   return 0;
 }

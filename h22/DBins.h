@@ -131,8 +131,21 @@ class DLineBins
   int GetUnderflow(){ return kUnderflow; }
   int GetOverflow(){ return kOverflow; }
 
+  DLineBins operator+(DLineBins&);
+  DLineBins operator+=(DLineBins&);
+
   DLineBins Rebin(int, std::vector<double>); /** Pass in number of bins and limits as string of doubles. */
+  DLineBins StatisticalRebin(int); /** Pass in the desired number of bins */
+
 };
+
+//////////////////////////////////////////////////////////////////////
+/*
+
+  DPlaneBins (Awaiting rework)
+
+*/
+//////////////////////////////////////////////////////////////////////
 
 // Plane of Bins
 class DPlaneBins
@@ -150,7 +163,8 @@ class DPlaneBins
   void AddLineBins(DLineBins); /**< Add your line of bins with corresponding edge bin number */
   void Fill(double, double);
   void Print();
-  
+
+  DPlaneBins StatisticalRebin(int, int); /**< Pass in the number of final edge bins, number of final bins in each line. */
 };
 
 #endif

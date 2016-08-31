@@ -7,15 +7,31 @@ using namespace std;
 #include "DBins.h"
 #include "DISPackage.h"
 #include "Dumper.h"
+#include "h22Option.h"
 
 int main(int argc, char * argv[])
 {
-  int n_files = 1;
-  if (argc > 1) { n_files = atoi(argv[1]);}  
+  // Configuring special options for this code! 
+  h22Options options; 
+  options.args["MACHINE"].args = "MAC";
+  options.args["MACHINE"].type = 1;
+  options.args["MACHINE"].name = "Machine being used";
+  options.args["N"].arg        = 1; 
+  options.set(argc,argv);
   
-  ifstream mc_list("mc.dat");      vector<string> mc_files;
-  ifstream data_list("data.dat");  vector<string> data_files;
+  int n_files = options.args["N"].arg;
 
+  ifstream mc_list;   vector<string> mc_files;
+  ifstream data_list; vector<string> data_files;
+  
+  if (options.args["MACHINE"].args == "MAC") {
+    mc_list.open("mc.dat");      
+    data_list.open("data.dat"); 
+  } else {
+    mc_list.open("mc_farm.dat");      
+    data_list.open("data_farm.dat"); 
+  }
+ 
   string line; int ifile = 0; 
   while( getline(mc_list, line) && ifile < n_files)  { mc_files.push_back(line);   ifile++; }  mc_list.close();  ifile = 0;
   while( getline(data_list, line) && ifile < n_files){ data_files.push_back(line); ifile++; }  data_list.close();
@@ -31,7 +47,8 @@ int main(int argc, char * argv[])
   manager.parfile[1] = "epars.dat"; 
   manager.outfile = "dis_devel";
   manager.infofile = "runs.info";
-  manager.momcorr_path = "/Users/dmriser/Work/analysis/momCorr/";
+  if (options.args["MACHINE"].args == "MAC") { manager.momcorr_path = "/Users/dmriser/Work/analysis/momCorr/"; }
+  else { manager.momcorr_path = "/u/home/dmriser/mydoc/analysis/root_scripts/Analysis_v2/momCorr/"; }
   manager.eid_version = 0; 
   
   manager.set_bins(xBins, qqBins);
@@ -53,8 +70,8 @@ int main(int argc, char * argv[])
   manager.dis_selector.summarize(); 
   manager.get_charge(data_files); 
   manager.do_xs();
-  //  manager.histos.draw();
-  //  manager.histos.save();
+  manager.histos.draw();
+  manager.histos.save();
 
   if (manager.eid_version == 1) {
     manager.eid[0].summarize();

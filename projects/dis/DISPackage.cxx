@@ -140,229 +140,6 @@ void DISHistograms::init()
       }
     h1_xs_x_by_qq.push_back(v);
   }
-
-  /*
-  // Generated Events for x-by-w
-  for (int s=0; s<7; s++) {
-    vector<TH1F*> v;
-    for (int b=0; b<(xBins.number()+1); b++)
-      {
-	string name  = Form("h1_gen_x_by_w_%d_%s",b,sect[s].c_str());
-	string title = Form("gen x-by-w for bin %d of %s",b,sect[s].c_str());
-	v.push_back( new TH1F(name.c_str(), title.c_str(), xBins.number(), xBins.min(), xBins.max()) );
-      }
-    h1_gen_x_by_w.push_back(v);
-  }
-
-  // Reconstructed Events for x-by-w
-  for (int s=0; s<7; s++) {
-    vector<TH1F*> v;
-    for (int b=0; b<(xBins.number()+1); b++)
-      {
-	string name  = Form("h1_rec_x_by_w_%d_%s",b,sect[s].c_str());
-	string title = Form("rec x-by-w for bin %d of %s",b,sect[s].c_str());
-	v.push_back( new TH1F(name.c_str(), title.c_str(), xBins.number(), xBins.min(), xBins.max()) );
-      }
-    h1_rec_x_by_w.push_back(v);
-  }
-
-  // Data Events for x-by-w
-  for (int s=0; s<7; s++) {
-    vector<TH1F*> v;
-    for (int b=0; b<(xBins.number()+1); b++)
-      {
-	string name  = Form("h1_hits_x_by_w_%d_%s",b,sect[s].c_str());
-	string title = Form("hits x-by-w for bin %d of %s",b,sect[s].c_str());
-	v.push_back( new TH1F(name.c_str(), title.c_str(), xBins.number(), xBins.min(), xBins.max()) );
-      }
-    h1_hits_x_by_w.push_back(v);
-  }
-
-  // Acc. for x-by-w
-  for (int s=0; s<7; s++) {
-    vector<TH1F*> v;
-    for (int b=0; b<(xBins.number()+1); b++)
-      {
-	string name  = Form("h1_acc_x_by_w_%d_%s",b,sect[s].c_str());
-	string title = Form("Acc. x-by-w for bin %d of %s",b,sect[s].c_str());
-	v.push_back( new TH1F(name.c_str(), title.c_str(), xBins.number(), xBins.min(), xBins.max()) );
-      }
-    h1_acc_x_by_w.push_back(v);
-  }
-
-
-  // rxs for x-by-w
-  for (int s=0; s<7; s++) {
-    vector<TH1F*> v;
-    for (int b=0; b<(xBins.number()+1); b++)
-      {
-	string name  = Form("h1_rxs_x_by_w_%d_%s",b,sect[s].c_str());
-	string title = Form("rxs x-by-w for bin %d of %s",b,sect[s].c_str());
-	v.push_back( new TH1F(name.c_str(), title.c_str(), xBins.number(), xBins.min(), xBins.max()) );
-      }
-    h1_rxs_x_by_w.push_back(v);
-  }
-
-
-  // xs for x-by-w
-  for (int s=0; s<7; s++) {
-    vector<TH1F*> v;
-    for (int b=0; b<(xBins.number()+1); b++)
-      {
-	string name  = Form("h1_xs_x_by_w_%d_%s",b,sect[s].c_str());
-	string title = Form("xs x-by-w for bin %d of %s",b,sect[s].c_str());
-	v.push_back( new TH1F(name.c_str(), title.c_str(), xBins.number(), xBins.min(), xBins.max()) );
-      }
-    h1_xs_x_by_w.push_back(v);
-  }
-
-  // Generated Events for qq-by-x
-  for (int s=0; s<7; s++) {
-    vector<TH1F*> v;
-    for (int b=0; b<(qqBins.number()+1); b++)
-      {
-	string name  = Form("h1_gen_qq_by_x_%d_%s",b,sect[s].c_str());
-	string title = Form("gen qq-by-x for bin %d of %s",b,sect[s].c_str());
-	v.push_back( new TH1F(name.c_str(), title.c_str(), qqBins.number(), qqBins.min(), qqBins.max()) );
-      }
-    h1_gen_qq_by_x.push_back(v);
-  }
-
-  // Reconstructed Events for x-by-w
-  for (int s=0; s<7; s++) {
-    vector<TH1F*> v;
-    for (int b=0; b<(qqBins.number()+1); b++)
-      {
-	string name  = Form("h1_rec_qq_by_x_%d_%s",b,sect[s].c_str());
-	string title = Form("rec qq-by-x for bin %d of %s",b,sect[s].c_str());
-	v.push_back( new TH1F(name.c_str(), title.c_str(), qqBins.number(), qqBins.min(), qqBins.max()) );
-      }
-    h1_rec_qq_by_x.push_back(v);
-  }
-
-  // Data Events for qq-by-x
-  for (int s=0; s<7; s++) {
-    vector<TH1F*> v;
-    for (int b=0; b<(qqBins.number()+1); b++)
-      {
-	string name  = Form("h1_hits_qq_by_x_%d_%s",b,sect[s].c_str());
-	string title = Form("hits qq-by-x for bin %d of %s",b,sect[s].c_str());
-	v.push_back( new TH1F(name.c_str(), title.c_str(), qqBins.number(), qqBins.min(), qqBins.max()) );
-      }
-    h1_hits_qq_by_x.push_back(v);
-  }
-
-  // Acc. for qq-by-x
-  for (int s=0; s<7; s++) {
-    vector<TH1F*> v;
-    for (int b=0; b<(qqBins.number()+1); b++)
-      {
-	string name  = Form("h1_acc_qq_by_x_%d_%s",b,sect[s].c_str());
-	string title = Form("Acc. qq-by-x for bin %d of %s",b,sect[s].c_str());
-	v.push_back( new TH1F(name.c_str(), title.c_str(), qqBins.number(), qqBins.min(), qqBins.max()) );
-      }
-    h1_acc_qq_by_x.push_back(v);
-  }
-
-  // rxs for qq-by-x
-  for (int s=0; s<7; s++) {
-    vector<TH1F*> v;
-    for (int b=0; b<(qqBins.number()+1); b++)
-      {
-	string name  = Form("h1_rxs_qq_by_x_%d_%s",b,sect[s].c_str());
-	string title = Form("rxs qq-by-x for bin %d of %s",b,sect[s].c_str());
-	v.push_back( new TH1F(name.c_str(), title.c_str(), qqBins.number(), qqBins.min(), qqBins.max()) );
-      }
-    h1_rxs_qq_by_x.push_back(v);
-  }
-
-  // xs for qq-by-x
-  for (int s=0; s<7; s++) {
-    vector<TH1F*> v;
-    for (int b=0; b<(qqBins.number()+1); b++)
-      {
-	string name  = Form("h1_xs_qq_by_x_%d_%s",b,sect[s].c_str());
-	string title = Form("xs qq-by-x for bin %d of %s",b,sect[s].c_str());
-	v.push_back( new TH1F(name.c_str(), title.c_str(), qqBins.number(), qqBins.min(), qqBins.max()) );
-      }
-    h1_xs_qq_by_x.push_back(v);
-  }
-
-  // Generated Events for qq-by-w
-  for (int s=0; s<7; s++) {
-    vector<TH1F*> v;
-    for (int b=0; b<(qqBins.number()+1); b++)
-      {
-	string name  = Form("h1_gen_qq_by_w_%d_%s",b,sect[s].c_str());
-	string title = Form("gen qq-by-w for bin %d of %s",b,sect[s].c_str());
-	v.push_back( new TH1F(name.c_str(), title.c_str(), qqBins.number(), qqBins.min(), qqBins.max()) );
-      }
-    h1_gen_qq_by_w.push_back(v);
-  }
-
-  // Reconstructed Events for qq-by-w
-  for (int s=0; s<7; s++) {
-    vector<TH1F*> v;
-    for (int b=0; b<(qqBins.number()+1); b++)
-      {
-	string name  = Form("h1_rec_qq_by_w_%d_%s",b,sect[s].c_str());
-	string title = Form("rec qq-by-w for bin %d of %s",b,sect[s].c_str());
-	v.push_back( new TH1F(name.c_str(), title.c_str(), qqBins.number(), qqBins.min(), qqBins.max()) );
-      }
-    h1_rec_qq_by_w.push_back(v);
-  }
-
-  // Data Events for qq-by-w
-  for (int s=0; s<7; s++) {
-    vector<TH1F*> v;
-    for (int b=0; b<(qqBins.number()+1); b++)
-      {
-	string name  = Form("h1_hits_qq_by_w_%d_%s",b,sect[s].c_str());
-	string title = Form("hits qq-by-w for bin %d of %s",b,sect[s].c_str());
-	v.push_back( new TH1F(name.c_str(), title.c_str(), qqBins.number(), qqBins.min(), qqBins.max()) );
-      }
-    h1_hits_qq_by_w.push_back(v);
-  }
-
-
-  // Acc. for qq-by-w
-  for (int s=0; s<7; s++) {
-    vector<TH1F*> v;
-    for (int b=0; b<(qqBins.number()+1); b++)
-      {
-	string name  = Form("h1_acc_qq_by_w_%d_%s",b,sect[s].c_str());
-	string title = Form("Acc. qq-by-w for bin %d of %s",b,sect[s].c_str());
-	v.push_back( new TH1F(name.c_str(), title.c_str(), qqBins.number(), qqBins.min(), qqBins.max()) );
-      }
-    h1_acc_qq_by_w.push_back(v);
-  }
-
-
-  // rxs for qq-by-w
-  for (int s=0; s<7; s++) {
-    vector<TH1F*> v;
-    for (int b=0; b<(qqBins.number()+1); b++)
-      {
-	string name  = Form("h1_rxs_qq_by_w_%d_%s",b,sect[s].c_str());
-	string title = Form("rxs qq-by-w for bin %d of %s",b,sect[s].c_str());
-	v.push_back( new TH1F(name.c_str(), title.c_str(), qqBins.number(), qqBins.min(), qqBins.max()) );
-      }
-    h1_rxs_qq_by_w.push_back(v);
-  }
-
-
-  // xs for qq-by-w
-  for (int s=0; s<7; s++) {
-    vector<TH1F*> v;
-    for (int b=0; b<(qqBins.number()+1); b++)
-      {
-	string name  = Form("h1_xs_qq_by_w_%d_%s",b,sect[s].c_str());
-	string title = Form("xs qq-by-w for bin %d of %s",b,sect[s].c_str());
-	v.push_back( new TH1F(name.c_str(), title.c_str(), qqBins.number(), qqBins.min(), qqBins.max()) );
-      }
-    h1_xs_qq_by_w.push_back(v);
-  }
-  */
 }
 
 void DISHistograms::fill(DEvent event, int index)
@@ -383,23 +160,6 @@ void DISHistograms::fill(DEvent event, int index)
     h1_rec_x_by_qq[0][qqbin] ->Fill(event.x);
     h1_rec_x_by_qq[s][0]     ->Fill(event.x);
     h1_rec_x_by_qq[s][qqbin] ->Fill(event.x);
-
-    /*
-    h1_rec_x_by_w[0][0]    ->Fill(event.x);
-    h1_rec_x_by_w[0][wbin]    ->Fill(event.x);
-    h1_rec_x_by_w[s][0]    ->Fill(event.x);
-    h1_rec_x_by_w[s][wbin] ->Fill(event.x);
-
-    h1_rec_qq_by_x[0][0]    ->Fill(event.qq);
-    h1_rec_qq_by_x[0][xbin]    ->Fill(event.qq);
-    h1_rec_qq_by_x[s][0]    ->Fill(event.qq);
-    h1_rec_qq_by_x[s][xbin] ->Fill(event.qq);
-    
-    h1_rec_qq_by_w[0][0]    ->Fill(event.qq);
-    h1_rec_qq_by_w[0][wbin]    ->Fill(event.qq);
-    h1_rec_qq_by_w[s][0]    ->Fill(event.qq);
-    h1_rec_qq_by_w[s][wbin] ->Fill(event.qq);
-    */
   }
 
   // Data Events
@@ -408,22 +168,6 @@ void DISHistograms::fill(DEvent event, int index)
     h1_hits_x_by_qq[0][qqbin]     ->Fill(event.x);
     h1_hits_x_by_qq[s][0]     ->Fill(event.x);
     h1_hits_x_by_qq[s][qqbin] ->Fill(event.x);
-    /*
-    h1_hits_x_by_w[0][0]    ->Fill(event.x);
-    h1_hits_x_by_w[0][wbin]    ->Fill(event.x);
-    h1_hits_x_by_w[s][0]    ->Fill(event.x);
-    h1_hits_x_by_w[s][wbin] ->Fill(event.x);
-
-    h1_hits_qq_by_x[0][0]    ->Fill(event.qq);
-    h1_hits_qq_by_x[0][xbin]    ->Fill(event.qq);
-    h1_hits_qq_by_x[s][0]    ->Fill(event.qq);
-    h1_hits_qq_by_x[s][xbin] ->Fill(event.qq);
-
-    h1_hits_qq_by_w[0][0]    ->Fill(event.qq);
-    h1_hits_qq_by_w[0][wbin]    ->Fill(event.qq);
-    h1_hits_qq_by_w[s][0]    ->Fill(event.qq);
-    h1_hits_qq_by_w[s][wbin] ->Fill(event.qq);
-    */
   }
 
 }
@@ -456,22 +200,6 @@ void DISHistograms::fill_gen(DEvent event)
   h1_gen_x_by_qq[0][qqbin] ->Fill(event.x);
   h1_gen_x_by_qq[s][0]     ->Fill(event.x);
   h1_gen_x_by_qq[s][qqbin] ->Fill(event.x);
-  /*
-  h1_gen_x_by_w[0][0]    ->Fill(event.x);
-  h1_gen_x_by_w[0][wbin] ->Fill(event.x);
-  h1_gen_x_by_w[s][0]    ->Fill(event.x);
-  h1_gen_x_by_w[s][wbin] ->Fill(event.x);
-  
-  h1_gen_qq_by_x[0][0]    ->Fill(event.qq);
-  h1_gen_qq_by_x[0][xbin] ->Fill(event.qq);
-  h1_gen_qq_by_x[s][0]    ->Fill(event.qq);
-  h1_gen_qq_by_x[s][xbin] ->Fill(event.qq);
-  
-  h1_gen_qq_by_w[0][0]    ->Fill(event.qq);
-  h1_gen_qq_by_w[0][wbin] ->Fill(event.qq);
-  h1_gen_qq_by_w[s][0]    ->Fill(event.qq);
-  h1_gen_qq_by_w[s][wbin] ->Fill(event.qq);
-  */
 }
 
 void DISHistograms::draw()
@@ -662,17 +390,6 @@ void DISHistograms::save()
 
   for (int s=0; s<7; s++)
     {
-      /*
-      for (int b=0; b<=xBins.number(); b++)
-	{
-	  h1_hits_qq_by_x[s][b] ->Write();
-	  h1_rec_qq_by_x[s][b]  ->Write();
-	  h1_gen_qq_by_x[s][b]  ->Write();
-	  h1_acc_qq_by_x[s][b] ->Write();
-	  h1_rxs_qq_by_x[s][b] ->Write();
-	  h1_xs_qq_by_x[s][b] ->Write();
-	}
-      */
       for (int b=0; b<=qqBins.number(); b++)
 	{
 	  h1_hits_x_by_qq[s][b] ->Write();
@@ -682,23 +399,6 @@ void DISHistograms::save()
 	  h1_rxs_x_by_qq[s][b] ->Write();
 	  h1_xs_x_by_qq[s][b] ->Write();
 	}
-      /*
-      for (int b=0; b<=wBins.number(); b++)
-	{
-	  h1_hits_x_by_w[s][b]  ->Write();
-	  h1_acc_x_by_w[s][b]  ->Write();
-	  h1_rxs_x_by_w[s][b]  ->Write();
-	  h1_xs_x_by_w[s][b]  ->Write();
-	  h1_rec_x_by_w[s][b]   ->Write();
-	  h1_gen_x_by_w[s][b]   ->Write();
-	  h1_hits_qq_by_w[s][b] ->Write();
-	  h1_acc_qq_by_w[s][b] ->Write();
-	  h1_rxs_qq_by_w[s][b] ->Write();
-	  h1_xs_qq_by_w[s][b] ->Write();
-	  h1_rec_qq_by_w[s][b]  ->Write();
-	  h1_gen_qq_by_w[s][b]  ->Write();
-	}
-      */
     }
 
   out.Write();
@@ -909,15 +609,15 @@ void DISManager::loop(int index)
   if (eid_version == 0) { 
     for (int iev=0; iev<nev; iev++)
       {
+	if (iev%1000 == 0){ cout << "\r done " << iev << " of " << nev << flush; } 
 	reader[index].GetEntry(iev); 
 	DEvent event( reader[index].GetEvent() );
 	if (runno != reader[index].runno()) { runno = reader[index].runno(); nathan.set_info(runno, reader[index].GSIM); }
 
 	// Do generated for MC 
 	if (index == 1) {
-	  //	  histos.fill_gen(event);
+	  histos.fill_gen(event);
 
-	  //	  event.set_electron( event.tracks.gen_particle(11) );
 	  event.set_electron( TLorentzVector(event.tracks.mcpx(0), event.tracks.mcpy(0), event.tracks.mcpz(0), event.tracks.mcp[0])); 
 	  int xb     = find_x_bin(event.x);
 	  int qqb    = find_qq_bin(event.x, event.qq); 
@@ -938,7 +638,7 @@ void DISManager::loop(int index)
 	  event.set_electron(electron);
 	  
 	  if (dis_selector.passes(event, e_index)) {
-	    //	    histos.fill(event, index);
+	    histos.fill(event, index);
 
 	    // Assigning this event to a bin. 
 	    if (index == 0) {
@@ -963,6 +663,8 @@ void DISManager::loop(int index)
     {
       for (int iev=0; iev<nev; iev++)
 	{
+	  if (iev%1000 == 0){ cout << "\r done " << iev << " of " << nev << flush; } 
+	  
 	  reader[index].GetEntry(iev); 
 	  DEvent event( reader[index].GetEvent() );
 	  if (runno != reader[index].runno()) { runno = reader[index].runno(); eid[index].set_info(runno, reader[index].GSIM); }
@@ -970,6 +672,12 @@ void DISManager::loop(int index)
 	  // Do generated for MC 
 	  if (index == 1) {
 	    histos.fill_gen(event);
+
+	    event.set_electron( TLorentzVector(event.tracks.mcpx(0), event.tracks.mcpy(0), event.tracks.mcpz(0), event.tracks.mcp[0])); 
+	    int xb     = find_x_bin(event.x);
+	    int qqb    = find_qq_bin(event.x, event.qq); 
+	    int mcsect = floor(event.tracks.mcphi[0]/60.0) +1; 
+	    if (xb > -1 && qqb > -1 && mcsect > 0) { gen[0][xb][qqb]++; gen[mcsect][xb][qqb]++; }
 	  }
 	  
 	  if (eid[index].passes(event, 0))
@@ -984,11 +692,27 @@ void DISManager::loop(int index)
 	      event.set_e_index(0);
 	      event.set_electron(electron);
 
-	      if (dis_selector.passes(event, 0)) histos.fill(event, index);
+	      if (dis_selector.passes(event, 0)){
+		histos.fill(event, index);
+
+		// Assigning this event to a bin. 
+		if (index == 0) {
+		  int xb  = find_x_bin(event.x);
+		  int qqb = find_qq_bin(event.x, event.qq); 
+		  int sect = event.tracks.dc_sect[0]; 
+		  if (xb > -1 && qqb > -1 && sect > 0) { hits[0][xb][qqb]++; hits[sect][xb][qqb]++; }
+		}
+		
+		else {
+		  int xb  = find_x_bin(event.x);
+		  int qqb = find_qq_bin(event.x, event.qq); 
+		  int sect = event.tracks.dc_sect[0]; 
+		  if (xb > -1 && qqb > -1 && sect > 0) { rec[0][xb][qqb]++; rec[sect][xb][qqb]++; }
+		}
+	      }
 	    }
 	}
     }
-  
 }
 
 void DISManager::print_table()

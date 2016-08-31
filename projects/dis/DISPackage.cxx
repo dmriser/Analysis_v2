@@ -26,6 +26,7 @@ using namespace std;
 #include "DISPackage.h"
 #include "DSelection.h"
 #include "ElectronIDPackage.h"
+#include "F1F209Wrapper.hh"
 #include "NathanArchive.h"
 #include "MomCorr.h"
 
@@ -562,6 +563,8 @@ void DISManager::do_xs()
 {
   string sect[7] = {"all","s1","s2","s3","s4","s5","s6"};
 
+  F1F209Wrapper model; 
+
   // Doing Cross Section
   for (int s=0; s<7; s++)
     {
@@ -778,6 +781,29 @@ void DISManager::print_table()
 	    cout.width(12); cout << data_mc_ratio[s][i][j] << endl;
 	  }
       }
+
+  ofstream out(Form("%s.dat",outfile.c_str()));
+  for (int s=0; s<7; s++) 
+    for (int i=0; i<n_x_bins; i++)
+      {
+	for (int j=0; j<n_qq_bins; j++)
+	  {
+	    out.width(8); out << s;
+	    out.width(8); out << xLims[i];
+	    out.width(8); out << xLims[i+1];
+	    out.width(8); out << qqLims[i][j];
+	    out.width(8); out << qqLims[i][j+1]; 
+	    out.width(8); out << hits[s][i][j];
+	    out.width(8); out << rec[s][i][j];
+	    out.width(8); out << gen[s][i][j];
+	    out.width(12); out << acc[s][i][j];
+	    out.width(12); out << corr_hits[s][i][j];
+	    out.width(12); out << xs[s][i][j] << endl;
+	  }
+      }
+  
+  out.close();
+
 }
 
 int DISManager::find_x_bin(double x)

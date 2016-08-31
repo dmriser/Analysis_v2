@@ -56,29 +56,6 @@ class DISHistograms
   std::vector<std::vector<TH1F*> > h1_rxs_x_by_qq;
   std::vector<std::vector<TH1F*> > h1_xs_x_by_qq;
 
-  /*
-  std::vector<std::vector<TH1F*> > h1_gen_x_by_w;
-  std::vector<std::vector<TH1F*> > h1_rec_x_by_w;
-  std::vector<std::vector<TH1F*> > h1_hits_x_by_w;
-  std::vector<std::vector<TH1F*> > h1_acc_x_by_w;
-  std::vector<std::vector<TH1F*> > h1_rxs_x_by_w;
-  std::vector<std::vector<TH1F*> > h1_xs_x_by_w;
-
-  std::vector<std::vector<TH1F*> > h1_gen_qq_by_x;
-  std::vector<std::vector<TH1F*> > h1_rec_qq_by_x;
-  std::vector<std::vector<TH1F*> > h1_hits_qq_by_x;
-  std::vector<std::vector<TH1F*> > h1_acc_qq_by_x;
-  std::vector<std::vector<TH1F*> > h1_rxs_qq_by_x;
-  std::vector<std::vector<TH1F*> > h1_xs_qq_by_x;
-
-  std::vector<std::vector<TH1F*> > h1_gen_qq_by_w;
-  std::vector<std::vector<TH1F*> > h1_rec_qq_by_w;
-  std::vector<std::vector<TH1F*> > h1_hits_qq_by_w;
-  std::vector<std::vector<TH1F*> > h1_acc_qq_by_w;
-  std::vector<std::vector<TH1F*> > h1_rxs_qq_by_w;
-  std::vector<std::vector<TH1F*> > h1_xs_qq_by_w;
-  */
-  
   // Member Functions
   void draw();
   void fill(DEvent, int); /** Pass in the event and the type data or monte carlo */

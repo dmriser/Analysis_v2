@@ -27,6 +27,7 @@
 
 //  root includes
 #include "TH1.h"
+#include "TH2.h"
 
 ////////////////////////////////////////////////////////////////////////
 /*
@@ -56,6 +57,10 @@ class DISHistograms
   std::vector<std::vector<TH1F*> > h1_rxs_x_by_qq;
   std::vector<std::vector<TH1F*> > h1_xs_x_by_qq;
 
+  TH2F * h2_hits_x_qq[7];
+  TH2F * h2_rec_x_qq[7];
+  TH2F * h2_gen_x_qq[7];
+  
   // Member Functions
   void draw();
   void fill(DEvent, int); /** Pass in the event and the type data or monte carlo */

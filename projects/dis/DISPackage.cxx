@@ -141,6 +141,14 @@ void DISHistograms::init()
       }
     h1_xs_x_by_qq.push_back(v);
   }
+
+  // 2-D x qq 
+  for (int s=0; s<7; s++) {
+    h2_hits_x_qq[s] = new TH2F(Form("h2_hits_x_qq_%d",s),Form("Hits QQ vs. X Sector %d",s),100,xBins.min(),xBins.max(),100,qqBins.min(),qqBins.max());
+    h2_rec_x_qq[s]  = new TH2F(Form("h2_rec_x_qq_%d",s),Form("Rec QQ vs. X Sector %d",s),100,xBins.min(),xBins.max(),100,qqBins.min(),qqBins.max());
+    h2_gen_x_qq[s]  = new TH2F(Form("h2_gen_x_qq_%d",s),Form("Gen QQ vs. X Sector %d",s),100,xBins.min(),xBins.max(),100,qqBins.min(),qqBins.max()); 
+  }
+  
 }
 
 void DISHistograms::fill(DEvent event, int index)
@@ -161,6 +169,8 @@ void DISHistograms::fill(DEvent event, int index)
     h1_rec_x_by_qq[0][qqbin] ->Fill(event.x);
     h1_rec_x_by_qq[s][0]     ->Fill(event.x);
     h1_rec_x_by_qq[s][qqbin] ->Fill(event.x);
+    h2_rec_x_qq[s]->Fill(event.x, event.qq);
+    h2_rec_x_qq[0]->Fill(event.x, event.qq);
   }
 
   // Data Events
@@ -169,6 +179,8 @@ void DISHistograms::fill(DEvent event, int index)
     h1_hits_x_by_qq[0][qqbin]     ->Fill(event.x);
     h1_hits_x_by_qq[s][0]     ->Fill(event.x);
     h1_hits_x_by_qq[s][qqbin] ->Fill(event.x);
+    h2_hits_x_qq[s]->Fill(event.x, event.qq);
+    h2_hits_x_qq[0]->Fill(event.x, event.qq);
   }
 
 }
@@ -201,6 +213,8 @@ void DISHistograms::fill_gen(DEvent event)
   h1_gen_x_by_qq[0][qqbin] ->Fill(event.x);
   h1_gen_x_by_qq[s][0]     ->Fill(event.x);
   h1_gen_x_by_qq[s][qqbin] ->Fill(event.x);
+  h2_gen_x_qq[0]->Fill(event.x, event.qq);
+  h2_gen_x_qq[s]->Fill(event.x, event.qq);
 }
 
 void DISHistograms::draw()
@@ -382,6 +396,34 @@ void DISHistograms::draw()
       canvas->Clear();
     }
 
+  // 2d
+  canvas->Divide(3, 2);
+  for (int s=1; s<7; s++)
+    {
+      canvas->cd(s);
+      h2_hits_x_qq[s]->Draw("colz");
+    }
+  canvas->Print( Form("%s.pdf",output_name.c_str()) );
+  canvas->Clear();
+
+  canvas->Divide(3, 2);
+  for (int s=1; s<7; s++)
+    {
+      canvas->cd(s);
+      h2_rec_x_qq[s]->Draw("colz");
+    }
+  canvas->Print( Form("%s.pdf",output_name.c_str()) );
+  canvas->Clear();
+
+  canvas->Divide(3, 2);
+  for (int s=1; s<7; s++)
+    {
+      canvas->cd(s);
+      h2_gen_x_qq[s]->Draw("colz");
+    }
+  canvas->Print( Form("%s.pdf",output_name.c_str()) );
+  canvas->Clear();
+
   canvas->Print( Form("%s.pdf]",output_name.c_str()) );
 }
 
@@ -400,6 +442,9 @@ void DISHistograms::save()
 	  h1_rxs_x_by_qq[s][b] ->Write();
 	  h1_xs_x_by_qq[s][b] ->Write();
 	}
+      h2_hits_x_qq[s]->Write();
+      h2_rec_x_qq[s]->Write();
+      h2_gen_x_qq[s]->Write();
     }
 
   out.Write();
@@ -587,6 +632,7 @@ void DISManager::do_xs()
 	  histos.h1_rxs_x_by_qq[s][b]->Divide( histos.h1_acc_x_by_qq[s][b] ); 
 	  histos.h1_rxs_x_by_qq[s][b]->SetTitle(title.c_str());
 	  histos.h1_rxs_x_by_qq[s][b]->SetName(name.c_str());
+	  histos.h1_rxs_x_by_qq[s][b]->Scale(cm_to_outhouse*(electron_c*hydrogen_molar_weight/(avogadro*hydrogen_density)));
 
 	  name  = Form("h1_xs_x_by_qq_%d_%s",b,sect[s].c_str());
 	  title = Form("xs for x-by-qq Bin %d Sector %s",b,sect[s].c_str());

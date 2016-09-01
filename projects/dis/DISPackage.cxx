@@ -641,16 +641,16 @@ void DISManager::fill_model(){
   
   for (int ibin=1; ibin<qqBins.number(); ibin++){
     for (int jbin=1; jbin<xBins.number(); jbin++) {
-      double e_prime = beam_energy - qqBins.bin_center(ibin)/(2*proton_mass*xBins.bin_center(jbin));; 
-      double theta   = 2*asin(sqrt(qqBins.bin_center(ibin))/(2*sqrt(beam_energy*e_prime))); 
-      double model_value = model.GetXS(1, 1, beam_energy, e_prime, theta);
+      double model_value = model.GetXS(1, 1, beam_energy, xBins.bin_center(jbin), qqBins.bin_center(ibin));
+
       if (model_value > 1e-20 && model_value < 1e20) {
-	histos.h1_model_x_by_qq[ibin]->SetBinContent(jbin,model_value);
+	histos.h1_model_x_by_qq[ibin]->SetBinContent(jbin,model_value/mev_to_gev);
 	histos.h1_model_x_by_qq[ibin]->SetBinError(jbin,0.00);
-      } 
-      cout.width(12); cout << model.GetXS(1,1,beam_energy,e_prime,theta);
-      cout.width(12); cout << theta;
-      cout.width(12); cout << e_prime << endl; 
+      }
+      
+      cout.width(12); cout << model.GetXS(1,1,beam_energy,xBins.bin_center(jbin),qqBins.bin_center(ibin));
+      cout.width(12); cout << xBins.bin_center(jbin);
+      cout.width(12); cout << qqBins.bin_center(ibin) << endl; 
     }
   }
 }

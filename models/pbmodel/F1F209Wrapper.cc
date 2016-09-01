@@ -51,14 +51,16 @@ void F1F209Wrapper::GetF1F2QE09(double Z, double A, double Q2, double W2, double
     F2 = F2o;
 }
 
-double F1F209Wrapper::GetXS(double Z, double A, double Ei, double Ef, double theta)
+double F1F209Wrapper::GetXS(double Z, double A, double Ei, double x, double qq)
 {
     const double M = 0.93825;
 
-    double nu = Ei - Ef;
-    double Q2 = 4. * Ei * Ef * (sin(abs(theta) / 2.))*(sin(abs(theta) / 2.));
-    double w2 = M * M + 2. * M * nu - Q2;
-
+    double Q2 = qq; 
+    double w2 = M*M + (1-x)*(Q2/x);
+    double nu = Q2/(2*M*x);
+    double Ef = Ei-nu;
+    double theta = 2*asin(sqrt(Q2)/(2*sqrt(Ei*Ef)));
+    
     double F1, F2, r;
     double xs1, xs2;
 

@@ -55,8 +55,11 @@ class DISHistograms
   std::vector<std::vector<TH1F*> > h1_hits_x_by_qq;
   std::vector<std::vector<TH1F*> > h1_acc_x_by_qq;
   std::vector<std::vector<TH1F*> > h1_rxs_x_by_qq;
+  std::vector<std::vector<TH1F*> > h1_rxs_ratio_x_by_qq;
   std::vector<std::vector<TH1F*> > h1_xs_x_by_qq;
-
+  std::vector<std::vector<TH1F*> > h1_xs_ratio_x_by_qq;
+  std::vector<TH1F*> h1_model_x_by_qq;
+  
   TH2F * h2_hits_x_qq[7];
   TH2F * h2_rec_x_qq[7];
   TH2F * h2_gen_x_qq[7];
@@ -120,7 +123,8 @@ class DISManager
   void do_xs();
   void get_charge(std::vector<std::string>);
   void print_table(); 
-
+  void fill_model();
+  
   int find_qq_bin(double,double);
   int find_x_bin(double);
 };

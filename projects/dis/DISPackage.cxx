@@ -142,6 +142,38 @@ void DISHistograms::init()
     h1_xs_x_by_qq.push_back(v);
   }
 
+  // xs ratio for x-by-qq
+  for (int s=0; s<7; s++) {
+    vector<TH1F*> v;
+    for (int b=0; b<(qqBins.number()+1); b++)
+      {
+	string name  = Form("h1_xs_ratio_x_by_qq_%d_%s",b,sect[s].c_str());
+	string title = Form("xs ratio x-by-qq for bin %d of %s",b,sect[s].c_str());
+	v.push_back( new TH1F(name.c_str(), title.c_str(), xBins.number(), xBins.min(), xBins.max()) );
+      }
+    h1_xs_ratio_x_by_qq.push_back(v);
+  }
+
+  // rxs ratio for x-by-qq
+  for (int s=0; s<7; s++) {
+    vector<TH1F*> v;
+    for (int b=0; b<(qqBins.number()+1); b++)
+      {
+	string name  = Form("h1_rxs_ratio_x_by_qq_%d_%s",b,sect[s].c_str());
+	string title = Form("rxs ratio x-by-qq for bin %d of %s",b,sect[s].c_str());
+	v.push_back( new TH1F(name.c_str(), title.c_str(), xBins.number(), xBins.min(), xBins.max()) );
+      }
+    h1_rxs_ratio_x_by_qq.push_back(v);
+  }
+
+  // Model Cross Section 
+  for (int b=0; b<(qqBins.number()+1); b++)
+    {
+      string name  = Form("h1_model_x_by_qq_%d",b);
+      string title = Form("model x-by-qq for bin %d",b);
+      h1_model_x_by_qq.push_back( new TH1F(name.c_str(), title.c_str(), xBins.number(), xBins.min(), xBins.max()) );
+    }
+  
   // 2-D x qq 
   for (int s=0; s<7; s++) {
     h2_hits_x_qq[s] = new TH2F(Form("h2_hits_x_qq_%d",s),Form("Hits QQ vs. X Sector %d",s),100,xBins.min(),xBins.max(),100,qqBins.min(),qqBins.max());
@@ -176,7 +208,7 @@ void DISHistograms::fill(DEvent event, int index)
   // Data Events
   else if (index == 0) {
     h1_hits_x_by_qq[0][0]     ->Fill(event.x);
-    h1_hits_x_by_qq[0][qqbin]     ->Fill(event.x);
+    h1_hits_x_by_qq[0][qqbin] ->Fill(event.x);
     h1_hits_x_by_qq[s][0]     ->Fill(event.x);
     h1_hits_x_by_qq[s][qqbin] ->Fill(event.x);
     h2_hits_x_qq[s]->Fill(event.x, event.qq);
@@ -369,6 +401,72 @@ void DISHistograms::draw()
       canvas->Clear();
     }
 
+  // xs ratio x-by-qq
+  for (int s=0; s<7; s++)
+    {
+      canvas->Divide(can_size+1, can_size);
+      for (int b=0; b<h1_xs_x_by_qq[s].size()-1; b++)
+	{
+	  canvas->cd(b+1);
+
+	  double qq_start = qqBins.min() + (b-1)*qqBins.width();
+	  double qq_end   = qqBins.min() + b*qqBins.width();
+	  if (b == 0) { qq_start = qqBins.min(); qq_end = qqBins.max(); }
+
+	  h1_xs_ratio_x_by_qq[s][b]->SetMarkerStyle(8);
+	  h1_xs_ratio_x_by_qq[s][b]->Draw("PE");
+	  lab.DrawLatex(0.3, 0.02, Form(" #sigma ratio(x): Sector %d Bin %d ",s,b));
+	  lab.DrawLatex(0.25, 0.925, Form(" Q^{2} (%.2f #rightarrow %.2f) GeV^{2}/c^{2} ",qq_start, qq_end));
+	}
+
+      canvas->Print( Form("%s.pdf",output_name.c_str()) );
+      canvas->Clear();
+    }
+  
+  // rxs ratio x-by-qq
+  for (int s=0; s<7; s++)
+    {
+      canvas->Divide(can_size+1, can_size);
+      for (int b=0; b<h1_rxs_ratio_x_by_qq[s].size()-1; b++)
+	{
+	  canvas->cd(b+1);
+
+	  double qq_start = qqBins.min() + (b-1)*qqBins.width();
+	  double qq_end   = qqBins.min() + b*qqBins.width();
+	  if (b == 0) { qq_start = qqBins.min(); qq_end = qqBins.max(); }
+
+	  h1_rxs_ratio_x_by_qq[s][b]->SetMarkerStyle(8);
+	  h1_rxs_ratio_x_by_qq[s][b]->Draw("PE");
+	  lab.DrawLatex(0.3, 0.02, Form(" raw #sigma ratio(x): Sector %d Bin %d ",s,b));
+	  lab.DrawLatex(0.25, 0.925, Form(" Q^{2} (%.2f #rightarrow %.2f) GeV^{2}/c^{2} ",qq_start, qq_end));
+	}
+
+      canvas->Print( Form("%s.pdf",output_name.c_str()) );
+      canvas->Clear();
+    }
+
+  // Model xs x-by-qq
+  canvas->Divide(can_size+1, can_size);
+  for (int b=0; b<h1_model_x_by_qq.size()-1; b++)
+    {
+      canvas->cd(b+1);
+      
+      double qq_start = qqBins.min() + (b-1)*qqBins.width();
+      double qq_end   = qqBins.min() + b*qqBins.width();
+      if (b == 0) { qq_start = qqBins.min(); qq_end = qqBins.max(); }
+      
+      h1_model_x_by_qq[b]->SetMarkerStyle(8);
+      h1_model_x_by_qq[b]->Draw("P");
+      lab.DrawLatex(0.3, 0.02, Form(" Model (x): Bin %d ",b));
+      lab.DrawLatex(0.25, 0.925, Form(" Q^{2} (%.2f #rightarrow %.2f) GeV^{2}/c^{2} ",qq_start, qq_end));
+
+      canvas->Update(); 
+    }
+  
+  canvas->Print( Form("%s.pdf",output_name.c_str()) );
+  canvas->Clear();
+  
+
   // rec & hits x-by-qq
   for (int s=0; s<7; s++)
     {
@@ -441,6 +539,9 @@ void DISHistograms::save()
 	  h1_acc_x_by_qq[s][b] ->Write();
 	  h1_rxs_x_by_qq[s][b] ->Write();
 	  h1_xs_x_by_qq[s][b] ->Write();
+	  h1_xs_ratio_x_by_qq[s][b] ->Write();
+	  h1_rxs_ratio_x_by_qq[s][b] ->Write();
+	  if (s==0) { h1_model_x_by_qq[b] ->Write(); } 
 	}
       h2_hits_x_qq[s]->Write();
       h2_rec_x_qq[s]->Write();
@@ -516,11 +617,11 @@ DISManager::DISManager()
     for (int ixbin=0; ixbin<n_x_bins; ixbin++)
       for (int iqqbin=0; iqqbin<n_qq_bins; iqqbin++)
 	{
-	  hits[s][ixbin][iqqbin] = 0;
-	  rec[s][ixbin][iqqbin]  = 0;
-	  gen[s][ixbin][iqqbin]  = 0;
-	  acc[s][ixbin][iqqbin]  = 0.0;
-	  xs[s][ixbin][iqqbin]   = 0.0;
+	  hits[s][ixbin][iqqbin]           = 0;
+	  rec[s][ixbin][iqqbin]            = 0;
+	  gen[s][ixbin][iqqbin]            = 0;
+	  acc[s][ixbin][iqqbin]            = 0.0;
+	  xs[s][ixbin][iqqbin]             = 0.0;
 	  corr_hits[s][ixbin][iqqbin]      = 0.0;
 	  data_mc_ratio[s][ixbin][iqqbin]  = 0.0;
       }
@@ -530,6 +631,28 @@ DISManager::DISManager()
 DISManager::~DISManager()
 {
   // Destruir todo. 
+}
+
+void DISManager::fill_model(){
+
+  // Get model 
+  F1F209Wrapper model; 
+  double beam_energy = 5.498; 
+  
+  for (int ibin=1; ibin<qqBins.number(); ibin++){
+    for (int jbin=1; jbin<xBins.number(); jbin++) {
+      double e_prime = beam_energy - qqBins.bin_center(ibin)/(2*proton_mass*xBins.bin_center(jbin));; 
+      double theta   = 2*asin(sqrt(qqBins.bin_center(ibin))/(2*sqrt(beam_energy*e_prime))); 
+      double model_value = model.GetXS(1, 1, beam_energy, e_prime, theta);
+      if (model_value > 1e-20 && model_value < 1e20) {
+	histos.h1_model_x_by_qq[ibin]->SetBinContent(jbin,model_value);
+	histos.h1_model_x_by_qq[ibin]->SetBinError(jbin,0.00);
+      } 
+      cout.width(12); cout << model.GetXS(1,1,beam_energy,e_prime,theta);
+      cout.width(12); cout << theta;
+      cout.width(12); cout << e_prime << endl; 
+    }
+  }
 }
 
 void DISManager::get_charge(vector<string> files)
@@ -632,6 +755,7 @@ void DISManager::do_xs()
 	  histos.h1_rxs_x_by_qq[s][b]->Divide( histos.h1_acc_x_by_qq[s][b] ); 
 	  histos.h1_rxs_x_by_qq[s][b]->SetTitle(title.c_str());
 	  histos.h1_rxs_x_by_qq[s][b]->SetName(name.c_str());
+	  histos.h1_rxs_x_by_qq[s][b]->Scale(1/(xBins.width()*qqBins.width())); 
 	  histos.h1_rxs_x_by_qq[s][b]->Scale(cm_to_outhouse*(electron_c*hydrogen_molar_weight/(avogadro*hydrogen_density)));
 
 	  name  = Form("h1_xs_x_by_qq_%d_%s",b,sect[s].c_str());
@@ -639,6 +763,21 @@ void DISManager::do_xs()
 	  histos.h1_xs_x_by_qq[s][b] = (TH1F*) histos.h1_rxs_x_by_qq[s][b]->Clone();
 	  histos.h1_xs_x_by_qq[s][b]->SetTitle(title.c_str());
 	  histos.h1_xs_x_by_qq[s][b]->SetName(name.c_str());
+
+	  name  = Form("h1_rxs_ratio_x_by_qq_%d_%s",b,sect[s].c_str());
+	  title = Form("rxs ratio for x-by-qq Bin %d Sector %s",b,sect[s].c_str());
+	  histos.h1_rxs_ratio_x_by_qq[s][b] = (TH1F*) histos.h1_rxs_x_by_qq[s][b]->Clone();
+	  histos.h1_rxs_ratio_x_by_qq[s][b]->Divide( histos.h1_model_x_by_qq[b] );
+	  histos.h1_rxs_ratio_x_by_qq[s][b]->SetTitle(title.c_str());
+	  histos.h1_rxs_ratio_x_by_qq[s][b]->SetName(name.c_str());
+
+	  name  = Form("h1_xs_ratio_x_by_qq_%d_%s",b,sect[s].c_str());
+	  title = Form("xs ratio for x-by-qq Bin %d Sector %s",b,sect[s].c_str());
+	  histos.h1_xs_ratio_x_by_qq[s][b] = (TH1F*) histos.h1_xs_x_by_qq[s][b]->Clone();
+	  histos.h1_xs_ratio_x_by_qq[s][b]->Divide( histos.h1_model_x_by_qq[b] );
+	  histos.h1_xs_ratio_x_by_qq[s][b]->SetTitle(title.c_str());
+	  histos.h1_xs_ratio_x_by_qq[s][b]->SetName(name.c_str());
+	  
 	}
     }
   

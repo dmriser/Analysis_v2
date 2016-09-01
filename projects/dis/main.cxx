@@ -73,6 +73,7 @@ int main(int argc, char * argv[])
   manager.loop(1);
   manager.dis_selector.summarize(); 
   manager.get_charge(data_files); 
+  manager.fill_model();
   manager.do_xs();
   manager.histos.draw();
   manager.histos.save();

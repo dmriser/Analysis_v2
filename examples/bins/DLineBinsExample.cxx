@@ -55,6 +55,14 @@ int main()
     cout << " Threshold: " << (double) i*0.02 << endl; 
     newYBins.Print();
   }
+
+  // Demonstrating getting bin limits.
+  vector<double> retrievedLimits = newXBins.GetLimits();
+  for (int i=0; i<retrievedLimits.size(); i++) {
+    cout << retrievedLimits[i] << " ";
+  }
+  cout << endl;
+
   
   return 0;
 }

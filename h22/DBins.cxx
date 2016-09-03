@@ -417,6 +417,17 @@ DLineBins DLineBins::StatisticalRebin(int numBins)
   return results; 
 }
 
+vector<double> DLineBins::GetLimits(){
+  vector<double> limits;
+
+  for (int ibin=0; ibin<GetNumber(); ibin++) {
+    limits.push_back( GetBin(ibin).GetMin() );
+  }
+
+  limits.push_back( bins.back().GetMax() );
+  return limits;
+}
+
 DLineBins DLineBins::operator+(DLineBins& lineBins){
   DLineBins results;
 

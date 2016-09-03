@@ -119,8 +119,7 @@ class DLineBins
   double stat_rebin_threshold; 
   std::vector<DBin> bins; 
   
-  
-  // Member Functions 
+    // Member Functions 
  public:
   void AddBin(DBin b){ bins.push_back(b); kNumber++; }
   void Clear(){ kUnderflow=0; kOverflow=0; kNumber=0; for(int i=0; i<bins.size(); i++) bins[i].Clear(); }
@@ -128,15 +127,17 @@ class DLineBins
   void Refresh(){ for(int i=0; i<bins.size(); i++) bins[i].Refresh(); }
   void Print();
   void SetStatRebinThreshold(double x){ stat_rebin_threshold = x; } 
-  int FindBin(double);
-  DBin GetBin(int i){ return bins[i]; }
+
+  int FindBin(double);  
   int GetNumber(){ return bins.size(); } 
   int GetUnderflow(){ return kUnderflow; }
   int GetOverflow(){ return kOverflow; }
 
+  std::vector<double> GetLimits(); 
+  
+  DBin GetBin(int i){ return bins[i]; }
   DLineBins operator+(DLineBins&);
   DLineBins operator+=(DLineBins&);
-
   DLineBins Rebin(int, std::vector<double>); /** Pass in number of bins and limits as string of doubles. */
   DLineBins StatisticalRebin(int); /** Pass in the desired number of bins */
 

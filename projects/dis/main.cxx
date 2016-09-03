@@ -18,9 +18,6 @@ int main(int argc, char * argv[])
   options.args["MACHINE"].name = "Machine being used";
   options.args["N"].arg        = 1;
   options.args["N"].name       = "Number of files"; 
-  options.args["EID_VERSION"].arg  = 0;
-  options.args["EID_VERSION"].type = 0;
-  options.args["EID_VERSION"].name = "EID Version";
   options.set(argc,argv);
   
   int n_files = options.args["N"].arg;
@@ -49,11 +46,11 @@ int main(int argc, char * argv[])
   manager.add_files(mc_files,   1);
   manager.parfile[0] = "epars.dat";
   manager.parfile[1] = "epars.dat"; 
-  manager.outfile = "dis_devel";
-  manager.infofile = "runs.info";
+  manager.outfile    = "dis_devel";
+  manager.infofile   = "runs.info";
   if (options.args["MACHINE"].args == "MAC") { manager.momcorr_path = "/Users/dmriser/Work/analysis/momCorr/"; }
   else { manager.momcorr_path = "/u/home/dmriser/mydoc/analysis/root_scripts/Analysis_v2/momCorr/"; }
-  manager.eid_version = int(options.args["EIDVERSION"].arg); 
+  manager.eid_version = 0;
   
   manager.set_bins(xBins, qqBins);
   manager.qq_cut->set_min(1.0);

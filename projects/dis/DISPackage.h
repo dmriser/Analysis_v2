@@ -58,8 +58,9 @@ class DISHistograms
   std::vector<std::vector<TH1F*> > h1_rxs_ratio_x_by_qq;
   std::vector<std::vector<TH1F*> > h1_xs_x_by_qq;
   std::vector<std::vector<TH1F*> > h1_xs_ratio_x_by_qq;
-  std::vector<TH1F*> h1_model_x_by_qq;
-   
+  std::vector<TH1F*>               h1_model_x_by_qq;
+
+  // 2-D Histos Used For Slicing 
   TH2F * h2_hits_x_qq[7];
   TH2F * h2_rec_x_qq[7];
   TH2F * h2_gen_x_qq[7];
@@ -86,26 +87,19 @@ class DISHistograms
 class DISManager
 {
  public:
-  DISManager(std::string outputFile, bool recalc);
+  DISManager(std::string outputFile, bool r);
   ~DISManager();
 
   // Data Types
   int eid_version;
   double fcup_charge; 
+  bool recalc; 
   std::string parfile[2]; 
   std::string outfile;
   std::string infofile; 
   std::string momcorr_path;
 
-  // Don't really want to do this but DPlaneBins isn't working yet 
-  const static int n_x_bins = 5, n_qq_bins = 2; 
-  int hits[7][n_x_bins][n_qq_bins], rec[7][n_x_bins][n_qq_bins], gen[7][n_x_bins][n_qq_bins];
-  double acc[7][n_x_bins][n_qq_bins], data_mc_ratio[7][n_x_bins][n_qq_bins], corr_hits[7][n_x_bins][n_qq_bins], xs[7][n_x_bins][n_qq_bins]; 
-  
-  double xLims[n_x_bins+1], qqLims[n_x_bins][n_qq_bins+1]; 
-  
   DBins xBins, qqBins; 
-  DPlaneBins x_qq_bins; 
   DInformation info; 
   DISHistograms histos; 
   DSelection dis_selector; 
@@ -113,8 +107,8 @@ class DISManager
   h22Reader reader[2];
   NathanEIDWrapper nathan; 
   VirtualityCut * qq_cut;
-  YCut * y_cut;
-  WCut * w_cut; 
+  YCut          * y_cut;
+  WCut          * w_cut; 
 
   // Member Functions
   void add_files(std::vector<std::string>, int);
@@ -123,11 +117,7 @@ class DISManager
   void loop(int); 
   void do_xs();
   void get_charge(std::vector<std::string>);
-  void print_table(); 
-  void fill_model();
-  
-  int find_qq_bin(double,double);
-  int find_x_bin(double);
+  void fill_model();  
 };
 
 

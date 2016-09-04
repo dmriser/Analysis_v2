@@ -388,8 +388,23 @@ class DCut_DeltaBetaCut : public DCut
   DCut_DeltaBetaCut();
   ~DCut_DeltaBetaCut();
 
-  bool passes(DEvent, int);
+  bool passes(DEvent event, int index, int pid);
 };
 
+/////////////////////////////////////////////////////////////////////
+/*
+
+  Delta Z-Vertex Cut 
+
+ */
+/////////////////////////////////////////////////////////////////////
+
+class DCut_DeltaZVertexCut : public DCut{
+ public:
+  DCut_DeltaZVertexCut();
+  ~DCut_DeltaZVertexCut();
+
+  bool passes(DEvent event, int index); 
+};
 
 #endif

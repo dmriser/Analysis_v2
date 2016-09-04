@@ -554,14 +554,47 @@ bool DCut_DeltaBetaCut::passes(DEvent event, int index, int pid){
   
   // Delta beta is a common cut used for comparing timing of a measured particle
   // and the theoretical result. 
-  double beta  = 0;
-  double dbeta = 0; 
+  double start_time = event.tracks.sc_t[event.e_index] - event.tracks.sc_r[event.e_index]/speed_of_light; 
+  double beta       = event.tracks.sc_r[index]/(event.tracks.sc_t[index]-start_time);
+  double dbeta      = event.tracks.p[index]/sqrt( pow(event.tracks.p[index],2) + pow(pid_to_mass(pid),2) ) - beta; 
 
   // Check if passing. 
-  if (dbeta > min() && dbeta < max()){ n_pass++; return true; }
+  if ( dbeta > min() && dbeta < max() ) { n_pass++; return true; }
   else { n_fail++; }
 
   return false; 
 }
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+/*
+
+  DCut_DeltaZVertexCut 
+
+*/
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+DCut_DeltaZVertexCut::DCut_DeltaZVertexCut(){
+  set_name("Delta Z-Vertex Cut"); 
+}
+
+DCut_DeltaZVertexCut::~DCut_DeltaZVertexCut(){ }
+
+bool DCut_DeltaZVertexCut::passes(DEvent event, int index){
+
+  if (event.e_index == -123){ cout << " Error: Calling DCut_DeltaZVertexCut() without having e_index set." << endl; return false; } 
+   
+  // Delta beta is a common cut used for comparing timing of a measured particle
+  // and the theoretical result. 
+  double dvz = event.tracks.vz[event.e_index] - event.tracks.vz[index];  
+  
+  // Check if passing. 
+  if ( dvz > min() && dvz < max() ) { n_pass++; return true; }
+  else { n_fail++; }
+
+  return false; 
+}
+
+ 
 
 #endif

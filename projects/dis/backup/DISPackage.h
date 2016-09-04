@@ -86,7 +86,7 @@ class DISHistograms
 class DISManager
 {
  public:
-  DISManager(std::string outputFile, bool recalc);
+  DISManager();
   ~DISManager();
 
   // Data Types

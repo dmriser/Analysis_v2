@@ -374,5 +374,22 @@ class YCut : public DCut
 
 };
 
+/////////////////////////////////////////////////////////////////////
+/*
+
+  Delta Beta Cut 
+
+ */
+/////////////////////////////////////////////////////////////////////
+
+class DCut_DeltaBetaCut : public DCut 
+{
+ public:
+  DCut_DeltaBetaCut();
+  ~DCut_DeltaBetaCut();
+
+  bool passes(DEvent, int);
+};
+
 
 #endif

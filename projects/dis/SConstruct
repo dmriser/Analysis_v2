@@ -7,6 +7,5 @@ env.Append(CCFLAGS = ['-g'])
 env.Append(CPPPATH = ['$h22libs/include/'], LIBPATH = ['$h22libs/lib/'],LIBS = ['h22'])
 env.Append(CPPPATH = ['$h22libs/include/'], LIBPATH = ['$h22libs/lib/'],LIBS = ['F1F209'])
 
-sources = glob.glob('*.cxx')
-
-env.Program('main',sources)
+env.Program('main',['main.cxx','DISPackage.cxx'])
+env.Program('draw',['draw.cxx','DISPackage.cxx'])

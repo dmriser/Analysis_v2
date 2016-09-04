@@ -133,6 +133,9 @@ class DLineBins
   int GetUnderflow(){ return kUnderflow; }
   int GetOverflow(){ return kOverflow; }
 
+  double GetMin(){ return bins.front().GetMin(); }
+  double GetMax(){ return bins.back() .GetMax(); }
+  
   std::vector<double> GetLimits(); 
   
   DBin GetBin(int i){ return bins[i]; }
@@ -146,7 +149,7 @@ class DLineBins
 //////////////////////////////////////////////////////////////////////
 /*
 
-  DPlaneBins (Awaiting rework)
+  DPlaneBins 
 
 */
 //////////////////////////////////////////////////////////////////////

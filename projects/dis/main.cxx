@@ -9,9 +9,9 @@ using namespace std;
 #include "Dumper.h"
 #include "h22Option.h"
 
-int main(int argc, char * argv[])
-{
-  // Configuring special options for this code! 
+int main(int argc, char * argv[]){
+  
+  // Configuring special options for this code. 
   h22Options options; 
   options.args["MACHINE"].args = "MAC";
   options.args["MACHINE"].type = 1;
@@ -75,7 +75,7 @@ int main(int argc, char * argv[])
   manager.histos.draw();
   manager.histos.save();
 
-  if (manager.eid_version == 1) {
+  if ( manager.eid_version == 1 ) {
     manager.eid[0].summarize();
     manager.eid[1].summarize(); 
   }

@@ -575,11 +575,11 @@ void DISHistograms::save()
 */
 ////////////////////////////////////////////////////////////////////////
 
-DISManager::DISManager(string outputFile, bool recalc)
+DISManager::DISManager()
 {
-  outfile      = outputFile;
-  parfile[0]   = "unset";
-  parfile[1]   = "unset";
+  outfile     = "unset";
+  parfile[0]  = "unset";
+  parfile[1]  = "unset";
   momcorr_path = "unset";
   
   eid_version = 0;
@@ -639,6 +639,7 @@ DISManager::DISManager(string outputFile, bool recalc)
 	  corr_hits[s][ixbin][iqqbin]      = 0.0;
 	  data_mc_ratio[s][ixbin][iqqbin]  = 0.0;
       }
+  
 }
 
 DISManager::~DISManager()

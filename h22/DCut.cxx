@@ -534,5 +534,34 @@ bool YCut::passes(DEvent event, int index)
   return false; 
 }
 
+///////////////////////////////////////////////////////////////////////////////////////////////////
+/*
+
+  DCut_DeltaBetaCut
+
+*/
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+DCut_DeltaBetaCut::DCut_DeltaBetaCut(){
+  set_name("Delta Beta Cut"); 
+}
+
+DCut_DeltaBetaCut::~DCut_DeltaBetaCut(){ }
+
+bool DCut_DeltaBetaCut::passes(DEvent event, int index, int pid){
+
+  if (event.e_index == -123){ cout << " Error: Calling DCut_DeltaBetaCut() without having e_index set." << endl; return false; } 
+  
+  // Delta beta is a common cut used for comparing timing of a measured particle
+  // and the theoretical result. 
+  double beta  = 0;
+  double dbeta = 0; 
+
+  // Check if passing. 
+  if (dbeta > min() && dbeta < max()){ n_pass++; return true; }
+  else { n_fail++; }
+
+  return false; 
+}
 
 #endif

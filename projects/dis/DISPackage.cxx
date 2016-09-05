@@ -60,6 +60,8 @@ DISHistograms::DISHistograms()
   sect[5] = "s5";
   sect[6] = "s6";
   output_name = "unset";
+
+  runInfoTree = new TTree("runInfoTree","Holds run information.");
 }
 
 

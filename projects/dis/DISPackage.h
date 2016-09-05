@@ -67,7 +67,7 @@ class DISHistograms
   TH2F * h2_gen_x_qq[7];
 
   // Tree used for run info
-  TTree * runInfoTree = new TTree("runInfoTree"," Information on Data Files used. "); 
+  TTree * runInfoTree; 
   
   // Member Functions
   void draw();

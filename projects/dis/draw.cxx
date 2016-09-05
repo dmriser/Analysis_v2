@@ -24,15 +24,15 @@ int main(int argc, char * argv[]){
   DISManager manager(argv[1],false); 
   manager.set_bins(xBins, qqBins); 
   manager.init();
-
+  
   // We need to program so routines in DISPackage.cxx before this will work
-  manager.do_xs();
+  // manager.do_xs();
   //  manager.histos.draw();
   
   return 0;
 }
 
 int PrintUsage(){
-  cout << " --> Fail: Pass in the name of the root file which contains histograms!"  << endl; 
+  cout << " Usage: ./draw <root file>" << endl;
   return 0; 
 }

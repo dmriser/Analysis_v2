@@ -35,6 +35,7 @@ using namespace std;
 #include "TCanvas.h"
 #include "TFile.h"
 #include "TH1.h"
+#include "TH2.h"
 #include "TLatex.h"
 #include "TLorentzVector.h"
 #include "TRegexp.h"
@@ -103,20 +104,22 @@ void DISHistograms::fill(DEvent event, int index)
 void DISHistograms::fill_gen(DEvent event)
 {
   int e_index = 0;
-  for (int ipart=0; ipart<event.tracks.gpart; ipart++)
-    {
-      if (event.tracks.mcpid[ipart] == 11)
-	{
-	  e_index = ipart;
-	  break;
-	} 
-    }
-
+  if ( event.tracks.mcid[0] != 11) {
+    for (int ipart=0; ipart<event.tracks.gpart; ipart++)
+      {
+	if (event.tracks.mcid[ipart] == 11)
+	  {
+	    e_index = ipart;
+	    break;
+	  } 
+      }
+  }
+  
   TLorentzVector gen_electron(event.tracks.mcpx(e_index), event.tracks.mcpy(e_index), event.tracks.mcpz(e_index), event.tracks.mcp[e_index]);
   event.set_electron(gen_electron); 
 
   int s = 1+floor(event.tracks.mcphi[e_index]/60.0);
-  
+
   // Do the fill. 
   h2_gen_x_qq[0]->Fill(event.x, event.qq);
   h2_gen_x_qq[s]->Fill(event.x, event.qq);
@@ -126,16 +129,19 @@ void DISHistograms::load(){
 
   //  string sect[7] = {"all","s1","s2","s3","s4","s5","s6"};
   TFile * f = TFile::Open( output_name.c_str() );
-  
+
+  if ( !f->IsOpen() ) {
+    cout << " Fatal Error in: DISHistograms::load(). File not opened! " << output_name << endl;
+    exit(0);
+  }
+
   for (int s=0; s<7; s++){
-    //    h2_hits_x_qq[s] = (TH2F*) f->Get( Form("h2_hits_x_qq_%s",sect[s].c_str()) );
-    //    h2_rec_x_qq[s]  = (TH2F*) f->Get( Form("h2_rec_x_qq_%s", sect[s].c_str()) );
-    //    h2_gen_x_qq[s]  = (TH2F*) f->Get( Form("h2_gen_x_qq_%s", sect[s].c_str()) );
     h2_hits_x_qq[s] = (TH2F*) f->Get( Form("h2_hits_x_qq_%d",s) );
     h2_rec_x_qq[s]  = (TH2F*) f->Get( Form("h2_rec_x_qq_%d", s) );
     h2_gen_x_qq[s]  = (TH2F*) f->Get( Form("h2_gen_x_qq_%d", s) );
   }
 
+  cout << h2_hits_x_qq[0]->GetEntries() << endl;
   f->Close();
 }
 
@@ -158,7 +164,7 @@ void DISHistograms::draw()
   canvas->Clear();
 
   int can_size = floor(sqrt(h1_hits_x_by_qq[0].size()));
-  
+  /*
   // Hits x-by-qq
   for (int s=0; s<7; s++)
     {
@@ -384,6 +390,8 @@ void DISHistograms::draw()
       canvas->Clear();
     }
 
+
+  */
   // 2d
   canvas->Divide(3, 2);
   for (int s=1; s<7; s++)
@@ -421,9 +429,9 @@ void DISHistograms::save()
 
   for (int s=0; s<7; s++)
     {
-      h2_hits_x_qq[s]->Write();
-      h2_rec_x_qq[s]->Write();
-      h2_gen_x_qq[s]->Write();
+      h2_hits_x_qq[s] ->Write();
+      h2_rec_x_qq[s]  ->Write();
+      h2_gen_x_qq[s]  ->Write();
     }
   
   runInfoTree->Write();
@@ -569,8 +577,10 @@ void DISManager::init()
 
   // Doing just loading, slicing, drawing. 
   else {
+    cout << " Loading histograms from... " << outfile << endl; 
     histos.load();     
   }
+
 }
 
 void DISManager::add_files(vector<string> files, int index)

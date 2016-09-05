@@ -28,6 +28,7 @@
 //  root includes
 #include "TH1.h"
 #include "TH2.h"
+#include "TTree.h"
 
 ////////////////////////////////////////////////////////////////////////
 /*
@@ -59,16 +60,19 @@ class DISHistograms
   std::vector<std::vector<TH1F*> > h1_xs_x_by_qq;
   std::vector<std::vector<TH1F*> > h1_xs_ratio_x_by_qq;
   std::vector<TH1F*>               h1_model_x_by_qq;
-
+   
   // 2-D Histos Used For Slicing 
   TH2F * h2_hits_x_qq[7];
   TH2F * h2_rec_x_qq[7];
   TH2F * h2_gen_x_qq[7];
+
+  // Tree used for run info
+  TTree * runInfoTree = new TTree("runInfoTree"," Information on Data Files used. "); 
   
   // Member Functions
   void draw();
   void fill(DEvent, int); /** Pass in the event and the type data or monte carlo */
-  void fill_gen(DEvent); /** Just pass in the generated event */
+  void fill_gen(DEvent);  /** Just pass in the generated event */
   void init();
   void load();
   void set_bins(DBins x, DBins qq){ xBins = x; qqBins = qq; }

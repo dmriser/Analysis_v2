@@ -20,7 +20,7 @@ MomCorr_e1f::MomCorr_e1f(string p) {
   path = p; 
   
   /* Reading angle correction parameters */
-  fprintf(stdout, "reading parameters \n");
+  //  fprintf(stdout, "reading parameters \n");
 
   read_theta_par();
   read_mom_par();
@@ -72,7 +72,7 @@ void MomCorr_e1f::read_theta_par() {
       fprintf(stdout, "===>>> WARNING: Cannot read angle correction from file: %s\n", file);
 
   }
-  fprintf(stdout,"--> MomCorr theta parameters loaded. ");
+  //  fprintf(stdout,"--> MomCorr theta parameters loaded. ");
   
 }
 
@@ -85,8 +85,8 @@ void MomCorr_e1f::read_mom_par() {
 
   char file[100];
   for (Int_t s=1; s<=NSect; s++) {
-    fprintf(stdout, "-------------------------------------- \n");
-    fprintf(stdout, "electron Momentum Correction sector %d\n", s);
+    //    fprintf(stdout, "-------------------------------------- \n");
+    //    fprintf(stdout, "electron Momentum Correction sector %d\n", s);
 
     for (Int_t k=0; k<2; k++) {
       sprintf(file, "%s/momentum2_s%d_c%d.out", path.c_str(),s, k);
@@ -128,7 +128,7 @@ void MomCorr_e1f::read_mom_par() {
 
 
   }
-  fprintf(stdout,"--> MomCorr p parameters loaded. ");
+  //  fprintf(stdout,"--> MomCorr p parameters loaded. ");
 }
 
 void MomCorr_e1f::read_mom_pip_par() {
@@ -140,14 +140,14 @@ void MomCorr_e1f::read_mom_pip_par() {
 
   char file[100];
   for (Int_t s=1; s<=NSect; s++) {
-    fprintf(stdout, "-------------------------------------- \n");
-    fprintf(stdout, "pi+ Momentum Correction sector %d\n", s);
+    //    fprintf(stdout, "-------------------------------------- \n");
+    //    fprintf(stdout, "pi+ Momentum Correction sector %d\n", s);
 
     for (Int_t k=0; k<2; k++) {
       sprintf(file, "%s/momentum3_s%d_c%d.out", path.c_str(),s, k);
       FILE *fp = fopen(&file[0], "r");
       if (fp) {
-	fprintf(stdout, "  Reading Parameter d%d\n", k);
+	//	fprintf(stdout, "  Reading Parameter d%d\n", k);
 	for (Int_t j=0; j<MomC_T_n; j++) {
 	  Double_t x1, y;
 	  Double_t a1,a2,a3;
@@ -161,13 +161,13 @@ void MomCorr_e1f::read_mom_pip_par() {
 	      d0_mom[bin][s-1][0] = a1;
 	      d0_mom[bin][s-1][1] = a2; 
 	      d0_mom[bin][s-1][2] = a3;
-	      fprintf(stdout, "%6.2f     %12.8f  %12.8f  %12.8f  %12.8f \n", x1, d0_mom[bin][s-1][0], d0_mom[bin][s-1][1], d0_mom[bin][s-1][2], d0_mom[bin][s-1][3]);
+	      //	      fprintf(stdout, "%6.2f     %12.8f  %12.8f  %12.8f  %12.8f \n", x1, d0_mom[bin][s-1][0], d0_mom[bin][s-1][1], d0_mom[bin][s-1][2], d0_mom[bin][s-1][3]);
 	    }
 	    else if (k==1) {
 	      d1_mom[bin][s-1][0] = a1;
 	      d1_mom[bin][s-1][1] = a2; 
 	      d1_mom[bin][s-1][2] = a3;
-	      fprintf(stdout, "%6.2f     %12.8f  %12.8f  %12.8f  %12.8f \n", x1, d1_mom[bin][s-1][0], d1_mom[bin][s-1][1], d1_mom[bin][s-1][2], d1_mom[bin][s-1][3]);
+	      //	      fprintf(stdout, "%6.2f     %12.8f  %12.8f  %12.8f  %12.8f \n", x1, d1_mom[bin][s-1][0], d1_mom[bin][s-1][1], d1_mom[bin][s-1][2], d1_mom[bin][s-1][3]);
 	    }
 	  }
 

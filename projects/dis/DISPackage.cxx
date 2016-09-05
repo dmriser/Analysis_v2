@@ -31,6 +31,7 @@ using namespace std;
 #include "MomCorr.h"
 
 //  root includes
+#include "TBranch.h"
 #include "TCanvas.h"
 #include "TFile.h"
 #include "TH1.h"
@@ -39,6 +40,7 @@ using namespace std;
 #include "TRegexp.h"
 #include "TStyle.h"
 #include "TString.h"
+#include "TTree.h"
 
 ////////////////////////////////////////////////////////////////////////
 /*
@@ -120,13 +122,16 @@ void DISHistograms::fill_gen(DEvent event)
 
 void DISHistograms::load(){
 
-  string sect[7] = {"all","s1","s2","s3","s4","s5","s6"};
-  TFile * f = TFile::Open( Form("%s.root",output_name.c_str()) );
+  //  string sect[7] = {"all","s1","s2","s3","s4","s5","s6"};
+  TFile * f = TFile::Open( output_name.c_str() );
   
   for (int s=0; s<7; s++){
-    h2_hits_x_qq[s] = (TH2F*) f->Get( Form("h2_hits_x_qq_%s",sect[s].c_str()) );
-    h2_rec_x_qq[s]  = (TH2F*) f->Get( Form("h2_rec_x_qq_%s", sect[s].c_str()) );
-    h2_gen_x_qq[s]  = (TH2F*) f->Get( Form("h2_gen_x_qq_%s", sect[s].c_str()) );
+    //    h2_hits_x_qq[s] = (TH2F*) f->Get( Form("h2_hits_x_qq_%s",sect[s].c_str()) );
+    //    h2_rec_x_qq[s]  = (TH2F*) f->Get( Form("h2_rec_x_qq_%s", sect[s].c_str()) );
+    //    h2_gen_x_qq[s]  = (TH2F*) f->Get( Form("h2_gen_x_qq_%s", sect[s].c_str()) );
+    h2_hits_x_qq[s] = (TH2F*) f->Get( Form("h2_hits_x_qq_%d",s) );
+    h2_rec_x_qq[s]  = (TH2F*) f->Get( Form("h2_rec_x_qq_%d", s) );
+    h2_gen_x_qq[s]  = (TH2F*) f->Get( Form("h2_gen_x_qq_%d", s) );
   }
 
   f->Close();
@@ -419,6 +424,7 @@ void DISHistograms::save()
       h2_gen_x_qq[s]->Write();
     }
   
+  runInfoTree->Write();
   out.Write();
   out.Close();
 }
@@ -493,6 +499,13 @@ void DISManager::get_charge(vector<string> files)
   
   TRegexp regex("[1-9][0-9][0-9][0-9][0-9]");
 
+  int    runno  = -1;
+  double charge = -1.0;
+  
+  // Setting up information tree.
+  TBranch * runnoBranch      = histos.runInfoTree->Branch("runno",      &runno);
+  TBranch * fcupChargeBranch = histos.runInfoTree->Branch("fcupCharge", &charge);
+  
   cout.width(12); cout << " runno: ";
   cout.width(12); cout << " charge: ";
   cout.width(12); cout << " tot charge: ";
@@ -502,24 +515,29 @@ void DISManager::get_charge(vector<string> files)
     {
       TString file(files[f]);
       TString srunno = file(regex);
-      int runno      = srunno.Atoi();
-      double charge  = (double) info.info[runno].dQ/info.info[runno].daq_scale;
-      fcup_charge    += charge;
+      runno        = srunno.Atoi();
+      charge       = (double) info.info[runno].dQ/info.info[runno].daq_scale;
+      fcup_charge += charge;
       cout.width(12); cout << runno;
       cout.width(12); cout << charge;
       cout.width(12); cout << fcup_charge;
-      cout.width(12); cout << info.info[runno].dN << endl; 
+      cout.width(12); cout << info.info[runno].dN << endl;
+
+      histos.runInfoTree->Fill();
     }
+
 }
 
 void DISManager::init()
 {
   // Warning for not setting parameters.  
-  if (parfile[0] == "unset" || parfile[1] == "unset" || outfile == "unset" || infofile == "unset")
-    {
-      cout << " Warning: Not all parameters have been set before initializing! " << endl;
-      cout << " parfile[0] = " << parfile[0] << " parfile[1] = " << parfile[1] << " outfile = " << outfile << " infofile = " << infofile << endl;  
-    }
+  if (recalc){
+    if (parfile[0] == "unset" || parfile[1] == "unset" || outfile == "unset" || infofile == "unset")
+      {
+	cout << " Warning: Not all parameters have been set before initializing! " << endl;
+	cout << " parfile[0] = " << parfile[0] << " parfile[1] = " << parfile[1] << " outfile = " << outfile << " infofile = " << infofile << endl;  
+      }
+  }
   
   // Setup Histograms
   histos.set_bins(xBins, qqBins);
@@ -538,20 +556,18 @@ void DISManager::init()
     // Setting up Electron ID from Nathan, needs to be updated while running. 
     nathan.set_info(reader[0].runno(), reader[0].GSIM);
     
-    // Adding Cuts 
+    // Adding Cuts to DIS Event Selector 
     dis_selector.add_cut( qq_cut );
     dis_selector.add_cut( w_cut );
     dis_selector.add_cut( y_cut );
-    
+
+    info.load(infofile);
     if ( reader[0].GetEntries() == 0 || reader[1].GetEntries() == 0 ) { cout << " Fatal Error: Trying to initialize with no files in one of the readers. " << endl; exit(0); }  
   }
 
   // Doing just loading, slicing, drawing. 
   else {
-    histos.load(); 
-    
-    // Loading information for runs
-    info.load(infofile);
+    histos.load();     
   }
 }
 
@@ -562,11 +578,36 @@ void DISManager::add_files(vector<string> files, int index)
 
 void DISManager::do_xs()
 {
+  cout << " Inside of DISManager::do_xs() with " << histos.h2_hits_x_qq[0]->GetEntries() << " entries. " << endl;
+
+  // Exists in histo.sect <-- Should be used instead of redeclaration. 
   string sect[7] = {"all","s1","s2","s3","s4","s5","s6"};
 
   F1F209Wrapper model; 
 
-  // Doing Cross Section
+  // Creating 1-Dim histograms from 2-Dim ones
+  // We need to use ProjectionX() to collapse the 2-Dim
+  // histograms into 1-D, but first we need to discover the binning scheme used
+  // for the 2-D histos so that we can collapse the corretly into the new bin
+  // scheme.
+
+  int n_micro_bins_x  = histos.h2_hits_x_qq[0]->GetXaxis()->GetNbins();
+  double micro_x_max  = histos.h2_hits_x_qq[0]->GetXaxis()->GetXmax();
+  double micro_x_min  = histos.h2_hits_x_qq[0]->GetXaxis()->GetXmin(); 
+
+  int n_micro_bins_qq = histos.h2_hits_x_qq[0]->GetYaxis()->GetNbins();
+  double micro_qq_max = histos.h2_hits_x_qq[0]->GetYaxis()->GetXmax();
+  double micro_qq_min = histos.h2_hits_x_qq[0]->GetYaxis()->GetXmin(); 
+  
+  cout << " Discovered binning scheme: " << endl;
+  cout << "      x bins: " << endl;
+  cout << "      " << n_micro_bins_x << " " << micro_x_min << " " << micro_x_max << endl;
+  cout << "      qq bins: " << endl;
+  cout << "      " << n_micro_bins_qq << " " << micro_qq_min << " " << micro_qq_max << endl;
+  
+  // Doing Cross Section AFTER creating histograms from 2D histograms.  
+
+  /*
   for (int s=0; s<7; s++)
     {
       for (int b=0; b<qqBins.number(); b++)
@@ -611,7 +652,8 @@ void DISManager::do_xs()
 	  histos.h1_xs_ratio_x_by_qq[s][b]->SetTitle(title.c_str());
 	  histos.h1_xs_ratio_x_by_qq[s][b]->SetName(name.c_str());	  
 	}
-    }  
+    }
+  */  
 }
 
 void DISManager::loop(int index)
@@ -691,6 +733,8 @@ void DISManager::loop(int index)
 	    }
 	}
     }
+
+  cout << endl;
 }
 
 #endif

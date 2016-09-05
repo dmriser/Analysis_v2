@@ -37,7 +37,7 @@ int main(int argc, char * argv[]){
   while( getline(mc_list, line) && ifile < n_files)  { mc_files.push_back(line);   ifile++; }  mc_list.close();  ifile = 0;
   while( getline(data_list, line) && ifile < n_files){ data_files.push_back(line); ifile++; }  data_list.close();
 
-  // Binning Scheme 
+  // Microscopic Binning Scheme for 2D Histograms 
   DBins xBins(200, 0.05, 0.65);
   DBins qqBins(200, 1.0, 5.0); 
 
@@ -47,6 +47,7 @@ int main(int argc, char * argv[]){
   manager.parfile[0] = "epars.dat";
   manager.parfile[1] = "epars.dat"; 
   manager.infofile   = "runs.info";
+
   if (options.args["MACHINE"].args == "MAC") { manager.momcorr_path = "/Users/dmriser/Work/analysis/momCorr/"; }
   else                                       { manager.momcorr_path = "/u/home/dmriser/mydoc/analysis/root_scripts/Analysis_v2/momCorr/"; }
   manager.eid_version = 0;
@@ -63,8 +64,10 @@ int main(int argc, char * argv[]){
   manager.loop(0);
   manager.loop(1);
   manager.dis_selector.summarize(); 
+  manager.get_charge( data_files );
   manager.histos.save();
 
+  // If using my EID print out statistics. 
   if ( manager.eid_version == 1 ) {
     manager.eid[0].summarize();
     manager.eid[1].summarize(); 

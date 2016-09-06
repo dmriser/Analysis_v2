@@ -44,30 +44,35 @@ class DISHistograms
   DISHistograms();
   ~DISHistograms();
 
-  // Data Types
+    // Data Types
   std::string output_name;
   std::string sect[7];
   
   DBins xBins, qqBins; 
 
   // Histograms
-  std::vector<std::vector<TH1F*> > h1_gen_x_by_qq;
-  std::vector<std::vector<TH1F*> > h1_rec_x_by_qq;
-  std::vector<std::vector<TH1F*> > h1_hits_x_by_qq;
-  std::vector<std::vector<TH1F*> > h1_acc_x_by_qq;
-  std::vector<std::vector<TH1F*> > h1_rxs_x_by_qq;
-  std::vector<std::vector<TH1F*> > h1_rxs_ratio_x_by_qq;
-  std::vector<std::vector<TH1F*> > h1_xs_x_by_qq;
-  std::vector<std::vector<TH1F*> > h1_xs_ratio_x_by_qq;
-  std::vector<TH1F*>               h1_model_x_by_qq;
+  std::vector<std::vector<TH1D*> > h1_gen_x_by_qq;
+  std::vector<std::vector<TH1D*> > h1_rec_x_by_qq;
+  std::vector<std::vector<TH1D*> > h1_hits_x_by_qq;
+  std::vector<std::vector<TH1D*> > h1_acc_x_by_qq;
+  std::vector<std::vector<TH1D*> > h1_rxs_x_by_qq;
+  std::vector<std::vector<TH1D*> > h1_rxs_ratio_x_by_qq;
+  std::vector<std::vector<TH1D*> > h1_xs_x_by_qq;
+  std::vector<std::vector<TH1D*> > h1_xs_ratio_x_by_qq;
+  std::vector<TH1D*>               h1_model_x_by_qq;
    
   // 2-D Histos Used For Slicing 
   TH2F * h2_hits_x_qq[7];
   TH2F * h2_rec_x_qq[7];
   TH2F * h2_gen_x_qq[7];
 
+  TH2F * h2_hits_x_qq_rebin[7];
+  TH2F * h2_rec_x_qq_rebin[7];
+  TH2F * h2_gen_x_qq_rebin[7];
+
   // Tree used for run info
   TTree * runInfoTree; 
+  TFile * f;
   
   // Member Functions
   void draw();

@@ -18,16 +18,15 @@ int main(int argc, char * argv[]){
   }
   
   // Binning Scheme for 1-D Histograms derived from 2-D Histograms 
-  DBins xBins(40, 0.05, 0.65);
+  DBins xBins(30, 0.05, 0.65);
   DBins qqBins(10, 1.0, 5.0); 
 
   DISManager manager(argv[1],false); 
   manager.set_bins(xBins, qqBins); 
   manager.init();
-  
-  // We need to program so routines in DISPackage.cxx before this will work
-  // manager.do_xs();
-  //  manager.histos.draw();
+  //manager.fill_model();
+  manager.do_xs();
+  manager.histos.draw();
   
   return 0;
 }

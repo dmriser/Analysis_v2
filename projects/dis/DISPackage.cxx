@@ -69,6 +69,11 @@ DISHistograms::DISHistograms()
 DISHistograms::~DISHistograms()
 {
   // Destroy things. 
+  if (f->IsOpen()){
+    f->Write();
+    f->Close();
+  } 
+
 }
 
 void DISHistograms::init()
@@ -128,7 +133,7 @@ void DISHistograms::fill_gen(DEvent event)
 void DISHistograms::load(){
 
   //  string sect[7] = {"all","s1","s2","s3","s4","s5","s6"};
-  TFile * f = TFile::Open( output_name.c_str() );
+  f = TFile::Open( output_name.c_str() );
 
   if ( !f->IsOpen() ) {
     cout << " Fatal Error in: DISHistograms::load(). File not opened! " << output_name << endl;
@@ -139,10 +144,16 @@ void DISHistograms::load(){
     h2_hits_x_qq[s] = (TH2F*) f->Get( Form("h2_hits_x_qq_%d",s) );
     h2_rec_x_qq[s]  = (TH2F*) f->Get( Form("h2_rec_x_qq_%d", s) );
     h2_gen_x_qq[s]  = (TH2F*) f->Get( Form("h2_gen_x_qq_%d", s) );
+
+    h2_hits_x_qq_rebin[s] = (TH2F*) h2_hits_x_qq[s]->Clone();
+    h2_hits_x_qq_rebin[s]->SetTitle(Form("h2_hits_x_qq_rebin_%d",s));
+    h2_rec_x_qq_rebin[s]  = (TH2F*) h2_rec_x_qq[s]->Clone();
+    h2_rec_x_qq_rebin[s]->SetTitle(Form("h2_rec_x_qq_rebin_%d",s));
+    h2_gen_x_qq_rebin[s]  = (TH2F*) h2_gen_x_qq[s]->Clone();
+    h2_gen_x_qq_rebin[s]->SetTitle(Form("h2_gen_x_qq_rebin_%d",s)); 
   }
 
-  cout << h2_hits_x_qq[0]->GetEntries() << endl;
-  f->Close();
+
 }
 
 void DISHistograms::draw()
@@ -164,7 +175,7 @@ void DISHistograms::draw()
   canvas->Clear();
 
   int can_size = floor(sqrt(h1_hits_x_by_qq[0].size()));
-  /*
+ 
   // Hits x-by-qq
   for (int s=0; s<7; s++)
     {
@@ -231,6 +242,7 @@ void DISHistograms::draw()
       canvas->Clear();
     }
 
+  /*
   // Acc x-by-qq
   for (int s=0; s<7; s++)
     {
@@ -340,7 +352,7 @@ void DISHistograms::draw()
       canvas->Print( Form("%s.pdf",output_name.c_str()) );
       canvas->Clear();
     }
-
+  
   // Model xs x-by-qq
   canvas->Divide(can_size+1, can_size);
   for (int b=0; b<h1_model_x_by_qq.size()-1; b++)
@@ -362,7 +374,7 @@ void DISHistograms::draw()
   canvas->Print( Form("%s.pdf",output_name.c_str()) );
   canvas->Clear();
   
-
+  
   // rec & hits x-by-qq
   for (int s=0; s<7; s++)
     {
@@ -392,6 +404,7 @@ void DISHistograms::draw()
 
 
   */
+  
   // 2d
   canvas->Divide(3, 2);
   for (int s=1; s<7; s++)
@@ -416,6 +429,33 @@ void DISHistograms::draw()
     {
       canvas->cd(s);
       h2_gen_x_qq[s]->Draw("colz");
+    }
+  canvas->Print( Form("%s.pdf",output_name.c_str()) );
+  canvas->Clear();
+
+  canvas->Divide(3, 2);
+  for (int s=1; s<7; s++)
+    {
+      canvas->cd(s);
+      h2_hits_x_qq_rebin[s]->Draw("colz");
+    }
+  canvas->Print( Form("%s.pdf",output_name.c_str()) );
+  canvas->Clear();
+
+  canvas->Divide(3, 2);
+  for (int s=1; s<7; s++)
+    {
+      canvas->cd(s);
+      h2_rec_x_qq_rebin[s]->Draw("colz");
+    }
+  canvas->Print( Form("%s.pdf",output_name.c_str()) );
+  canvas->Clear();
+
+  canvas->Divide(3, 2);
+  for (int s=1; s<7; s++)
+    {
+      canvas->cd(s);
+      h2_gen_x_qq_rebin[s]->Draw("colz");
     }
   canvas->Print( Form("%s.pdf",output_name.c_str()) );
   canvas->Clear();
@@ -611,33 +651,102 @@ void DISManager::do_xs()
   double micro_qq_max = histos.h2_hits_x_qq[0]->GetYaxis()->GetXmax();
   double micro_qq_min = histos.h2_hits_x_qq[0]->GetYaxis()->GetXmin(); 
   
-  cout << " Discovered binning scheme: " << endl;
+  cout << " Discovered fine binning scheme: " << endl;
   cout << "      x bins: " << endl;
   cout << "      " << n_micro_bins_x << " " << micro_x_min << " " << micro_x_max << endl;
   cout << "      qq bins: " << endl;
   cout << "      " << n_micro_bins_qq << " " << micro_qq_min << " " << micro_qq_max << endl;
+
+  cout << " Going to binning scheme: " << endl;
+  cout << "      x bins: " << endl;
+  cout << "      " << xBins.number() << " " << xBins.min() << " " << xBins.max() << endl;
+  cout << "      qq bins: " << endl;
+  cout << "      " << qqBins.number() << " " << qqBins.min() << " " << qqBins.max() << endl;
+
+  DBins microXBins(n_micro_bins_x, micro_x_min, micro_x_max);
+  DBins microQQBins(n_micro_bins_qq,micro_qq_min,micro_qq_max);
+
+  // Dying for bad binning scheme. 
+  if ( xBins.number() > microXBins.number() || qqBins.number() > microQQBins.number()) {
+    cout << "Fatal Error: Trying to bin finer than possible. " << endl;
+    exit(0);
+  }
+
+  int xConversion  = microXBins.number() /xBins.number();
+  int qqConversion = microQQBins.number()/qqBins.number();
+
+  // Do rebinning
+  for (int s=0; s<7; s++) {
+    histos.h2_hits_x_qq_rebin[s] ->Rebin2D(xConversion, qqConversion);
+    histos.h2_rec_x_qq_rebin[s]  ->Rebin2D(xConversion, qqConversion);
+    histos.h2_gen_x_qq_rebin[s]  ->Rebin2D(xConversion, qqConversion);
+  }
+  
+  // Projecting into 1-D Histograms, could be combined into above loop. More readable like this. 
+  for (int s=0; s<7; s++) {
+    vector<TH1D*> v;
+
+    for (int b=0; b<=qqBins.number(); b++) {
+      string name = Form("h1_hits_x_by_qq_bin%d_%d",b,s);
+      TH1D * hist = new TH1D(name.c_str(),"",xBins.number(),xBins.min(),xBins.max()); 
+      if (b == 0) { histos.h2_hits_x_qq_rebin[s]->ProjectionX(name.c_str(),1,qqBins.number()); }
+      else        { histos.h2_hits_x_qq_rebin[s]->ProjectionX(name.c_str(),b+1,b+2); }
+      hist->Sumw2();
+      v.push_back(hist);
+    }
+    
+    histos.h1_hits_x_by_qq.push_back(v); 
+  }
+
+  // reconstructed 
+  for (int s=0; s<7; s++) {
+    vector<TH1D*> v;
+
+    for (int b=0; b<=qqBins.number(); b++) {
+      string name = Form("h1_rec_x_by_qq_bin%d_%d",b,s);
+      TH1D * hist = new TH1D(name.c_str(),"",xBins.number(),xBins.min(),xBins.max()); 
+      if (b == 0) { histos.h2_rec_x_qq_rebin[s]->ProjectionX(name.c_str(),1,qqBins.number()); }
+      else        { histos.h2_rec_x_qq_rebin[s]->ProjectionX(name.c_str(),b+1,b+2); }
+      hist->Sumw2();
+      v.push_back(hist);
+    }
+    
+    histos.h1_rec_x_by_qq.push_back(v); 
+  }
+
+  // Generated 
+  for (int s=0; s<7; s++) {
+    vector<TH1D*> v;
+
+    for (int b=0; b<=qqBins.number(); b++) {
+      string name = Form("h1_gen_x_by_qq_bin%d_%d",b,s);
+      TH1D * hist = new TH1D(name.c_str(),"",xBins.number(),xBins.min(),xBins.max()); 
+      if (b == 0) { histos.h2_gen_x_qq_rebin[s]->ProjectionX(name.c_str(),1,qqBins.number()); }
+      else        { histos.h2_gen_x_qq_rebin[s]->ProjectionX(name.c_str(),b+1,b+2); }
+      hist->Sumw2();
+      v.push_back(hist);
+    }
+    
+    histos.h1_gen_x_by_qq.push_back(v); 
+  }
+  
   
   // Doing Cross Section AFTER creating histograms from 2D histograms.  
-
   /*
   for (int s=0; s<7; s++)
     {
       for (int b=0; b<qqBins.number(); b++)
 	{
-	  histos.h1_hits_x_by_qq[s][b] ->Sumw2();
-	  histos.h1_rec_x_by_qq[s][b]  ->Sumw2();
-	  histos.h1_gen_x_by_qq[s][b]  ->Sumw2();
-
 	  string name  = Form("h1_acc_x_by_qq_%d_%s",b,sect[s].c_str());
 	  string title = Form("Acc. for x-by-qq Bin %d Sector %s",b,sect[s].c_str());
-	  histos.h1_acc_x_by_qq[s][b] = (TH1F*) histos.h1_rec_x_by_qq[s][b]->Clone();
+	  histos.h1_acc_x_by_qq[s][b] = (TH1D*) histos.h1_rec_x_by_qq[s][b]->Clone();
 	  histos.h1_acc_x_by_qq[s][b]->Divide( histos.h1_gen_x_by_qq[s][b] ); 
 	  histos.h1_acc_x_by_qq[s][b]->SetTitle(title.c_str());
 	  histos.h1_acc_x_by_qq[s][b]->SetName(name.c_str());
 
 	  name  = Form("h1_rxs_x_by_qq_%d_%s",b,sect[s].c_str());
 	  title = Form("rxs for x-by-qq Bin %d Sector %s",b,sect[s].c_str());
-	  histos.h1_rxs_x_by_qq[s][b] = (TH1F*) histos.h1_hits_x_by_qq[s][b]->Clone();
+	  histos.h1_rxs_x_by_qq[s][b] = (TH1D*) histos.h1_hits_x_by_qq[s][b]->Clone();
 	  histos.h1_rxs_x_by_qq[s][b]->Divide( histos.h1_acc_x_by_qq[s][b] ); 
 	  histos.h1_rxs_x_by_qq[s][b]->SetTitle(title.c_str());
 	  histos.h1_rxs_x_by_qq[s][b]->SetName(name.c_str());
@@ -646,26 +755,26 @@ void DISManager::do_xs()
 
 	  name  = Form("h1_xs_x_by_qq_%d_%s",b,sect[s].c_str());
 	  title = Form("xs for x-by-qq Bin %d Sector %s",b,sect[s].c_str());
-	  histos.h1_xs_x_by_qq[s][b] = (TH1F*) histos.h1_rxs_x_by_qq[s][b]->Clone();
+	  histos.h1_xs_x_by_qq[s][b] = (TH1D*) histos.h1_rxs_x_by_qq[s][b]->Clone();
 	  histos.h1_xs_x_by_qq[s][b]->SetTitle(title.c_str());
 	  histos.h1_xs_x_by_qq[s][b]->SetName(name.c_str());
 
 	  name  = Form("h1_rxs_ratio_x_by_qq_%d_%s",b,sect[s].c_str());
 	  title = Form("rxs ratio for x-by-qq Bin %d Sector %s",b,sect[s].c_str());
-	  histos.h1_rxs_ratio_x_by_qq[s][b] = (TH1F*) histos.h1_rxs_x_by_qq[s][b]->Clone();
+	  histos.h1_rxs_ratio_x_by_qq[s][b] = (TH1D*) histos.h1_rxs_x_by_qq[s][b]->Clone();
 	  histos.h1_rxs_ratio_x_by_qq[s][b]->Divide( histos.h1_model_x_by_qq[b] );
 	  histos.h1_rxs_ratio_x_by_qq[s][b]->SetTitle(title.c_str());
 	  histos.h1_rxs_ratio_x_by_qq[s][b]->SetName(name.c_str());
 
 	  name  = Form("h1_xs_ratio_x_by_qq_%d_%s",b,sect[s].c_str());
 	  title = Form("xs ratio for x-by-qq Bin %d Sector %s",b,sect[s].c_str());
-	  histos.h1_xs_ratio_x_by_qq[s][b] = (TH1F*) histos.h1_xs_x_by_qq[s][b]->Clone();
+	  histos.h1_xs_ratio_x_by_qq[s][b] = (TH1D*) histos.h1_xs_x_by_qq[s][b]->Clone();
 	  histos.h1_xs_ratio_x_by_qq[s][b]->Divide( histos.h1_model_x_by_qq[b] );
 	  histos.h1_xs_ratio_x_by_qq[s][b]->SetTitle(title.c_str());
-	  histos.h1_xs_ratio_x_by_qq[s][b]->SetName(name.c_str());	  
-	}
+	  histos.h1_xs_ratio_x_by_qq[s][b]->SetName(name.c_str());	  	  
+	  }
     }
-  */  
+  */
 }
 
 void DISManager::loop(int index)

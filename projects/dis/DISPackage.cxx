@@ -43,8 +43,6 @@ using namespace std;
 #include "TStyle.h"
 #include "TString.h"
 #include "TTree.h"
-#include "TTreeReader.h"
-#include "TTreeReaderValue.h"
 
 ////////////////////////////////////////////////////////////////////////
 /*
@@ -419,7 +417,6 @@ void DISHistograms::draw()
       gPad->SetLogz();
       h2_hits_x_qq[s]->Draw("colz");
       lab.DrawLatex(0.2,0.85,Form("Entries: %0.f",h2_hits_x_qq[s]->GetEntries()));
-      if (s==1) lab.DrawLatex(0.2,0.7,Form("#int L dt = %2.f cm^{-2}",integ_lumi)); 
       lab.DrawLatex(0.325,0.925,Form("Hits Q^{2} vs. x #rightarrow Sector %d",s)); 
       lab.DrawLatex(0.45,0.025,"x_{Bjorken}  "); 
       lab.SetTextAngle(90);

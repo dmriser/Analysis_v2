@@ -16,26 +16,19 @@ int main(){
 
   F1F209Wrapper model;
 
-  // Binning Scheme 
-  vector<double> limits;
-  limits.push_back( 1.0 );
-  limits.push_back( 1.3 );
-  limits.push_back( 5.0 );
+  // Constants for XS 
+  int A = 27, Z = 13;
+  double beam_energy = 6.4; // GeV 
   
-  DLineBins xBins(5,0.1,0.6);
-  DLineBins qqBins(limits.size()-1,limits);
+  DLineBins thetaBins(10, 5, 35);
+  DLineBins energyBins(10,0.5,5.9);
 
-  double e_beam = 5.498; 
-  
-  for (int i=0; i<xBins.GetNumber(); i++) {
-    for (int j=0; j<qqBins.GetNumber(); j++) {
-      double e_prime = e_beam - qqBins.GetBin(j).GetCenter()/(2*0.938*xBins.GetBin(i).GetCenter());
-      double theta   = 2*(180/3.14159265)*asin(qqBins.GetBin(j).GetCenter()/(2*sqrt(e_prime*e_beam)));
-      cout.width(12); cout << xBins.GetBin(i).GetCenter();
-      cout.width(12); cout << qqBins.GetBin(j).GetCenter();
-      cout.width(12); cout << e_prime;
-      cout.width(12); cout << theta;
-      cout.width(12); cout << model.GetXS(1,1,e_beam,e_prime,theta) << endl;
+  // Looping on bins 
+  for (int thetaBin = 0; thetaBin < thetaBins.GetNumber(); thetaBin++) {
+    for (int energyBin = 0; energyBin < energyBins.GetNumber(); energyBin++) {
+      cout.width(12); cout << thetaBins .GetBin(thetaBin) .GetCenter();
+      cout.width(12); cout << energyBins.GetBin(energyBin).GetCenter();
+      cout.width(12); cout << model.GetXSByAngle(Z, A, beam_energy, energyBins.GetBin(energyBin).GetCenter(), thetaBins.GetBin(thetaBin).GetCenter()) << endl;
     }
   }
   

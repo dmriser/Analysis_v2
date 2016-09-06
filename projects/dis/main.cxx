@@ -67,11 +67,15 @@ int main(int argc, char * argv[]){
   manager.get_charge( data_files );
   manager.histos.save();
 
+  cout << " Still Alive after saving " << endl;
+  
   // If using my EID print out statistics. 
   if ( manager.eid_version == 1 ) {
     manager.eid[0].summarize();
     manager.eid[1].summarize(); 
   }
+
+  cout << " Still alive before retun " << endl;
 
   return 0;
 }

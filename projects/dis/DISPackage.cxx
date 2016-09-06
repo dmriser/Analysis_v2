@@ -33,6 +33,7 @@ using namespace std;
 //  root includes
 #include "TBranch.h"
 #include "TCanvas.h"
+#include "TChain.h"
 #include "TFile.h"
 #include "TH1.h"
 #include "TH2.h"
@@ -42,6 +43,8 @@ using namespace std;
 #include "TStyle.h"
 #include "TString.h"
 #include "TTree.h"
+#include "TTreeReader.h"
+#include "TTreeReaderValue.h"
 
 ////////////////////////////////////////////////////////////////////////
 /*
@@ -68,11 +71,6 @@ DISHistograms::DISHistograms()
 
 DISHistograms::~DISHistograms()
 {
-  // Destroy things. 
-  if (f->IsOpen()){
-    f->Write();
-    f->Close();
-  } 
 
 }
 
@@ -84,6 +82,8 @@ void DISHistograms::init()
     h2_rec_x_qq[s]  = new TH2F(Form("h2_rec_x_qq_%d",s), Form("Rec QQ vs. X Sector %d",s), xBins.number(),xBins.min(),xBins.max(),qqBins.number(),qqBins.min(),qqBins.max());
     h2_gen_x_qq[s]  = new TH2F(Form("h2_gen_x_qq_%d",s), Form("Gen QQ vs. X Sector %d",s), xBins.number(),xBins.min(),xBins.max(),qqBins.number(),qqBins.min(),qqBins.max()); 
   }
+
+  h1_fcup_charge = new TH1D("h1_fcup_charge","",xBins.number(),xBins.min(),xBins.max());
 }
 
 void DISHistograms::fill(DEvent event, int index)
@@ -134,7 +134,8 @@ void DISHistograms::load(){
 
   //  string sect[7] = {"all","s1","s2","s3","s4","s5","s6"};
   f = TFile::Open( output_name.c_str() );
-
+  runInfoTree = (TTree*) f->Get("runInfoTree"); 
+  
   if ( !f->IsOpen() ) {
     cout << " Fatal Error in: DISHistograms::load(). File not opened! " << output_name << endl;
     exit(0);
@@ -147,13 +148,17 @@ void DISHistograms::load(){
 
     h2_hits_x_qq_rebin[s] = (TH2F*) h2_hits_x_qq[s]->Clone();
     h2_hits_x_qq_rebin[s]->SetTitle(Form("h2_hits_x_qq_rebin_%d",s));
+
     h2_rec_x_qq_rebin[s]  = (TH2F*) h2_rec_x_qq[s]->Clone();
     h2_rec_x_qq_rebin[s]->SetTitle(Form("h2_rec_x_qq_rebin_%d",s));
+
     h2_gen_x_qq_rebin[s]  = (TH2F*) h2_gen_x_qq[s]->Clone();
     h2_gen_x_qq_rebin[s]->SetTitle(Form("h2_gen_x_qq_rebin_%d",s)); 
   }
 
-
+  h1_fcup_charge = (TH1D*) f->Get("h1_fcup_charge");
+  cout << " Total Charge (uC) From File " << output_name << " = " << h1_fcup_charge->GetBinContent(1) << endl;
+  
 }
 
 void DISHistograms::draw()
@@ -165,7 +170,8 @@ void DISHistograms::draw()
   gStyle->SetOptStat(0);
   gStyle->SetOptFit(0);
   gStyle->SetOptTitle(0);
-
+  gStyle->SetPalette(112);
+  
   // Latex Writer
   TLatex lab;
   lab.SetNDC();
@@ -175,7 +181,8 @@ void DISHistograms::draw()
   canvas->Clear();
 
   int can_size = floor(sqrt(h1_hits_x_by_qq[0].size()));
- 
+  double integ_lumi = ((avogadro*5.00*hydrogen_density*1e-6*h1_fcup_charge->GetBinContent(1))/(hydrogen_molar_weight*electron_c));
+  
   // Hits x-by-qq
   for (int s=0; s<7; s++)
     {
@@ -242,7 +249,7 @@ void DISHistograms::draw()
       canvas->Clear();
     }
 
-  /*
+  
   // Acc x-by-qq
   for (int s=0; s<7; s++)
     {
@@ -363,7 +370,7 @@ void DISHistograms::draw()
       double qq_end   = qqBins.min() + b*qqBins.width();
       if (b == 0) { qq_start = qqBins.min(); qq_end = qqBins.max(); }
       
-      h1_model_x_by_qq[b]->SetMarkerStyle(8);
+      h1_model_x_by_qq[b]->SetMarkerStyle(7);
       h1_model_x_by_qq[b]->Draw("P");
       lab.DrawLatex(0.3, 0.02, Form(" Model (x): Bin %d ",b));
       lab.DrawLatex(0.25, 0.925, Form(" Q^{2} (%.2f #rightarrow %.2f) GeV^{2}/c^{2} ",qq_start, qq_end));
@@ -373,6 +380,7 @@ void DISHistograms::draw()
   
   canvas->Print( Form("%s.pdf",output_name.c_str()) );
   canvas->Clear();
+  
   
   
   // rec & hits x-by-qq
@@ -402,15 +410,21 @@ void DISHistograms::draw()
       canvas->Clear();
     }
 
-
-  */
-  
   // 2d
   canvas->Divide(3, 2);
   for (int s=1; s<7; s++)
     {
       canvas->cd(s);
+      gPad->SetMargin(0.15,0.1,0.1,0.1); 
+      gPad->SetLogz();
       h2_hits_x_qq[s]->Draw("colz");
+      lab.DrawLatex(0.2,0.85,Form("Entries: %0.f",h2_hits_x_qq[s]->GetEntries()));
+      if (s==1) lab.DrawLatex(0.2,0.7,Form("#int L dt = %2.f cm^{-2}",integ_lumi)); 
+      lab.DrawLatex(0.325,0.925,Form("Hits Q^{2} vs. x #rightarrow Sector %d",s)); 
+      lab.DrawLatex(0.45,0.025,"x_{Bjorken}  "); 
+      lab.SetTextAngle(90);
+      lab.DrawLatex(0.05, 0.35,"Q^{2} [GeV^{2}/c^{2}]"); 
+      lab.SetTextAngle(0);
     }
   canvas->Print( Form("%s.pdf",output_name.c_str()) );
   canvas->Clear();
@@ -419,7 +433,15 @@ void DISHistograms::draw()
   for (int s=1; s<7; s++)
     {
       canvas->cd(s);
+      gPad->SetMargin(0.15,0.1,0.1,0.1); 
+      gPad->SetLogz();
       h2_rec_x_qq[s]->Draw("colz");
+      lab.DrawLatex(0.2,0.85,Form("Entries: %0.f",h2_rec_x_qq[s]->GetEntries())); 
+      lab.DrawLatex(0.3,0.925,Form("Rec. MC Q^{2} vs. x #rightarrow Sector %d",s)); 
+      lab.DrawLatex(0.45,0.025,"x_{Bjorken}  "); 
+      lab.SetTextAngle(90);
+      lab.DrawLatex(0.05, 0.35,"Q^{2} [GeV^{2}/c^{2}]"); 
+      lab.SetTextAngle(0);
     }
   canvas->Print( Form("%s.pdf",output_name.c_str()) );
   canvas->Clear();
@@ -428,7 +450,15 @@ void DISHistograms::draw()
   for (int s=1; s<7; s++)
     {
       canvas->cd(s);
+      gPad->SetMargin(0.15,0.1,0.1,0.1); 
+      gPad->SetLogz();
       h2_gen_x_qq[s]->Draw("colz");
+      lab.DrawLatex(0.2,0.85,Form("Entries: %0.f",h2_gen_x_qq[s]->GetEntries())); 
+      lab.DrawLatex(0.3,0.925,Form("Gen MC Q^{2} vs. x #rightarrow Sector %d",s)); 
+      lab.DrawLatex(0.45,0.025,"x_{Bjorken}  "); 
+      lab.SetTextAngle(90);
+      lab.DrawLatex(0.05, 0.35,"Q^{2} [GeV^{2}/c^{2}]"); 
+      lab.SetTextAngle(0);
     }
   canvas->Print( Form("%s.pdf",output_name.c_str()) );
   canvas->Clear();
@@ -437,7 +467,15 @@ void DISHistograms::draw()
   for (int s=1; s<7; s++)
     {
       canvas->cd(s);
+      gPad->SetMargin(0.15,0.1,0.1,0.1); 
+      gPad->SetLogz();
       h2_hits_x_qq_rebin[s]->Draw("colz");
+      lab.DrawLatex(0.2,0.85,Form("Entries: %0.f",h2_hits_x_qq[s]->GetEntries())); 
+      lab.DrawLatex(0.325,0.925,Form("Hits Q^{2} vs. x #rightarrow Sector %d",s)); 
+      lab.DrawLatex(0.45,0.025,"x_{Bjorken}  "); 
+      lab.SetTextAngle(90);
+      lab.DrawLatex(0.05, 0.35,"Q^{2} [GeV^{2}/c^{2}]"); 
+      lab.SetTextAngle(0);
     }
   canvas->Print( Form("%s.pdf",output_name.c_str()) );
   canvas->Clear();
@@ -446,7 +484,15 @@ void DISHistograms::draw()
   for (int s=1; s<7; s++)
     {
       canvas->cd(s);
+      gPad->SetMargin(0.15,0.1,0.1,0.1); 
+      gPad->SetLogz();
       h2_rec_x_qq_rebin[s]->Draw("colz");
+      lab.DrawLatex(0.2,0.85,Form("Entries: %0.f",h2_rec_x_qq[s]->GetEntries())); 
+      lab.DrawLatex(0.3,0.925,Form("Rec MC Q^{2} vs. x #rightarrow Sector %d",s)); 
+      lab.DrawLatex(0.45,0.025,"x_{Bjorken}  "); 
+      lab.SetTextAngle(90);
+      lab.DrawLatex(0.05, 0.35,"Q^{2} [GeV^{2}/c^{2}]"); 
+      lab.SetTextAngle(0);
     }
   canvas->Print( Form("%s.pdf",output_name.c_str()) );
   canvas->Clear();
@@ -455,7 +501,15 @@ void DISHistograms::draw()
   for (int s=1; s<7; s++)
     {
       canvas->cd(s);
+      gPad->SetMargin(0.15,0.1,0.1,0.1); 
+      gPad->SetLogz();
       h2_gen_x_qq_rebin[s]->Draw("colz");
+      lab.DrawLatex(0.2,0.85,Form("Entries: %0.f",h2_gen_x_qq[s]->GetEntries())); 
+      lab.DrawLatex(0.3,0.925,Form("Gen MC Q^{2} vs. x #rightarrow Sector %d",s)); 
+      lab.DrawLatex(0.45,0.025,"x_{Bjorken}  "); 
+      lab.SetTextAngle(90);
+      lab.DrawLatex(0.05, 0.35,"Q^{2} [GeV^{2}/c^{2}]"); 
+      lab.SetTextAngle(0);
     }
   canvas->Print( Form("%s.pdf",output_name.c_str()) );
   canvas->Clear();
@@ -473,12 +527,24 @@ void DISHistograms::save()
       h2_rec_x_qq[s]  ->Write();
       h2_gen_x_qq[s]  ->Write();
     }
+
+  h1_fcup_charge->Write();
   
   runInfoTree->Write();
   out.Write();
   out.Close();
+
+  if ( !out.IsOpen() ){
+    cout << " DISHistograms::save() finished with success. " << endl;
+  } 
 }
 
+void DISHistograms::close(){
+  if (f->IsOpen()){
+    f->Write();
+    f->Close();
+  } 
+}
 
 ////////////////////////////////////////////////////////////////////////
 /*
@@ -513,7 +579,7 @@ DISManager::DISManager(string outputFile, bool r)
 
 DISManager::~DISManager()
 {
-  // Destruir todo. 
+
 }
 
 void DISManager::fill_model(){
@@ -521,6 +587,13 @@ void DISManager::fill_model(){
   // Get model 
   F1F209Wrapper model; 
   double beam_energy = 5.498; 
+
+  // Initialize the model histograms before loading them. 
+  for (int b=0; b<qqBins.number(); b++){
+    TH1D * hist = new TH1D(Form("h1_model_x_by_qq_bin%d",b),"",xBins.number(),xBins.min(),xBins.max()); 
+    histos.h1_model_x_by_qq.push_back(hist); 
+  } 
+  
   
   for (int ibin=1; ibin<qqBins.number(); ibin++){
     for (int jbin=1; jbin<xBins.number(); jbin++) {
@@ -536,6 +609,7 @@ void DISManager::fill_model(){
       cout.width(12); cout << qqBins.bin_center(ibin) << endl; 
     }
   }
+  
 }
 
 void DISManager::get_charge(vector<string> files)
@@ -576,6 +650,13 @@ void DISManager::get_charge(vector<string> files)
       histos.runInfoTree->Fill();
     }
 
+  // Filling the histogram which holds the number. 
+  for (int b=0; b<xBins.number(); b++) {
+    histos.h1_fcup_charge->SetBinContent(1+b,fcup_charge); 
+    histos.h1_fcup_charge->SetBinError(1+b,0.0); 
+  }
+
+  cout << " Finished getting charge! " << endl;
 }
 
 void DISManager::init()
@@ -650,7 +731,8 @@ void DISManager::do_xs()
   int n_micro_bins_qq = histos.h2_hits_x_qq[0]->GetYaxis()->GetNbins();
   double micro_qq_max = histos.h2_hits_x_qq[0]->GetYaxis()->GetXmax();
   double micro_qq_min = histos.h2_hits_x_qq[0]->GetYaxis()->GetXmin(); 
-  
+
+  /*  
   cout << " Discovered fine binning scheme: " << endl;
   cout << "      x bins: " << endl;
   cout << "      " << n_micro_bins_x << " " << micro_x_min << " " << micro_x_max << endl;
@@ -662,7 +744,8 @@ void DISManager::do_xs()
   cout << "      " << xBins.number() << " " << xBins.min() << " " << xBins.max() << endl;
   cout << "      qq bins: " << endl;
   cout << "      " << qqBins.number() << " " << qqBins.min() << " " << qqBins.max() << endl;
-
+  */
+  
   DBins microXBins(n_micro_bins_x, micro_x_min, micro_x_max);
   DBins microQQBins(n_micro_bins_qq,micro_qq_min,micro_qq_max);
 
@@ -675,6 +758,9 @@ void DISManager::do_xs()
   int xConversion  = microXBins.number() /xBins.number();
   int qqConversion = microQQBins.number()/qqBins.number();
 
+  // Getting charge for normalization. 
+  fcup_charge = histos.h1_fcup_charge->GetBinContent(1); 
+  
   // Do rebinning
   for (int s=0; s<7; s++) {
     histos.h2_hits_x_qq_rebin[s] ->Rebin2D(xConversion, qqConversion);
@@ -729,21 +815,84 @@ void DISManager::do_xs()
     
     histos.h1_gen_x_by_qq.push_back(v); 
   }
+
+  // Acceptance 
+  for (int s=0; s<7; s++) {
+    vector<TH1D*> v;
+
+    for (int b=0; b<=qqBins.number(); b++) {
+      string name = Form("h1_acc_x_by_qq_bin%d_%d",b,s);
+      TH1D * hist = new TH1D(name.c_str(),"",xBins.number(),xBins.min(),xBins.max()); 
+      v.push_back(hist);
+    }
+    
+    histos.h1_acc_x_by_qq.push_back(v); 
+  }
+
+  // Raw Cross Section 
+  for (int s=0; s<7; s++) {
+    vector<TH1D*> v;
+
+    for (int b=0; b<=qqBins.number(); b++) {
+      string name = Form("h1_rxs_x_by_qq_bin%d_%d",b,s);
+      TH1D * hist = new TH1D(name.c_str(),"",xBins.number(),xBins.min(),xBins.max()); 
+      v.push_back(hist);
+    }
+    
+    histos.h1_rxs_x_by_qq.push_back(v); 
+  }
+
+  //  Cross Section 
+  for (int s=0; s<7; s++) {
+    vector<TH1D*> v;
+
+    for (int b=0; b<=qqBins.number(); b++) {
+      string name = Form("h1_xs_x_by_qq_bin%d_%d",b,s);
+      TH1D * hist = new TH1D(name.c_str(),"",xBins.number(),xBins.min(),xBins.max()); 
+      v.push_back(hist);
+    }
+    
+    histos.h1_xs_x_by_qq.push_back(v); 
+  }
+    // Ratio Raw 
+  for (int s=0; s<7; s++) {
+    vector<TH1D*> v;
+
+    for (int b=0; b<=qqBins.number(); b++) {
+      string name = Form("h1_rxs_ratio_x_by_qq_bin%d_%d",b,s);
+      TH1D * hist = new TH1D(name.c_str(),"",xBins.number(),xBins.min(),xBins.max()); 
+      v.push_back(hist);
+    }
+    
+    histos.h1_rxs_ratio_x_by_qq.push_back(v); 
+  }
+  
+  // Ratio 
+  for (int s=0; s<7; s++) {
+    vector<TH1D*> v;
+
+    for (int b=0; b<=qqBins.number(); b++) {
+      string name = Form("h1_xs_ratio_x_by_qq_bin%d_%d",b,s);
+      TH1D * hist = new TH1D(name.c_str(),"",xBins.number(),xBins.min(),xBins.max()); 
+      v.push_back(hist);
+    }
+    
+    histos.h1_xs_ratio_x_by_qq.push_back(v); 
+  }
   
   
-  // Doing Cross Section AFTER creating histograms from 2D histograms.  
-  /*
+  // Doing Cross Section AFTER creating histograms from 2D histograms.    
   for (int s=0; s<7; s++)
     {
       for (int b=0; b<qqBins.number(); b++)
 	{
-	  string name  = Form("h1_acc_x_by_qq_%d_%s",b,sect[s].c_str());
+	  string name  = Form("h1_acc_x_by_qq_bin%d_%s",b,sect[s].c_str());
 	  string title = Form("Acc. for x-by-qq Bin %d Sector %s",b,sect[s].c_str());
 	  histos.h1_acc_x_by_qq[s][b] = (TH1D*) histos.h1_rec_x_by_qq[s][b]->Clone();
 	  histos.h1_acc_x_by_qq[s][b]->Divide( histos.h1_gen_x_by_qq[s][b] ); 
-	  histos.h1_acc_x_by_qq[s][b]->SetTitle(title.c_str());
-	  histos.h1_acc_x_by_qq[s][b]->SetName(name.c_str());
-
+	  histos.h1_acc_x_by_qq[s][b]->SetTitle( title.c_str() );
+	  histos.h1_acc_x_by_qq[s][b]->SetName(  name.c_str()  );
+	  
 	  name  = Form("h1_rxs_x_by_qq_%d_%s",b,sect[s].c_str());
 	  title = Form("rxs for x-by-qq Bin %d Sector %s",b,sect[s].c_str());
 	  histos.h1_rxs_x_by_qq[s][b] = (TH1D*) histos.h1_hits_x_by_qq[s][b]->Clone();
@@ -751,7 +900,7 @@ void DISManager::do_xs()
 	  histos.h1_rxs_x_by_qq[s][b]->SetTitle(title.c_str());
 	  histos.h1_rxs_x_by_qq[s][b]->SetName(name.c_str());
 	  histos.h1_rxs_x_by_qq[s][b]->Scale(1/(xBins.width()*qqBins.width())); 
-	  histos.h1_rxs_x_by_qq[s][b]->Scale(cm_to_outhouse*(electron_c*hydrogen_molar_weight/(avogadro*hydrogen_density)));
+	  histos.h1_rxs_x_by_qq[s][b]->Scale(cm_to_outhouse*(1e6*electron_c*hydrogen_molar_weight/(avogadro*hydrogen_density*5*fcup_charge)));
 
 	  name  = Form("h1_xs_x_by_qq_%d_%s",b,sect[s].c_str());
 	  title = Form("xs for x-by-qq Bin %d Sector %s",b,sect[s].c_str());
@@ -772,9 +921,11 @@ void DISManager::do_xs()
 	  histos.h1_xs_ratio_x_by_qq[s][b]->Divide( histos.h1_model_x_by_qq[b] );
 	  histos.h1_xs_ratio_x_by_qq[s][b]->SetTitle(title.c_str());
 	  histos.h1_xs_ratio_x_by_qq[s][b]->SetName(name.c_str());	  	  
+  
+
 	  }
     }
-  */
+  
 }
 
 void DISManager::loop(int index)

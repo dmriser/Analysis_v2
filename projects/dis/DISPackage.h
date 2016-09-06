@@ -60,7 +60,10 @@ class DISHistograms
   std::vector<std::vector<TH1D*> > h1_xs_x_by_qq;
   std::vector<std::vector<TH1D*> > h1_xs_ratio_x_by_qq;
   std::vector<TH1D*>               h1_model_x_by_qq;
-   
+
+  // Easiest way to hold the charge. 
+  TH1D * h1_fcup_charge;
+  
   // 2-D Histos Used For Slicing 
   TH2F * h2_hits_x_qq[7];
   TH2F * h2_rec_x_qq[7];
@@ -82,7 +85,7 @@ class DISHistograms
   void load();
   void set_bins(DBins x, DBins qq){ xBins = x; qqBins = qq; }
   void save();
-  
+  void close();  
 };
 
 ////////////////////////////////////////////////////////////////////////
@@ -128,6 +131,5 @@ class DISManager
   void get_charge(std::vector<std::string>);
   void fill_model();  
 };
-
 
 #endif

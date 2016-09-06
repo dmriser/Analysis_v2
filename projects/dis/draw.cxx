@@ -24,7 +24,7 @@ int main(int argc, char * argv[]){
   DISManager manager(argv[1],false); 
   manager.set_bins(xBins, qqBins); 
   manager.init();
-  //manager.fill_model();
+  manager.fill_model();
   manager.do_xs();
   manager.histos.draw();
   

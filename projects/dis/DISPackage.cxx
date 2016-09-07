@@ -123,9 +123,11 @@ void DISHistograms::fill_gen(DEvent event)
 
   int s = 1+floor(event.tracks.mcphi[e_index]/60.0);
 
-  // Do the fill. 
-  h2_gen_x_qq[0]->Fill(event.x, event.qq);
-  h2_gen_x_qq[s]->Fill(event.x, event.qq);
+  if (s > 0 && s < 7){ 
+    // Do the fill. 
+    h2_gen_x_qq[0]->Fill(event.x, event.qq);
+    h2_gen_x_qq[s]->Fill(event.x, event.qq);
+  }
 }
 
 void DISHistograms::load(){

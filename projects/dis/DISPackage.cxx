@@ -919,7 +919,6 @@ void DISManager::do_xs()
 	  histos.h1_xs_ratio_x_by_qq[s][b]->SetTitle(title.c_str());
 	  histos.h1_xs_ratio_x_by_qq[s][b]->SetName(name.c_str());	  	  
   
-
 	  }
     }
   

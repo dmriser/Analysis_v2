@@ -15,6 +15,12 @@ int main()
   // Demonstrates how to make symmetric bins.  
   DLineBins xBins(20, 0, 0.6); 
 
+  // Print 
+  for (int b=0; b<xBins.GetNumber(); b++) {
+    cout << xBins.GetBin(b).GetMin() << " ";
+  }
+  cout << endl;
+  
   // Do a little test fill 
   for (int i=0; i<10000; i++){
     xBins.Fill( rand->Uniform(1) );

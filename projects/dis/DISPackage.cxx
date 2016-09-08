@@ -79,6 +79,9 @@ void DISHistograms::init()
     h2_hits_x_qq[s] = new TH2F(Form("h2_hits_x_qq_%d",s),Form("Hits QQ vs. X Sector %d",s),xBins.number(),xBins.min(),xBins.max(),qqBins.number(),qqBins.min(),qqBins.max());
     h2_rec_x_qq[s]  = new TH2F(Form("h2_rec_x_qq_%d",s), Form("Rec QQ vs. X Sector %d",s), xBins.number(),xBins.min(),xBins.max(),qqBins.number(),qqBins.min(),qqBins.max());
     h2_gen_x_qq[s]  = new TH2F(Form("h2_gen_x_qq_%d",s), Form("Gen QQ vs. X Sector %d",s), xBins.number(),xBins.min(),xBins.max(),qqBins.number(),qqBins.min(),qqBins.max()); 
+    h2_hits_w_qq[s] = new TH2F(Form("h2_hits_w_qq_%d",s),Form("Hits QQ vs. W Sector %d",s),wBins.number(),wBins.min(),wBins.max(),qqBins.number(),qqBins.min(),qqBins.max());
+    h2_rec_w_qq[s]  = new TH2F(Form("h2_rec_w_qq_%d",s), Form("Rec QQ vs. W Sector %d",s), wBins.number(),wBins.min(),wBins.max(),qqBins.number(),qqBins.min(),qqBins.max());
+    h2_gen_w_qq[s]  = new TH2F(Form("h2_gen_w_qq_%d",s), Form("Gen QQ vs. W Sector %d",s), wBins.number(),wBins.min(),wBins.max(),qqBins.number(),qqBins.min(),qqBins.max()); 
   }
 
   h1_fcup_charge = new TH1D("h1_fcup_charge","",xBins.number(),xBins.min(),xBins.max());
@@ -94,12 +97,16 @@ void DISHistograms::fill(DEvent event, int index)
   if (index == 1) {
     h2_rec_x_qq[s]->Fill(event.x, event.qq);
     h2_rec_x_qq[0]->Fill(event.x, event.qq);
+    h2_rec_w_qq[s]->Fill(event.w, event.qq);
+    h2_rec_w_qq[0]->Fill(event.w, event.qq);
   }
 
   // Data Events
   else if (index == 0) {
     h2_hits_x_qq[s]->Fill(event.x, event.qq);
     h2_hits_x_qq[0]->Fill(event.x, event.qq);
+    h2_hits_w_qq[s]->Fill(event.w, event.qq);
+    h2_hits_w_qq[0]->Fill(event.w, event.qq);
   }
 
 }
@@ -127,6 +134,8 @@ void DISHistograms::fill_gen(DEvent event)
     // Do the fill. 
     h2_gen_x_qq[0]->Fill(event.x, event.qq);
     h2_gen_x_qq[s]->Fill(event.x, event.qq);
+    h2_gen_w_qq[0]->Fill(event.x, event.qq);
+    h2_gen_w_qq[s]->Fill(event.x, event.qq);
   }
 }
 
@@ -146,6 +155,10 @@ void DISHistograms::load(){
     h2_rec_x_qq[s]  = (TH2F*) f->Get( Form("h2_rec_x_qq_%d", s) );
     h2_gen_x_qq[s]  = (TH2F*) f->Get( Form("h2_gen_x_qq_%d", s) );
 
+    h2_hits_w_qq[s] = (TH2F*) f->Get( Form("h2_hits_w_qq_%d",s) );
+    h2_rec_w_qq[s]  = (TH2F*) f->Get( Form("h2_rec_w_qq_%d", s) );
+    h2_gen_w_qq[s]  = (TH2F*) f->Get( Form("h2_gen_w_qq_%d", s) );
+
     h2_hits_x_qq_rebin[s] = (TH2F*) h2_hits_x_qq[s]->Clone();
     h2_hits_x_qq_rebin[s]->SetTitle(Form("h2_hits_x_qq_rebin_%d",s));
 
@@ -154,6 +167,15 @@ void DISHistograms::load(){
 
     h2_gen_x_qq_rebin[s]  = (TH2F*) h2_gen_x_qq[s]->Clone();
     h2_gen_x_qq_rebin[s]->SetTitle(Form("h2_gen_x_qq_rebin_%d",s)); 
+
+    h2_hits_w_qq_rebin[s] = (TH2F*) h2_hits_w_qq[s]->Clone();
+    h2_hits_w_qq_rebin[s]->SetTitle(Form("h2_hits_w_qq_rebin_%d",s));
+
+    h2_rec_w_qq_rebin[s]  = (TH2F*) h2_rec_w_qq[s]->Clone();
+    h2_rec_w_qq_rebin[s]->SetTitle(Form("h2_rec_w_qq_rebin_%d",s));
+
+    h2_gen_w_qq_rebin[s]  = (TH2F*) h2_gen_w_qq[s]->Clone();
+    h2_gen_w_qq_rebin[s]->SetTitle(Form("h2_gen_w_qq_rebin_%d",s)); 
   }
 
   h1_fcup_charge = (TH1D*) f->Get("h1_fcup_charge");
@@ -199,6 +221,7 @@ void DISHistograms::draw()
 	  h1_hits_x_by_qq[s][b]->Draw("PE");
 	  lab.DrawLatex(0.3, 0.02, Form(" Hits (x): Sector %d Bin %d ",s,b));
 	  lab.DrawLatex(0.25, 0.925, Form(" Q^{2} (%.2f #rightarrow %.2f) GeV^{2}/c^{2} ",qq_start, qq_end));
+	  lab.DrawLatex(0.15,0.85,Form("Entries: %0.f",h1_hits_x_by_qq[s][b]->GetEntries()));
 	}
 
       canvas->Print( Form("%s.pdf",output_name.c_str()) );
@@ -221,6 +244,7 @@ void DISHistograms::draw()
 	  h1_rec_x_by_qq[s][b]->Draw("PE");
 	  lab.DrawLatex(0.3, 0.02, Form(" Rec (x): Sector %d Bin %d ",s,b));
 	  lab.DrawLatex(0.25, 0.925, Form(" Q^{2} (%.2f #rightarrow %.2f) GeV^{2}/c^{2} ",qq_start, qq_end));
+	  lab.DrawLatex(0.15,0.85,Form("Entries: %0.f",h1_rec_x_by_qq[s][b]->GetEntries()));
 	}
 
       canvas->Print( Form("%s.pdf",output_name.c_str()) );
@@ -243,6 +267,7 @@ void DISHistograms::draw()
 	  h1_gen_x_by_qq[s][b]->Draw("PE");
 	  lab.DrawLatex(0.3, 0.02, Form(" Gen (x): Sector %d Bin %d ",s,b));
 	  lab.DrawLatex(0.25, 0.925, Form(" Q^{2} (%.2f #rightarrow %.2f) GeV^{2}/c^{2} ",qq_start, qq_end));
+	  lab.DrawLatex(0.15,0.85,Form("Entries: %0.f",h1_gen_x_by_qq[s][b]->GetEntries()));
 	}
 
       canvas->Print( Form("%s.pdf",output_name.c_str()) );
@@ -288,6 +313,7 @@ void DISHistograms::draw()
 	  h1_rxs_x_by_qq[s][b]->Draw("PE");
 	  lab.DrawLatex(0.3, 0.02, Form(" #sigma_{raw} (x): Sector %d Bin %d ",s,b));
 	  lab.DrawLatex(0.25, 0.925, Form(" Q^{2} (%.2f #rightarrow %.2f) GeV^{2}/c^{2} ",qq_start, qq_end));
+	  lab.DrawLatex(0.15,0.85,Form("Entries: %0.f",h1_hits_x_by_qq[s][b]->GetEntries()));
 	}
 
       canvas->Print( Form("%s.pdf",output_name.c_str()) );
@@ -310,6 +336,7 @@ void DISHistograms::draw()
 	  h1_xs_x_by_qq[s][b]->Draw("PE");
 	  lab.DrawLatex(0.3, 0.02, Form(" #sigma (x): Sector %d Bin %d ",s,b));
 	  lab.DrawLatex(0.25, 0.925, Form(" Q^{2} (%.2f #rightarrow %.2f) GeV^{2}/c^{2} ",qq_start, qq_end));
+	  lab.DrawLatex(0.15,0.85,Form("Entries: %0.f",h1_hits_x_by_qq[s][b]->GetEntries()));
 	}
 
       canvas->Print( Form("%s.pdf",output_name.c_str()) );
@@ -362,7 +389,7 @@ void DISHistograms::draw()
   
   // Model xs x-by-qq
   canvas->Divide(can_size+1, can_size);
-  for (int b=0; b<h1_model_x_by_qq.size()-1; b++)
+  for (int b=0; b<h1_model_x_by_qq.size(); b++)
     {
       canvas->cd(b+1);
       
@@ -525,6 +552,10 @@ void DISHistograms::save()
       h2_hits_x_qq[s] ->Write();
       h2_rec_x_qq[s]  ->Write();
       h2_gen_x_qq[s]  ->Write();
+
+      h2_hits_w_qq[s] ->Write();
+      h2_rec_w_qq[s]  ->Write();
+      h2_gen_w_qq[s]  ->Write();
     }
 
   h1_fcup_charge->Write();
@@ -570,6 +601,7 @@ DISManager::DISManager(string outputFile, bool r)
 
   xBins  = DBins(100,0,1);
   qqBins = DBins(100,0,6);
+  wBins  = DBins(100,0,6);
 
   infofile = "unset";
 
@@ -594,13 +626,13 @@ void DISManager::fill_model(){
   } 
   
   
-  for (int ibin=1; ibin<qqBins.number(); ibin++){
-    for (int jbin=1; jbin<xBins.number(); jbin++) {
+  for (int ibin=0; ibin<qqBins.number(); ibin++){
+    for (int jbin=0; jbin<xBins.number(); jbin++) {
       double model_value = model.GetXS(1, 1, beam_energy, xBins.bin_center(jbin), qqBins.bin_center(ibin));
 
       if (model_value > 1e-20 && model_value < 1e20) {
-	histos.h1_model_x_by_qq[ibin]->SetBinContent(jbin,model_value/mev_to_gev);
-	histos.h1_model_x_by_qq[ibin]->SetBinError(jbin,0.00);
+	histos.h1_model_x_by_qq[ibin]->SetBinContent(jbin+1,model_value/mev_to_gev);
+	histos.h1_model_x_by_qq[ibin]->SetBinError(jbin+1,0.00);
       }
       
       cout.width(12); cout << model.GetXS(1,1,beam_energy,xBins.bin_center(jbin),qqBins.bin_center(ibin));
@@ -670,7 +702,7 @@ void DISManager::init()
   }
   
   // Setup Histograms
-  histos.set_bins(xBins, qqBins);
+  histos.set_bins(xBins, qqBins, wBins);
   
   if (recalc) {
     reader[0].Init();
@@ -723,6 +755,31 @@ void DISManager::do_xs()
   // for the 2-D histos so that we can collapse the corretly into the new bin
   // scheme.
 
+  /*
+
+    Normalization for the cross section. 
+
+                      M * e                1                          1 
+    xs = N_hits ------------------  ---------------  ---------------------------------
+                dQ * A * l * rho     Acc  RaddCorr     xBins.width() * qqBins.width()
+   
+
+		M   = Molar Mass of Hydrogen : hydrogen_molar_mass 
+		e   = Electron Charge        : electron_c  
+		dQ  = Faraday Cup Charge     : fcup_charge
+		A   = Avogadro's Number      : avogadro 
+		l   = target length          : 5 cm 
+		rho = hydrogen density       : hydrogen_density
+
+  */
+
+  // Getting charge for normalization. 
+  fcup_charge = histos.h1_fcup_charge->GetBinContent(1);
+  
+  double abs_norm = cm_to_outhouse*(hydrogen_molar_weight*electron_c*1e6)/(fcup_charge*5.00*avogadro*hydrogen_density); 
+
+  cout << " Abs. Norm Scale: " << abs_norm << " outhouses. " << endl; 
+  
   int n_micro_bins_x  = histos.h2_hits_x_qq[0]->GetXaxis()->GetNbins();
   double micro_x_max  = histos.h2_hits_x_qq[0]->GetXaxis()->GetXmax();
   double micro_x_min  = histos.h2_hits_x_qq[0]->GetXaxis()->GetXmin(); 
@@ -756,9 +813,6 @@ void DISManager::do_xs()
 
   int xConversion  = microXBins.number() /xBins.number();
   int qqConversion = microQQBins.number()/qqBins.number();
-
-  // Getting charge for normalization. 
-  fcup_charge = histos.h1_fcup_charge->GetBinContent(1); 
   
   // Do rebinning
   for (int s=0; s<7; s++) {
@@ -885,13 +939,16 @@ void DISManager::do_xs()
     {
       for (int b=0; b<qqBins.number(); b++)
 	{
+
+	  cout << Form(" Doing Acceptance for Sect. %d Bin %d",s,b) << endl;
 	  string name  = Form("h1_acc_x_by_qq_bin%d_%s",b,sect[s].c_str());
 	  string title = Form("Acc. for x-by-qq Bin %d Sector %s",b,sect[s].c_str());
 	  histos.h1_acc_x_by_qq[s][b] = (TH1D*) histos.h1_rec_x_by_qq[s][b]->Clone();
 	  histos.h1_acc_x_by_qq[s][b]->Divide( histos.h1_gen_x_by_qq[s][b] ); 
 	  histos.h1_acc_x_by_qq[s][b]->SetTitle( title.c_str() );
 	  histos.h1_acc_x_by_qq[s][b]->SetName(  name.c_str()  );
-	  
+
+	  cout << Form(" Doing Raw XS for Sect. %d Bin %d",s,b) << endl;
 	  name  = Form("h1_rxs_x_by_qq_%d_%s",b,sect[s].c_str());
 	  title = Form("rxs for x-by-qq Bin %d Sector %s",b,sect[s].c_str());
 	  histos.h1_rxs_x_by_qq[s][b] = (TH1D*) histos.h1_hits_x_by_qq[s][b]->Clone();
@@ -899,14 +956,19 @@ void DISManager::do_xs()
 	  histos.h1_rxs_x_by_qq[s][b]->SetTitle(title.c_str());
 	  histos.h1_rxs_x_by_qq[s][b]->SetName(name.c_str());
 	  histos.h1_rxs_x_by_qq[s][b]->Scale(1/(xBins.width()*qqBins.width())); 
-	  histos.h1_rxs_x_by_qq[s][b]->Scale(cm_to_outhouse*(1e6*electron_c*hydrogen_molar_weight/(avogadro*hydrogen_density*5*fcup_charge)));
+	  histos.h1_rxs_x_by_qq[s][b]->Scale( abs_norm );
+	  //    Note sure why this just gives blank histograms. 
+	  //	  if (s == 0) { histos.h1_rxs_x_by_qq[s][b]->Scale(1/6);               }
+	  //	  if (b == 0) { histos.h1_rxs_x_by_qq[s][b]->Scale(1/qqBins.number()); }
 
+	  cout << Form(" Doing XS for Sect. %d Bin %d",s,b) << endl;
 	  name  = Form("h1_xs_x_by_qq_%d_%s",b,sect[s].c_str());
 	  title = Form("xs for x-by-qq Bin %d Sector %s",b,sect[s].c_str());
 	  histos.h1_xs_x_by_qq[s][b] = (TH1D*) histos.h1_rxs_x_by_qq[s][b]->Clone();
 	  histos.h1_xs_x_by_qq[s][b]->SetTitle(title.c_str());
 	  histos.h1_xs_x_by_qq[s][b]->SetName(name.c_str());
 
+	  cout << Form(" Doing Raw XS Ratio for Sect. %d Bin %d",s,b) << endl;
 	  name  = Form("h1_rxs_ratio_x_by_qq_%d_%s",b,sect[s].c_str());
 	  title = Form("rxs ratio for x-by-qq Bin %d Sector %s",b,sect[s].c_str());
 	  histos.h1_rxs_ratio_x_by_qq[s][b] = (TH1D*) histos.h1_rxs_x_by_qq[s][b]->Clone();
@@ -914,6 +976,7 @@ void DISManager::do_xs()
 	  histos.h1_rxs_ratio_x_by_qq[s][b]->SetTitle(title.c_str());
 	  histos.h1_rxs_ratio_x_by_qq[s][b]->SetName(name.c_str());
 
+	  cout << Form(" Doing XS Ratio for Sect. %d Bin %d",s,b) << endl;
 	  name  = Form("h1_xs_ratio_x_by_qq_%d_%s",b,sect[s].c_str());
 	  title = Form("xs ratio for x-by-qq Bin %d Sector %s",b,sect[s].c_str());
 	  histos.h1_xs_ratio_x_by_qq[s][b] = (TH1D*) histos.h1_xs_x_by_qq[s][b]->Clone();
@@ -923,6 +986,13 @@ void DISManager::do_xs()
   
 	  }
     }
+
+  cout << " Number of bins summary for debugging: " << endl;
+  cout << " hits " << histos.h1_hits_x_by_qq[0][0]->GetXaxis()->GetNbins() << endl;
+  cout << " rec " << histos.h1_rec_x_by_qq[0][0]->GetXaxis()->GetNbins() << endl;
+  cout << " gen " << histos.h1_gen_x_by_qq[0][0]->GetXaxis()->GetNbins() << endl;
+  cout << " model " << histos.h1_model_x_by_qq[0]->GetXaxis()->GetNbins() << endl;
+
   
 }
 

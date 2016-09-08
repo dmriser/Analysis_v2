@@ -48,7 +48,7 @@ class DISHistograms
   std::string output_name;
   std::string sect[7];
   
-  DBins xBins, qqBins; 
+  DBins xBins, qqBins, wBins; 
 
   // Histograms
   std::vector<std::vector<TH1D*> > h1_gen_x_by_qq;
@@ -69,6 +69,14 @@ class DISHistograms
   TH2F * h2_rec_x_qq[7];
   TH2F * h2_gen_x_qq[7];
 
+  TH2F * h2_hits_w_qq[7];
+  TH2F * h2_rec_w_qq[7];
+  TH2F * h2_gen_w_qq[7];
+
+  TH2F * h2_hits_w_qq_rebin[7];
+  TH2F * h2_rec_w_qq_rebin[7];
+  TH2F * h2_gen_w_qq_rebin[7];
+
   TH2F * h2_hits_x_qq_rebin[7];
   TH2F * h2_rec_x_qq_rebin[7];
   TH2F * h2_gen_x_qq_rebin[7];
@@ -83,7 +91,7 @@ class DISHistograms
   void fill_gen(DEvent);  /** Just pass in the generated event */
   void init();
   void load();
-  void set_bins(DBins x, DBins qq){ xBins = x; qqBins = qq; }
+  void set_bins(DBins x, DBins qq, DBins w){ xBins = x; qqBins = qq; wBins = w; }
   void save();
   void close();  
 };
@@ -111,7 +119,7 @@ class DISManager
   std::string infofile; 
   std::string momcorr_path;
 
-  DBins xBins, qqBins; 
+  DBins xBins, qqBins, wBins; 
   DInformation info; 
   DISHistograms histos; 
   DSelection dis_selector; 
@@ -125,7 +133,7 @@ class DISManager
   // Member Functions
   void add_files(std::vector<std::string>, int);
   void init();
-  void set_bins(DBins x, DBins qq){ xBins = x; qqBins = qq; }
+  void set_bins(DBins x, DBins qq, DBins w){ xBins = x; qqBins = qq; wBins = w; }
   void loop(int); 
   void do_xs();
   void get_charge(std::vector<std::string>);

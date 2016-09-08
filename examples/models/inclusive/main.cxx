@@ -5,6 +5,7 @@
 using std::cout;
 using std::endl;
 using std::vector;
+using std::string;
 
 // model
 #include "F1F209Wrapper.hh"
@@ -21,14 +22,20 @@ using std::vector;
 #include "TPad.h"
 #include "TStyle.h"
 
-int main(){
+int main(int argc, char * argv[]){
 
   F1F209Wrapper model;
 
   // Constants for XS 
-  int A = 3, Z = 2;
-  double beam_energy = 6.4; // GeV 
+  int A = 1, Z = 1;
+  double beam_energy = 6.0; // GeV 
 
+  // Passing in A, Z
+  if (argc == 3) {
+    A = atoi( argv[1] );
+    Z = atoi( argv[2] );
+  }
+  
   DLineBins thetaBins(60, 5, 35);
   DLineBins energyBins(400,0.5,5.9);
 
@@ -58,6 +65,10 @@ int main(){
   gStyle->SetOptTitle(0);
 
   int colorOffset = 15; 
+
+  string name      = Form("a%dz%d.pdf",A,Z);
+  string openName  = Form("a%dz%d.pdf[",A,Z);
+  string closeName = Form("a%dz%d.pdf]",A,Z); 
   
   // print out 
   TLatex lab;
@@ -68,7 +79,7 @@ int main(){
   leg.SetBorderSize(0); 
   
   TCanvas * printer = new TCanvas("printer","",1200,800); 
-  printer->Print("out.pdf[");
+  printer->Print( openName.c_str() );
 
   gPad->SetLogy();
   gPad->SetMargin(0.12,0.12,0.15,0.1); 
@@ -81,15 +92,15 @@ int main(){
     leg.AddEntry(h1_xs[b], Form("#theta = %.1f",thetaBins.GetBin(b).GetMin()), "l"); 
   }
 
-  lab.DrawLatex(0.3,0.95,Form(" Inclusive e^{-} on A=%d Z=%d from Bosted Model ",A,Z));
-  lab.DrawLatex(0.45,0.05," E_{final} [GeV] ");
+  lab.DrawLatex(0.2,0.95,Form(" Inclusive e^{-} on A=%d Z=%d from Bosted Model E_{beam} = %.2f",A,Z,beam_energy));
+  lab.DrawLatex(0.45,0.05," E_{Final} [GeV] ");
   lab.SetTextAngle(90); 
   lab.DrawLatex(0.05,0.35," #frac{ d#sigma }{ dE d#Omega } #left[ #frac{#mu b}{GeV-sr} #right]"); 
   lab.SetTextAngle(0);
   leg.Draw(); 
-  printer->Print("out.pdf");
+  printer->Print( name.c_str() );
   
-  printer->Print("out.pdf]"); 
+  printer->Print( closeName.c_str() ); 
   
   return 0; 
 }

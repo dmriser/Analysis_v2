@@ -40,7 +40,7 @@ int main(int argc, char * argv[]){
   // Microscopic Binning Scheme for 2D Histograms 
   DBins xBins(200, 0.05, 0.65);
   DBins qqBins(200, 1.0, 5.0);
-  DBins wBins(200, 2.05, 5.0); 
+  DBins wBins(200, 2.05, 3.25); 
 
   DISManager manager(options.args["OUT"].args, true); 
   manager.add_files(data_files, 0);

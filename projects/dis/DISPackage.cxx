@@ -134,8 +134,8 @@ void DISHistograms::fill_gen(DEvent event)
     // Do the fill. 
     h2_gen_x_qq[0]->Fill(event.x, event.qq);
     h2_gen_x_qq[s]->Fill(event.x, event.qq);
-    h2_gen_w_qq[0]->Fill(event.x, event.qq);
-    h2_gen_w_qq[s]->Fill(event.x, event.qq);
+    h2_gen_w_qq[0]->Fill(event.w, event.qq);
+    h2_gen_w_qq[s]->Fill(event.w, event.qq);
   }
 }
 
@@ -540,6 +540,108 @@ void DISHistograms::draw()
   canvas->Print( Form("%s.pdf",output_name.c_str()) );
   canvas->Clear();
 
+  canvas->Divide(3, 2);
+  for (int s=1; s<7; s++)
+    {
+      canvas->cd(s);
+      gPad->SetMargin(0.15,0.1,0.1,0.1); 
+      gPad->SetLogz();
+      h2_hits_w_qq[s]->Draw("colz");
+      lab.DrawLatex(0.2,0.85,Form("Entries: %0.f",h2_hits_w_qq[s]->GetEntries())); 
+      lab.DrawLatex(0.3,0.925,Form("Hits Q^{2} vs. W #rightarrow Sector %d",s)); 
+      lab.DrawLatex(0.45,0.025," W [GeV/c^{2}] "); 
+      lab.SetTextAngle(90);
+      lab.DrawLatex(0.05, 0.35,"Q^{2} [GeV^{2}/c^{2}]"); 
+      lab.SetTextAngle(0);
+    }
+  canvas->Print( Form("%s.pdf",output_name.c_str()) );
+  canvas->Clear();
+
+  canvas->Divide(3, 2);
+  for (int s=1; s<7; s++)
+    {
+      canvas->cd(s);
+      gPad->SetMargin(0.15,0.1,0.1,0.1); 
+      gPad->SetLogz();
+      h2_rec_w_qq[s]->Draw("colz");
+      lab.DrawLatex(0.2,0.85,Form("Entries: %0.f",h2_rec_w_qq[s]->GetEntries())); 
+      lab.DrawLatex(0.3,0.925,Form("Rec MC Q^{2} vs. W #rightarrow Sector %d",s)); 
+      lab.DrawLatex(0.45,0.025," W [GeV/c^{2}] "); 
+      lab.SetTextAngle(90);
+      lab.DrawLatex(0.05, 0.35,"Q^{2} [GeV^{2}/c^{2}]"); 
+      lab.SetTextAngle(0);
+    }
+  canvas->Print( Form("%s.pdf",output_name.c_str()) );
+  canvas->Clear();
+
+
+  canvas->Divide(3, 2);
+  for (int s=1; s<7; s++)
+    {
+      canvas->cd(s);
+      gPad->SetMargin(0.15,0.1,0.1,0.1); 
+      gPad->SetLogz();
+      h2_gen_w_qq[s]->Draw("colz");
+      lab.DrawLatex(0.2,0.85,Form("Entries: %0.f",h2_gen_w_qq[s]->GetEntries())); 
+      lab.DrawLatex(0.3,0.925,Form("Gen MC Q^{2} vs. W #rightarrow Sector %d",s)); 
+      lab.DrawLatex(0.45,0.025," W [GeV/c^{2}] "); 
+      lab.SetTextAngle(90);
+      lab.DrawLatex(0.05, 0.35,"Q^{2} [GeV^{2}/c^{2}]"); 
+      lab.SetTextAngle(0);
+    }
+  canvas->Print( Form("%s.pdf",output_name.c_str()) );
+  canvas->Clear();
+  canvas->Divide(3, 2);
+  for (int s=1; s<7; s++)
+    {
+      canvas->cd(s);
+      gPad->SetMargin(0.15,0.1,0.1,0.1); 
+      gPad->SetLogz();
+      h2_hits_w_qq[s]->Draw("colz");
+      lab.DrawLatex(0.2,0.85,Form("Entries: %0.f",h2_hits_w_qq[s]->GetEntries())); 
+      lab.DrawLatex(0.3,0.925,Form("Hits Q^{2} vs. W #rightarrow Sector %d",s)); 
+      lab.DrawLatex(0.45,0.025," W [GeV/c^{2}] "); 
+      lab.SetTextAngle(90);
+      lab.DrawLatex(0.05, 0.35,"Q^{2} [GeV^{2}/c^{2}]"); 
+      lab.SetTextAngle(0);
+    }
+  canvas->Print( Form("%s.pdf",output_name.c_str()) );
+  canvas->Clear();
+
+  canvas->Divide(3, 2);
+  for (int s=1; s<7; s++)
+    {
+      canvas->cd(s);
+      gPad->SetMargin(0.15,0.1,0.1,0.1); 
+      gPad->SetLogz();
+      h2_rec_w_qq[s]->Draw("colz");
+      lab.DrawLatex(0.2,0.85,Form("Entries: %0.f",h2_rec_w_qq[s]->GetEntries())); 
+      lab.DrawLatex(0.3,0.925,Form("Rec MC Q^{2} vs. W #rightarrow Sector %d",s)); 
+      lab.DrawLatex(0.45,0.025," W [GeV/c^{2}] "); 
+      lab.SetTextAngle(90);
+      lab.DrawLatex(0.05, 0.35,"Q^{2} [GeV^{2}/c^{2}]"); 
+      lab.SetTextAngle(0);
+    }
+  canvas->Print( Form("%s.pdf",output_name.c_str()) );
+  canvas->Clear();
+
+  canvas->Divide(3, 2);
+  for (int s=1; s<7; s++)
+    {
+      canvas->cd(s);
+      gPad->SetMargin(0.15,0.1,0.1,0.1); 
+      gPad->SetLogz();
+      h2_gen_w_qq_rebin[s]->Draw("colz");
+      lab.DrawLatex(0.2,0.85,Form("Entries: %0.f",h2_gen_w_qq[s]->GetEntries())); 
+      lab.DrawLatex(0.3,0.925,Form("Gen MC Q^{2} vs. W #rightarrow Sector %d",s)); 
+      lab.DrawLatex(0.45,0.025," W [GeV/c^{2}] "); 
+      lab.SetTextAngle(90);
+      lab.DrawLatex(0.05, 0.35,"Q^{2} [GeV^{2}/c^{2}]"); 
+      lab.SetTextAngle(0);
+    }
+  canvas->Print( Form("%s.pdf",output_name.c_str()) );
+  canvas->Clear();
+
   canvas->Print( Form("%s.pdf]",output_name.c_str()) );
 }
 
@@ -788,37 +890,33 @@ void DISManager::do_xs()
   double micro_qq_max = histos.h2_hits_x_qq[0]->GetYaxis()->GetXmax();
   double micro_qq_min = histos.h2_hits_x_qq[0]->GetYaxis()->GetXmin(); 
 
-  /*  
-  cout << " Discovered fine binning scheme: " << endl;
-  cout << "      x bins: " << endl;
-  cout << "      " << n_micro_bins_x << " " << micro_x_min << " " << micro_x_max << endl;
-  cout << "      qq bins: " << endl;
-  cout << "      " << n_micro_bins_qq << " " << micro_qq_min << " " << micro_qq_max << endl;
-
-  cout << " Going to binning scheme: " << endl;
-  cout << "      x bins: " << endl;
-  cout << "      " << xBins.number() << " " << xBins.min() << " " << xBins.max() << endl;
-  cout << "      qq bins: " << endl;
-  cout << "      " << qqBins.number() << " " << qqBins.min() << " " << qqBins.max() << endl;
-  */
+  int n_micro_bins_w = histos.h2_hits_w_qq[0]->GetYaxis()->GetNbins();
+  double micro_w_max = histos.h2_hits_w_qq[0]->GetYaxis()->GetXmax();
+  double micro_w_min = histos.h2_hits_w_qq[0]->GetYaxis()->GetXmin(); 
   
   DBins microXBins(n_micro_bins_x, micro_x_min, micro_x_max);
+  DBins microWBins(n_micro_bins_w, micro_w_min, micro_w_max);
   DBins microQQBins(n_micro_bins_qq,micro_qq_min,micro_qq_max);
 
   // Dying for bad binning scheme. 
-  if ( xBins.number() > microXBins.number() || qqBins.number() > microQQBins.number()) {
+  if ( xBins.number() > microXBins.number() || qqBins.number() > microQQBins.number() || wBins.number() > microWBins.number()) {
     cout << "Fatal Error: Trying to bin finer than possible. " << endl;
     exit(0);
   }
 
   int xConversion  = microXBins.number() /xBins.number();
   int qqConversion = microQQBins.number()/qqBins.number();
+  int wConversion  = microWBins.number() /wBins.number();
   
   // Do rebinning
   for (int s=0; s<7; s++) {
     histos.h2_hits_x_qq_rebin[s] ->Rebin2D(xConversion, qqConversion);
     histos.h2_rec_x_qq_rebin[s]  ->Rebin2D(xConversion, qqConversion);
     histos.h2_gen_x_qq_rebin[s]  ->Rebin2D(xConversion, qqConversion);
+
+    histos.h2_hits_w_qq_rebin[s] ->Rebin2D(wConversion, qqConversion);
+    histos.h2_rec_w_qq_rebin[s]  ->Rebin2D(wConversion, qqConversion);
+    histos.h2_gen_w_qq_rebin[s]  ->Rebin2D(wConversion, qqConversion);
   }
   
   // Projecting into 1-D Histograms, could be combined into above loop. More readable like this. 
@@ -852,7 +950,7 @@ void DISManager::do_xs()
     
     histos.h1_rec_x_by_qq.push_back(v); 
   }
-
+ 
   // Generated 
   for (int s=0; s<7; s++) {
     vector<TH1D*> v;

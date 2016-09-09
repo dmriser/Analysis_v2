@@ -1462,7 +1462,7 @@ void DISManager::do_xs()
 	  histos.h1_rxs_w_by_qq[s][b]->SetName(name.c_str());
 	  histos.h1_rxs_w_by_qq[s][b]->Scale(1/(wBins.width()*qqBins.width())); 
 	  histos.h1_rxs_w_by_qq[s][b]->Scale( abs_norm );
-	  //	  if (s == 0) { histos.h1_rxs_w_by_qq[s][b]->Scale(1/6);               }
+	  if (s == 0) { histos.h1_rxs_w_by_qq[s][b]->Scale(1/6.0);               }
 	  //	  if (b == 0) { histos.h1_rxs_w_by_qq[s][b]->Scale(1/qqBins.number()); }
 
 	  name  = Form("h1_xs_w_by_qq_%d_%s",b,sect[s].c_str());

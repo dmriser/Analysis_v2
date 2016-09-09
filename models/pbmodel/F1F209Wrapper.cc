@@ -78,6 +78,34 @@ double F1F209Wrapper::GetXS(double Z, double A, double Ei, double x, double qq)
     return (xs1 + xs2) / 1000.; // ub/MeV-sr
 }
 
+double F1F209Wrapper::GetXSByWQQ(double Z, double A, double Ei, double w, double qq)
+{
+    const double M = 0.93825;
+
+    double Q2 = qq; 
+    double w2 = w*w;
+    double x = Q2/(Q2 + w2 - M*M);
+    double nu = Q2/(2*M*x);
+    double Ef = Ei-nu;
+    double theta = 2*asin(sqrt(Q2)/(2*sqrt(Ei*Ef)));
+    
+    double F1, F2, r;
+    double xs1, xs2;
+
+    GetF1F2IN09(Z, A, Q2, w2, F1, F2, r);
+
+    xs1 = (2. / 137. * Ef / Q2 * cos(theta / 2.))*(2. / 137. * Ef / Q2 * cos(theta / 2.)); // mott
+    xs1 = xs1 * (2. / M * F1 * tan(abs(theta) / 2.) * tan(abs(theta) / 2.) + F2 / nu);
+    xs1 = xs1 * 389.379;
+
+    GetF1F2QE09(Z, A, Q2, w2, F1, F2);
+    xs2 = (2. / 137. * Ef / Q2 * cos(theta / 2.))*(2. / 137. * Ef / Q2 * cos(theta / 2.)); // mott
+    xs2 = xs2 * (2. / M * F1 * tan(abs(theta) / 2.) * tan(abs(theta) / 2.) + F2 / nu);
+    xs2 = xs2 * 389.379;
+
+    return (xs1 + xs2) / 1000.; // ub/MeV-sr
+}
+
 double F1F209Wrapper::GetXSByAngle(double Z, double A, double Ei, double Ef, double theta)
 {
     const double M = 0.93825;

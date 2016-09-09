@@ -961,6 +961,8 @@ void DISManager::fill_model(){
   F1F209Wrapper model; 
   double beam_energy = 5.498; 
 
+  ofstream xsTable("xsTable.dat",std::ios::trunc); 
+  
   // Initialize the model histograms before loading them. 
   for (int b=0; b<qqBins.number(); b++){
     TH1D * xhist = new TH1D(Form("h1_model_x_by_qq_bin%d",b),"",xBins.number(),xBins.min(),xBins.max());
@@ -980,18 +982,22 @@ void DISManager::fill_model(){
 	histos.h1_model_x_by_qq[ibin]->SetBinContent(jbin+1,model_value/mev_to_gev);
 	histos.h1_model_x_by_qq[ibin]->SetBinError(jbin+1,0.00);
       }
-
+    }
       for (int jbin=0; jbin<wBins.number(); jbin++) {
-	double xValue = qqBins.bin_center(ibin)/(qqBins.bin_center(ibin) - pow(proton_mass,2) + pow(wBins.bin_center(jbin),2)); 
-	double model_value = model.GetXS(1, 1, beam_energy, xValue, qqBins.bin_center(ibin));
+	double model_value = model.GetXSByWQQ(1, 1, beam_energy, wBins.bin_center(jbin), qqBins.bin_center(ibin));
 
+	xsTable.width(12); xsTable << wBins.bin_center(jbin);
+	xsTable.width(12); xsTable << qqBins.bin_center(ibin);
+	xsTable.width(12); xsTable << model_value << endl;
+		
 	if (model_value > 1e-20 && model_value < 1e20) {
 	  histos.h1_model_w_by_qq[ibin]->SetBinContent(jbin+1,model_value/mev_to_gev);
 	  histos.h1_model_w_by_qq[ibin]->SetBinError(jbin+1,0.00);
 	}
       }
-    }
   }
+
+  xsTable.close();
 }
 
 void DISManager::get_charge(vector<string> files)
@@ -1399,7 +1405,6 @@ void DISManager::do_xs()
       for (int b=0; b<qqBins.number(); b++)
 	{
 
-	  cout << Form(" Doing Acceptance for Sect. %d Bin %d",s,b) << endl;
 	  string name  = Form("h1_acc_x_by_qq_bin%d_%s",b,sect[s].c_str());
 	  string title = Form("Acc. for x-by-qq Bin %d Sector %s",b,sect[s].c_str());
 	  histos.h1_acc_x_by_qq[s][b] = (TH1D*) histos.h1_rec_x_by_qq[s][b]->Clone();
@@ -1407,7 +1412,6 @@ void DISManager::do_xs()
 	  histos.h1_acc_x_by_qq[s][b]->SetTitle( title.c_str() );
 	  histos.h1_acc_x_by_qq[s][b]->SetName(  name.c_str()  );
 
-	  cout << Form(" Doing Raw XS for Sect. %d Bin %d",s,b) << endl;
 	  name  = Form("h1_rxs_x_by_qq_%d_%s",b,sect[s].c_str());
 	  title = Form("rxs for x-by-qq Bin %d Sector %s",b,sect[s].c_str());
 	  histos.h1_rxs_x_by_qq[s][b] = (TH1D*) histos.h1_hits_x_by_qq[s][b]->Clone();
@@ -1416,26 +1420,24 @@ void DISManager::do_xs()
 	  histos.h1_rxs_x_by_qq[s][b]->SetName(name.c_str());
 	  histos.h1_rxs_x_by_qq[s][b]->Scale(1/(xBins.width()*qqBins.width())); 
 	  histos.h1_rxs_x_by_qq[s][b]->Scale( abs_norm );
+
 	  //    Note sure why this just gives blank histograms. 
 	  //	  if (s == 0) { histos.h1_rxs_x_by_qq[s][b]->Scale(1/6);               }
 	  //	  if (b == 0) { histos.h1_rxs_x_by_qq[s][b]->Scale(1/qqBins.number()); }
 
-	  cout << Form(" Doing XS for Sect. %d Bin %d",s,b) << endl;
 	  name  = Form("h1_xs_x_by_qq_%d_%s",b,sect[s].c_str());
 	  title = Form("xs for x-by-qq Bin %d Sector %s",b,sect[s].c_str());
 	  histos.h1_xs_x_by_qq[s][b] = (TH1D*) histos.h1_rxs_x_by_qq[s][b]->Clone();
 	  histos.h1_xs_x_by_qq[s][b]->SetTitle(title.c_str());
 	  histos.h1_xs_x_by_qq[s][b]->SetName(name.c_str());
 
-	  cout << Form(" Doing Raw XS Ratio for Sect. %d Bin %d",s,b) << endl;
 	  name  = Form("h1_rxs_ratio_x_by_qq_%d_%s",b,sect[s].c_str());
 	  title = Form("rxs ratio for x-by-qq Bin %d Sector %s",b,sect[s].c_str());
 	  histos.h1_rxs_ratio_x_by_qq[s][b] = (TH1D*) histos.h1_rxs_x_by_qq[s][b]->Clone();
 	  histos.h1_rxs_ratio_x_by_qq[s][b]->Divide( histos.h1_model_x_by_qq[b] );
 	  histos.h1_rxs_ratio_x_by_qq[s][b]->SetTitle(title.c_str());
 	  histos.h1_rxs_ratio_x_by_qq[s][b]->SetName(name.c_str());
-
-	  cout << Form(" Doing XS Ratio for Sect. %d Bin %d",s,b) << endl;
+	  
 	  name  = Form("h1_xs_ratio_x_by_qq_%d_%s",b,sect[s].c_str());
 	  title = Form("xs ratio for x-by-qq Bin %d Sector %s",b,sect[s].c_str());
 	  histos.h1_xs_ratio_x_by_qq[s][b] = (TH1D*) histos.h1_xs_x_by_qq[s][b]->Clone();
@@ -1445,7 +1447,6 @@ void DISManager::do_xs()
 
 
 	  // W 
-	  cout << Form(" Doing Acceptance for Sect. %d Bin %d",s,b) << endl;
 	  name  = Form("h1_acc_w_by_qq_bin%d_%s",b,sect[s].c_str());
 	  title = Form("Acc. for w-by-qq Bin %d Sector %s",b,sect[s].c_str());
 	  histos.h1_acc_w_by_qq[s][b] = (TH1D*) histos.h1_rec_w_by_qq[s][b]->Clone();
@@ -1453,7 +1454,6 @@ void DISManager::do_xs()
 	  histos.h1_acc_w_by_qq[s][b]->SetTitle( title.c_str() );
 	  histos.h1_acc_w_by_qq[s][b]->SetName(  name.c_str()  );
 
-	  cout << Form(" Doing Raw XS for Sect. %d Bin %d",s,b) << endl;
 	  name  = Form("h1_rxs_w_by_qq_%d_%s",b,sect[s].c_str());
 	  title = Form("rxs for w-by-qq Bin %d Sector %s",b,sect[s].c_str());
 	  histos.h1_rxs_w_by_qq[s][b] = (TH1D*) histos.h1_hits_w_by_qq[s][b]->Clone();
@@ -1462,15 +1462,15 @@ void DISManager::do_xs()
 	  histos.h1_rxs_w_by_qq[s][b]->SetName(name.c_str());
 	  histos.h1_rxs_w_by_qq[s][b]->Scale(1/(wBins.width()*qqBins.width())); 
 	  histos.h1_rxs_w_by_qq[s][b]->Scale( abs_norm );
+	  //	  if (s == 0) { histos.h1_rxs_w_by_qq[s][b]->Scale(1/6);               }
+	  //	  if (b == 0) { histos.h1_rxs_w_by_qq[s][b]->Scale(1/qqBins.number()); }
 
-	  cout << Form(" Doing XS for Sect. %d Bin %d",s,b) << endl;
 	  name  = Form("h1_xs_w_by_qq_%d_%s",b,sect[s].c_str());
 	  title = Form("xs for x-by-qq Bin %d Sector %s",b,sect[s].c_str());
 	  histos.h1_xs_w_by_qq[s][b] = (TH1D*) histos.h1_rxs_w_by_qq[s][b]->Clone();
 	  histos.h1_xs_w_by_qq[s][b]->SetTitle(title.c_str());
 	  histos.h1_xs_w_by_qq[s][b]->SetName(name.c_str());
 
- 	  cout << Form(" Doing Raw XS Ratio for Sect. %d Bin %d",s,b) << endl;
 	  name  = Form("h1_rxs_ratio_w_by_qq_%d_%s",b,sect[s].c_str());
 	  title = Form("rxs ratio for w-by-qq Bin %d Sector %s",b,sect[s].c_str());
 	  histos.h1_rxs_ratio_w_by_qq[s][b] = (TH1D*) histos.h1_rxs_w_by_qq[s][b]->Clone();
@@ -1478,7 +1478,6 @@ void DISManager::do_xs()
 	  histos.h1_rxs_ratio_w_by_qq[s][b]->SetTitle(title.c_str());
 	  histos.h1_rxs_ratio_w_by_qq[s][b]->SetName(name.c_str());
 
-	  cout << Form(" Doing XS Ratio for Sect. %d Bin %d",s,b) << endl;
 	  name  = Form("h1_xs_ratio_w_by_qq_%d_%s",b,sect[s].c_str());
 	  title = Form("xs ratio for w-by-qq Bin %d Sector %s",b,sect[s].c_str());
 	  histos.h1_xs_ratio_w_by_qq[s][b] = (TH1D*) histos.h1_xs_w_by_qq[s][b]->Clone();

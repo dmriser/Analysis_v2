@@ -95,7 +95,7 @@ double DBins::bin_center(int ibin)
   if ( ibin > kNumber || ibin < 0 ) { cout << "Error trying to get bin center of bin outside range! " << endl; return 0.0; }
 
   // Bins are all the same size 
-  return kWidth/2 + kBins[ibin];
+  return (kWidth/2 + ibin*kWidth + kMin);
   
 }
 

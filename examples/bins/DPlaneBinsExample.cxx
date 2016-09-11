@@ -12,19 +12,19 @@ int main()
 
   // Setup our binning plane  
   DPlaneBins xy_plane;
-  DLineBins x_bins(200,-1, 1); 
-  DLineBins y_bins(200,-1, 1); 
+  DLineBins x_bins(20,-1, 1); 
+  DLineBins y_bins(20,-1, 1); 
 
   // Make symettric bins along the x direction in y, just like a TH2
   xy_plane.SetEdgeBins( x_bins );
   for (int iline=0; iline<xy_plane.GetEdgeBins().GetNumber(); iline++) { xy_plane.AddLineBins( y_bins ); } 
 
   for (int i=0; i<100000; i++){
-    xy_plane.Fill(rand->Gaus(0, 1),rand->Gaus(0, 0.5)); 
+    xy_plane.Fill(rand->Gaus(0, 1),rand->Gaus(0, 0.05)); 
   } 
   
   cout << " DPlaneBins " << endl; 
-  //  xy_plane.Print();
+  xy_plane.Print();
 
   // Doing Statistical Rebin
   cout << " Rebinned DPlaneBins " << endl; 

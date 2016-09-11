@@ -17,6 +17,7 @@
 #include <vector>
 
 // root includes
+#include "TH2.h"
 
 // my includes
 
@@ -161,6 +162,8 @@ class DPlaneBins
   DPlaneBins();
   ~DPlaneBins(); 
 
+  DPlaneBins(TH2D * sourceHistogram);
+  
  private:
   DLineBins edge_bins;
   std::vector<DLineBins> bins; 

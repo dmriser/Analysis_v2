@@ -18,6 +18,8 @@
 #include <vector>
 using namespace std;
 
+#include "TH2.h"
+
 // my includes
 #include "DBins.h"
 
@@ -411,7 +413,6 @@ DLineBins DLineBins::StatisticalRebin(int numBins)
     
     // Add the bin contents to the running total 
     running_total += bins[ibin].GetFills();
-    
   }
   
   return results; 
@@ -485,6 +486,40 @@ DPlaneBins::DPlaneBins()
 DPlaneBins::~DPlaneBins()
 {
 
+}
+
+DPlaneBins::DPlaneBins(TH2D * sourceHistogram){
+
+  int numberXBins = sourceHistogram->GetXaxis()->GetNbins();
+  double xMin = sourceHistogram->GetXaxis()->GetBinLowEdge(1);
+  double xMax = sourceHistogram->GetXaxis()->GetBinUpEdge(numberXBins);
+
+  int numberYBins = sourceHistogram->GetYaxis()->GetNbins();
+  double yMin = sourceHistogram->GetYaxis()->GetBinLowEdge(1);
+  double yMax = sourceHistogram->GetYaxis()->GetBinUpEdge(numberYBins);
+
+  SetEdgeBins(DLineBins(numberYBins, yMin, yMax)); 
+
+  for (int yBin = 0; yBin < numberYBins; yBin++) {
+    DLineBins theseBins(numberXBins, xMin, xMax); 
+
+    for (int xBin = 0; xBin < numberXBins; xBin++) {
+      int fills = (int) sourceHistogram->GetBinContent(xBin, yBin); 
+      theseBins.GetBin(xBin).SetFills( fills );
+      cout << fills << " ";
+    }
+    AddLineBins( theseBins );
+    cout << endl; 
+  }
+
+  // Still need to set edge bin content in order for rebins to work. 
+  for (int ibin=0; ibin<edge_bins.GetNumber(); ibin++){
+    int fills = 0;
+    for (int jbin=0; jbin<bins[ibin].GetNumber(); jbin++){
+      fills += bins[ibin].GetBin(jbin).GetFills(); 
+    }
+    edge_bins.GetBin(ibin).SetFills( fills );
+  }
 }
 
 void DPlaneBins::AddLineBins(DLineBins inBins)

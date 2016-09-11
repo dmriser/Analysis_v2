@@ -9,6 +9,7 @@ set NHEADERS = `ls -l */*.h | wc -l`
 # moving to dest
 cp lib/*.so $h22libs/lib/
 cp */*.h    $h22libs/include/
+cp models/pdfModels/*.h $h22libs/include/
 cp models/pbmodel/*.hh $h22libs/include/
 cp models/pbmodel/*.so $h22libs/lib/
 

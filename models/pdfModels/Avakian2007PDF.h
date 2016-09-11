@@ -14,6 +14,8 @@
 #define avakian_2007_pdf_h
 
 #include "GenericPDF.h"
+#include "GenericQuark.h"
+#include "GenericStructureFunction.h"
 
 class PDFUpPlus_HA2007 : public GenericPDF{
 

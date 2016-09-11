@@ -19,15 +19,18 @@ using namespace std;
 
 #include "Avakian2007PDF.h"
 #include "GenericPDF.h"
+#include "GenericQuark.h"
+#include "GenericStructureFunction.h"
 
 PDFUpPlus_HA2007::PDFUpPlus_HA2007(){
   setName("Avakian 2007 u+");
   setQuarkFlavor('u'); 
+  setQuarkCharge(2/3.0); 
   setHelicity(1); 
 
-  alphaCoef = 1.0;
-  ACoef = 1.0;
-  BCoef = 1.0;
+  alphaCoef = 1.313;
+  ACoef = 3.088;
+  BCoef = -3.010;
 }
 
 PDFUpPlus_HA2007::~PDFUpPlus_HA2007(){
@@ -48,12 +51,13 @@ double PDFUpPlus_HA2007::getValue(double x){
 PDFUpMinus_HA2007::PDFUpMinus_HA2007(){
   setName("Avakian 2007 u-");
   setQuarkFlavor('u'); 
+  setQuarkCharge(2/3.0); 
   setHelicity(-1); 
 
-  alphaCoef = 1.0;
+  alphaCoef = 1.313;
   CCoef = 2.143;
   CPrimeCoef = 0.493;
-  DCoef = 1.0; 
+  DCoef = -2.065; 
 }
 
 PDFUpMinus_HA2007::~PDFUpMinus_HA2007(){
@@ -74,11 +78,12 @@ double PDFUpMinus_HA2007::getValue(double x){
 PDFDownPlus_HA2007::PDFDownPlus_HA2007(){
   setName("Avakian 2007 d+");
   setQuarkFlavor('d'); 
+  setQuarkCharge(1/3.0); 
   setHelicity(1); 
 
-  alphaCoef = 1.0;
-  ACoef = 1.0;
-  BCoef = 1.0;
+  alphaCoef = 1.313;
+  ACoef = 0.343;
+  BCoef = -0.265;
 }
 
 PDFDownPlus_HA2007::~PDFDownPlus_HA2007(){
@@ -97,12 +102,13 @@ double PDFDownPlus_HA2007::getValue(double x){
 PDFDownMinus_HA2007::PDFDownMinus_HA2007(){
   setName("Avakian 2007 d-");
   setQuarkFlavor('d'); 
+  setQuarkCharge(-1/3.0); 
   setHelicity(-1); 
 
-  alphaCoef = 1.0;
+  alphaCoef = 1.313;
   CCoef = 1.689;
   CPrimeCoef = 1.592;
-  DCoef = 1.0; 
+  DCoef = -1.610; 
 }
 
 PDFDownMinus_HA2007::~PDFDownMinus_HA2007(){

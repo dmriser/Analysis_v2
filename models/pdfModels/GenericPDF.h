@@ -29,6 +29,7 @@ class GenericPDF{
  public:
   void setName( std::string n ){ name = n; } 
   void setHelicity(int h){ quark.helicity = h; }
+  void setQuarkCharge(double c){ quark.charge = c; }
   void setQuarkFlavor(char q){ quark.flavor = q; }
   
   GenericQuark getQuark(){ return quark; }

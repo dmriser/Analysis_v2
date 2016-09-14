@@ -53,7 +53,7 @@ using namespace std;
 */
 ////////////////////////////////////////////////////////////////////////
 
-DISHistograms::DISHistograms()
+DISHistograms::DISHistograms(string outputFilename, DBins xbins, DBins qqbins, DBins wbins)
 {
   sect[0] = "all";
   sect[1] = "s1";
@@ -62,8 +62,12 @@ DISHistograms::DISHistograms()
   sect[4] = "s4";
   sect[5] = "s5";
   sect[6] = "s6";
-  output_name = "unset";
 
+  output_name = outputFilename;
+  xBins  = xbins;
+  qqBins = qqbins;
+  wBins  = wbins; 
+  
   runInfoTree = new TTree("runInfoTree","Holds run information.");
 }
 
@@ -205,6 +209,18 @@ void DISHistograms::draw()
 
   int can_size = floor(sqrt(h1_hits_x_by_qq[0].size()));
   double integ_lumi = ((avogadro*5.00*hydrogen_density*1e-6*h1_fcup_charge->GetBinContent(1))/(hydrogen_molar_weight*electron_c));
+
+  int markerStyle = 8;
+
+  // Setting marker size based on how many qq bins we have.
+  if (qqBins.number() > 15){ markerStyle = 7; }
+  if (qqBins.number() > 30){ markerStyle = 6; }
+
+  // Testing function. 
+  h1_hits_x_by_qq[0][0]->SetTitle(" Bin 0 Sector 0 Test Title"); 
+  drawVectorOfTH1D(h1_hits_x_by_qq[0], canvas, "testXTitle", "testYTitle"); 
+  canvas->Print( Form("%s.pdf",output_name.c_str()) );
+  canvas->Clear(); 
   
   // Hits x-by-qq
   for (int s=0; s<7; s++)
@@ -218,7 +234,7 @@ void DISHistograms::draw()
 	  double qq_end   = qqBins.min() + b*qqBins.width();
 	  if (b == 0) { qq_start = qqBins.min(); qq_end = qqBins.max(); }
 
-	  h1_hits_x_by_qq[s][b]->SetMarkerStyle(8);
+	  h1_hits_x_by_qq[s][b]->SetMarkerStyle(markerStyle);
 	  h1_hits_x_by_qq[s][b]->Draw("PE");
 	  lab.DrawLatex(0.3, 0.02, Form(" Hits (x): Sector %d Bin %d ",s,b));
 	  lab.DrawLatex(0.25, 0.925, Form(" Q^{2} (%.2f #rightarrow %.2f) GeV^{2}/c^{2} ",qq_start, qq_end));
@@ -241,7 +257,7 @@ void DISHistograms::draw()
 	  double qq_end   = qqBins.min() + b*qqBins.width();
 	  if (b == 0) { qq_start = qqBins.min(); qq_end = qqBins.max(); }
 
-	  h1_rec_x_by_qq[s][b]->SetMarkerStyle(8);
+	  h1_rec_x_by_qq[s][b]->SetMarkerStyle(markerStyle);
 	  h1_rec_x_by_qq[s][b]->Draw("PE");
 	  lab.DrawLatex(0.3, 0.02, Form(" Rec (x): Sector %d Bin %d ",s,b));
 	  lab.DrawLatex(0.25, 0.925, Form(" Q^{2} (%.2f #rightarrow %.2f) GeV^{2}/c^{2} ",qq_start, qq_end));
@@ -264,7 +280,7 @@ void DISHistograms::draw()
 	  double qq_end   = qqBins.min() + b*qqBins.width();
 	  if (b == 0) { qq_start = qqBins.min(); qq_end = qqBins.max(); }
 
-	  h1_gen_x_by_qq[s][b]->SetMarkerStyle(8);
+	  h1_gen_x_by_qq[s][b]->SetMarkerStyle(markerStyle);
 	  h1_gen_x_by_qq[s][b]->Draw("PE");
 	  lab.DrawLatex(0.3, 0.02, Form(" Gen (x): Sector %d Bin %d ",s,b));
 	  lab.DrawLatex(0.25, 0.925, Form(" Q^{2} (%.2f #rightarrow %.2f) GeV^{2}/c^{2} ",qq_start, qq_end));
@@ -288,7 +304,9 @@ void DISHistograms::draw()
 	  double qq_end   = qqBins.min() + b*qqBins.width();
 	  if (b == 0) { qq_start = qqBins.min(); qq_end = qqBins.max(); }
 
-	  h1_acc_x_by_qq[s][b]->SetMarkerStyle(8);
+	  h1_acc_x_by_qq[s][b]->SetMarkerStyle(markerStyle);
+	  h1_acc_x_by_qq[s][b]->SetMaximum(1.1);
+	  h1_acc_x_by_qq[s][b]->SetMinimum(-0.1);
 	  h1_acc_x_by_qq[s][b]->Draw("PE");
 	  lab.DrawLatex(0.3, 0.02, Form(" Acc (x): Sector %d Bin %d ",s,b));
 	  lab.DrawLatex(0.25, 0.925, Form(" Q^{2} (%.2f #rightarrow %.2f) GeV^{2}/c^{2} ",qq_start, qq_end));
@@ -310,7 +328,7 @@ void DISHistograms::draw()
 	  double qq_end   = qqBins.min() + b*qqBins.width();
 	  if (b == 0) { qq_start = qqBins.min(); qq_end = qqBins.max(); }
 
-	  h1_rxs_x_by_qq[s][b]->SetMarkerStyle(8);
+	  h1_rxs_x_by_qq[s][b]->SetMarkerStyle(markerStyle);
 	  h1_rxs_x_by_qq[s][b]->Draw("PE");
 	  lab.DrawLatex(0.3, 0.02, Form(" #sigma_{raw} (x): Sector %d Bin %d ",s,b));
 	  lab.DrawLatex(0.25, 0.925, Form(" Q^{2} (%.2f #rightarrow %.2f) GeV^{2}/c^{2} ",qq_start, qq_end));
@@ -333,7 +351,7 @@ void DISHistograms::draw()
 	  double qq_end   = qqBins.min() + b*qqBins.width();
 	  if (b == 0) { qq_start = qqBins.min(); qq_end = qqBins.max(); }
 
-	  h1_xs_x_by_qq[s][b]->SetMarkerStyle(8);
+	  h1_xs_x_by_qq[s][b]->SetMarkerStyle(markerStyle);
 	  h1_xs_x_by_qq[s][b]->Draw("PE");
 	  lab.DrawLatex(0.3, 0.02, Form(" #sigma (x): Sector %d Bin %d ",s,b));
 	  lab.DrawLatex(0.25, 0.925, Form(" Q^{2} (%.2f #rightarrow %.2f) GeV^{2}/c^{2} ",qq_start, qq_end));
@@ -356,7 +374,7 @@ void DISHistograms::draw()
 	  double qq_end   = qqBins.min() + b*qqBins.width();
 	  if (b == 0) { qq_start = qqBins.min(); qq_end = qqBins.max(); }
 
-	  h1_xs_ratio_x_by_qq[s][b]->SetMarkerStyle(8);
+	  h1_xs_ratio_x_by_qq[s][b]->SetMarkerStyle(markerStyle);
 	  h1_xs_ratio_x_by_qq[s][b]->Draw("PE");
 	  lab.DrawLatex(0.3, 0.02, Form(" #sigma ratio(x): Sector %d Bin %d ",s,b));
 	  lab.DrawLatex(0.25, 0.925, Form(" Q^{2} (%.2f #rightarrow %.2f) GeV^{2}/c^{2} ",qq_start, qq_end));
@@ -378,7 +396,9 @@ void DISHistograms::draw()
 	  double qq_end   = qqBins.min() + b*qqBins.width();
 	  if (b == 0) { qq_start = qqBins.min(); qq_end = qqBins.max(); }
 
-	  h1_rxs_ratio_x_by_qq[s][b]->SetMarkerStyle(8);
+	  h1_rxs_ratio_x_by_qq[s][b]->SetMarkerStyle(markerStyle);
+	  h1_rxs_ratio_x_by_qq[s][b]->SetMaximum(1.5);
+	  h1_rxs_ratio_x_by_qq[s][b]->SetMinimum(0.5);
 	  h1_rxs_ratio_x_by_qq[s][b]->Draw("PE");
 	  lab.DrawLatex(0.3, 0.02, Form(" raw #sigma ratio(x): Sector %d Bin %d ",s,b));
 	  lab.DrawLatex(0.25, 0.925, Form(" Q^{2} (%.2f #rightarrow %.2f) GeV^{2}/c^{2} ",qq_start, qq_end));
@@ -398,7 +418,7 @@ void DISHistograms::draw()
       double qq_end   = qqBins.min() + b*qqBins.width();
       if (b == 0) { qq_start = qqBins.min(); qq_end = qqBins.max(); }
       
-      h1_model_x_by_qq[b]->SetMarkerStyle(7);
+      h1_model_x_by_qq[b]->SetMarkerStyle(markerStyle);
       h1_model_x_by_qq[b]->Draw("P");
       lab.DrawLatex(0.3, 0.02, Form(" Model (x): Bin %d ",b));
       lab.DrawLatex(0.25, 0.925, Form(" Q^{2} (%.2f #rightarrow %.2f) GeV^{2}/c^{2} ",qq_start, qq_end));
@@ -409,8 +429,7 @@ void DISHistograms::draw()
   canvas->Print( Form("%s.pdf",output_name.c_str()) );
   canvas->Clear();
   
-  
-  
+    
   // rec & hits x-by-qq
   for (int s=0; s<7; s++)
     {
@@ -426,14 +445,53 @@ void DISHistograms::draw()
 	  double qq_end   = qqBins.min() + b*qqBins.width();
 	  if (b == 0) { qq_start = qqBins.min(); qq_end = qqBins.max(); }
 
+	  double yAxisScaleMax = biggest(h1_hits_x_by_qq[s][b]->GetMaximum(), h1_rec_x_by_qq[s][b]->GetMaximum()); 
+	  yAxisScaleMax *= 1.1; 
+
 	  h1_rec_x_by_qq[s][b]->SetFillStyle(3004);
 	  h1_rec_x_by_qq[s][b]->SetFillColorAlpha(kRed,1.0);
 	  h1_rec_x_by_qq[s][b]->SetLineColor(kRed);
+	  //	  h1_hits_x_by_qq[s][b]->SetFillColorAlpha(kBlack,0.2);
+	  //	  h1_hits_x_by_qq[s][b]->SetLineColor(kBlack);
 	  h1_hits_x_by_qq[s][b]->Scale( data_norm );
 	  h1_rec_x_by_qq[s][b]->Scale( mc_norm );
+	  h1_hits_x_by_qq[s][b]->SetMaximum( yAxisScaleMax );
+	  h1_rec_x_by_qq[s][b]->SetMaximum( yAxisScaleMax );
 	  h1_hits_x_by_qq[s][b]->Draw();
 	  h1_rec_x_by_qq[s][b]->Draw("HISTsame");
 	  lab.DrawLatex(0.3, 0.02, Form(" Hits & Rec Sector %d Bin %d ",s,b));
+	  lab.DrawLatex(0.25, 0.925, Form(" Q^{2} (%.2f #rightarrow %.2f) GeV^{2}/c^{2} ",qq_start, qq_end));
+	}
+
+      canvas->Print( Form("%s.pdf",output_name.c_str()) );
+      canvas->Clear();
+    }
+    
+  // Generated & Model x-by-qq
+  for (int s=0; s<7; s++)
+    {
+      canvas->Divide(can_size+1, can_size);
+      double model_norm = 1;
+      
+      for (int b=0; b<h1_rec_x_by_qq[s].size()-1; b++)
+	{
+	  canvas->cd(b+1);
+
+	  double qq_start = qqBins.min() + (b-1)*qqBins.width();
+	  double qq_end   = qqBins.min() + b*qqBins.width();
+	  if (b == 0) { qq_start = qqBins.min(); qq_end = qqBins.max(); }
+
+	  //	  h1_model_x_by_qq[b]->SetFillStyle(3004);
+	  h1_model_x_by_qq[b]->SetFillColorAlpha(kRed,0.25);
+	  h1_model_x_by_qq[b]->SetLineColor(kRed);
+	  h1_model_x_by_qq[b]->SetLineWidth(1);
+	  h1_model_x_by_qq[b]->Scale(1/h1_model_x_by_qq[b]->Integral()); 
+	  h1_gen_x_by_qq[s][b]->Scale(1/h1_gen_x_by_qq[s][b]->Integral()); 
+	  h1_gen_x_by_qq[s][b]->SetFillColorAlpha(kBlack,0.25); 
+	  h1_gen_x_by_qq[s][b]->SetLineWidth(1); 
+	  h1_model_x_by_qq[b]->Draw("HIST");
+	  h1_gen_x_by_qq[s][b]->Draw("HISTsame");
+	  lab.DrawLatex(0.3, 0.02, Form(" Gen & Model Sector %d Bin %d ",s,b));
 	  lab.DrawLatex(0.25, 0.925, Form(" Q^{2} (%.2f #rightarrow %.2f) GeV^{2}/c^{2} ",qq_start, qq_end));
 	}
 
@@ -455,7 +513,7 @@ void DISHistograms::draw()
 	  double qq_end   = qqBins.min() + b*qqBins.width();
 	  if (b == 0) { qq_start = qqBins.min(); qq_end = qqBins.max(); }
 
-	  h1_hits_w_by_qq[s][b]->SetMarkerStyle(8);
+	  h1_hits_w_by_qq[s][b]->SetMarkerStyle(markerStyle);
 	  h1_hits_w_by_qq[s][b]->Draw("PE");
 	  lab.DrawLatex(0.3, 0.02, Form(" Hits (w): Sector %d Bin %d ",s,b));
 	  lab.DrawLatex(0.25, 0.925, Form(" Q^{2} (%.2f #rightarrow %.2f) GeV^{2}/c^{2} ",qq_start, qq_end));
@@ -478,7 +536,7 @@ void DISHistograms::draw()
 	  double qq_end   = qqBins.min() + b*qqBins.width();
 	  if (b == 0) { qq_start = qqBins.min(); qq_end = qqBins.max(); }
 
-	  h1_rec_w_by_qq[s][b]->SetMarkerStyle(8);
+	  h1_rec_w_by_qq[s][b]->SetMarkerStyle(markerStyle);
 	  h1_rec_w_by_qq[s][b]->Draw("PE");
 	  lab.DrawLatex(0.3, 0.02, Form(" Rec (w): Sector %d Bin %d ",s,b));
 	  lab.DrawLatex(0.25, 0.925, Form(" Q^{2} (%.2f #rightarrow %.2f) GeV^{2}/c^{2} ",qq_start, qq_end));
@@ -501,7 +559,7 @@ void DISHistograms::draw()
 	  double qq_end   = qqBins.min() + b*qqBins.width();
 	  if (b == 0) { qq_start = qqBins.min(); qq_end = qqBins.max(); }
 
-	  h1_gen_w_by_qq[s][b]->SetMarkerStyle(8);
+	  h1_gen_w_by_qq[s][b]->SetMarkerStyle(markerStyle);
 	  h1_gen_w_by_qq[s][b]->Draw("PE");
 	  lab.DrawLatex(0.3, 0.02, Form(" Gen (w): Sector %d Bin %d ",s,b));
 	  lab.DrawLatex(0.25, 0.925, Form(" Q^{2} (%.2f #rightarrow %.2f) GeV^{2}/c^{2} ",qq_start, qq_end));
@@ -525,7 +583,9 @@ void DISHistograms::draw()
 	  double qq_end   = qqBins.min() + b*qqBins.width();
 	  if (b == 0) { qq_start = qqBins.min(); qq_end = qqBins.max(); }
 
-	  h1_acc_w_by_qq[s][b]->SetMarkerStyle(8);
+	  h1_acc_w_by_qq[s][b]->SetMarkerStyle(markerStyle);
+	  h1_acc_w_by_qq[s][b]->SetMaximum(1.1);
+	  h1_acc_w_by_qq[s][b]->SetMinimum(-0.1);
 	  h1_acc_w_by_qq[s][b]->Draw("PE");
 	  lab.DrawLatex(0.3, 0.02, Form(" Acc (w): Sector %d Bin %d ",s,b));
 	  lab.DrawLatex(0.25, 0.925, Form(" Q^{2} (%.2f #rightarrow %.2f) GeV^{2}/c^{2} ",qq_start, qq_end));
@@ -547,7 +607,7 @@ void DISHistograms::draw()
 	  double qq_end   = qqBins.min() + b*qqBins.width();
 	  if (b == 0) { qq_start = qqBins.min(); qq_end = qqBins.max(); }
 
-	  h1_rxs_w_by_qq[s][b]->SetMarkerStyle(8);
+	  h1_rxs_w_by_qq[s][b]->SetMarkerStyle(markerStyle);
 	  h1_rxs_w_by_qq[s][b]->Draw("PE");
 	  lab.DrawLatex(0.3, 0.02, Form(" #sigma_{raw} (w): Sector %d Bin %d ",s,b));
 	  lab.DrawLatex(0.25, 0.925, Form(" Q^{2} (%.2f #rightarrow %.2f) GeV^{2}/c^{2} ",qq_start, qq_end));
@@ -570,7 +630,7 @@ void DISHistograms::draw()
 	  double qq_end   = qqBins.min() + b*qqBins.width();
 	  if (b == 0) { qq_start = qqBins.min(); qq_end = qqBins.max(); }
 
-	  h1_xs_w_by_qq[s][b]->SetMarkerStyle(8);
+	  h1_xs_w_by_qq[s][b]->SetMarkerStyle(markerStyle);
 	  h1_xs_w_by_qq[s][b]->Draw("PE");
 	  lab.DrawLatex(0.3, 0.02, Form(" #sigma (w): Sector %d Bin %d ",s,b));
 	  lab.DrawLatex(0.25, 0.925, Form(" Q^{2} (%.2f #rightarrow %.2f) GeV^{2}/c^{2} ",qq_start, qq_end));
@@ -593,7 +653,7 @@ void DISHistograms::draw()
 	  double qq_end   = qqBins.min() + b*qqBins.width();
 	  if (b == 0) { qq_start = qqBins.min(); qq_end = qqBins.max(); }
 
-	  h1_xs_ratio_w_by_qq[s][b]->SetMarkerStyle(8);
+	  h1_xs_ratio_w_by_qq[s][b]->SetMarkerStyle(markerStyle);
 	  h1_xs_ratio_w_by_qq[s][b]->Draw("PE");
 	  lab.DrawLatex(0.3, 0.02, Form(" #sigma ratio(w): Sector %d Bin %d ",s,b));
 	  lab.DrawLatex(0.25, 0.925, Form(" Q^{2} (%.2f #rightarrow %.2f) GeV^{2}/c^{2} ",qq_start, qq_end));
@@ -615,7 +675,7 @@ void DISHistograms::draw()
 	  double qq_end   = qqBins.min() + b*qqBins.width();
 	  if (b == 0) { qq_start = qqBins.min(); qq_end = qqBins.max(); }
 
-	  h1_rxs_ratio_w_by_qq[s][b]->SetMarkerStyle(8);
+	  h1_rxs_ratio_w_by_qq[s][b]->SetMarkerStyle(markerStyle);
 	  h1_rxs_ratio_w_by_qq[s][b]->Draw("PE");
 	  lab.DrawLatex(0.3, 0.02, Form(" raw #sigma ratio(w): Sector %d Bin %d ",s,b));
 	  lab.DrawLatex(0.25, 0.925, Form(" Q^{2} (%.2f #rightarrow %.2f) GeV^{2}/c^{2} ",qq_start, qq_end));
@@ -635,7 +695,7 @@ void DISHistograms::draw()
       double qq_end   = qqBins.min() + b*qqBins.width();
       if (b == 0) { qq_start = qqBins.min(); qq_end = qqBins.max(); }
       
-      h1_model_w_by_qq[b]->SetMarkerStyle(7);
+      h1_model_w_by_qq[b]->SetMarkerStyle(markerStyle);
       h1_model_w_by_qq[b]->Draw("P");
       lab.DrawLatex(0.3, 0.02, Form(" Model (w): Bin %d ",b));
       lab.DrawLatex(0.25, 0.925, Form(" Q^{2} (%.2f #rightarrow %.2f) GeV^{2}/c^{2} ",qq_start, qq_end));
@@ -646,6 +706,38 @@ void DISHistograms::draw()
   canvas->Print( Form("%s.pdf",output_name.c_str()) );
   canvas->Clear();
   
+    
+  // Generated & Model w-by-qq
+  for (int s=0; s<7; s++)
+    {
+      canvas->Divide(can_size+1, can_size);
+      double model_norm = 1;
+      
+      for (int b=0; b<h1_rec_w_by_qq[s].size()-1; b++)
+	{
+	  canvas->cd(b+1);
+
+	  double qq_start = qqBins.min() + (b-1)*qqBins.width();
+	  double qq_end   = qqBins.min() + b*qqBins.width();
+	  if (b == 0) { qq_start = qqBins.min(); qq_end = qqBins.max(); }
+
+	  //	  h1_model_x_by_qq[b]->SetFillStyle(3004);
+	  h1_model_w_by_qq[b]->SetFillColorAlpha(kRed,0.25);
+	  h1_model_w_by_qq[b]->SetLineColor(kRed);
+	  h1_model_w_by_qq[b]->SetLineWidth(1);
+	  h1_model_w_by_qq[b]->Scale(1/h1_model_w_by_qq[b]->Integral()); 
+	  h1_gen_w_by_qq[s][b]->Scale(1/h1_gen_w_by_qq[s][b]->Integral()); 
+	  h1_gen_w_by_qq[s][b]->SetFillColorAlpha(kBlack,0.25); 
+	  h1_gen_w_by_qq[s][b]->SetLineWidth(1); 
+	  h1_model_w_by_qq[b]->Draw("HIST");
+	  h1_gen_w_by_qq[s][b]->Draw("HISTsame");
+	  lab.DrawLatex(0.3, 0.02, Form(" Gen & Model Sector %d Bin %d ",s,b));
+	  lab.DrawLatex(0.25, 0.925, Form(" Q^{2} (%.2f #rightarrow %.2f) GeV^{2}/c^{2} ",qq_start, qq_end));
+	}
+
+      canvas->Print( Form("%s.pdf",output_name.c_str()) );
+      canvas->Clear();
+    }
   
   
   // rec & hits x-by-qq
@@ -662,11 +754,16 @@ void DISHistograms::draw()
 	  double qq_end   = qqBins.min() + b*qqBins.width();
 	  if (b == 0) { qq_start = qqBins.min(); qq_end = qqBins.max(); }
 
+	  double yAxisScaleMax = biggest(h1_hits_w_by_qq[s][b]->GetMaximum(), h1_rec_w_by_qq[s][b]->GetMaximum()); 
+	  yAxisScaleMax *= 1.05; 
+	  
 	  h1_rec_w_by_qq[s][b]->SetFillStyle(3004);
 	  h1_rec_w_by_qq[s][b]->SetFillColorAlpha(kRed,1.0);
 	  h1_rec_w_by_qq[s][b]->SetLineColor(kRed);
 	  h1_hits_w_by_qq[s][b]->Scale( data_norm );
 	  h1_rec_w_by_qq[s][b]->Scale( mc_norm );
+	  h1_hits_w_by_qq[s][b]->SetMaximum(yAxisScaleMax);
+	  h1_rec_w_by_qq[s][b]->SetMaximum(yAxisScaleMax);
 	  h1_hits_w_by_qq[s][b]->Draw();
 	  h1_rec_w_by_qq[s][b]->Draw("HISTsame");
 	  lab.DrawLatex(0.3, 0.02, Form(" Hits & Rec Sector %d Bin %d ",s,b));
@@ -837,7 +934,7 @@ void DISHistograms::draw()
       canvas->cd(s);
       gPad->SetMargin(0.15,0.1,0.1,0.1); 
       gPad->SetLogz();
-      h2_hits_w_qq[s]->Draw("colz");
+      h2_hits_w_qq_rebin[s]->Draw("colz");
       lab.DrawLatex(0.2,0.85,Form("Entries: %0.f",h2_hits_w_qq[s]->GetEntries())); 
       lab.DrawLatex(0.3,0.925,Form("Hits Q^{2} vs. W #rightarrow Sector %d",s)); 
       lab.DrawLatex(0.45,0.025," W [GeV/c^{2}] "); 
@@ -854,7 +951,7 @@ void DISHistograms::draw()
       canvas->cd(s);
       gPad->SetMargin(0.15,0.1,0.1,0.1); 
       gPad->SetLogz();
-      h2_rec_w_qq[s]->Draw("colz");
+      h2_rec_w_qq_rebin[s]->Draw("colz");
       lab.DrawLatex(0.2,0.85,Form("Entries: %0.f",h2_rec_w_qq[s]->GetEntries())); 
       lab.DrawLatex(0.3,0.925,Form("Rec MC Q^{2} vs. W #rightarrow Sector %d",s)); 
       lab.DrawLatex(0.45,0.025," W [GeV/c^{2}] "); 
@@ -926,28 +1023,24 @@ void DISHistograms::close(){
 */
 ////////////////////////////////////////////////////////////////////////
 
-DISManager::DISManager(string outputFile, bool r)
+DISManager::DISManager(string outputFile, bool r, DBins x, DBins qq, DBins w) : histos(outputFile, x, qq, w)
 {
   outfile      = outputFile;
-  parfile[0]   = "unset";
-  parfile[1]   = "unset";
   momcorr_path = "unset";
   recalc       = r; 
   
-  eid_version = 0;
   fcup_charge = 0.00; 
   
   qq_cut = new VirtualityCut();
   w_cut = new WCut();
   y_cut = new YCut(); 
 
-  xBins  = DBins(100,0,1);
-  qqBins = DBins(100,0,6);
-  wBins  = DBins(100,0,6);
+  xBins  = x;
+  qqBins = qq;
+  wBins  = w;
 
   infofile = "unset";
 
-  histos.output_name = outputFile; 
 }
 
 DISManager::~DISManager()
@@ -1051,10 +1144,10 @@ void DISManager::init()
 {
   // Warning for not setting parameters.  
   if (recalc){
-    if (parfile[0] == "unset" || parfile[1] == "unset" || outfile == "unset" || infofile == "unset")
+    if (outfile == "unset" || infofile == "unset")
       {
 	cout << " Warning: Not all parameters have been set before initializing! " << endl;
-	cout << " parfile[0] = " << parfile[0] << " parfile[1] = " << parfile[1] << " outfile = " << outfile << " infofile = " << infofile << endl;  
+	cout << " outfile = " << outfile << " infofile = " << infofile << endl;  
       }
   }
   
@@ -1066,12 +1159,6 @@ void DISManager::init()
     reader[1].Init();
     histos.init();
   
-    // Setting up ElectronSelector 
-    eid[0].set_parfile( parfile[0] );
-    eid[1].set_parfile( parfile[1] );
-    eid[0].set_info(reader[0].runno(), reader[0].GSIM);
-    eid[1].set_info(reader[1].runno(), reader[1].GSIM);
-    
     // Setting up Electron ID from Nathan, needs to be updated while running. 
     nathan.set_info(reader[0].runno(), reader[0].GSIM);
     
@@ -1420,10 +1507,8 @@ void DISManager::do_xs()
 	  histos.h1_rxs_x_by_qq[s][b]->SetName(name.c_str());
 	  histos.h1_rxs_x_by_qq[s][b]->Scale(1/(xBins.width()*qqBins.width())); 
 	  histos.h1_rxs_x_by_qq[s][b]->Scale( abs_norm );
-
-	  //    Note sure why this just gives blank histograms. 
-	  //	  if (s == 0) { histos.h1_rxs_x_by_qq[s][b]->Scale(1/6);               }
-	  //	  if (b == 0) { histos.h1_rxs_x_by_qq[s][b]->Scale(1/qqBins.number()); }
+	  if (s == 0) { histos.h1_rxs_x_by_qq[s][b]->Scale(1/6.0);             }
+	  //	  if (b == 0) { histos.h1_rxs_x_by_qq[s][b]->Scale((double)1/qqBins.number()); }
 
 	  name  = Form("h1_xs_x_by_qq_%d_%s",b,sect[s].c_str());
 	  title = Form("xs for x-by-qq Bin %d Sector %s",b,sect[s].c_str());
@@ -1463,7 +1548,7 @@ void DISManager::do_xs()
 	  histos.h1_rxs_w_by_qq[s][b]->Scale(1/(wBins.width()*qqBins.width())); 
 	  histos.h1_rxs_w_by_qq[s][b]->Scale( abs_norm );
 	  if (s == 0) { histos.h1_rxs_w_by_qq[s][b]->Scale(1/6.0);               }
-	  //	  if (b == 0) { histos.h1_rxs_w_by_qq[s][b]->Scale(1/qqBins.number()); }
+	  if (b == 0) { histos.h1_rxs_w_by_qq[s][b]->Scale((double)1/qqBins.number()); }
 
 	  name  = Form("h1_xs_w_by_qq_%d_%s",b,sect[s].c_str());
 	  title = Form("xs for x-by-qq Bin %d Sector %s",b,sect[s].c_str());
@@ -1505,9 +1590,8 @@ void DISManager::loop(int index)
 
   MomCorr_e1f momcorr(momcorr_path);
   
-  cout << " Starting DISManager::loop() for index " << index << " with " << nev << " entries, using eid version " << eid_version << endl;  
+  cout << " Starting DISManager::loop() for index " << index << " with " << nev << " entries."  << endl;  
 
-  if (eid_version == 0) { 
     for (int iev=0; iev<nev; iev++)
       {
 	if (iev%1000 == 0){ cout << "\r done " << iev << " of " << nev << flush; } 
@@ -1537,43 +1621,6 @@ void DISManager::loop(int index)
 	  }
 	}
       }
-  }
-
-  else
-    {
-      for (int iev=0; iev<nev; iev++)
-	{
-	  if (iev%1000 == 0){ cout << "\r done " << iev << " of " << nev << flush; } 
-	  
-	  reader[index].GetEntry(iev); 
-	  DEvent event( reader[index].GetEvent() );
-	  if (runno != reader[index].runno()) { runno = reader[index].runno(); eid[index].set_info(runno, reader[index].GSIM); }
-
-	  // Do generated for MC 
-	  if (index == 1) {
-	    histos.fill_gen(event);
-
-	    event.set_electron( TLorentzVector(event.tracks.mcpx(0), event.tracks.mcpy(0), event.tracks.mcpz(0), event.tracks.mcp[0])); 
-	  }
-	  
-	  if (eid[index].passes(event, 0))
-	    {
-	      // Doing Mom Corrections 
-	      TLorentzVector electron(event.tracks.p[0]*event.tracks.cx[0],
-				      event.tracks.p[0]*event.tracks.cy[0],
-				      event.tracks.p[0]*event.tracks.cz[0],
-				      event.tracks.p[0]);
-	      
-	      if (index == 0) { electron = momcorr.PcorN(electron, -1, 11); }
-	      event.set_e_index(0);
-	      event.set_electron(electron);
-
-	      if (dis_selector.passes(event, 0)){
-		histos.fill(event, index);
-	      }
-	    }
-	}
-    }
 
   cout << endl;
 }

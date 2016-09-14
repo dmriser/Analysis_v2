@@ -22,7 +22,8 @@
 #include "DEvent.h"
 #include "DInformation.h"
 #include "DSelection.h"
-#include "ElectronIDPackage.h"
+#include "DHistogramTools.h"
+#include "h22Reader.h"
 #include "NathanArchive.h"
 
 //  root includes
@@ -41,7 +42,7 @@
 class DISHistograms
 {
  public:
-  DISHistograms();
+  DISHistograms(std::string outputName, DBins xbins, DBins qqbins, DBins wbins);
   ~DISHistograms();
 
     // Data Types
@@ -70,7 +71,6 @@ class DISHistograms
   std::vector<std::vector<TH1D*> > h1_xs_w_by_qq;
   std::vector<std::vector<TH1D*> > h1_xs_ratio_w_by_qq;
   std::vector<TH1D*>               h1_model_w_by_qq;
-
 
   // Easiest way to hold the charge. 
   TH1D * h1_fcup_charge;
@@ -118,14 +118,13 @@ class DISHistograms
 class DISManager
 {
  public:
-  DISManager(std::string outputFile, bool r);
+  DISManager(std::string outputFile, bool r, DBins x, DBins qq, DBins w);
   ~DISManager();
 
   // Data Types
   int eid_version;
   double fcup_charge; 
   bool recalc; 
-  std::string parfile[2]; 
   std::string outfile;
   std::string infofile; 
   std::string momcorr_path;
@@ -134,7 +133,6 @@ class DISManager
   DInformation info; 
   DISHistograms histos; 
   DSelection dis_selector; 
-  ElectronSelector eid[2];
   h22Reader reader[2];
   NathanEIDWrapper nathan; 
   VirtualityCut * qq_cut;

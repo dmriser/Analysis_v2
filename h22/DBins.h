@@ -178,6 +178,7 @@ class DPlaneBins
   DLineBins GetLineBins(int l){ return bins[l]; }
   
   DPlaneBins StatisticalRebin(int, int); /**< Pass in the number of final edge bins, number of final bins in each line. */
+  TH2D * toTH2D(); 
 };
 
 #endif

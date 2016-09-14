@@ -500,16 +500,20 @@ DPlaneBins::DPlaneBins(TH2D * sourceHistogram){
 
   SetEdgeBins(DLineBins(numberYBins, yMin, yMax)); 
 
+  DLineBins xBins(numberXBins, xMin, xMax);
+  
   for (int yBin = 0; yBin < numberYBins; yBin++) {
-    DLineBins theseBins(numberXBins, xMin, xMax); 
+    DLineBins theseBins; 
 
     for (int xBin = 0; xBin < numberXBins; xBin++) {
-      int fills = (int) sourceHistogram->GetBinContent(xBin, yBin); 
-      theseBins.GetBin(xBin).SetFills( fills );
-      cout << fills << " ";
+      int fills = (int) sourceHistogram->GetBinContent(xBin+1, yBin+1); 
+      DBin thisBin;
+      thisBin.SetMin(xBins.GetBin(xBin).GetMin());
+      thisBin.SetMax(xBins.GetBin(xBin).GetMax());
+      thisBin.SetFills( fills );
+      theseBins.AddBin(thisBin);
     }
     AddLineBins( theseBins );
-    cout << endl; 
   }
 
   // Still need to set edge bin content in order for rebins to work. 
@@ -520,6 +524,7 @@ DPlaneBins::DPlaneBins(TH2D * sourceHistogram){
     }
     edge_bins.GetBin(ibin).SetFills( fills );
   }
+
 }
 
 void DPlaneBins::AddLineBins(DLineBins inBins)
@@ -571,6 +576,7 @@ DPlaneBins DPlaneBins::StatisticalRebin(int numEdgeBins, int numBinsPerLine){
   for (int ibin=0; ibin<edge_bins.GetNumber(); ibin++) {
 
     // Stop adding bins together. 
+    cout << " bin " << ibin << " edge bin " << edge_bin_index << endl;
     if (edge_bins.GetBin(ibin).GetMax() > edge_result.GetBin(edge_bin_index).GetMax()) {
       edge_bin_index++; 
       DLineBins this_new_line = this_line.StatisticalRebin(numBinsPerLine);
@@ -593,6 +599,23 @@ DPlaneBins DPlaneBins::StatisticalRebin(int numEdgeBins, int numBinsPerLine){
   }
   
   return result; 
+}
+
+TH2D * DPlaneBins::toTH2D(){
+
+  DLineBins xBins = bins[0];
+  DLineBins yBins = edge_bins;
+  
+  TH2D * thisHisto = new TH2D("thisHisto","",xBins.GetNumber(),xBins.GetMin(),xBins.GetMax(),yBins.GetNumber(),yBins.GetMin(),yBins.GetMax()); 
+
+  for (int yBin = 0; yBin < yBins.GetNumber(); yBin++){
+    for (int xBin = 0; xBin < xBins.GetNumber(); xBin++){
+      double binContent = bins[yBin].GetBin(xBin).GetFills(); 
+      thisHisto->SetBinContent(xBin+1, yBin+1, binContent); 
+    }
+  }
+
+  return thisHisto; 
 }
 
 #endif

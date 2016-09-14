@@ -42,18 +42,15 @@ int main(int argc, char * argv[]){
   DBins qqBins(200, 1.0, 5.0);
   DBins wBins(200, 1.1, 2.9); 
 
-  DISManager manager(options.args["OUT"].args, true); 
+  DISManager manager(options.args["OUT"].args, true, xBins, qqBins, wBins); 
   manager.add_files(data_files, 0);
   manager.add_files(mc_files,   1);
-  manager.parfile[0] = "epars.dat";
-  manager.parfile[1] = "epars.dat"; 
   manager.infofile   = "runs.info";
 
   if (options.args["MACHINE"].args == "MAC") { manager.momcorr_path = "/Users/dmriser/Work/analysis/momCorr/"; }
   else                                       { manager.momcorr_path = "/u/home/dmriser/mydoc/analysis/root_scripts/Analysis_v2/momCorr/"; }
-  manager.eid_version = 0;
   
-  manager.set_bins(xBins, qqBins, wBins);
+  //  manager.set_bins(xBins, qqBins, wBins);
   manager.qq_cut->set_min(1.0);
   manager.qq_cut->set_max(50.0);
   manager.w_cut ->set_min(1.1);
@@ -68,16 +65,6 @@ int main(int argc, char * argv[]){
   manager.dis_selector.summarize(); 
   manager.get_charge( data_files );
   manager.histos.save();
-
-  cout << " Still Alive after saving " << endl;
-  
-  // If using my EID print out statistics. 
-  if ( manager.eid_version == 1 ) {
-    manager.eid[0].summarize();
-    manager.eid[1].summarize(); 
-  }
-
-  cout << " Still alive before retun " << endl;
 
   return 0;
 }

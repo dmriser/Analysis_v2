@@ -82,15 +82,11 @@ void DISHistograms::init()
   // Initialize Histograms
   for (int s=0; s<7; s++) {
     h2_hits_x_qq[s] = new TH2F(Form("h2_hits_x_qq_%d",s),Form("Hits QQ vs. X Sector %d",s),xBins.number(),xBins.min(),xBins.max(),qqBins.number(),qqBins.min(),qqBins.max());
-    h2_rec_rad_x_qq[s]  = new TH2F(Form("h2_rec_rad_x_qq_%d",s), Form("Rec QQ vs. X Sector %d",s), xBins.number(),xBins.min(),xBins.max(),qqBins.number(),qqBins.min(),qqBins.max());
-    h2_gen_rad_x_qq[s]  = new TH2F(Form("h2_gen_rad_x_qq_%d",s), Form("Gen QQ vs. X Sector %d",s), xBins.number(),xBins.min(),xBins.max(),qqBins.number(),qqBins.min(),qqBins.max()); 
-    h2_rec_norad_x_qq[s]  = new TH2F(Form("h2_rec_norad_x_qq_%d",s), Form("Rec QQ vs. X Sector %d",s), xBins.number(),xBins.min(),xBins.max(),qqBins.number(),qqBins.min(),qqBins.max());
-    h2_gen_norad_x_qq[s]  = new TH2F(Form("h2_gen_norad_x_qq_%d",s), Form("Gen QQ vs. X Sector %d",s), xBins.number(),xBins.min(),xBins.max(),qqBins.number(),qqBins.min(),qqBins.max()); 
+    h2_rec_x_qq[s]  = new TH2F(Form("h2_rec_x_qq_%d",s), Form("Rec QQ vs. X Sector %d",s), xBins.number(),xBins.min(),xBins.max(),qqBins.number(),qqBins.min(),qqBins.max());
+    h2_gen_x_qq[s]  = new TH2F(Form("h2_gen_x_qq_%d",s), Form("Gen QQ vs. X Sector %d",s), xBins.number(),xBins.min(),xBins.max(),qqBins.number(),qqBins.min(),qqBins.max()); 
     h2_hits_w_qq[s] = new TH2F(Form("h2_hits_w_qq_%d",s),Form("Hits QQ vs. W Sector %d",s),wBins.number(),wBins.min(),wBins.max(),qqBins.number(),qqBins.min(),qqBins.max());
-    h2_rec_rad_w_qq[s]  = new TH2F(Form("h2_rec_rad_w_qq_%d",s), Form("Rec QQ vs. W Sector %d",s), wBins.number(),wBins.min(),wBins.max(),qqBins.number(),qqBins.min(),qqBins.max());
-    h2_gen_rad_w_qq[s]  = new TH2F(Form("h2_gen_rad_w_qq_%d",s), Form("Gen QQ vs. W Sector %d",s), wBins.number(),wBins.min(),wBins.max(),qqBins.number(),qqBins.min(),qqBins.max()); 
-    h2_rec_norad_w_qq[s]  = new TH2F(Form("h2_rec_norad_w_qq_%d",s), Form("Rec QQ vs. W Sector %d",s), wBins.number(),wBins.min(),wBins.max(),qqBins.number(),qqBins.min(),qqBins.max());
-    h2_gen_norad_w_qq[s]  = new TH2F(Form("h2_gen_norad_w_qq_%d",s), Form("Gen QQ vs. W Sector %d",s), wBins.number(),wBins.min(),wBins.max(),qqBins.number(),qqBins.min(),qqBins.max()); 
+    h2_rec_w_qq[s]  = new TH2F(Form("h2_rec_w_qq_%d",s), Form("Rec QQ vs. W Sector %d",s), wBins.number(),wBins.min(),wBins.max(),qqBins.number(),qqBins.min(),qqBins.max());
+    h2_gen_w_qq[s]  = new TH2F(Form("h2_gen_w_qq_%d",s), Form("Gen QQ vs. W Sector %d",s), wBins.number(),wBins.min(),wBins.max(),qqBins.number(),qqBins.min(),qqBins.max()); 
   }
 
   h1_fcup_charge = new TH1D("h1_fcup_charge","",xBins.number(),xBins.min(),xBins.max());
@@ -102,20 +98,12 @@ void DISHistograms::fill(DEvent event, int index)
   
   int s = event.tracks.dc_sect[event.e_index];
 
-  // Monte Carlo Rad. 
+  // Monte Carlo 
   if (index == 1) {
-    h2_rec_rad_x_qq[s]->Fill(event.x, event.qq);
-    h2_rec_rad_x_qq[0]->Fill(event.x, event.qq);
-    h2_rec_rad_w_qq[s]->Fill(event.w, event.qq);
-    h2_rec_rad_w_qq[0]->Fill(event.w, event.qq);
-  }
-
-  // Monte Carlo No Rad. 
-  if (index == 1) {
-    h2_rec_norad_x_qq[s]->Fill(event.x, event.qq);
-    h2_rec_norad_x_qq[0]->Fill(event.x, event.qq);
-    h2_rec_norad_w_qq[s]->Fill(event.w, event.qq);
-    h2_rec_norad_w_qq[0]->Fill(event.w, event.qq);
+    h2_rec_x_qq[s]->Fill(event.x, event.qq);
+    h2_rec_x_qq[0]->Fill(event.x, event.qq);
+    h2_rec_w_qq[s]->Fill(event.w, event.qq);
+    h2_rec_w_qq[0]->Fill(event.w, event.qq);
   }
 
   // Data Events
@@ -128,7 +116,7 @@ void DISHistograms::fill(DEvent event, int index)
 
 }
 
-void DISHistograms::fill_gen(DEvent event, int index)
+void DISHistograms::fill_gen(DEvent event)
 {
   int e_index = 0;
   if ( event.tracks.mcid[0] != 11) {
@@ -148,21 +136,11 @@ void DISHistograms::fill_gen(DEvent event, int index)
   int s = 1+floor(event.tracks.mcphi[e_index]/60.0);
 
   if (s > 0 && s < 7){ 
-    
-    if (index == 1) {
-      h2_gen_rad_x_qq[0]->Fill(event.x, event.qq);
-      h2_gen_rad_x_qq[s]->Fill(event.x, event.qq);
-      h2_gen_rad_w_qq[0]->Fill(event.w, event.qq);
-      h2_gen_rad_w_qq[s]->Fill(event.w, event.qq);
-    }
-    
-    if (index == 2) {
-      h2_gen_norad_x_qq[0]->Fill(event.x, event.qq);
-      h2_gen_norad_x_qq[s]->Fill(event.x, event.qq);
-      h2_gen_norad_w_qq[0]->Fill(event.w, event.qq);
-      h2_gen_norad_w_qq[s]->Fill(event.w, event.qq);
-    }
-    
+    // Do the fill. 
+    h2_gen_x_qq[0]->Fill(event.x, event.qq);
+    h2_gen_x_qq[s]->Fill(event.x, event.qq);
+    h2_gen_w_qq[0]->Fill(event.w, event.qq);
+    h2_gen_w_qq[s]->Fill(event.w, event.qq);
   }
 }
 
@@ -179,42 +157,30 @@ void DISHistograms::load(){
 
   for (int s=0; s<7; s++){
     h2_hits_x_qq[s] = (TH2F*) f->Get( Form("h2_hits_x_qq_%d",s) );
-    h2_rec_rad_x_qq[s]  = (TH2F*) f->Get( Form("h2_rec_rad_x_qq_%d", s) );
-    h2_gen_rad_x_qq[s]  = (TH2F*) f->Get( Form("h2_gen_rad_x_qq_%d", s) );
-    h2_rec_norad_x_qq[s]  = (TH2F*) f->Get( Form("h2_rec_norad_x_qq_%d", s) );
-    h2_gen_norad_x_qq[s]  = (TH2F*) f->Get( Form("h2_gen_norad_x_qq_%d", s) );
+    h2_rec_x_qq[s]  = (TH2F*) f->Get( Form("h2_rec_x_qq_%d", s) );
+    h2_gen_x_qq[s]  = (TH2F*) f->Get( Form("h2_gen_x_qq_%d", s) );
 
     h2_hits_w_qq[s] = (TH2F*) f->Get( Form("h2_hits_w_qq_%d",s) );
-    h2_rec_rad_w_qq[s]  = (TH2F*) f->Get( Form("h2_rec_rad_w_qq_%d", s) );
-    h2_gen_rad_w_qq[s]  = (TH2F*) f->Get( Form("h2_gen_rad_w_qq_%d", s) );
-    h2_rec_norad_w_qq[s]  = (TH2F*) f->Get( Form("h2_rec_norad_w_qq_%d", s) );
-    h2_gen_norad_w_qq[s]  = (TH2F*) f->Get( Form("h2_gen_norad_w_qq_%d", s) );
+    h2_rec_w_qq[s]  = (TH2F*) f->Get( Form("h2_rec_w_qq_%d", s) );
+    h2_gen_w_qq[s]  = (TH2F*) f->Get( Form("h2_gen_w_qq_%d", s) );
 
     h2_hits_x_qq_rebin[s] = (TH2F*) h2_hits_x_qq[s]->Clone();
     h2_hits_x_qq_rebin[s]->SetTitle(Form("h2_hits_x_qq_rebin_%d",s));
 
-    h2_rec_rad_x_qq_rebin[s]  = (TH2F*) h2_rec_rad_x_qq[s]->Clone();
-    h2_rec_rad_x_qq_rebin[s]->SetTitle(Form("h2_rec_rad_x_qq_rebin_%d",s));
-    h2_rec_norad_x_qq_rebin[s]  = (TH2F*) h2_rec_norad_x_qq[s]->Clone();
-    h2_rec_norad_x_qq_rebin[s]->SetTitle(Form("h2_rec_norad_x_qq_rebin_%d",s));
+    h2_rec_x_qq_rebin[s]  = (TH2F*) h2_rec_x_qq[s]->Clone();
+    h2_rec_x_qq_rebin[s]->SetTitle(Form("h2_rec_x_qq_rebin_%d",s));
 
-    h2_gen_rad_x_qq_rebin[s]  = (TH2F*) h2_gen_rad_x_qq[s]->Clone();
-    h2_gen_rad_x_qq_rebin[s]->SetTitle(Form("h2_gen_rad_x_qq_rebin_%d",s)); 
-    h2_gen_norad_x_qq_rebin[s]  = (TH2F*) h2_gen_norad_x_qq[s]->Clone();
-    h2_gen_norad_x_qq_rebin[s]->SetTitle(Form("h2_gen_norad_x_qq_rebin_%d",s)); 
+    h2_gen_x_qq_rebin[s]  = (TH2F*) h2_gen_x_qq[s]->Clone();
+    h2_gen_x_qq_rebin[s]->SetTitle(Form("h2_gen_x_qq_rebin_%d",s)); 
 
     h2_hits_w_qq_rebin[s] = (TH2F*) h2_hits_w_qq[s]->Clone();
     h2_hits_w_qq_rebin[s]->SetTitle(Form("h2_hits_w_qq_rebin_%d",s));
 
-    h2_rec_rad_w_qq_rebin[s]  = (TH2F*) h2_rec_rad_w_qq[s]->Clone();
-    h2_rec_rad_w_qq_rebin[s]->SetTitle(Form("h2_rec_rad_w_qq_rebin_%d",s));
-    h2_rec_norad_w_qq_rebin[s]  = (TH2F*) h2_rec_norad_w_qq[s]->Clone();
-    h2_rec_norad_w_qq_rebin[s]->SetTitle(Form("h2_rec_norad_w_qq_rebin_%d",s));
+    h2_rec_w_qq_rebin[s]  = (TH2F*) h2_rec_w_qq[s]->Clone();
+    h2_rec_w_qq_rebin[s]->SetTitle(Form("h2_rec_w_qq_rebin_%d",s));
 
-    h2_gen_rad_w_qq_rebin[s]  = (TH2F*) h2_gen_rad_w_qq[s]->Clone();
-    h2_gen_rad_w_qq_rebin[s]->SetTitle(Form("h2_gen_rad_w_qq_rebin_%d",s)); 
-    h2_gen_norad_w_qq_rebin[s]  = (TH2F*) h2_gen_norad_w_qq[s]->Clone();
-    h2_gen_norad_w_qq_rebin[s]->SetTitle(Form("h2_gen_norad_w_qq_rebin_%d",s)); 
+    h2_gen_w_qq_rebin[s]  = (TH2F*) h2_gen_w_qq[s]->Clone();
+    h2_gen_w_qq_rebin[s]->SetTitle(Form("h2_gen_w_qq_rebin_%d",s)); 
   }
 
   h1_fcup_charge = (TH1D*) f->Get("h1_fcup_charge");
@@ -251,10 +217,8 @@ void DISHistograms::draw()
   if (qqBins.number() > 30){ markerStyle = 6; }
 
   drawVectorOfVectorOfTH1D(h1_hits_x_by_qq, canvas, output_name,"X_{Bjorken}", "","PE");
-  drawVectorOfVectorOfTH1D(h1_rec_rad_x_by_qq, canvas, output_name,"X_{Bjorken}", "","PE");
-  drawVectorOfVectorOfTH1D(h1_gen_rad_x_by_qq, canvas, output_name,"X_{Bjorken}", "","PE");
-  drawVectorOfVectorOfTH1D(h1_rec_norad_x_by_qq, canvas, output_name,"X_{Bjorken}", "","PE");
-  drawVectorOfVectorOfTH1D(h1_gen_norad_x_by_qq, canvas, output_name,"X_{Bjorken}", "","PE");
+  drawVectorOfVectorOfTH1D(h1_rec_x_by_qq, canvas, output_name,"X_{Bjorken}", "","PE");
+  drawVectorOfVectorOfTH1D(h1_gen_x_by_qq, canvas, output_name,"X_{Bjorken}", "","PE");
   drawVectorOfVectorOfTH1D(h1_acc_x_by_qq, canvas, output_name,"X_{Bjorken}", "","PE");
   drawVectorOfVectorOfTH1D(h1_rxs_x_by_qq, canvas, output_name,"X_{Bjorken}", "","PE");
   drawVectorOfVectorOfTH1D(h1_rxs_ratio_x_by_qq, canvas, output_name,"X_{Bjorken}", "","PE"); 
@@ -263,14 +227,14 @@ void DISHistograms::draw()
   drawVectorOfTH1D(h1_model_x_by_qq, canvas, output_name,"X_{Bjorken}", "","PE"); 
 
   
-  // rec_rad & hits x-by-qq
+  // rec & hits x-by-qq
   for (int s=0; s<7; s++)
     {
       canvas->Divide(can_size+1, can_size);
       double data_norm = 1;
-      double mc_norm   = h1_hits_x_by_qq[s][0]->GetEntries()/h1_rec_rad_x_by_qq[s][0]->GetEntries(); 
+      double mc_norm   = h1_hits_x_by_qq[s][0]->GetEntries()/h1_rec_x_by_qq[s][0]->GetEntries(); 
       
-      for (int b=0; b<h1_rec_rad_x_by_qq[s].size()-1; b++)
+      for (int b=0; b<h1_rec_x_by_qq[s].size()-1; b++)
 	{
 	  canvas->cd(b+1);
 
@@ -278,20 +242,20 @@ void DISHistograms::draw()
 	  double qq_end   = qqBins.min() + b*qqBins.width();
 	  if (b == 0) { qq_start = qqBins.min(); qq_end = qqBins.max(); }
 
-	  double yAxisScaleMax = biggest(h1_hits_x_by_qq[s][b]->GetMaximum(), h1_rec_rad_x_by_qq[s][b]->GetMaximum()); 
+	  double yAxisScaleMax = biggest(h1_hits_x_by_qq[s][b]->GetMaximum(), h1_rec_x_by_qq[s][b]->GetMaximum()); 
 	  yAxisScaleMax *= 1.1; 
 
-	  h1_rec_rad_x_by_qq[s][b]->SetFillStyle(3004);
-	  h1_rec_rad_x_by_qq[s][b]->SetFillColorAlpha(kRed,1.0);
-	  h1_rec_rad_x_by_qq[s][b]->SetLineColor(kRed);
+	  h1_rec_x_by_qq[s][b]->SetFillStyle(3004);
+	  h1_rec_x_by_qq[s][b]->SetFillColorAlpha(kRed,1.0);
+	  h1_rec_x_by_qq[s][b]->SetLineColor(kRed);
 	  //	  h1_hits_x_by_qq[s][b]->SetFillColorAlpha(kBlack,0.2);
 	  //	  h1_hits_x_by_qq[s][b]->SetLineColor(kBlack);
 	  h1_hits_x_by_qq[s][b]->Scale( data_norm );
-	  h1_rec_rad_x_by_qq[s][b]->Scale( mc_norm );
+	  h1_rec_x_by_qq[s][b]->Scale( mc_norm );
 	  h1_hits_x_by_qq[s][b]->SetMaximum( yAxisScaleMax );
-	  h1_rec_rad_x_by_qq[s][b]->SetMaximum( yAxisScaleMax );
+	  h1_rec_x_by_qq[s][b]->SetMaximum( yAxisScaleMax );
 	  h1_hits_x_by_qq[s][b]->Draw();
-	  h1_rec_rad_x_by_qq[s][b]->Draw("HISTsame");
+	  h1_rec_x_by_qq[s][b]->Draw("HISTsame");
 	  lab.DrawLatex(0.3, 0.02, Form(" Hits & Rec Sector %d Bin %d ",s,b));
 	  lab.DrawLatex(0.25, 0.925, Form(" Q^{2} (%.2f #rightarrow %.2f) GeV^{2}/c^{2} ",qq_start, qq_end));
 	}
@@ -306,7 +270,7 @@ void DISHistograms::draw()
       canvas->Divide(can_size+1, can_size);
       double model_norm = 1;
       
-      for (int b=0; b<h1_rec_rad_x_by_qq[s].size()-1; b++)
+      for (int b=0; b<h1_rec_x_by_qq[s].size()-1; b++)
 	{
 	  canvas->cd(b+1);
 
@@ -319,11 +283,11 @@ void DISHistograms::draw()
 	  h1_model_x_by_qq[b]->SetLineColor(kRed);
 	  h1_model_x_by_qq[b]->SetLineWidth(1);
 	  h1_model_x_by_qq[b]->Scale(1/h1_model_x_by_qq[b]->Integral()); 
-	  h1_gen_rad_x_by_qq[s][b]->Scale(1/h1_gen_rad_x_by_qq[s][b]->Integral()); 
-	  h1_gen_rad_x_by_qq[s][b]->SetFillColorAlpha(kBlack,0.25); 
-	  h1_gen_rad_x_by_qq[s][b]->SetLineWidth(1); 
+	  h1_gen_x_by_qq[s][b]->Scale(1/h1_gen_x_by_qq[s][b]->Integral()); 
+	  h1_gen_x_by_qq[s][b]->SetFillColorAlpha(kBlack,0.25); 
+	  h1_gen_x_by_qq[s][b]->SetLineWidth(1); 
 	  h1_model_x_by_qq[b]->Draw("HIST");
-	  h1_gen_rad_x_by_qq[s][b]->Draw("HISTsame");
+	  h1_gen_x_by_qq[s][b]->Draw("HISTsame");
 	  lab.DrawLatex(0.3, 0.02, Form(" Gen & Model Sector %d Bin %d ",s,b));
 	  lab.DrawLatex(0.25, 0.925, Form(" Q^{2} (%.2f #rightarrow %.2f) GeV^{2}/c^{2} ",qq_start, qq_end));
 	}
@@ -336,10 +300,8 @@ void DISHistograms::draw()
 
   // This ugly function call replaces several hundered lines of code. 
   drawVectorOfVectorOfTH1D(h1_hits_w_by_qq, canvas, output_name,"W [GeV/c^{2}]", "","PE");
-  drawVectorOfVectorOfTH1D(h1_rec_rad_w_by_qq, canvas, output_name,"W [GeV/c^{2}]", "","PE");
-  drawVectorOfVectorOfTH1D(h1_gen_rad_w_by_qq, canvas, output_name,"W [GeV/c^{2}]", "","PE");
-  drawVectorOfVectorOfTH1D(h1_rec_norad_w_by_qq, canvas, output_name,"W [GeV/c^{2}]", "","PE");
-  drawVectorOfVectorOfTH1D(h1_gen_norad_w_by_qq, canvas, output_name,"W [GeV/c^{2}]", "","PE");
+  drawVectorOfVectorOfTH1D(h1_rec_w_by_qq, canvas, output_name,"W [GeV/c^{2}]", "","PE");
+  drawVectorOfVectorOfTH1D(h1_gen_w_by_qq, canvas, output_name,"W [GeV/c^{2}]", "","PE");
   drawVectorOfVectorOfTH1D(h1_acc_w_by_qq, canvas, output_name,"W [GeV/c^{2}]", "","PE");
   drawVectorOfVectorOfTH1D(h1_rxs_w_by_qq, canvas, output_name,"W [GeV/c^{2}]", "","PE");
   drawVectorOfVectorOfTH1D(h1_rxs_ratio_w_by_qq, canvas, output_name,"W [GeV/c^{2}]", "","PE"); 
@@ -353,7 +315,7 @@ void DISHistograms::draw()
       canvas->Divide(can_size+1, can_size);
       double model_norm = 1;
       
-      for (int b=0; b<h1_rec_rad_w_by_qq[s].size()-1; b++)
+      for (int b=0; b<h1_rec_w_by_qq[s].size()-1; b++)
 	{
 	  canvas->cd(b+1);
 
@@ -366,11 +328,11 @@ void DISHistograms::draw()
 	  h1_model_w_by_qq[b]->SetLineColor(kRed);
 	  h1_model_w_by_qq[b]->SetLineWidth(1);
 	  h1_model_w_by_qq[b]->Scale(1/h1_model_w_by_qq[b]->Integral()); 
-	  h1_gen_rad_w_by_qq[s][b]->Scale(1/h1_gen_rad_w_by_qq[s][b]->Integral()); 
-	  h1_gen_rad_w_by_qq[s][b]->SetFillColorAlpha(kBlack,0.25); 
-	  h1_gen_rad_w_by_qq[s][b]->SetLineWidth(1); 
+	  h1_gen_w_by_qq[s][b]->Scale(1/h1_gen_w_by_qq[s][b]->Integral()); 
+	  h1_gen_w_by_qq[s][b]->SetFillColorAlpha(kBlack,0.25); 
+	  h1_gen_w_by_qq[s][b]->SetLineWidth(1); 
 	  h1_model_w_by_qq[b]->Draw("HIST");
-	  h1_gen_rad_w_by_qq[s][b]->Draw("HISTsame");
+	  h1_gen_w_by_qq[s][b]->Draw("HISTsame");
 	  lab.DrawLatex(0.3, 0.02, Form(" Gen & Model Sector %d Bin %d ",s,b));
 	  lab.DrawLatex(0.25, 0.925, Form(" Q^{2} (%.2f #rightarrow %.2f) GeV^{2}/c^{2} ",qq_start, qq_end));
 	}
@@ -380,13 +342,13 @@ void DISHistograms::draw()
     }
   
   
-  // rec_rad & hits x-by-qq
+  // rec & hits x-by-qq
   for (int s=0; s<7; s++)
     {
       canvas->Divide(can_size+1, can_size);
       double data_norm = 1;
-      double mc_norm   = h1_hits_w_by_qq[s][0]->GetEntries()/h1_rec_rad_w_by_qq[s][0]->GetEntries(); 
-      for (int b=0; b<h1_rec_rad_w_by_qq[s].size()-1; b++)
+      double mc_norm   = h1_hits_w_by_qq[s][0]->GetEntries()/h1_rec_w_by_qq[s][0]->GetEntries(); 
+      for (int b=0; b<h1_rec_w_by_qq[s].size()-1; b++)
 	{
 	  canvas->cd(b+1);
 
@@ -394,18 +356,18 @@ void DISHistograms::draw()
 	  double qq_end   = qqBins.min() + b*qqBins.width();
 	  if (b == 0) { qq_start = qqBins.min(); qq_end = qqBins.max(); }
 
-	  double yAxisScaleMax = biggest(h1_hits_w_by_qq[s][b]->GetMaximum(), h1_rec_rad_w_by_qq[s][b]->GetMaximum()); 
+	  double yAxisScaleMax = biggest(h1_hits_w_by_qq[s][b]->GetMaximum(), h1_rec_w_by_qq[s][b]->GetMaximum()); 
 	  yAxisScaleMax *= 1.05; 
 	  
-	  h1_rec_rad_w_by_qq[s][b]->SetFillStyle(3004);
-	  h1_rec_rad_w_by_qq[s][b]->SetFillColorAlpha(kRed,1.0);
-	  h1_rec_rad_w_by_qq[s][b]->SetLineColor(kRed);
+	  h1_rec_w_by_qq[s][b]->SetFillStyle(3004);
+	  h1_rec_w_by_qq[s][b]->SetFillColorAlpha(kRed,1.0);
+	  h1_rec_w_by_qq[s][b]->SetLineColor(kRed);
 	  h1_hits_w_by_qq[s][b]->Scale( data_norm );
-	  h1_rec_rad_w_by_qq[s][b]->Scale( mc_norm );
+	  h1_rec_w_by_qq[s][b]->Scale( mc_norm );
 	  h1_hits_w_by_qq[s][b]->SetMaximum(yAxisScaleMax);
-	  h1_rec_rad_w_by_qq[s][b]->SetMaximum(yAxisScaleMax);
+	  h1_rec_w_by_qq[s][b]->SetMaximum(yAxisScaleMax);
 	  h1_hits_w_by_qq[s][b]->Draw();
-	  h1_rec_rad_w_by_qq[s][b]->Draw("HISTsame");
+	  h1_rec_w_by_qq[s][b]->Draw("HISTsame");
 	  lab.DrawLatex(0.3, 0.02, Form(" Hits & Rec Sector %d Bin %d ",s,b));
 	  lab.DrawLatex(0.25, 0.925, Form(" Q^{2} (%.2f #rightarrow %.2f) GeV^{2}/c^{2} ",qq_start, qq_end));
 	}
@@ -438,8 +400,8 @@ void DISHistograms::draw()
       canvas->cd(s);
       gPad->SetMargin(0.15,0.1,0.1,0.1); 
       gPad->SetLogz();
-      h2_rec_rad_x_qq[s]->Draw("colz");
-      lab.DrawLatex(0.2,0.85,Form("Entries: %0.f",h2_rec_rad_x_qq[s]->GetEntries())); 
+      h2_rec_x_qq[s]->Draw("colz");
+      lab.DrawLatex(0.2,0.85,Form("Entries: %0.f",h2_rec_x_qq[s]->GetEntries())); 
       lab.DrawLatex(0.3,0.925,Form("Rec. MC Q^{2} vs. x #rightarrow Sector %d",s)); 
       lab.DrawLatex(0.45,0.025,"x_{Bjorken}  "); 
       lab.SetTextAngle(90);
@@ -455,8 +417,8 @@ void DISHistograms::draw()
       canvas->cd(s);
       gPad->SetMargin(0.15,0.1,0.1,0.1); 
       gPad->SetLogz();
-      h2_gen_rad_x_qq[s]->Draw("colz");
-      lab.DrawLatex(0.2,0.85,Form("Entries: %0.f",h2_gen_rad_x_qq[s]->GetEntries())); 
+      h2_gen_x_qq[s]->Draw("colz");
+      lab.DrawLatex(0.2,0.85,Form("Entries: %0.f",h2_gen_x_qq[s]->GetEntries())); 
       lab.DrawLatex(0.3,0.925,Form("Gen MC Q^{2} vs. x #rightarrow Sector %d",s)); 
       lab.DrawLatex(0.45,0.025,"x_{Bjorken}  "); 
       lab.SetTextAngle(90);
@@ -489,8 +451,8 @@ void DISHistograms::draw()
       canvas->cd(s);
       gPad->SetMargin(0.15,0.1,0.1,0.1); 
       gPad->SetLogz();
-      h2_rec_rad_x_qq_rebin[s]->Draw("colz");
-      lab.DrawLatex(0.2,0.85,Form("Entries: %0.f",h2_rec_rad_x_qq[s]->GetEntries())); 
+      h2_rec_x_qq_rebin[s]->Draw("colz");
+      lab.DrawLatex(0.2,0.85,Form("Entries: %0.f",h2_rec_x_qq[s]->GetEntries())); 
       lab.DrawLatex(0.3,0.925,Form("Rec MC Q^{2} vs. x #rightarrow Sector %d",s)); 
       lab.DrawLatex(0.45,0.025,"x_{Bjorken}  "); 
       lab.SetTextAngle(90);
@@ -506,8 +468,8 @@ void DISHistograms::draw()
       canvas->cd(s);
       gPad->SetMargin(0.15,0.1,0.1,0.1); 
       gPad->SetLogz();
-      h2_gen_rad_x_qq_rebin[s]->Draw("colz");
-      lab.DrawLatex(0.2,0.85,Form("Entries: %0.f",h2_gen_rad_x_qq[s]->GetEntries())); 
+      h2_gen_x_qq_rebin[s]->Draw("colz");
+      lab.DrawLatex(0.2,0.85,Form("Entries: %0.f",h2_gen_x_qq[s]->GetEntries())); 
       lab.DrawLatex(0.3,0.925,Form("Gen MC Q^{2} vs. x #rightarrow Sector %d",s)); 
       lab.DrawLatex(0.45,0.025,"x_{Bjorken}  "); 
       lab.SetTextAngle(90);
@@ -540,8 +502,8 @@ void DISHistograms::draw()
       canvas->cd(s);
       gPad->SetMargin(0.15,0.1,0.1,0.1); 
       gPad->SetLogz();
-      h2_rec_rad_w_qq[s]->Draw("colz");
-      lab.DrawLatex(0.2,0.85,Form("Entries: %0.f",h2_rec_rad_w_qq[s]->GetEntries())); 
+      h2_rec_w_qq[s]->Draw("colz");
+      lab.DrawLatex(0.2,0.85,Form("Entries: %0.f",h2_rec_w_qq[s]->GetEntries())); 
       lab.DrawLatex(0.3,0.925,Form("Rec MC Q^{2} vs. W #rightarrow Sector %d",s)); 
       lab.DrawLatex(0.45,0.025," W [GeV/c^{2}] "); 
       lab.SetTextAngle(90);
@@ -558,8 +520,8 @@ void DISHistograms::draw()
       canvas->cd(s);
       gPad->SetMargin(0.15,0.1,0.1,0.1); 
       gPad->SetLogz();
-      h2_gen_rad_w_qq[s]->Draw("colz");
-      lab.DrawLatex(0.2,0.85,Form("Entries: %0.f",h2_gen_rad_w_qq[s]->GetEntries())); 
+      h2_gen_w_qq[s]->Draw("colz");
+      lab.DrawLatex(0.2,0.85,Form("Entries: %0.f",h2_gen_w_qq[s]->GetEntries())); 
       lab.DrawLatex(0.3,0.925,Form("Gen MC Q^{2} vs. W #rightarrow Sector %d",s)); 
       lab.DrawLatex(0.45,0.025," W [GeV/c^{2}] "); 
       lab.SetTextAngle(90);
@@ -591,8 +553,8 @@ void DISHistograms::draw()
       canvas->cd(s);
       gPad->SetMargin(0.15,0.1,0.1,0.1); 
       gPad->SetLogz();
-      h2_rec_rad_w_qq_rebin[s]->Draw("colz");
-      lab.DrawLatex(0.2,0.85,Form("Entries: %0.f",h2_rec_rad_w_qq[s]->GetEntries())); 
+      h2_rec_w_qq_rebin[s]->Draw("colz");
+      lab.DrawLatex(0.2,0.85,Form("Entries: %0.f",h2_rec_w_qq[s]->GetEntries())); 
       lab.DrawLatex(0.3,0.925,Form("Rec MC Q^{2} vs. W #rightarrow Sector %d",s)); 
       lab.DrawLatex(0.45,0.025," W [GeV/c^{2}] "); 
       lab.SetTextAngle(90);
@@ -608,8 +570,8 @@ void DISHistograms::draw()
       canvas->cd(s);
       gPad->SetMargin(0.15,0.1,0.1,0.1); 
       gPad->SetLogz();
-      h2_gen_rad_w_qq_rebin[s]->Draw("colz");
-      lab.DrawLatex(0.2,0.85,Form("Entries: %0.f",h2_gen_rad_w_qq[s]->GetEntries())); 
+      h2_gen_w_qq_rebin[s]->Draw("colz");
+      lab.DrawLatex(0.2,0.85,Form("Entries: %0.f",h2_gen_w_qq[s]->GetEntries())); 
       lab.DrawLatex(0.3,0.925,Form("Gen MC Q^{2} vs. W #rightarrow Sector %d",s)); 
       lab.DrawLatex(0.45,0.025," W [GeV/c^{2}] "); 
       lab.SetTextAngle(90);
@@ -629,16 +591,12 @@ void DISHistograms::save()
   for (int s=0; s<7; s++)
     {
       h2_hits_x_qq[s] ->Write();
-      h2_rec_rad_x_qq[s]  ->Write();
-      h2_gen_rad_x_qq[s]  ->Write();
-      h2_rec_norad_x_qq[s]  ->Write();
-      h2_gen_norad_x_qq[s]  ->Write();
+      h2_rec_x_qq[s]  ->Write();
+      h2_gen_x_qq[s]  ->Write();
 
       h2_hits_w_qq[s] ->Write();
-      h2_rec_rad_w_qq[s]  ->Write();
-      h2_gen_rad_w_qq[s]  ->Write();
-      h2_rec_norad_w_qq[s]  ->Write();
-      h2_gen_norad_w_qq[s]  ->Write();
+      h2_rec_w_qq[s]  ->Write();
+      h2_gen_w_qq[s]  ->Write();
     }
 
   h1_fcup_charge->Write();
@@ -671,7 +629,7 @@ DISManager::DISManager(string outputFile, bool r, DBins x, DBins qq, DBins w) : 
 {
   outfile      = outputFile;
   momcorr_path = "unset";
-  rec_radalc       = r; 
+  recalc       = r; 
   
   fcup_charge = 0.00; 
   
@@ -787,7 +745,7 @@ void DISManager::get_charge(vector<string> files)
 void DISManager::init()
 {
   // Warning for not setting parameters.  
-  if (rec_radalc){
+  if (recalc){
     if (outfile == "unset" || infofile == "unset")
       {
 	cout << " Warning: Not all parameters have been set before initializing! " << endl;
@@ -798,10 +756,9 @@ void DISManager::init()
   // Setup Histograms
   histos.set_bins(xBins, qqBins, wBins);
   
-  if (rec_radalc) {
+  if (recalc) {
     reader[0].Init();
     reader[1].Init();
-    reader[2].Init();
     histos.init();
   
     // Setting up Electron ID from Nathan, needs to be updated while running. 
@@ -813,8 +770,7 @@ void DISManager::init()
     dis_selector.add_cut( y_cut );
 
     info.load(infofile);
-    if ( reader[0].GetEntries() == 0 || reader[1].GetEntries() == 0 || reader[2].GetEntries() == 0)
-      { cout << " Fatal Error: Trying to initialize with no files in one of the readers. " << endl; exit(0); }  
+    if ( reader[0].GetEntries() == 0 || reader[1].GetEntries() == 0 ) { cout << " Fatal Error: Trying to initialize with no files in one of the readers. " << endl; exit(0); }  
   }
 
   // Doing just loading, slicing, drawing. 
@@ -854,12 +810,12 @@ void DISManager::do_xs()
                 dQ * A * l * rho     Acc  RaddCorr     xBins.width() * qqBins.width()
    
 
-		M   = Molar Mass of Hydrogen_rad : hydrogen_rad_molar_mass 
+		M   = Molar Mass of Hydrogen : hydrogen_molar_mass 
 		e   = Electron Charge        : electron_c  
 		dQ  = Faraday Cup Charge     : fcup_charge
 		A   = Avogadro's Number      : avogadro 
 		l   = target length          : 5 cm 
-		rho = hydrogen_rad density       : hydrogen_rad_density
+		rho = hydrogen density       : hydrogen_density
 
   */
 
@@ -899,12 +855,12 @@ void DISManager::do_xs()
   // Do rebinning
   for (int s=0; s<7; s++) {
     histos.h2_hits_x_qq_rebin[s] ->Rebin2D(xConversion, qqConversion);
-    histos.h2_rec_rad_x_qq_rebin[s]  ->Rebin2D(xConversion, qqConversion);
-    histos.h2_gen_rad_x_qq_rebin[s]  ->Rebin2D(xConversion, qqConversion);
+    histos.h2_rec_x_qq_rebin[s]  ->Rebin2D(xConversion, qqConversion);
+    histos.h2_gen_x_qq_rebin[s]  ->Rebin2D(xConversion, qqConversion);
 
     histos.h2_hits_w_qq_rebin[s] ->Rebin2D(wConversion, qqConversion);
-    histos.h2_rec_rad_w_qq_rebin[s]  ->Rebin2D(wConversion, qqConversion);
-    histos.h2_gen_rad_w_qq_rebin[s]  ->Rebin2D(wConversion, qqConversion);
+    histos.h2_rec_w_qq_rebin[s]  ->Rebin2D(wConversion, qqConversion);
+    histos.h2_gen_w_qq_rebin[s]  ->Rebin2D(wConversion, qqConversion);
   }
 
 
@@ -928,36 +884,21 @@ void DISManager::do_xs()
     histos.h1_hits_x_by_qq.push_back(v); 
   }
 
-   
-  // rec_radonstructed 
+  
+  // reconstructed 
   for (int s=0; s<7; s++) {
     vector<TH1D*> v;
 
     for (int b=0; b<=qqBins.number(); b++) {
-      string name = Form("h1_rec_rad_x_by_qq_bin%d_%d",b,s);
+      string name = Form("h1_rec_x_by_qq_bin%d_%d",b,s);
       TH1D * hist = new TH1D(name.c_str(),"",xBins.number(),xBins.min(),xBins.max()); 
-      if (b == 0) { histos.h2_rec_rad_x_qq_rebin[s]->ProjectionX(name.c_str(),1,qqBins.number()); }
-      else        { histos.h2_rec_rad_x_qq_rebin[s]->ProjectionX(name.c_str(),b+1,b+2); }
+      if (b == 0) { histos.h2_rec_x_qq_rebin[s]->ProjectionX(name.c_str(),1,qqBins.number()); }
+      else        { histos.h2_rec_x_qq_rebin[s]->ProjectionX(name.c_str(),b+1,b+2); }
       hist->Sumw2();
       v.push_back(hist);
     }
     
-    histos.h1_rec_rad_x_by_qq.push_back(v); 
-  }
-
-  for (int s=0; s<7; s++) {
-    vector<TH1D*> v;
-
-    for (int b=0; b<=qqBins.number(); b++) {
-      string name = Form("h1_rec_norad_x_by_qq_bin%d_%d",b,s);
-      TH1D * hist = new TH1D(name.c_str(),"",xBins.number(),xBins.min(),xBins.max()); 
-      if (b == 0) { histos.h2_rec_norad_x_qq_rebin[s]->ProjectionX(name.c_str(),1,qqBins.number()); }
-      else        { histos.h2_rec_norad_x_qq_rebin[s]->ProjectionX(name.c_str(),b+1,b+2); }
-      hist->Sumw2();
-      v.push_back(hist);
-    }
-    
-    histos.h1_rec_rad_x_by_qq.push_back(v); 
+    histos.h1_rec_x_by_qq.push_back(v); 
   }
  
   // Generated 
@@ -965,31 +906,15 @@ void DISManager::do_xs()
     vector<TH1D*> v;
 
     for (int b=0; b<=qqBins.number(); b++) {
-      string name = Form("h1_gen_rad_x_by_qq_bin%d_%d",b,s);
+      string name = Form("h1_gen_x_by_qq_bin%d_%d",b,s);
       TH1D * hist = new TH1D(name.c_str(),"",xBins.number(),xBins.min(),xBins.max()); 
-      if (b == 0) { histos.h2_gen_rad_x_qq_rebin[s]->ProjectionX(name.c_str(),1,qqBins.number()); }
-      else        { histos.h2_gen_rad_x_qq_rebin[s]->ProjectionX(name.c_str(),b+1,b+2); }
+      if (b == 0) { histos.h2_gen_x_qq_rebin[s]->ProjectionX(name.c_str(),1,qqBins.number()); }
+      else        { histos.h2_gen_x_qq_rebin[s]->ProjectionX(name.c_str(),b+1,b+2); }
       hist->Sumw2();
       v.push_back(hist);
     }
     
-    histos.h1_gen_rad_x_by_qq.push_back(v); 
-  }
-
-  // Generated 
-  for (int s=0; s<7; s++) {
-    vector<TH1D*> v;
-
-    for (int b=0; b<=qqBins.number(); b++) {
-      string name = Form("h1_gen_norad_x_by_qq_bin%d_%d",b,s);
-      TH1D * hist = new TH1D(name.c_str(),"",xBins.number(),xBins.min(),xBins.max()); 
-      if (b == 0) { histos.h2_gen_norad_x_qq_rebin[s]->ProjectionX(name.c_str(),1,qqBins.number()); }
-      else        { histos.h2_gen_norad_x_qq_rebin[s]->ProjectionX(name.c_str(),b+1,b+2); }
-      hist->Sumw2();
-      v.push_back(hist);
-    }
-    
-    histos.h1_gen_norad_x_by_qq.push_back(v); 
+    histos.h1_gen_x_by_qq.push_back(v); 
   }
 
   // Acceptance 
@@ -1003,19 +928,6 @@ void DISManager::do_xs()
     }
     
     histos.h1_acc_x_by_qq.push_back(v); 
-  }
-
-  // Radiative Correction  
-  for (int s=0; s<7; s++) {
-    vector<TH1D*> v;
-
-    for (int b=0; b<=qqBins.number(); b++) {
-      string name = Form("h1_rc_x_by_qq_bin%d_%d",b,s);
-      TH1D * hist = new TH1D(name.c_str(),"",xBins.number(),xBins.min(),xBins.max()); 
-      v.push_back(hist);
-    }
-    
-    histos.h1_rc_x_by_qq.push_back(v); 
   }
 
   // Raw Cross Section 
@@ -1085,34 +997,20 @@ void DISManager::do_xs()
     histos.h1_hits_w_by_qq.push_back(v); 
   }
 
-  // rec_radonstructed 
+  // reconstructed 
   for (int s=0; s<7; s++) {
     vector<TH1D*> v;
 
     for (int b=0; b<=qqBins.number(); b++) {
-      string name = Form("h1_rec_rad_w_by_qq_bin%d_%d",b,s);
+      string name = Form("h1_rec_w_by_qq_bin%d_%d",b,s);
       TH1D * hist = new TH1D(name.c_str(),"",wBins.number(),wBins.min(),wBins.max()); 
-      if (b == 0) { histos.h2_rec_rad_w_qq_rebin[s]->ProjectionX(name.c_str(),1,qqBins.number()); }
-      else        { histos.h2_rec_rad_w_qq_rebin[s]->ProjectionX(name.c_str(),b+1,b+2); }
+      if (b == 0) { histos.h2_rec_w_qq_rebin[s]->ProjectionX(name.c_str(),1,qqBins.number()); }
+      else        { histos.h2_rec_w_qq_rebin[s]->ProjectionX(name.c_str(),b+1,b+2); }
       hist->Sumw2();
       v.push_back(hist);
     }
     
-    histos.h1_rec_rad_w_by_qq.push_back(v); 
-  }
-  for (int s=0; s<7; s++) {
-    vector<TH1D*> v;
-
-    for (int b=0; b<=qqBins.number(); b++) {
-      string name = Form("h1_rec_norad_w_by_qq_bin%d_%d",b,s);
-      TH1D * hist = new TH1D(name.c_str(),"",wBins.number(),wBins.min(),wBins.max()); 
-      if (b == 0) { histos.h2_rec_norad_w_qq_rebin[s]->ProjectionX(name.c_str(),1,qqBins.number()); }
-      else        { histos.h2_rec_norad_w_qq_rebin[s]->ProjectionX(name.c_str(),b+1,b+2); }
-      hist->Sumw2();
-      v.push_back(hist);
-    }
-    
-    histos.h1_rec_norad_w_by_qq.push_back(v); 
+    histos.h1_rec_w_by_qq.push_back(v); 
   }
  
   // Generated 
@@ -1120,30 +1018,15 @@ void DISManager::do_xs()
     vector<TH1D*> v;
 
     for (int b=0; b<=qqBins.number(); b++) {
-      string name = Form("h1_gen_rad_w_by_qq_bin%d_%d",b,s);
+      string name = Form("h1_gen_w_by_qq_bin%d_%d",b,s);
       TH1D * hist = new TH1D(name.c_str(),"",wBins.number(),wBins.min(),wBins.max()); 
-      if (b == 0) { histos.h2_gen_rad_w_qq_rebin[s]->ProjectionX(name.c_str(),1,qqBins.number()); }
-      else        { histos.h2_gen_rad_w_qq_rebin[s]->ProjectionX(name.c_str(),b+1,b+2); }
+      if (b == 0) { histos.h2_gen_w_qq_rebin[s]->ProjectionX(name.c_str(),1,qqBins.number()); }
+      else        { histos.h2_gen_w_qq_rebin[s]->ProjectionX(name.c_str(),b+1,b+2); }
       hist->Sumw2();
       v.push_back(hist);
     }
     
-    histos.h1_gen_rad_w_by_qq.push_back(v); 
-  }
-
-  for (int s=0; s<7; s++) {
-    vector<TH1D*> v;
-
-    for (int b=0; b<=qqBins.number(); b++) {
-      string name = Form("h1_gen_norad_w_by_qq_bin%d_%d",b,s);
-      TH1D * hist = new TH1D(name.c_str(),"",wBins.number(),wBins.min(),wBins.max()); 
-      if (b == 0) { histos.h2_gen_norad_w_qq_rebin[s]->ProjectionX(name.c_str(),1,qqBins.number()); }
-      else        { histos.h2_gen_norad_w_qq_rebin[s]->ProjectionX(name.c_str(),b+1,b+2); }
-      hist->Sumw2();
-      v.push_back(hist);
-    }
-    
-    histos.h1_gen_norad_w_by_qq.push_back(v); 
+    histos.h1_gen_w_by_qq.push_back(v); 
   }
 
   // Acceptance 
@@ -1157,20 +1040,6 @@ void DISManager::do_xs()
     }
     
     histos.h1_acc_w_by_qq.push_back(v); 
-  }
-
-  // rad Corr
-  for (int s=0; s<7; s++) {
-    vector<TH1D*> v;
-
-    for (int b=0; b<=qqBins.number(); b++) {
-      string name = Form("h1_rc_w_by_qq_bin%d_%d",b,s);
-      string title = Form("h1_rc_w_by_qq_bin%d_%d",b,s);
-      TH1D * hist = new TH1D(name.c_str(),title.c_str(),wBins.number(),wBins.min(),wBins.max()); 
-      v.push_back(hist);
-    }
-    
-    histos.h1_rc_w_by_qq.push_back(v); 
   }
 
   // Raw Cross Section 
@@ -1233,17 +1102,10 @@ void DISManager::do_xs()
 
 	  string name  = Form("h1_acc_x_by_qq_bin%d_%s",b,sect[s].c_str());
 	  string title = Form("Acc. for x-by-qq Bin %d Sector %s",b,sect[s].c_str());
-	  histos.h1_acc_x_by_qq[s][b] = (TH1D*) histos.h1_rec_rad_x_by_qq[s][b]->Clone();
-	  histos.h1_acc_x_by_qq[s][b]->Divide( histos.h1_gen_rad_x_by_qq[s][b] ); 
+	  histos.h1_acc_x_by_qq[s][b] = (TH1D*) histos.h1_rec_x_by_qq[s][b]->Clone();
+	  histos.h1_acc_x_by_qq[s][b]->Divide( histos.h1_gen_x_by_qq[s][b] ); 
 	  histos.h1_acc_x_by_qq[s][b]->SetTitle( title.c_str() );
 	  histos.h1_acc_x_by_qq[s][b]->SetName(  name.c_str()  );
-
-	  name  = Form("h1_rc_x_by_qq_bin%d_%s",b,sect[s].c_str());
-	  title = Form("RC for x-by-qq Bin %d Sector %s",b,sect[s].c_str());
-	  histos.h1_rc_x_by_qq[s][b] = (TH1D*) histos.h1_gen_rad_x_by_qq[s][b]->Clone();
-	  histos.h1_rc_x_by_qq[s][b]->Divide( histos.h1_gen_norad_x_by_qq[s][b] ); 
-	  histos.h1_rc_x_by_qq[s][b]->SetTitle( title.c_str() );
-	  histos.h1_rc_x_by_qq[s][b]->SetName(  name.c_str()  );
 
 	  name  = Form("h1_rxs_x_by_qq_%d_%s",b,sect[s].c_str());
 	  title = Form("rxs for x-by-qq Bin %d Sector %s",b,sect[s].c_str());
@@ -1254,14 +1116,14 @@ void DISManager::do_xs()
 	  histos.h1_rxs_x_by_qq[s][b]->Scale(1/(xBins.width()*qqBins.width())); 
 	  histos.h1_rxs_x_by_qq[s][b]->Scale( abs_norm );
 	  if (s == 0) { histos.h1_rxs_x_by_qq[s][b]->Scale(1/6.0);             }
+	  //	  if (b == 0) { histos.h1_rxs_x_by_qq[s][b]->Scale((double)1/qqBins.number()); }
 
 	  name  = Form("h1_xs_x_by_qq_%d_%s",b,sect[s].c_str());
 	  title = Form("xs for x-by-qq Bin %d Sector %s",b,sect[s].c_str());
 	  histos.h1_xs_x_by_qq[s][b] = (TH1D*) histos.h1_rxs_x_by_qq[s][b]->Clone();
 	  histos.h1_xs_x_by_qq[s][b]->SetTitle(title.c_str());
 	  histos.h1_xs_x_by_qq[s][b]->SetName(name.c_str());
-	  histos.h1_xs_x_by_qq[s][b]->Divide( histos.h1_rc_x_by_qq[s][b] ); 
-	  
+
 	  name  = Form("h1_rxs_ratio_x_by_qq_%d_%s",b,sect[s].c_str());
 	  title = Form("rxs ratio for x-by-qq Bin %d Sector %s",b,sect[s].c_str());
 	  histos.h1_rxs_ratio_x_by_qq[s][b] = (TH1D*) histos.h1_rxs_x_by_qq[s][b]->Clone();
@@ -1280,17 +1142,10 @@ void DISManager::do_xs()
 	  // W 
 	  name  = Form("h1_acc_w_by_qq_bin%d_%s",b,sect[s].c_str());
 	  title = Form("Acc. for w-by-qq Bin %d Sector %s",b,sect[s].c_str());
-	  histos.h1_acc_w_by_qq[s][b] = (TH1D*) histos.h1_rec_rad_w_by_qq[s][b]->Clone();
-	  histos.h1_acc_w_by_qq[s][b]->Divide( histos.h1_gen_rad_w_by_qq[s][b] ); 
+	  histos.h1_acc_w_by_qq[s][b] = (TH1D*) histos.h1_rec_w_by_qq[s][b]->Clone();
+	  histos.h1_acc_w_by_qq[s][b]->Divide( histos.h1_gen_w_by_qq[s][b] ); 
 	  histos.h1_acc_w_by_qq[s][b]->SetTitle( title.c_str() );
 	  histos.h1_acc_w_by_qq[s][b]->SetName(  name.c_str()  );
-
-	  name  = Form("h1_rc_w_by_qq_bin%d_%s",b,sect[s].c_str());
-	  title = Form("RC for w-by-qq Bin %d Sector %s",b,sect[s].c_str());
-	  histos.h1_rc_w_by_qq[s][b] = (TH1D*) histos.h1_gen_rad_w_by_qq[s][b]->Clone();
-	  histos.h1_rc_w_by_qq[s][b]->Divide( histos.h1_gen_norad_w_by_qq[s][b] ); 
-	  histos.h1_rc_w_by_qq[s][b]->SetTitle( title.c_str() );
-	  histos.h1_rc_w_by_qq[s][b]->SetName(  name.c_str()  );
 
 	  name  = Form("h1_rxs_w_by_qq_%d_%s",b,sect[s].c_str());
 	  title = Form("rxs for w-by-qq Bin %d Sector %s",b,sect[s].c_str());
@@ -1308,8 +1163,7 @@ void DISManager::do_xs()
 	  histos.h1_xs_w_by_qq[s][b] = (TH1D*) histos.h1_rxs_w_by_qq[s][b]->Clone();
 	  histos.h1_xs_w_by_qq[s][b]->SetTitle(title.c_str());
 	  histos.h1_xs_w_by_qq[s][b]->SetName(name.c_str());
-	  histos.h1_xs_w_by_qq[s][b]->Divide( histos.h1_rc_w_by_qq[s][b] );
-	  
+
 	  name  = Form("h1_rxs_ratio_w_by_qq_%d_%s",b,sect[s].c_str());
 	  title = Form("rxs ratio for w-by-qq Bin %d Sector %s",b,sect[s].c_str());
 	  histos.h1_rxs_ratio_w_by_qq[s][b] = (TH1D*) histos.h1_rxs_w_by_qq[s][b]->Clone();
@@ -1329,8 +1183,8 @@ void DISManager::do_xs()
 
   cout << " Number of bins summary for debugging: " << endl;
   cout << " hits " << histos.h1_hits_x_by_qq[0][0]->GetXaxis()->GetNbins() << endl;
-  cout << " rec_rad " << histos.h1_rec_rad_x_by_qq[0][0]->GetXaxis()->GetNbins() << endl;
-  cout << " gen_rad " << histos.h1_gen_rad_x_by_qq[0][0]->GetXaxis()->GetNbins() << endl;
+  cout << " rec " << histos.h1_rec_x_by_qq[0][0]->GetXaxis()->GetNbins() << endl;
+  cout << " gen " << histos.h1_gen_x_by_qq[0][0]->GetXaxis()->GetNbins() << endl;
   cout << " model " << histos.h1_model_x_by_qq[0]->GetXaxis()->GetNbins() << endl;
 
   
@@ -1353,9 +1207,9 @@ void DISManager::loop(int index)
 	DEvent event( reader[index].GetEvent() );
 	if (runno != reader[index].runno()) { runno = reader[index].runno(); nathan.set_info(runno, reader[index].GSIM); }
 
-	// Do gen_raderated for MC 
-	if (index != 0) {
-	  histos.fill_gen(event, index);
+	// Do generated for MC 
+	if (index == 1) {
+	  histos.fill_gen(event);
 	}
 	
 	int e_index = nathan.get_electron(event.tracks); 

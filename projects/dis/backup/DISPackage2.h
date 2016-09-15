@@ -52,29 +52,19 @@ class DISHistograms
   DBins xBins, qqBins, wBins; 
 
   // Histograms
-  std::vector<std::vector<TH1D*> > h1_gen_rad_x_by_qq;
-  std::vector<std::vector<TH1D*> > h1_rec_rad_x_by_qq;
-
-  std::vector<std::vector<TH1D*> > h1_gen_norad_x_by_qq;
-  std::vector<std::vector<TH1D*> > h1_rec_norad_x_by_qq;
-
+  std::vector<std::vector<TH1D*> > h1_gen_x_by_qq;
+  std::vector<std::vector<TH1D*> > h1_rec_x_by_qq;
   std::vector<std::vector<TH1D*> > h1_hits_x_by_qq;
   std::vector<std::vector<TH1D*> > h1_acc_x_by_qq;
-  std::vector<std::vector<TH1D*> > h1_rc_x_by_qq;
   std::vector<std::vector<TH1D*> > h1_rxs_x_by_qq;
   std::vector<std::vector<TH1D*> > h1_rxs_ratio_x_by_qq;
   std::vector<std::vector<TH1D*> > h1_xs_x_by_qq;
   std::vector<std::vector<TH1D*> > h1_xs_ratio_x_by_qq;
   std::vector<TH1D*>               h1_model_x_by_qq;
     
-  std::vector<std::vector<TH1D*> > h1_gen_rad_w_by_qq;
-  std::vector<std::vector<TH1D*> > h1_rec_rad_w_by_qq;
-
-  std::vector<std::vector<TH1D*> > h1_gen_norad_w_by_qq;
-  std::vector<std::vector<TH1D*> > h1_rec_norad_w_by_qq;
-
+  std::vector<std::vector<TH1D*> > h1_gen_w_by_qq;
+  std::vector<std::vector<TH1D*> > h1_rec_w_by_qq;
   std::vector<std::vector<TH1D*> > h1_hits_w_by_qq;
-  std::vector<std::vector<TH1D*> > h1_rc_w_by_qq;
   std::vector<std::vector<TH1D*> > h1_acc_w_by_qq;
   std::vector<std::vector<TH1D*> > h1_rxs_w_by_qq;
   std::vector<std::vector<TH1D*> > h1_rxs_ratio_w_by_qq;
@@ -87,28 +77,20 @@ class DISHistograms
   
   // 2-D Histos Used For Slicing 
   TH2F * h2_hits_x_qq[7];
-  TH2F * h2_rec_rad_x_qq[7];
-  TH2F * h2_gen_rad_x_qq[7];
-  TH2F * h2_rec_norad_x_qq[7];
-  TH2F * h2_gen_norad_x_qq[7];
+  TH2F * h2_rec_x_qq[7];
+  TH2F * h2_gen_x_qq[7];
 
   TH2F * h2_hits_w_qq[7];
-  TH2F * h2_rec_rad_w_qq[7];
-  TH2F * h2_gen_rad_w_qq[7];
-  TH2F * h2_rec_norad_w_qq[7];
-  TH2F * h2_gen_norad_w_qq[7];
+  TH2F * h2_rec_w_qq[7];
+  TH2F * h2_gen_w_qq[7];
 
   TH2F * h2_hits_w_qq_rebin[7];
-  TH2F * h2_rec_rad_w_qq_rebin[7];
-  TH2F * h2_gen_rad_w_qq_rebin[7];
-  TH2F * h2_rec_norad_w_qq_rebin[7];
-  TH2F * h2_gen_norad_w_qq_rebin[7];
+  TH2F * h2_rec_w_qq_rebin[7];
+  TH2F * h2_gen_w_qq_rebin[7];
 
   TH2F * h2_hits_x_qq_rebin[7];
-  TH2F * h2_rec_rad_x_qq_rebin[7];
-  TH2F * h2_gen_rad_x_qq_rebin[7];
-  TH2F * h2_rec_norad_x_qq_rebin[7];
-  TH2F * h2_gen_norad_x_qq_rebin[7];
+  TH2F * h2_rec_x_qq_rebin[7];
+  TH2F * h2_gen_x_qq_rebin[7];
 
   // Tree used for run info
   TTree * runInfoTree; 
@@ -117,7 +99,7 @@ class DISHistograms
   // Member Functions
   void draw();
   void fill(DEvent, int); /** Pass in the event and the type data or monte carlo */
-  void fill_gen(DEvent event, int index);  /** Just pass in the gen_raderated event */
+  void fill_gen(DEvent);  /** Just pass in the generated event */
   void init();
   void load();
   void set_bins(DBins x, DBins qq, DBins w){ xBins = x; qqBins = qq; wBins = w; }
@@ -142,7 +124,7 @@ class DISManager
   // Data Types
   int eid_version;
   double fcup_charge; 
-  bool rec_radalc; 
+  bool recalc; 
   std::string outfile;
   std::string infofile; 
   std::string momcorr_path;
@@ -151,7 +133,7 @@ class DISManager
   DInformation info; 
   DISHistograms histos; 
   DSelection dis_selector; 
-  h22Reader reader[3];
+  h22Reader reader[2];
   NathanEIDWrapper nathan; 
   VirtualityCut * qq_cut;
   YCut          * y_cut;

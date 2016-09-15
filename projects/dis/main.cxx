@@ -22,19 +22,23 @@ int main(int argc, char * argv[]){
   
   int n_files = options.args["N"].arg;
   
-  ifstream mc_list;   vector<string> mc_files;
-  ifstream data_list; vector<string> data_files;
+  ifstream mc_rad_list;   vector<string> mc_rad_files;
+  ifstream mc_norad_list; vector<string> mc_norad_files;
+  ifstream data_list;     vector<string> data_files;
   
   if (options.args["MACHINE"].args == "MAC") {
-    mc_list.open("mc.dat");      
+    mc_rad_list.open("mc.dat");
+    mc_norad_list.open("mc.dat");      
     data_list.open("data.dat"); 
   } else {
-    mc_list.open("mc_farm.dat");      
+    mc_rad_list.open("mc_farm.dat");
+    mc_norad_list.open("mc_farm.dat");      
     data_list.open("data_farm.dat"); 
   }
  
   string line; int ifile = 0; 
-  while( getline(mc_list, line) && ifile < n_files)  { mc_files.push_back(line);   ifile++; }  mc_list.close();  ifile = 0;
+  while( getline(mc_rad_list, line) && ifile < n_files)  { mc_rad_files.push_back(line);   ifile++; }  mc_rad_list.close();  ifile = 0;
+  while( getline(mc_norad_list, line) && ifile < n_files){ mc_norad_files.push_back(line); ifile++; }  mc_norad_list.close(); ifile = 0; 
   while( getline(data_list, line) && ifile < n_files){ data_files.push_back(line); ifile++; }  data_list.close();
 
   // Microscopic Binning Scheme for 2D Histograms 
@@ -44,7 +48,8 @@ int main(int argc, char * argv[]){
 
   DISManager manager(options.args["OUT"].args, true, xBins, qqBins, wBins); 
   manager.add_files(data_files, 0);
-  manager.add_files(mc_files,   1);
+  manager.add_files(mc_rad_files,   1);
+  manager.add_files(mc_norad_files,   2);
   manager.infofile   = "runs.info";
 
   if (options.args["MACHINE"].args == "MAC") { manager.momcorr_path = "/Users/dmriser/Work/analysis/momCorr/"; }
@@ -62,6 +67,7 @@ int main(int argc, char * argv[]){
 
   manager.loop(0);
   manager.loop(1);
+  manager.loop(2);
   manager.dis_selector.summarize(); 
   manager.get_charge( data_files );
   manager.histos.save();

@@ -66,6 +66,7 @@ class DISHistograms
   std::vector<std::vector<TH1D*> > h1_xs_x_by_qq;
   std::vector<std::vector<TH1D*> > h1_xs_ratio_x_by_qq;
   std::vector<TH1D*>               h1_model_x_by_qq;
+  std::vector<TH1D*>               h1_model_avg_x_by_qq;
     
   std::vector<std::vector<TH1D*> > h1_gen_rad_w_by_qq;
   std::vector<std::vector<TH1D*> > h1_rec_rad_w_by_qq;
@@ -81,6 +82,7 @@ class DISHistograms
   std::vector<std::vector<TH1D*> > h1_xs_w_by_qq;
   std::vector<std::vector<TH1D*> > h1_xs_ratio_w_by_qq;
   std::vector<TH1D*>               h1_model_w_by_qq;
+  std::vector<TH1D*>               h1_model_avg_w_by_qq;
 
   // Easiest way to hold the charge. 
   TH1D * h1_fcup_charge;
@@ -91,25 +93,29 @@ class DISHistograms
   TH2F * h2_gen_rad_x_qq[7];
   TH2F * h2_rec_norad_x_qq[7];
   TH2F * h2_gen_norad_x_qq[7];
-
+  TH2F * h2_rec_gen_norad_x_qq[7];
+  
   TH2F * h2_hits_w_qq[7];
   TH2F * h2_rec_rad_w_qq[7];
   TH2F * h2_gen_rad_w_qq[7];
   TH2F * h2_rec_norad_w_qq[7];
   TH2F * h2_gen_norad_w_qq[7];
+  TH2F * h2_rec_gen_norad_w_qq[7];
 
   TH2F * h2_hits_w_qq_rebin[7];
   TH2F * h2_rec_rad_w_qq_rebin[7];
   TH2F * h2_gen_rad_w_qq_rebin[7];
   TH2F * h2_rec_norad_w_qq_rebin[7];
   TH2F * h2_gen_norad_w_qq_rebin[7];
-
+  TH2F * h2_rec_gen_norad_w_qq_rebin[7];
+  
   TH2F * h2_hits_x_qq_rebin[7];
   TH2F * h2_rec_rad_x_qq_rebin[7];
   TH2F * h2_gen_rad_x_qq_rebin[7];
   TH2F * h2_rec_norad_x_qq_rebin[7];
   TH2F * h2_gen_norad_x_qq_rebin[7];
-
+  TH2F * h2_rec_gen_norad_x_qq_rebin[7];
+  
   // Tree used for run info
   TTree * runInfoTree; 
   TFile * f;

@@ -54,6 +54,8 @@ class DBins
   double max(){ return kMax; }
   double width(){ return kWidth; }
   double bin_center(int);
+  double bin_min(int);
+  double bin_max(int);
   std::vector<double> get_bins(){ return kBins; } 
   
 };

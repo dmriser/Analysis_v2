@@ -42,9 +42,9 @@ int main(int argc, char * argv[]){
   while( getline(data_list, line) && ifile < n_files){ data_files.push_back(line); ifile++; }  data_list.close();
 
   // Microscopic Binning Scheme for 2D Histograms 
-  DBins xBins(200, 0.05, 0.65);
-  DBins qqBins(200, 1.0, 5.0);
-  DBins wBins(200, 1.1, 2.9); 
+  DBins xBins(60, 0.05, 0.65);
+  DBins qqBins(60, 1.0, 5.0);
+  DBins wBins(60, 1.1, 2.9); 
 
   DISManager manager(options.args["OUT"].args, true, xBins, qqBins, wBins); 
   manager.add_files(data_files, 0);
@@ -68,6 +68,7 @@ int main(int argc, char * argv[]){
   manager.loop(0);
   manager.loop(1);
   manager.loop(2);
+
   manager.dis_selector.summarize(); 
   manager.get_charge( data_files );
   manager.histos.save();

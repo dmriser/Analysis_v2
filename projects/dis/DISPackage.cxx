@@ -86,11 +86,13 @@ void DISHistograms::init()
     h2_gen_rad_x_qq[s]  = new TH2F(Form("h2_gen_rad_x_qq_%d",s), Form("Gen QQ vs. X Sector %d",s), xBins.number(),xBins.min(),xBins.max(),qqBins.number(),qqBins.min(),qqBins.max()); 
     h2_rec_norad_x_qq[s]  = new TH2F(Form("h2_rec_norad_x_qq_%d",s), Form("Rec QQ vs. X Sector %d",s), xBins.number(),xBins.min(),xBins.max(),qqBins.number(),qqBins.min(),qqBins.max());
     h2_gen_norad_x_qq[s]  = new TH2F(Form("h2_gen_norad_x_qq_%d",s), Form("Gen QQ vs. X Sector %d",s), xBins.number(),xBins.min(),xBins.max(),qqBins.number(),qqBins.min(),qqBins.max()); 
+    h2_rec_gen_norad_x_qq[s]  = new TH2F(Form("h2_rec_gen_norad_x_qq_%d",s), Form("Rec QQ vs. X Sector %d",s), xBins.number(),xBins.min(),xBins.max(),qqBins.number(),qqBins.min(),qqBins.max());
     h2_hits_w_qq[s] = new TH2F(Form("h2_hits_w_qq_%d",s),Form("Hits QQ vs. W Sector %d",s),wBins.number(),wBins.min(),wBins.max(),qqBins.number(),qqBins.min(),qqBins.max());
     h2_rec_rad_w_qq[s]  = new TH2F(Form("h2_rec_rad_w_qq_%d",s), Form("Rec QQ vs. W Sector %d",s), wBins.number(),wBins.min(),wBins.max(),qqBins.number(),qqBins.min(),qqBins.max());
     h2_gen_rad_w_qq[s]  = new TH2F(Form("h2_gen_rad_w_qq_%d",s), Form("Gen QQ vs. W Sector %d",s), wBins.number(),wBins.min(),wBins.max(),qqBins.number(),qqBins.min(),qqBins.max()); 
     h2_rec_norad_w_qq[s]  = new TH2F(Form("h2_rec_norad_w_qq_%d",s), Form("Rec QQ vs. W Sector %d",s), wBins.number(),wBins.min(),wBins.max(),qqBins.number(),qqBins.min(),qqBins.max());
-    h2_gen_norad_w_qq[s]  = new TH2F(Form("h2_gen_norad_w_qq_%d",s), Form("Gen QQ vs. W Sector %d",s), wBins.number(),wBins.min(),wBins.max(),qqBins.number(),qqBins.min(),qqBins.max()); 
+    h2_gen_norad_w_qq[s]  = new TH2F(Form("h2_gen_norad_w_qq_%d",s), Form("Gen QQ vs. W Sector %d",s), wBins.number(),wBins.min(),wBins.max(),qqBins.number(),qqBins.min(),qqBins.max());
+    h2_rec_gen_norad_w_qq[s]  = new TH2F(Form("h2_rec_gen_norad_w_qq_%d",s), Form("Gen QQ vs. W Sector %d",s), wBins.number(),wBins.min(),wBins.max(),qqBins.number(),qqBins.min(),qqBins.max()); 
   }
 
   h1_fcup_charge = new TH1D("h1_fcup_charge","",xBins.number(),xBins.min(),xBins.max());
@@ -183,13 +185,15 @@ void DISHistograms::load(){
     h2_gen_rad_x_qq[s]  = (TH2F*) f->Get( Form("h2_gen_rad_x_qq_%d", s) );
     h2_rec_norad_x_qq[s]  = (TH2F*) f->Get( Form("h2_rec_norad_x_qq_%d", s) );
     h2_gen_norad_x_qq[s]  = (TH2F*) f->Get( Form("h2_gen_norad_x_qq_%d", s) );
-
+    h2_rec_gen_norad_x_qq[s]  = (TH2F*) f->Get( Form("h2_rec_gen_norad_x_qq_%d", s) );
+    
     h2_hits_w_qq[s] = (TH2F*) f->Get( Form("h2_hits_w_qq_%d",s) );
     h2_rec_rad_w_qq[s]  = (TH2F*) f->Get( Form("h2_rec_rad_w_qq_%d", s) );
     h2_gen_rad_w_qq[s]  = (TH2F*) f->Get( Form("h2_gen_rad_w_qq_%d", s) );
     h2_rec_norad_w_qq[s]  = (TH2F*) f->Get( Form("h2_rec_norad_w_qq_%d", s) );
     h2_gen_norad_w_qq[s]  = (TH2F*) f->Get( Form("h2_gen_norad_w_qq_%d", s) );
-
+    h2_rec_gen_norad_w_qq[s]  = (TH2F*) f->Get( Form("h2_rec_gen_norad_w_qq_%d", s) );
+    
     h2_hits_x_qq_rebin[s] = (TH2F*) h2_hits_x_qq[s]->Clone();
     h2_hits_x_qq_rebin[s]->SetTitle(Form("h2_hits_x_qq_rebin_%d",s));
 
@@ -633,12 +637,14 @@ void DISHistograms::save()
       h2_gen_rad_x_qq[s]  ->Write();
       h2_rec_norad_x_qq[s]  ->Write();
       h2_gen_norad_x_qq[s]  ->Write();
-
+      h2_rec_gen_norad_x_qq[s]  ->Write();
+      
       h2_hits_w_qq[s] ->Write();
       h2_rec_rad_w_qq[s]  ->Write();
       h2_gen_rad_w_qq[s]  ->Write();
       h2_rec_norad_w_qq[s]  ->Write();
       h2_gen_norad_w_qq[s]  ->Write();
+      h2_rec_gen_norad_w_qq[s]  ->Write();
     }
 
   h1_fcup_charge->Write();
@@ -707,21 +713,33 @@ void DISManager::fill_model(){
     histos.h1_model_x_by_qq.push_back(xhist);
     histos.h1_model_w_by_qq.push_back(whist); 
 
+    TH1D * xAvghist = new TH1D(Form("h1_model_avg_x_by_qq_bin%d",b),"",xBins.number(),xBins.min(),xBins.max());
+    TH1D * wAvghist = new TH1D(Form("h1_model_avg_w_by_qq_bin%d",b),"",wBins.number(),wBins.min(),wBins.max()); 
+    histos.h1_model_avg_x_by_qq.push_back(xAvghist);
+    histos.h1_model_avg_w_by_qq.push_back(wAvghist); 
+
   } 
-  
   
   for (int ibin=0; ibin<qqBins.number(); ibin++){
 
     for (int jbin=0; jbin<xBins.number(); jbin++) {
       double model_value = model.GetXS(1, 1, beam_energy, xBins.bin_center(jbin), qqBins.bin_center(ibin));
-
+      double model_left = model.GetXS(1, 1, beam_energy, xBins.bin_min(jbin), qqBins.bin_min(ibin));
+      double model_right = model.GetXS(1, 1, beam_energy, xBins.bin_max(jbin), qqBins.bin_max(ibin));
+      double model_avg = 0.5*(model_left + model_right); 
+      
       if (model_value > 1e-20 && model_value < 1e20) {
 	histos.h1_model_x_by_qq[ibin]->SetBinContent(jbin+1,model_value/mev_to_gev);
 	histos.h1_model_x_by_qq[ibin]->SetBinError(jbin+1,0.00);
+	histos.h1_model_avg_x_by_qq[ibin]->SetBinContent(jbin+1,model_avg/mev_to_gev);
+	histos.h1_model_avg_x_by_qq[ibin]->SetBinError(jbin+1,0.00);
       }
     }
       for (int jbin=0; jbin<wBins.number(); jbin++) {
 	double model_value = model.GetXSByWQQ(1, 1, beam_energy, wBins.bin_center(jbin), qqBins.bin_center(ibin));
+	double model_left = model.GetXSByWQQ(1, 1, beam_energy, wBins.bin_min(jbin), qqBins.bin_max(ibin));
+	double model_right = model.GetXSByWQQ(1, 1, beam_energy, wBins.bin_min(jbin), qqBins.bin_max(ibin));
+	double model_avg = 0.5*(model_left + model_right); 
 
 	xsTable.width(12); xsTable << wBins.bin_center(jbin);
 	xsTable.width(12); xsTable << qqBins.bin_center(ibin);
@@ -730,6 +748,8 @@ void DISManager::fill_model(){
 	if (model_value > 1e-20 && model_value < 1e20) {
 	  histos.h1_model_w_by_qq[ibin]->SetBinContent(jbin+1,model_value/mev_to_gev);
 	  histos.h1_model_w_by_qq[ibin]->SetBinError(jbin+1,0.00);
+	  histos.h1_model_avg_w_by_qq[ibin]->SetBinContent(jbin+1,model_avg/mev_to_gev);
+	  histos.h1_model_avg_w_by_qq[ibin]->SetBinError(jbin+1,0.00);
 	}
       }
   }
@@ -1352,11 +1372,6 @@ void DISManager::loop(int index)
 	reader[index].GetEntry(iev); 
 	DEvent event( reader[index].GetEvent() );
 	if (runno != reader[index].runno()) { runno = reader[index].runno(); nathan.set_info(runno, reader[index].GSIM); }
-
-	// Do gen_raderated for MC 
-	if (index != 0) {
-	  histos.fill_gen(event, index);
-	}
 	
 	int e_index = nathan.get_electron(event.tracks); 
 	if (e_index > -123) {
@@ -1374,6 +1389,44 @@ void DISManager::loop(int index)
 	    histos.fill(event, index);
 	  }
 	}
+
+	// Do gen_raderated for MC 
+	if (index != 0) {
+	  histos.fill_gen(event, index);
+
+	  if (e_index > -123) {
+	    int genElectronIndex = event.getGeneratedIndex(11);
+
+	    if (genElectronIndex > -123) {
+	      TLorentzVector genElectronVector(event.tracks.mcpx(genElectronIndex),
+					       event.tracks.mcpy(genElectronIndex),
+					       event.tracks.mcpz(genElectronIndex),
+					       event.tracks.mcp[genElectronIndex]); 
+
+	      TLorentzVector recElectronVector(event.tracks.cx[e_index]*event.tracks.p[e_index],
+					       event.tracks.cy[e_index]*event.tracks.p[e_index],
+					       event.tracks.cz[e_index]*event.tracks.p[e_index],
+					       event.tracks.p[e_index]); 
+	      
+	      DEvent genEvent, recEvent;
+	      genEvent.set_electron( genElectronVector );
+	      recEvent.set_electron( recElectronVector );
+
+	      int genxQQBin = histos.h2_rec_gen_norad_x_qq[0]->FindBin(genEvent.x, genEvent.qq);
+	      int recxQQBin = histos.h2_rec_gen_norad_x_qq[0]->FindBin(recEvent.x, recEvent.qq);
+
+	      int sect = (int) event.tracks.dc_sect[e_index]; 
+	      
+	      if (genxQQBin == recxQQBin){
+		histos.h2_rec_gen_norad_x_qq[0]->Fill(recEvent.x, recEvent.qq); 
+		histos.h2_rec_gen_norad_x_qq[sect]->Fill(recEvent.x, recEvent.qq); 
+	      }
+	    }
+	  }
+	}
+
+
+	
       }
 
   cout << endl;

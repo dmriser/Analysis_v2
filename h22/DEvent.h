@@ -51,6 +51,7 @@ class DEvent
   void set_event(h22Event ev){ tracks = ev; }
   void refresh();
   void print();
+  int getGeneratedIndex(int pid); 
   
 };
 

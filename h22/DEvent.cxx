@@ -118,4 +118,15 @@ void DEvent::print()
   cout.width(12); cout << mm2 << endl;
 }
 
+int DEvent::getGeneratedIndex(int pid){
+
+  for (int ipart = 0; ipart < tracks.gpart; ipart++) {
+    if (tracks.mcid[ipart] == pid){
+      return ipart; 
+    }
+  }
+
+  return -123; 
+}
+
 #endif

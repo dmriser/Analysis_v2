@@ -67,7 +67,7 @@ class DISHistograms
   std::vector<std::vector<TH1D*> > h1_xs_ratio_x_by_qq;
   std::vector<TH1D*>               h1_model_x_by_qq;
   std::vector<TH1D*>               h1_model_avg_x_by_qq;
-    
+  std::vector<TH1D*>               h1_bin_corr_x_by_qq;
   std::vector<std::vector<TH1D*> > h1_gen_rad_w_by_qq;
   std::vector<std::vector<TH1D*> > h1_rec_rad_w_by_qq;
 
@@ -83,7 +83,8 @@ class DISHistograms
   std::vector<std::vector<TH1D*> > h1_xs_ratio_w_by_qq;
   std::vector<TH1D*>               h1_model_w_by_qq;
   std::vector<TH1D*>               h1_model_avg_w_by_qq;
-
+  std::vector<TH1D*>               h1_bin_corr_w_by_qq;
+  
   // Easiest way to hold the charge. 
   TH1D * h1_fcup_charge;
   

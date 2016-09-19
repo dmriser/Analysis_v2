@@ -264,7 +264,8 @@ void DISHistograms::draw()
   drawVectorOfVectorOfTH1D(h1_rxs_ratio_x_by_qq, canvas, output_name,"X_{Bjorken}", "","PE"); 
   drawVectorOfVectorOfTH1D(h1_xs_x_by_qq, canvas, output_name,"X_{Bjorken}", "","PE");
   drawVectorOfVectorOfTH1D(h1_xs_ratio_x_by_qq, canvas, output_name,"X_{Bjorken}", "","PE");
-  drawVectorOfTH1D(h1_model_x_by_qq, canvas, output_name,"X_{Bjorken}", "","PE"); 
+  drawVectorOfTH1D(h1_model_x_by_qq, canvas, output_name,"X_{Bjorken}", "","PE");
+  drawVectorOfTH1D(h1_bin_corr_x_by_qq, canvas, output_name,"X_{Bjorken}", "","PE"); 
 
   
   // rec_rad & hits x-by-qq
@@ -349,7 +350,8 @@ void DISHistograms::draw()
   drawVectorOfVectorOfTH1D(h1_rxs_ratio_w_by_qq, canvas, output_name,"W [GeV/c^{2}]", "","PE"); 
   drawVectorOfVectorOfTH1D(h1_xs_w_by_qq, canvas, output_name,"W [GeV/c^{2}]", "","PE");
   drawVectorOfVectorOfTH1D(h1_xs_ratio_w_by_qq, canvas, output_name,"W [GeV/c^{2}]", "","PE");
-  drawVectorOfTH1D(h1_model_w_by_qq, canvas, output_name,"W [GeV/c^{2}]", "","PE"); 
+  drawVectorOfTH1D(h1_model_w_by_qq, canvas, output_name,"W [GeV/c^{2}]", "","PE");
+  drawVectorOfTH1D(h1_bin_corr_w_by_qq, canvas, output_name,"W [GeV/c^{2}]", "","PE"); 
   
   // Generated & Model w-by-qq
   for (int s=0; s<7; s++)
@@ -752,6 +754,14 @@ void DISManager::fill_model(){
 	  histos.h1_model_avg_w_by_qq[ibin]->SetBinError(jbin+1,0.00);
 	}
       }
+      
+      TH1D * xBinCenterCorrection = (TH1D*) histos.h1_model_x_by_qq[ibin]->Clone(); 
+      xBinCenterCorrection->Divide(histos.h1_model_avg_x_by_qq[ibin]); 
+      histos.h1_bin_corr_x_by_qq.push_back(xBinCenterCorrection); 
+
+      TH1D * wBinCenterCorrection = (TH1D*) histos.h1_model_w_by_qq[ibin]->Clone(); 
+      wBinCenterCorrection->Divide(histos.h1_model_avg_w_by_qq[ibin]); 
+      histos.h1_bin_corr_w_by_qq.push_back(wBinCenterCorrection); 
   }
 
   xsTable.close();

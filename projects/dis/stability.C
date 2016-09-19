@@ -11,8 +11,8 @@ void stability(string inputFilename){
   TH2F *recAndGenEventsxByQQ = (TH2F*) inputFile->Get("h2_rec_gen_norad_x_qq_0");
   TH2F *genEventsxByQQ = (TH2F*) inputFile->Get("h2_gen_norad_x_qq_0"); 
 
-  int xRebinFactor = 10;
-  int qqRebinFactor = 10; 
+  int xRebinFactor = 1;
+  int qqRebinFactor = 1; 
 
   recAndGenEventsxByQQ->Rebin2D(xRebinFactor, qqRebinFactor);
   genEventsxByQQ->Rebin2D(xRebinFactor, qqRebinFactor); 

@@ -18,10 +18,10 @@ int main(int argc, char * argv[]){
   }
   
   // Binning Scheme for 1-D Histograms derived from 2-D Histograms 
-  DBins xBins(40, 0.05, 0.65);
-  DBins qqBins(40, 1.0, 5.0);
+  DBins xBins(20, 0.05, 0.65);
+  DBins qqBins(14, 1.0, 5.0);
   //  DBins qqBins(10, 1.0, 5.0); 
-  DBins wBins(40, 1.1, 2.9);
+  DBins wBins(20, 1.1, 2.9);
   
     
   DISManager manager(argv[1],false, xBins, wBins, qqBins); 

@@ -26,7 +26,7 @@ using namespace std;
 #include "h22Event.h"
 #include "CommonTools.h"
 
-h22Event::h22Event()
+h22Event::h22Event() 
 {
     // Should probably find something to do here.
 }

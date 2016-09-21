@@ -7,7 +7,7 @@ void checkFile(){
   gROOT->LoadMacro("purity.C");
   gROOT->LoadMacro("stability.C"); 
 
-  string inputFilename = "thisTestFile.root";
+  string inputFilename = "pass2v7.root";
   
   TControlBar *bar = new TControlBar("vertical"); 
   bar->AddButton("Show Purity",Form("purity(\"%s\")",inputFilename.c_str()));

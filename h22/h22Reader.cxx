@@ -132,6 +132,7 @@ void h22Reader::Init()
    fchain->SetBranchAddress("q", event.q, &b_q);
    fchain->SetBranchAddress("p", event.p, &b_p);
    fchain->SetBranchAddress("b", event.b, &b_b);
+   fchain->SetBranchAddress("id", event.id, &b_id);
    fchain->SetBranchAddress("cx", event.cx, &b_cx);
    fchain->SetBranchAddress("cy", event.cy, &b_cy);
    fchain->SetBranchAddress("cz", event.cz, &b_cz);

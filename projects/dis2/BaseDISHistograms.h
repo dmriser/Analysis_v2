@@ -1,6 +1,13 @@
+
+// c++ 
 #include <iostream>
-#include "TH2.h"
+
+// me 
 #include "DBins.h"
+#include "PhysicsEvent.h"
+
+// root 
+#include "TH2.h"
 
 #ifndef base_dis_histograms_h
 #define base_dis_histograms_h
@@ -24,12 +31,8 @@ class BaseDISHistograms{
   void Init(std::string name, std::string title);
   void Load(std::string filename, std::string name); 
   void Save(std::string filename);
-  /*  
-  void Init(char * name, char * title);
-  void Load(char * filename, char * title);
-  void Save(char * filename);
-  */
-
+  void Fill(PhysicsEvent event, int sector); 
+  
   //ClassDef(BaseDISHistograms, 1); 
 };
 

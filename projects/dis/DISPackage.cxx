@@ -69,6 +69,7 @@ DISHistograms::DISHistograms(string outputFilename, DBins xbins, DBins qqbins, D
   wBins  = wbins; 
   
   runInfoTree = new TTree("runInfoTree","Holds run information.");
+
 }
 
 

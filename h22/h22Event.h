@@ -25,7 +25,7 @@
  * It defines the general structure of an event in the h22 ntuple.
  */
 
-class h22Event 
+class h22Event
 {
  public :
  

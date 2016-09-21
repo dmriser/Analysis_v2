@@ -41,10 +41,10 @@ void acceptance(string fileTitle){
   TCanvas * canvas = new TCanvas("canvas","",1200,400); 
   canvas->Divide(3,1);
   canvas->cd(1);
-  gPad->SetLogz();
+  //  gPad->SetLogz();
   recEventsxByQQ->Draw("colz"); 
   canvas->cd(2);
-  gPad->SetLogz();
+  //  gPad->SetLogz();
   genEventsxByQQ->Draw("colz");
   canvas->cd(3);
   acceptance->SetMinimum(0.0);

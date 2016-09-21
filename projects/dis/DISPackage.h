@@ -42,7 +42,7 @@
 class DISHistograms
 {
  public:
-  DISHistograms(std::string outputName, DBins xbins, DBins qqbins, DBins wbins);
+ DISHistograms(std::string outputName, DBins xbins, DBins qqbins, DBins wbins);
   ~DISHistograms();
 
     // Data Types

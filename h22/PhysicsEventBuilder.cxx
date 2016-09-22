@@ -1,6 +1,7 @@
 
 #include <cmath>
 
+#include "CommonTools.h"
 #include "TLorentzVector.h"
 #include "PhysicsEvent.h"
 #include "PhysicsEventBuilder.h"
@@ -8,13 +9,20 @@
 #ifndef physics_event_builder_cxx
 #define physics_event_builder_cxx
 
+PhysicsEventBuilder::PhysicsEventBuilder(){
+  //  by default building for my experiment
+  physicsEvent.beamElectron = TLorentzVector(0, 0, 5.498, 5.498);
+  physicsEvent.targetParticle = TLorentzVector(0, 0,0,proton_mass);
+  physicsEvent.beamEnergy = physicsEvent.beamElectron.E();
+  physicsEvent.targetMass = physicsEvent.targetParticle.E(); 
+}
+
 PhysicsEventBuilder::PhysicsEventBuilder(TLorentzVector beam, TLorentzVector target){
   physicsEvent.beamElectron = beam;
   physicsEvent.targetParticle = target;
   physicsEvent.beamEnergy = physicsEvent.beamElectron.E();
   physicsEvent.targetMass = physicsEvent.targetParticle.E(); 
 }
-
 
 PhysicsEventBuilder::~PhysicsEventBuilder(){
 }

@@ -27,16 +27,16 @@ BaseDISHistograms::~BaseDISHistograms(){
 
 void BaseDISHistograms::Init(string name, string title){
   for (int isect = 0; isect < 7; isect++){
-    TH2D * xByQQ[isect] = new TH2D(Form("%s_xByQQ_s%d",name.c_str(),isect),Form("%s x vs. Q^{2} Sect. %d",title.c_str(),isect), numberOfXBins, xMin, xMax, numberOfQQBins, qqMin, qqMax);
-    TH2D * wByQQ[isect] = new TH2D(Form("%s_wByQQ_s%d",name.c_str(),isect),Form("%s w vs. Q^{2} Sect. %d",title.c_str(),isect), numberOfWBins, wMin, wMax, numberOfQQBins, qqMin, qqMax);
+    xByQQ[isect] = new TH2I(Form("%s_xByQQ_s%d",name.c_str(),isect),Form("%s x vs. Q^{2} Sect. %d",title.c_str(),isect), numberOfXBins, xMin, xMax, numberOfQQBins, qqMin, qqMax);
+    wByQQ[isect] = new TH2I(Form("%s_wByQQ_s%d",name.c_str(),isect),Form("%s w vs. Q^{2} Sect. %d",title.c_str(),isect), numberOfWBins, wMin, wMax, numberOfQQBins, qqMin, qqMax);
   }
 }
 
-void BaseDISHistograms::Save(string filename){
+void BaseDISHistograms::Save(string filename, string option){
 
-  TFile * file = TFile::Open(filename.c_str());
+  TFile * file = TFile::Open(filename.c_str(),option.c_str());
 
-  if (file.IsOpen()){
+  if (file->IsOpen()){
     for (int isect = 0; isect < 7; isect++){
       xByQQ[isect]->Write();
       wByQQ[isect]->Write();
@@ -53,10 +53,10 @@ void BaseDISHistograms::Load(string filename, string name){
 
   TFile * file = TFile::Open(filename.c_str());
 
-  if (file.IsOpen()){
+  if (file->IsOpen()){
     for (int isect = 0; isect < 7; isect++){
-      xByQQ[isect] = file->Get(Form("%s_xByQQ_s%d",name.c_str(),isect));
-      wByQQ[isect] = file->Get(Form("%s_wByQQ_s%d",name.c_str(),isect));
+      xByQQ[isect] = (TH2I*) file->Get(Form("%s_xByQQ_s%d",name.c_str(),isect));
+      wByQQ[isect] = (TH2I*) file->Get(Form("%s_wByQQ_s%d",name.c_str(),isect));
     }
   } else {
     cout << " Error opening file... " << filename << endl; 

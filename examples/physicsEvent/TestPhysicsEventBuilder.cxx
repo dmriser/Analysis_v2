@@ -31,7 +31,8 @@ TestPhysicsEventBuilder::~TestPhysicsEventBuilder(){
 void TestPhysicsEventBuilder::Loop(){
 
   PhysicsEventBuilder eventBuilder = PhysicsEventBuilder(beam, target); 
-
+  PhysicsEventBuilder noArgsEventBuilder; 
+  
   // -------------- Elastic event criteria ----------------
   PhysicsEventCut_MissingMass * missingMassCut = new PhysicsEventCut_MissingMass();
   missingMassCut->set_min(0.8);
@@ -73,8 +74,11 @@ void TestPhysicsEventBuilder::Loop(){
 					event.p[ipart]*event.cz[ipart],
 					event.p[ipart]);
 	
-	PhysicsEvent thisEvent = eventBuilder.getPhysicsEvent(detectedElectron); 
+	PhysicsEvent thisEvent = eventBuilder.getPhysicsEvent(detectedElectron);
+	PhysicsEvent thisNoArgsEvent = noArgsEventBuilder.getPhysicsEvent(detectedElectron); 
 
+	cout << thisNoArgsEvent.w << " " << thisEvent.w << endl; 
+	
 	elasticSelector.passes(thisEvent);
 	inclusiveSelector.passes(thisEvent);
 	

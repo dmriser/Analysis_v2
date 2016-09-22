@@ -8,6 +8,7 @@
 class PhysicsEventBuilder{
 
  public:
+  PhysicsEventBuilder();
   PhysicsEventBuilder(TLorentzVector beam, TLorentzVector target);
   ~PhysicsEventBuilder();
 

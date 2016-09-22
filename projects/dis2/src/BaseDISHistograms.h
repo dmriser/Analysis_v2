@@ -25,12 +25,12 @@ class BaseDISHistograms{
   double qqMin = 1.0;   double qqMax = 4.8;
   double wMin  = 2.05;  double wMax  = 3.1; 
   
-  TH2D * xByQQ[7]; 
-  TH2D * wByQQ[7]; 
+  TH2I * xByQQ[7]; 
+  TH2I * wByQQ[7]; 
 
   void Init(std::string name, std::string title);
   void Load(std::string filename, std::string name); 
-  void Save(std::string filename);
+  void Save(std::string filename, std::string option);
   void Fill(PhysicsEvent event, int sector); 
   
   //ClassDef(BaseDISHistograms, 1); 

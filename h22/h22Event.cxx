@@ -67,7 +67,7 @@ TLorentzVector h22Event::gen_particle(int pid)
       }
     }
   
-  cout << " WARNING: GEN PARTICLE NOT FOUND! " << endl; 
+  //  cout << " WARNING: GEN PARTICLE NOT FOUND! " << endl;
   return TLorentzVector(0,0,1000,1000); 
 }
 
@@ -78,7 +78,7 @@ void h22Event::printEvent()
         cout.width(6); cout << ipart;
         cout.width(6); cout << q[ipart];
         cout.width(6); cout << "1";
-        cout.width(6); cout << "-123";
+        cout.width(6); cout << id[ipart];
         cout.width(4); cout << "0";
         cout.width(4); cout << "0";
         cout.width(12); cout << cx[ipart]*p[ipart];
@@ -191,5 +191,19 @@ double h22Event::rot_dc1y(int ipart)
     return tl1_y[ipart]*cos(sm1*to_radians*60.0)-tl1_x[ipart]*sin(sm1*to_radians*60.0);
 }
 
+int h22Event::mcSectorByPID(int pid){
+
+  int index = 0;
+
+  for (int i=0; i<gpart; i++){
+    if (mcid[i] == pid){
+      index = i; 
+    }
+  }
+
+  int mcsect = 1+floor(mcphi[index]/60);
+  
+  return mcsect;
+}
 
 #endif

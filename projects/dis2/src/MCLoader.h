@@ -16,7 +16,7 @@
 
 class MCLoader : public HistogramLoader{
  public:
-  MCLoader(PhysicsEventSelector *eventCriteria, std::string outputFile, std::string saveOpts);
+  MCLoader(PhysicsEventSelector *eventCriteria, std::string outputFile, std::string saveOpts, std::string monteCarloType);
   ~MCLoader();
 
  protected:
@@ -24,6 +24,7 @@ class MCLoader : public HistogramLoader{
   BaseDISHistograms genEvents;
   BaseDISHistograms recAndGenEvents;
   NathanEIDWrapper eID; 
+  std::string mcType; 
   
  protected:
   void Initialize();

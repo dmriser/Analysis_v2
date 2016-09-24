@@ -74,4 +74,21 @@ void BaseDISHistograms::Fill(PhysicsEvent event, int sector){
   wByQQ[sector] ->Fill(event.w, event.qq);
 }
 
+void BaseDISHistograms::FillxByQQ(double x, double qq, int sector){
+  xByQQ[0]      ->Fill(x, qq);
+  xByQQ[sector] ->Fill(x, qq);
+}
+
+void BaseDISHistograms::FillwByQQ(double w, double qq, int sector){
+  wByQQ[0]      ->Fill(w, qq);
+  wByQQ[sector] ->Fill(w, qq);
+}
+
+void BaseDISHistograms::Rebin2D(int xFactor, int yFactor){
+  for (int ihist = 0; ihist < 7; ihist++) {
+    xByQQ[ihist]->Rebin2D(xFactor, yFactor);
+    wByQQ[ihist]->Rebin2D(xFactor, yFactor); 
+  }
+}
+
 #endif

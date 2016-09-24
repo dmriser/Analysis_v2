@@ -9,6 +9,7 @@
 #include "h22Reader.h"
 #include "HistogramLoader.h"
 #include "NathanArchive.h"
+#include "MomCorr.h"
 #include "PhysicsEvent.h"
 #include "PhysicsEventBuilder.h"
 #include "PhysicsEventSelector.h"
@@ -19,7 +20,8 @@
 #ifndef data_loader_cxx
 #define data_loader_cxx
 
-DataLoader::DataLoader(PhysicsEventSelector *eventCriteria, std::string outputFile, std::string saveOpts) : HistogramLoader(eventCriteria, outputFile, saveOpts){
+DataLoader::DataLoader(PhysicsEventSelector *eventCriteria, MomCorr_e1f * momCorr, std::string outputFile, std::string saveOpts) : HistogramLoader(eventCriteria, outputFile, saveOpts){
+  momCorrector = momCorr; 
 }
 
 DataLoader::~DataLoader(){
@@ -41,6 +43,7 @@ void DataLoader::ProcessEvent(){
 			    event.cz[e_index]*event.p[e_index],
 			    event.p[e_index]);
 
+    electron = momCorrector->PcorN(electron, -1, 11); 
     // TODO: Add momentum corrections here.  Think about setting path to momemtum correction file, or relying on external environment to provide us with
     // a working momentum correction utility (probably the better solution).
     

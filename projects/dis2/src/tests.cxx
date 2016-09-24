@@ -1,9 +1,11 @@
 #include "BaseDISHistograms.h"
 #include "DataLoader.h"
 #include "HistogramLoader.h"
+#include "MomCorr.h"
 #include "MCLoader.h"
 #include "PhysicsEventCut.h"
 #include "PhysicsEventSelector.h"
+#include "TLorentzVector.h"
 
 void testBaseHistograms();
 void testHistogramBuilder();
@@ -48,8 +50,10 @@ void testDataHistogramBuilder(){
   w_cut->set_max(400.00);
   sel->add_cut(w_cut); 
   sel->enable_all();
+
+  MomCorr_e1f * momCorr = new MomCorr_e1f("/Users/dmriser/Work/analysis/momCorr/");
   
-  DataLoader testLoader(sel, "out/testBothLoader.root", "RECREATE");  
+  DataLoader testLoader(sel, momCorr, "out/testBothLoader.root", "RECREATE");  
   testLoader.AddFile("/Users/dmriser/Data/clas_038534.A01.root");
   testLoader.Execute();
   
@@ -64,7 +68,7 @@ void testMCHistogramBuilder(){
   sel->add_cut(w_cut); 
   sel->enable_all();
   
-  MCLoader testLoader(sel, "out/testBothLoader.root", "UPDATE");  
+  MCLoader testLoader(sel, "out/testBothLoader.root", "UPDATE", "NoRad");  
   testLoader.AddFile("/Users/dmriser/Data/mc/dis/ftp/dis_pass0.2510.root");
   testLoader.Execute();
   

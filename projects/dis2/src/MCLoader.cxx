@@ -17,12 +17,13 @@
 
 // root 
 #include "TLorentzVector.h"
+#include "TH2.h"
 
 #ifndef mc_loader_cxx
 #define mc_loader_cxx
 
-MCLoader::MCLoader(PhysicsEventSelector *eventCriteria, std::string outputFile, std::string saveOpts) : HistogramLoader(eventCriteria, outputFile, saveOpts){
-
+MCLoader::MCLoader(PhysicsEventSelector *eventCriteria, std::string outputFile, std::string saveOpts, std::string monteCarloType) : HistogramLoader(eventCriteria, outputFile, saveOpts){
+  mcType = monteCarloType; 
 }
 
 MCLoader::~MCLoader(){
@@ -30,9 +31,10 @@ MCLoader::~MCLoader(){
 }
 
 void MCLoader::Initialize(){
-  recEvents.Init("recEvents","Reconstructed MC Hits");
-  genEvents.Init("genEvents","Generated MC Events");
-  recAndGenEvents.Init("recAndGenEvents","Rec/Gen Same Bin Events");
+  recEvents.Init(Form("recEvents%s",mcType.c_str()),"Reconstructed MC Hits");
+  genEvents.Init(Form("genEvents%s",mcType.c_str()),"Generated MC Events");
+  recAndGenEvents.Init(Form("recAndGenEvents%s",mcType.c_str()),"Rec/Gen Same Bin Events");
+  recAndGenEvents.Rebin2D(2,2);
 }
 
 // This is the core routine which conditionally fills histograms. 
@@ -41,8 +43,13 @@ void MCLoader::ProcessEvent(){
   // Deal with the generated first.
   TLorentzVector genElectron = event.gen_particle(11);   
   PhysicsEvent genPhysicsEvent = builder.getPhysicsEvent(genElectron); 
-  int mcsect = floor(to_degrees*genElectron.Phi()/60)+1;
-  if (mcsect > 0) { genEvents.Fill(genPhysicsEvent, mcsect); }
+
+  genEvents.Fill(genPhysicsEvent, event.mcSectorByPID(11));
+
+  // Dealing directly with histograms in base histograms here
+  // is not ideal, think of a better way. 
+  int genxByQQBin = recAndGenEvents.xByQQ[0]->FindBin(genPhysicsEvent.x, genPhysicsEvent.qq);
+  int genwByQQBin = recAndGenEvents.wByQQ[0]->FindBin(genPhysicsEvent.w, genPhysicsEvent.qq);
   
   eID.set_info(runno(),GSIM);
   int e_index = eID.get_electron(event);
@@ -54,6 +61,14 @@ void MCLoader::ProcessEvent(){
     
     int sector = event.dc_sect[e_index]; 
     PhysicsEvent recPhysicsEvent = builder.getPhysicsEvent(recElectron);
+
+    // Again doing this to fill coincident events recAndGen needed to calculate purity and
+    // stability. 
+    int recxByQQBin = recAndGenEvents.xByQQ[0]->FindBin(recPhysicsEvent.x, recPhysicsEvent.qq);
+    int recwByQQBin = recAndGenEvents.wByQQ[0]->FindBin(recPhysicsEvent.w, recPhysicsEvent.qq);
+
+    if (recxByQQBin == genxByQQBin){ recAndGenEvents.FillxByQQ(recPhysicsEvent.x, recPhysicsEvent.qq, sector); }
+    if (recwByQQBin == genwByQQBin){ recAndGenEvents.FillwByQQ(recPhysicsEvent.w, recPhysicsEvent.qq, sector); } 
     
     if (eventSelector->passes(recPhysicsEvent) && sector > 0) {
       recEvents.Fill(recPhysicsEvent, sector);

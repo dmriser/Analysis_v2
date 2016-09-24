@@ -32,6 +32,12 @@ class BaseDISHistograms{
   void Load(std::string filename, std::string name); 
   void Save(std::string filename, std::string option);
   void Fill(PhysicsEvent event, int sector); 
+  void Rebin2D(int xFactor, int yFactor);
+  
+  // These were added for recAndGen coincident in the same bin,
+  // there should be a better way to accomplish this.  Keep thinkin.
+  void FillxByQQ(double x, double qq, int sector);
+  void FillwByQQ(double w, double qq, int sector);
   
   //ClassDef(BaseDISHistograms, 1); 
 };

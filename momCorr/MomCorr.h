@@ -6,24 +6,6 @@
 #include "TROOT.h"
 #include "TLorentzVector.h"
 
-#define NSect 6
-
-/* Theta Binning for Theta correction */
-#define ThetaC_n 144
-Double_t ThetaC_min = 0;
-Double_t ThetaC_max = 144;
-Double_t ThetaC_wid = 1.;
-
-/* Theta Binning for Momentum correction */
-#define MomC_T_n 48
-Double_t MomC_T_min = 1;
-Double_t MomC_T_max = 145;
-Double_t MomC_T_wid = 3.;
-
-/* Size of Vectors with parameters for phi dependence of Momentum Correction
-   phi between -30 and 30 deg */
-#define Npar 4
-
 Int_t GetSector(Double_t);
 
 /* CLASS DEFINITION */
@@ -31,7 +13,19 @@ class MomCorr_e1f {
 public:
   MomCorr_e1f(std::string);
 
+  const static int NSect = 6;
+  const static int Npar = 4; 
 
+  const static int ThetaC_n = 144;
+  Double_t ThetaC_min = 0;
+  Double_t ThetaC_max = 144;
+  Double_t ThetaC_wid = 1.;
+  
+const static int MomC_T_n = 48;
+Double_t MomC_T_min = 1;
+Double_t MomC_T_max = 145;
+Double_t MomC_T_wid = 3.;
+  
 private:
   std::string path;
   

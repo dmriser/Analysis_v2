@@ -25,7 +25,7 @@ int main(){
 void testBaseHistograms(){
   BaseDISHistograms dataEvents;
   dataEvents.Init("dataEvents","Data Events ");
-  dataEvents.Save("out/test.root","RECREATE");
+  dataEvents.Save("../out/test.root","RECREATE");
 }
 
 void testHistogramBuilder(){
@@ -37,7 +37,7 @@ void testHistogramBuilder(){
   sel->add_cut(w_cut); 
   sel->enable_all();
   
-  HistogramLoader testLoader(sel, "out/testLoader.root", "RECREATE");  
+  HistogramLoader testLoader(sel, "../out/testLoader.root", "RECREATE");  
   testLoader.Execute();
   
 }
@@ -53,7 +53,7 @@ void testDataHistogramBuilder(){
 
   MomCorr_e1f * momCorr = new MomCorr_e1f("/Users/dmriser/Work/analysis/momCorr/");
   
-  DataLoader testLoader(sel, momCorr, "out/testBothLoader.root", "RECREATE");  
+  DataLoader testLoader(sel, momCorr, "../out/testBothLoader.root", "RECREATE");  
   testLoader.AddFile("/Users/dmriser/Data/clas_038534.A01.root");
   testLoader.Execute();
   
@@ -68,7 +68,7 @@ void testMCHistogramBuilder(){
   sel->add_cut(w_cut); 
   sel->enable_all();
   
-  MCLoader testLoader(sel, "out/testBothLoader.root", "UPDATE", "NoRad");  
+  MCLoader testLoader(sel, "../out/testBothLoader.root", "UPDATE", "NoRad");  
   testLoader.AddFile("/Users/dmriser/Data/mc/dis/ftp/dis_pass0.2510.root");
   testLoader.Execute();
   

@@ -1,14 +1,23 @@
 import os, glob
 
-env = Environment(ENV = {'PATH':os.environ['PATH']}, h22libs=os.environ['h22libs'])
-
-env.ParseConfig("root-config --glibs --cflags")
-env.Append(CCFLAGS = ['-g'])
-env.Append(CPPPATH = ['$h22libs/include/'], LIBPATH = ['$h22libs/lib/'],LIBS = ['h22'])
+libEnv = Environment(ENV = {'PATH':os.environ['PATH']}, h22libs=os.environ['h22libs'])
+libEnv.ParseConfig("root-config --glibs --cflags")
+libEnv.Append(CCFLAGS = ['-g'])
+libEnv.Append(CPPPATH = ['$h22libs/include/'], LIBPATH = ['$h22libs/lib/'],LIBS = ['h22'])
 #env.Append(CPPPATH = ['$h22libs/include/'], LIBPATH = ['$h22libs/lib/'],LIBS = ['F1F209'])
+
+common = glob.glob('src/common/*.cxx')
+libEnv.SharedLibrary('lib/Common',common)
+
+
+exeEnv = Environment(ENV = {'PATH':os.environ['PATH']}, h22libs=os.environ['h22libs'])
+exeEnv.ParseConfig("root-config --glibs --cflags")
+exeEnv.Append(CCFLAGS = ['-g'])
+exeEnv.Append(CPPPATH = ['$h22libs/include/'], LIBPATH = ['$h22libs/lib/'],LIBS = ['h22'])
+exeEnv.Append(CPPPATH = ['src/common'], LIBPATH = ['lib/'], LIBS = ['Common'] )
 
 sources = glob.glob('src/*.cxx')
 
-
-env.Program('DISTestSuite',sources)
+for target in sources:
+    exeEnv.Program(target)
 

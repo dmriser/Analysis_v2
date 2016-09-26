@@ -44,9 +44,7 @@ void DataLoader::ProcessEvent(){
 			    event.p[e_index]);
 
     electron = momCorrector->PcorN(electron, -1, 11); 
-    // TODO: Add momentum corrections here.  Think about setting path to momemtum correction file, or relying on external environment to provide us with
-    // a working momentum correction utility (probably the better solution).
-    
+
     int sector = event.dc_sect[e_index]; 
     PhysicsEvent physicsEvent = builder.getPhysicsEvent(electron);
     

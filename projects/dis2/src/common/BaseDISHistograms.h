@@ -21,7 +21,7 @@ class BaseDISHistograms{
   int numberOfQQBins = 200; 
   int numberOfWBins = 200;
 
-  double xMin  = 0.05;  double xMax  = 0.7; 
+  double xMin  = 0.1;  double xMax  = 0.6; 
   double qqMin = 1.0;   double qqMax = 4.8;
   double wMin  = 2.05;  double wMax  = 3.1; 
   

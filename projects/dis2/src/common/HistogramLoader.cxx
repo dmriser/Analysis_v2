@@ -49,7 +49,7 @@ void HistogramLoader::Loop(){
   int numberOfEntries = fchain->GetEntries();
 
   for (int iEntry = 0; iEntry < numberOfEntries; iEntry++) {
-    if (iEntry%1000 == 0){ cout << "\r done " << iEntry << flush; } 
+    if (iEntry%1000 == 0){ cout << "\r done " << iEntry << " events of " << numberOfEntries << flush; } 
 
     GetEntry(iEntry); // Tell the fchain where to point 
     ProcessEvent();    

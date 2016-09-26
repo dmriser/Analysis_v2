@@ -11,6 +11,8 @@ using namespace std;
 
 #include "h22Option.h"
 #include "DataLoader.h"
+#include "DInformation.h"
+#include "FaradayCupLoader.h"
 #include "MCLoader.h"
 #include "MomCorr.h"
 #include "PhysicsEventCut.h"
@@ -77,6 +79,13 @@ int main(int argc, char * argv[]){
     DataLoader loader(eventSelector, momentumCorrection, outputFilename, "RECREATE");
     for (int ifile = 0; ifile < files.size(); ifile++) { loader.AddFile(files[ifile]); }
     loader.Execute();
+
+    DInformation * runInformation = new DInformation();
+    runInformation->load("/Users/dmriser/Work/analysis/lists/runs.info"); 
+
+    FaradayCupAppender chargeAppender(runInformation);
+    chargeAppender.AddFiles(files);
+    chargeAppender.AppendToFile(outputFilename);
   }
 
   else if (runMode == "mcrad"){
@@ -99,37 +108,6 @@ int main(int argc, char * argv[]){
 
   return 0;
 }
-
-int PrintUsage(){
-
-  cout << endl;
-  cout << endl; 
-  cout << "######################################################" << endl;
-  cout << "#                                                    #" << endl;
-  cout << "#    fillHistograms -> Used to fill DIS histograms   #" << endl;
-  cout << "#                                                    #" << endl;
-  cout << "#  This code requires a set of files specified by    #" << endl;
-  cout << "#  a list using -LIST=files.dat, or by wildcard      #" << endl;
-  cout << "#  after the option flags.                           #" << endl;
-  cout << "#                                                    #" << endl;
-  cout << "#                                                    #" << endl;
-  cout << "#  Set the number of files using the -N= flag, and   #" << endl;
-  cout << "#  set the run type using the -TYPE= flag.           #" << endl; 
-  cout << "#                                                    #" << endl;
-  cout << "#  Valid types are data, mcnorad, mcrad.             #" << endl;
-  cout << "#                                                    #" << endl;
-  cout << "#  Set the output file using the -OUT= flag.         #" << endl;
-  cout << "#                                                    #" << endl;
-  cout << "#  Sample usage:                                     #" << endl;
-  cout << "#  ./fillHistograms -N=1000 -LIST=goodFiles.dat      #" << endl;
-  cout << "#   -OUT=pass1.root                                  #" << endl;
-  cout << "#                                                    #" << endl;
-  cout << "######################################################" << endl;
-  cout << endl;
-  cout << endl;
-  
-  return 0;
-} 
 
 void configureCommandLineOptions(h22Options * theseOpts){
 
@@ -166,11 +144,43 @@ vector<string> loadFilesFromList(string fileList, int numFiles){
 vector<string> loadFilesFromCommandLine(h22Options * theseOpts, int numFiles){
   vector<string> theseFiles; 
 
-  int ifile = 0; 
-  while(ifile < numFiles){
+  for(int ifile = 0; ifile < theseOpts->ifiles.size(); ifile++){
     theseFiles.push_back(theseOpts->ifiles[ifile]);
     ifile++;
+
+    if (ifile == numFiles){ break; }
   }
 
   return theseFiles; 
 }
+
+int PrintUsage(){
+
+  cout << endl;
+  cout << endl; 
+  cout << "######################################################" << endl;
+  cout << "#                                                    #" << endl;
+  cout << "#    fillHistograms -> Used to fill DIS histograms   #" << endl;
+  cout << "#                                                    #" << endl;
+  cout << "#  This code requires a set of files specified by    #" << endl;
+  cout << "#  a list using -LIST=files.dat, or by wildcard      #" << endl;
+  cout << "#  after the option flags.                           #" << endl;
+  cout << "#                                                    #" << endl;
+  cout << "#                                                    #" << endl;
+  cout << "#  Set the number of files using the -N= flag, and   #" << endl;
+  cout << "#  set the run type using the -TYPE= flag.           #" << endl; 
+  cout << "#                                                    #" << endl;
+  cout << "#  Valid types are data, mcnorad, mcrad.             #" << endl;
+  cout << "#                                                    #" << endl;
+  cout << "#  Set the output file using the -OUT= flag.         #" << endl;
+  cout << "#                                                    #" << endl;
+  cout << "#  Sample usage:                                     #" << endl;
+  cout << "#  ./fillHistograms -N=1000 -LIST=goodFiles.dat      #" << endl;
+  cout << "#   -OUT=pass1.root                                  #" << endl;
+  cout << "#                                                    #" << endl;
+  cout << "######################################################" << endl;
+  cout << endl;
+  cout << endl;
+  
+  return 0;
+} 

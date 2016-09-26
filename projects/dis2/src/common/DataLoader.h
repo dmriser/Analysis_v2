@@ -24,7 +24,7 @@ class DataLoader : public HistogramLoader{
   BaseDISHistograms dataEvents;
   NathanEIDWrapper eID; 
   MomCorr_e1f * momCorrector; 
-  
+
  protected:
   void Initialize();
   void ProcessEvent();

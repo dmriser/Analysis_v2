@@ -1,5 +1,7 @@
+#include "DInformation.h"
 #include "BaseDISHistograms.h"
 #include "DataLoader.h"
+#include "FaradayCupLoader.h"
 #include "HistogramLoader.h"
 #include "MomCorr.h"
 #include "MCLoader.h"
@@ -7,17 +9,27 @@
 #include "PhysicsEventSelector.h"
 #include "TLorentzVector.h"
 
+#include <iostream>
+#include <vector>
+using std::cout;
+using std::endl;
+using std::string;
+using std::vector;
+
 void testBaseHistograms();
 void testHistogramBuilder();
 void testDataHistogramBuilder();
 void testMCHistogramBuilder();
+void testFaradayCupLoader();
+
 
 int main(){
 
   //  testBaseHistograms();
   //  testHistogramBuilder();
-  testDataHistogramBuilder();
-  testMCHistogramBuilder(); 
+  //  testDataHistogramBuilder();
+  //  testMCHistogramBuilder(); 
+  testFaradayCupLoader();
   
   return 0; 
 }
@@ -68,9 +80,23 @@ void testMCHistogramBuilder(){
   sel->add_cut(w_cut); 
   sel->enable_all();
   
-  MCLoader testLoader(sel, "../out/testBothLoader.root", "UPDATE", "NoRad");  
+  MCLoader testLoader(sel, "out/testBothLoader.root", "UPDATE", "NoRad");  
   testLoader.AddFile("/Users/dmriser/Data/mc/dis/ftp/dis_pass0.2510.root");
   testLoader.Execute();
   
+}
+
+void testFaradayCupLoader(){
+  DInformation * thisInformation = new DInformation();
+  thisInformation->load("/Users/dmriser/Work/analysis/lists/runs.info"); 
+
+  vector<string> files; 
+  files.push_back("/Users/dmriser/Data/clas_038534.A01.root");
+  files.push_back("/Users/dmriser/Data/clas_038534.A02.root");
+  files.push_back("/Users/dmriser/Data/clas_038534.A03.root"); 
+
+  FaradayCupAppender testAppender(thisInformation);
+  testAppender.AddFiles(files);
+  testAppender.AppendToFile("out/testfile.root"); 
 }
 

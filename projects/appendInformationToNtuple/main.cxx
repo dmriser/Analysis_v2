@@ -12,6 +12,7 @@ int main(int argc, char * argv[]){
 
         for (int ifile=1; ifile<argc; ifile++){ Analyzer.AddFile(argv[ifile]); } 
         Analyzer.Init(); 
-        Analyzer.Loop(); 
+	Analyzer.Loop(); 
+	//	Analyzer.SaveNewFile("test.root"); 
         return 0; 
 }

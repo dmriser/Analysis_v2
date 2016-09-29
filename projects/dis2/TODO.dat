@@ -2,33 +2,19 @@
 #									       #
 #									       #
 #                             THINGS TO DO  				       #
-#    			      Sept. 22, 2016				       #
+#    			      Sept. 29, 2016				       #
 #									       #	
 #									       #
 ################################################################################
 
-(1) Add recAndGen check to MCLoader.cxx, this will require modifying the
-    BaseDISHistogram class or finding some way to verify that the reconstructed
-    and generated event are in the same bin.
-
-(2) Add momentum corrections to the DataLoader.
-
-(3) Check why h22Reader::get_particle(int monteCarloPID) is throwing partice
-    not found warnings.
-
-(4) Create a main that wires together an h22Options object with the other
-    histogram filling classes and selection objects.  The main code which will
-    do the histogram fills.  It will most likely have to be flagged like,
-    ./fillDISHistograms -N=1000 -TYPE=MCRAD /path/to/files/*
-
-(5) Think about where the Faraday charge load belongs, if not in the loading
-    then one needs to be sure about what files were used in the load before
-    going on to calculate the normalization.
-
-(6) Start doing the logic for the cross section calculation code:
+(1) Solve problem that dis2/ doesnt run on the farm and complains about
+    not finding commonlib.  Could just add it to LD_LIBRARY_PATH but
+    that would be a terrible solution.  It works just fine in laptop.
+    
+(2) Start doing the logic for the cross section calculation code:
     (a) Loading 2D histograms
     (b) Slicing them into vectors of 1-D histograms
     (c) Operating on these vectors (division, scaling)
 
-(7) Creating a drawing script to display final results. 
+(3) Creating a drawing script to display final results. 
 

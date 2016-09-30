@@ -17,13 +17,13 @@ class BaseDISHistograms{
   BaseDISHistograms();
   ~BaseDISHistograms();
 
-  int numberOfXBins = 200;
-  int numberOfQQBins = 200; 
-  int numberOfWBins = 200;
+  const int numberOfXBins = 200;
+  const int numberOfQQBins = 200; 
+  const int numberOfWBins = 200;
 
-  double xMin  = 0.1;  double xMax  = 0.6; 
-  double qqMin = 1.0;   double qqMax = 4.8;
-  double wMin  = 2.05;  double wMax  = 3.1; 
+  const double xMin  = 0.1;  const double xMax  = 0.6; 
+  const double qqMin = 1.0;  const double qqMax = 4.8;
+  const double wMin  = 2.05; const double wMax  = 3.1; 
   
   TH2I * xByQQ[7]; 
   TH2I * wByQQ[7]; 

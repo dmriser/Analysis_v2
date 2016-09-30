@@ -4,11 +4,11 @@
 #include "PhysicsEventSelector.h"
 #include "TLorentzVector.h"
 
-#include "BaseDISHistograms.h"
-#include "DataLoader.h"
-#include "FaradayCupLoader.h"
-#include "HistogramLoader.h"
-#include "MCLoader.h"
+#include "common/BaseDISHistograms.h"
+#include "common/DataLoader.h"
+#include "common/FaradayCupLoader.h"
+#include "common/HistogramLoader.h"
+#include "common/MCLoader.h"
 
 #include <iostream>
 #include <vector>
@@ -89,7 +89,7 @@ void testMCHistogramBuilder(){
 
 void testFaradayCupLoader(){
   DInformation * thisInformation = new DInformation();
-  thisInformation->load("/Users/dmriser/Work/analysis/lists/runs.info"); 
+  thisInformation->load("/u/home/dmriser/mydoc/analysis/root_scripts/Analysis_v2/lists/runs.info"); 
 
   vector<string> files; 
   files.push_back("/Users/dmriser/Data/clas_038534.A01.root");

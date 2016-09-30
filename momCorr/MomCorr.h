@@ -17,14 +17,14 @@ public:
   const static int Npar = 4; 
   
   const static int ThetaC_n = 144;
-  const double ThetaC_min = 0;
-  const double ThetaC_max = 144;
-  const double ThetaC_wid = 1.;
+  const static double ThetaC_min = 0;
+  const static double ThetaC_max = 144;
+  const static double ThetaC_wid = 1.;
   
   const static int MomC_T_n = 48;
-  const double MomC_T_min = 1;
-  const double MomC_T_max = 145;
-  const double MomC_T_wid = 3.;
+  const static double MomC_T_min = 1;
+  const static double MomC_T_max = 145;
+  const static double MomC_T_wid = 3.;
   
 private:
   std::string path;

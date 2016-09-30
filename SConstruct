@@ -16,5 +16,5 @@ env.Append(CPPPATH = ['models/pbmodel/'], LIBPATH = ['models/pbmodel/'],LIBS = [
 h22_sources  = glob.glob('h22/*.cxx')
 h22_sources += glob.glob('momCorr/*.cxx')	
 h22_sources += glob.glob('models/pbmodel/*.cc')
-h22_sources += glob.glob('models/pdfModels/*.cxx')
+#h22_sources += glob.glob('models/pdfModels/*.cxx')
 env.SharedLibrary('lib/h22',h22_sources)

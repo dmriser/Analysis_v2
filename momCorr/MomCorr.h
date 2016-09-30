@@ -12,19 +12,19 @@ Int_t GetSector(Double_t);
 class MomCorr_e1f {
 public:
   MomCorr_e1f(std::string);
-
+  
   const static int NSect = 6;
   const static int Npar = 4; 
-
-  const static int ThetaC_n = 144;
-  Double_t ThetaC_min = 0;
-  Double_t ThetaC_max = 144;
-  Double_t ThetaC_wid = 1.;
   
-const static int MomC_T_n = 48;
-Double_t MomC_T_min = 1;
-Double_t MomC_T_max = 145;
-Double_t MomC_T_wid = 3.;
+  const static int ThetaC_n = 144;
+  const double ThetaC_min = 0;
+  const double ThetaC_max = 144;
+  const double ThetaC_wid = 1.;
+  
+  const static int MomC_T_n = 48;
+  const double MomC_T_min = 1;
+  const double MomC_T_max = 145;
+  const double MomC_T_wid = 3.;
   
 private:
   std::string path;

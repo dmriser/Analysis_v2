@@ -10,13 +10,14 @@
 using namespace std;
 
 #include "h22Option.h"
-#include "DataLoader.h"
 #include "DInformation.h"
-#include "FaradayCupLoader.h"
-#include "MCLoader.h"
 #include "MomCorr.h"
 #include "PhysicsEventCut.h"
 #include "PhysicsEventSelector.h"
+
+#include "DataLoader.h"
+#include "FaradayCupLoader.h"
+#include "MCLoader.h"
 
 int PrintUsage();
 void configureCommandLineOptions(h22Options * theseOpts); 
@@ -45,8 +46,9 @@ int main(int argc, char * argv[]){
   eventSelector->enable_all();
 
   // ----------------------------------------------------------------------------------
-  
+  //  
   // ------------------------ Boring Bits that make shit work -------------------------
+  //
   // Check for improper usage of this code. 
   if (argc < 3){
     return PrintUsage();

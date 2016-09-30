@@ -7,7 +7,7 @@ libEnv.Append(CPPPATH = ['$h22libs/include/'], LIBPATH = ['$h22libs/lib/'],LIBS 
 #env.Append(CPPPATH = ['$h22libs/include/'], LIBPATH = ['$h22libs/lib/'],LIBS = ['F1F209'])
 
 common = glob.glob('src/common/*.cxx')
-libEnv.SharedLibrary('lib/Common',common)
+libEnv.Library('lib/Common',common)
 
 
 exeEnv = Environment(ENV = {'PATH':os.environ['PATH']}, h22libs=os.environ['h22libs'])

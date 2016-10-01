@@ -1,20 +1,10 @@
 import os, glob
 
-#libEnv = Environment(ENV = {'PATH':os.environ['PATH']}, h22libs=os.environ['h22libs'])
-#libEnv.ParseConfig("root-config --glibs --cflags")
-#libEnv.Append(CCFLAGS = ['-g'])
-#libEnv.Append(CPPPATH = ['$h22libs/include/'], LIBPATH = ['$h22libs/lib/'],LIBS = ['h22'])
-#libEnv.Append(CPPPATH = ['$h22libs/include/'], LIBPATH = ['$h22libs/lib/'],LIBS = ['F1F209'])
-
-#common = glob.glob('src/common/*.cxx')
-#libEnv.Library('lib/Common',common)
-
 exeEnv = Environment(ENV = {'PATH':os.environ['PATH']}, h22libs=os.environ['h22libs'])
 exeEnv.ParseConfig("root-config --glibs --cflags")
 exeEnv.Append(CCFLAGS = ['-g'])
 exeEnv.Append(CPPPATH = ['$h22libs/include/'], LIBPATH = ['$h22libs/lib/'],LIBS = ['h22'])
 exeEnv.Append(CPPPATH = ['$h22libs/include/'], LIBPATH = ['$h22libs/lib/'],LIBS = ['F1F209'])
-#exeEnv.Append(CPPPATH = ['src/common'], LIBPATH = ['lib/'], LIBS = ['Common'] )
 
 sources = glob.glob('src/*.cxx')
 

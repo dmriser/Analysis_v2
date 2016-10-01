@@ -106,15 +106,18 @@ void testFaradayCupLoader(){
 void test1DHistograms(){
   BaseDISHistograms * dataEvents = new BaseDISHistograms();
   dataEvents->Load("out/pass1.root","dataEvents"); 
-  dataEvents->Rebin2D(4,4);
+  dataEvents->Rebin2D(2,2);
 
   BaseDISHistograms * recEvents = new BaseDISHistograms();
   recEvents->Load("out/pass1.root","recEventsRad"); 
-  recEvents->Rebin2D(4,4);
+  recEvents->Rebin2D(2,2);
 
   BaseDISHistograms * genEvents = new BaseDISHistograms();
   genEvents->Load("out/pass1.root","genEventsRad"); 
-  genEvents->Rebin2D(4,4);
+  genEvents->Rebin2D(2,2);
+
+  BaseDISHistograms * recAndGenEvents = new BaseDISHistograms();
+  recAndGenEvents->Load("out/pass1.root","recAndGenEventsRad"); 
 
   DIS1DHistograms * dataHistos = new DIS1DHistograms(); 
   dataHistos->Create(dataEvents);
@@ -131,9 +134,20 @@ void test1DHistograms(){
   genHistos->SetErrors();
   genHistos->Save("out/testSlicing.root","update");
 
+  DIS1DHistograms * recAndGenHistos = new DIS1DHistograms(); 
+  recAndGenHistos->Create(recAndGenEvents);
+  recAndGenHistos->SetErrors();
+  recAndGenHistos->Save("out/testSlicing.root","update");
+
   DIS1DHistograms * accHistos = new DIS1DHistograms(); 
   accHistos->CreateFromExisting(recHistos,"acc","Acceptance");
   accHistos->Divide(genHistos);
   accHistos->Save("out/testSlicing.root","update");
+  
+  DIS1DHistograms * purity = new DIS1DHistograms();
+  purity->CreateByDivision(recAndGenHistos, recHistos, "purity", "Purity");
+  purity->Scale(1.0);
+  purity->ScaleByBinWidth();
+  purity->Save("out/testSlicing.root","update");
 
 }

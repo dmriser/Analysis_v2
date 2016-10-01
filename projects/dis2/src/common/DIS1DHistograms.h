@@ -24,17 +24,34 @@ class DIS1DHistograms{
   vector<vector<TH1D*> > xByQQ; 
   vector<vector<TH1D*> > wByQQ; 
 
+  int numberOfXBins; 
+  double xMin, xMax, xWidth;
+
+  int numberOfWBins; 
+  double wMin, wMax, wWidth;
+
+  int numberOfQQBins; 
+  double qqMin, qqMax, qqWidth;
+
  public:
   void Create(BaseDISHistograms * baseHistograms); 
+  void CreateByDivision(DIS1DHistograms *numerator, DIS1DHistograms *demoninator, string name, string title);
   void CreateFromExisting(DIS1DHistograms * sourceHistograms, string newName, string newTitle);
+  void Divide(DIS1DHistograms * denominator);
   void Load(string inputFilenameWithExtension, string title);
   void Save(string outputFilenameWithExtension, string saveOption); 
+  void Scale(double scaleValue);
+  void ScaleByBinWidth();
   void SetErrors(); 
-  void Divide(DIS1DHistograms * denominator);
 };
 
 DIS1DHistograms::DIS1DHistograms(){
-
+  numberOfXBins = 0; 
+  xMin = 0; xMax = 0; xWidth = 0; 
+  numberOfWBins = 0; 
+  wMin = 0; wMax = 0; wWidth = 0; 
+  numberOfQQBins = 0; 
+  qqMin = 0; qqMax = 0; qqWidth = 0; 
 }
 
 DIS1DHistograms::~DIS1DHistograms(){
@@ -54,17 +71,20 @@ void DIS1DHistograms::Create(BaseDISHistograms * baseHistograms){
     string xByQQBaseTitle = baseHistograms->xByQQ[sector]->GetTitle(); 
     string wByQQBaseTitle = baseHistograms->wByQQ[sector]->GetTitle(); 
   
-    int numberOfXBins = baseHistograms->xByQQ[sector]->GetXaxis()->GetNbins();
-    double xMin = baseHistograms->xByQQ[sector]->GetXaxis()->GetBinLowEdge(1);
-    double xMax = baseHistograms->xByQQ[sector]->GetXaxis()->GetBinUpEdge(numberOfXBins);
+    numberOfXBins = baseHistograms->xByQQ[sector]->GetXaxis()->GetNbins();
+    xMin = baseHistograms->xByQQ[sector]->GetXaxis()->GetBinLowEdge(1);
+    xMax = baseHistograms->xByQQ[sector]->GetXaxis()->GetBinUpEdge(numberOfXBins);
+    xWidth = (xMax-xMin)/numberOfXBins;
   
-    int numberOfWBins = baseHistograms->wByQQ[sector]->GetXaxis()->GetNbins();
-    double wMin = baseHistograms->wByQQ[sector]->GetXaxis()->GetBinLowEdge(1);
-    double wMax = baseHistograms->wByQQ[sector]->GetXaxis()->GetBinUpEdge(numberOfWBins);
-  
-    int numberOfQQBins = baseHistograms->wByQQ[sector]->GetYaxis()->GetNbins();
-    double qqMin = baseHistograms->wByQQ[sector]->GetYaxis()->GetBinLowEdge(1);
-    double qqMax = baseHistograms->wByQQ[sector]->GetYaxis()->GetBinUpEdge(numberOfQQBins);
+    numberOfWBins = baseHistograms->wByQQ[sector]->GetXaxis()->GetNbins();
+    wMin = baseHistograms->wByQQ[sector]->GetXaxis()->GetBinLowEdge(1);
+    wMax = baseHistograms->wByQQ[sector]->GetXaxis()->GetBinUpEdge(numberOfWBins);
+    wWidth = (wMax-wMin)/numberOfWBins;
+
+    numberOfQQBins = baseHistograms->wByQQ[sector]->GetYaxis()->GetNbins();
+    qqMin = baseHistograms->wByQQ[sector]->GetYaxis()->GetBinLowEdge(1);
+    qqMax = baseHistograms->wByQQ[sector]->GetYaxis()->GetBinUpEdge(numberOfQQBins);
+    qqWidth = (qqMax-qqMin)/numberOfQQBins;
 
     allxByQQ[sector] = new TH1D(xByQQBaseName.c_str(),xByQQBaseTitle.c_str(),numberOfXBins,xMin,xMax);
     allwByQQ[sector] = new TH1D(wByQQBaseName.c_str(),wByQQBaseTitle.c_str(),numberOfWBins,wMin,wMax);
@@ -166,7 +186,22 @@ void DIS1DHistograms::Divide(DIS1DHistograms * denominator){
 }
 
 void DIS1DHistograms::CreateFromExisting(DIS1DHistograms * sourceHistograms, string newName, string newTitle){
-  
+
+  numberOfXBins = sourceHistograms->numberOfXBins; 
+  xMin = sourceHistograms->xMin; 
+  xMax = sourceHistograms->xMax; 
+  xWidth = sourceHistograms->xWidth; 
+
+  numberOfWBins = sourceHistograms->numberOfWBins; 
+  wMin = sourceHistograms->wMin; 
+  wMax = sourceHistograms->wMax; 
+  wWidth = sourceHistograms->wWidth; 
+
+  numberOfQQBins = sourceHistograms->numberOfQQBins; 
+  qqMin = sourceHistograms->qqMin; 
+  qqMax = sourceHistograms->qqMax; 
+  qqWidth = sourceHistograms->qqWidth; 
+
   for (int sector=0; sector<7; sector++){
     allxByQQ[sector] = (TH1D*) sourceHistograms->allxByQQ[sector]->Clone();
     allxByQQ[sector]->SetName(Form("%s_xByQQ_s%d",newName.c_str(),sector));
@@ -195,6 +230,62 @@ void DIS1DHistograms::CreateFromExisting(DIS1DHistograms * sourceHistograms, str
     xByQQ.push_back(xContainer);
     wByQQ.push_back(wContainer);
   }
+
+}
+
+void DIS1DHistograms::CreateByDivision(DIS1DHistograms *numerator, DIS1DHistograms *denominator, string name, string title){
+
+  numberOfXBins = numerator->numberOfXBins; 
+  xMin = numerator->xMin; 
+  xMax = numerator->xMax; 
+  xWidth = numerator->xWidth; 
+
+  numberOfWBins = numerator->numberOfWBins; 
+  wMin = numerator->wMin; 
+  wMax = numerator->wMax; 
+  wWidth = numerator->wWidth; 
+
+  numberOfQQBins = numerator->numberOfQQBins; 
+  qqMin = numerator->qqMin; 
+  qqMax = numerator->qqMax; 
+  qqWidth = numerator->qqWidth; 
+
+  CreateFromExisting(numerator,name,title);
+  Divide(denominator);
+}
+
+void DIS1DHistograms::Scale(double scaleValue){
+
+  for (int sector=0; sector<7; sector++){
+    allxByQQ[sector]->Scale(scaleValue/6.0);
+    allwByQQ[sector]->Scale(scaleValue/6.0);
+
+    for (int slice=0; slice<xByQQ[sector].size(); slice++){
+      xByQQ[sector][slice]->Scale(scaleValue);
+    }
+
+    for (int slice=0; slice<wByQQ[sector].size(); slice++){
+      wByQQ[sector][slice]->Scale(scaleValue);
+    }
+  }
+}
+
+void DIS1DHistograms::ScaleByBinWidth(){
+
+  for (int sector=0; sector<7; sector++){
+    allxByQQ[sector]->Scale(1/xWidth);
+    allwByQQ[sector]->Scale(1/wWidth);
+  
+    for (int slice=0; slice<xByQQ[sector].size(); slice++){
+      xByQQ[sector][slice]->Scale(1/(xWidth*qqWidth));
+    }
+
+    for (int slice=0; slice<wByQQ[sector].size(); slice++){
+      wByQQ[sector][slice]->Scale(1/(wWidth*qqWidth));
+    }
+
+  }
+  
 
 }
 

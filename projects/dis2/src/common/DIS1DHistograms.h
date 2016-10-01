@@ -9,6 +9,7 @@ using std::string;
 using std::vector; 
 
 #include "BaseDISHistograms.h"
+#include "TFile.h"
 #include "TH1.h"
 #include "TH2.h"
 
@@ -17,6 +18,7 @@ class DIS1DHistograms{
   DIS1DHistograms();
   ~DIS1DHistograms();
 
+  TFile * inputFile; 
   TH1D * allxByQQ[7];
   TH1D * allwByQQ[7];
   vector<vector<TH1D*> > xByQQ; 
@@ -24,9 +26,11 @@ class DIS1DHistograms{
 
  public:
   void Create(BaseDISHistograms * baseHistograms); 
+  void CreateFromExisting(DIS1DHistograms * sourceHistograms, string newName, string newTitle);
   void Load(string inputFilenameWithExtension, string title);
   void Save(string outputFilenameWithExtension, string saveOption); 
   void SetErrors(); 
+  void Divide(DIS1DHistograms * denominator);
 };
 
 DIS1DHistograms::DIS1DHistograms(){
@@ -34,7 +38,9 @@ DIS1DHistograms::DIS1DHistograms(){
 }
 
 DIS1DHistograms::~DIS1DHistograms(){
-  
+  if (inputFile->IsOpen()){
+    inputFile->Close();
+  }
 }
 
 void DIS1DHistograms::Create(BaseDISHistograms * baseHistograms){
@@ -87,6 +93,12 @@ void DIS1DHistograms::Create(BaseDISHistograms * baseHistograms){
 }
 
 void DIS1DHistograms::Load(string inputFilenameWithExtension, string title){
+  
+  if (!inputFile->IsOpen()){
+    inputFile = new TFile(inputFilenameWithExtension.c_str());
+  }
+
+  // How do we load unspecified number of slices?
 
 }
 
@@ -134,6 +146,56 @@ void DIS1DHistograms::SetErrors(){
 	wByQQ[sector][slice]->Sumw2();
       }
     }
+}
+
+void DIS1DHistograms::Divide(DIS1DHistograms * denominator){
+
+  for (int sector=0; sector<7; sector++){
+    allxByQQ[sector]->Divide(denominator->allxByQQ[sector]); 
+    allwByQQ[sector]->Divide(denominator->allwByQQ[sector]); 
+
+    for (int slice=0; slice<xByQQ[sector].size(); slice++){
+      xByQQ[sector][slice]->Divide(denominator->xByQQ[sector][slice]);
+    }
+
+    for (int slice=0; slice<wByQQ[sector].size(); slice++){
+      wByQQ[sector][slice]->Divide(denominator->wByQQ[sector][slice]);
+    }
+  }
+
+}
+
+void DIS1DHistograms::CreateFromExisting(DIS1DHistograms * sourceHistograms, string newName, string newTitle){
+  
+  for (int sector=0; sector<7; sector++){
+    allxByQQ[sector] = (TH1D*) sourceHistograms->allxByQQ[sector]->Clone();
+    allxByQQ[sector]->SetName(Form("%s_xByQQ_s%d",newName.c_str(),sector));
+    allxByQQ[sector]->SetName(Form("%s x vs. Q^{2} Sect. %d",newTitle.c_str(),sector));
+
+    allwByQQ[sector] = (TH1D*) sourceHistograms->allwByQQ[sector]->Clone();
+    allwByQQ[sector]->SetName(Form("%s_wByQQ_s%d",newName.c_str(),sector));
+    allwByQQ[sector]->SetName(Form("%s w vs. Q^{2} Sect. %d",newTitle.c_str(),sector));
+  
+    vector<TH1D*> xContainer; 
+    vector<TH1D*> wContainer; 
+    for (int slice=0; slice<sourceHistograms->xByQQ[sector].size(); slice++){
+      TH1D * xSlice = (TH1D*) sourceHistograms->xByQQ[sector][slice]->Clone();
+      xSlice->SetName(Form("%s_xByQQ_s%d_slice%d",newName.c_str(),sector,slice));
+      xSlice->SetTitle(Form("%s x vs. Q^{2} Sect. %d Slice %d",newTitle.c_str(),sector,slice));
+      xContainer.push_back(xSlice);
+    }
+
+    for (int slice=0; slice<sourceHistograms->wByQQ[sector].size(); slice++){
+      TH1D * wSlice = (TH1D*) sourceHistograms->wByQQ[sector][slice]->Clone();
+      wSlice->SetName(Form("%s_wByQQ_s%d_slice%d",newName.c_str(),sector,slice));
+      wSlice->SetTitle(Form("%s w vs. Q^{2} Sect. %d Slice %d",newTitle.c_str(),sector,slice));
+      wContainer.push_back(wSlice);
+    }
+    
+    xByQQ.push_back(xContainer);
+    wByQQ.push_back(wContainer);
+  }
+
 }
 
 #endif

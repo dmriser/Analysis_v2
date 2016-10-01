@@ -112,6 +112,9 @@ void test1DHistograms(){
   recEvents->Load("out/pass1.root","recEventsRad"); 
   recEvents->Rebin2D(4,4);
 
+  BaseDISHistograms * genEvents = new BaseDISHistograms();
+  genEvents->Load("out/pass1.root","genEventsRad"); 
+  genEvents->Rebin2D(4,4);
 
   DIS1DHistograms * dataHistos = new DIS1DHistograms(); 
   dataHistos->Create(dataEvents);
@@ -122,5 +125,15 @@ void test1DHistograms(){
   recHistos->Create(recEvents);
   recHistos->SetErrors();
   recHistos->Save("out/testSlicing.root","update");
+
+  DIS1DHistograms * genHistos = new DIS1DHistograms(); 
+  genHistos->Create(genEvents);
+  genHistos->SetErrors();
+  genHistos->Save("out/testSlicing.root","update");
+
+  DIS1DHistograms * accHistos = new DIS1DHistograms(); 
+  accHistos->CreateFromExisting(recHistos,"acc","Acceptance");
+  accHistos->Divide(genHistos);
+  accHistos->Save("out/testSlicing.root","update");
 
 }

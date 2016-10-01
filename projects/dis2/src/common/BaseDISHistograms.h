@@ -27,6 +27,7 @@ class BaseDISHistograms{
   const static double qqMin = 1.0;  const static double qqMax = 4.8;
   const static double wMin  = 2.05; const static double wMax  = 3.1; 
   
+  TFile * inputFile; 
   TH2I * xByQQ[7]; 
   TH2I * wByQQ[7]; 
 
@@ -54,7 +55,9 @@ BaseDISHistograms::BaseDISHistograms(){
 }
 
 BaseDISHistograms::~BaseDISHistograms(){
-
+  if (inputFile->IsOpen()){
+    inputFile->Close();
+  }
 }
 
 void BaseDISHistograms::Init(string name, string title){
@@ -83,18 +86,18 @@ void BaseDISHistograms::Save(string filename, string option){
 
 void BaseDISHistograms::Load(string filename, string name){
 
-  TFile * file = TFile::Open(filename.c_str());
+  TFile * inputFile = TFile::Open(filename.c_str());
 
-  if (file->IsOpen()){
+  if (inputFile->IsOpen()){
     for (int isect = 0; isect < 7; isect++){
-      xByQQ[isect] = (TH2I*) file->Get(Form("%s_xByQQ_s%d",name.c_str(),isect));
-      wByQQ[isect] = (TH2I*) file->Get(Form("%s_wByQQ_s%d",name.c_str(),isect));
+      xByQQ[isect] = (TH2I*) inputFile->Get(Form("%s_xByQQ_s%d",name.c_str(),isect));
+      wByQQ[isect] = (TH2I*) inputFile->Get(Form("%s_wByQQ_s%d",name.c_str(),isect));
     }
   } else {
     cout << " Error opening file... " << filename << endl; 
   }
 
-  file->Close();
+  //  file->Close();
    
 }
 

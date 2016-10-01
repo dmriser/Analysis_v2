@@ -9,6 +9,7 @@
 #include "common/FaradayCupLoader.h"
 #include "common/HistogramLoader.h"
 #include "common/MCLoader.h"
+#include "common/DIS1DHistograms.h"
 
 #include <iostream>
 #include <vector>
@@ -22,7 +23,7 @@ void testHistogramBuilder();
 void testDataHistogramBuilder();
 void testMCHistogramBuilder();
 void testFaradayCupLoader();
-
+void test1DHistograms();
 
 int main(){
 
@@ -30,8 +31,9 @@ int main(){
   //  testHistogramBuilder();
   //  testDataHistogramBuilder();
   //  testMCHistogramBuilder(); 
-  testFaradayCupLoader();
-  
+  //  testFaradayCupLoader();
+  test1DHistograms();  
+
   return 0; 
 }
 
@@ -101,3 +103,24 @@ void testFaradayCupLoader(){
   testAppender.AppendToFile("out/testfile.root"); 
 }
 
+void test1DHistograms(){
+  BaseDISHistograms * dataEvents = new BaseDISHistograms();
+  dataEvents->Load("out/pass1.root","dataEvents"); 
+  dataEvents->Rebin2D(4,4);
+
+  BaseDISHistograms * recEvents = new BaseDISHistograms();
+  recEvents->Load("out/pass1.root","recEventsRad"); 
+  recEvents->Rebin2D(4,4);
+
+
+  DIS1DHistograms * dataHistos = new DIS1DHistograms(); 
+  dataHistos->Create(dataEvents);
+  dataHistos->SetErrors();
+  dataHistos->Save("out/testSlicing.root","recreate");
+
+  DIS1DHistograms * recHistos = new DIS1DHistograms(); 
+  recHistos->Create(recEvents);
+  recHistos->SetErrors();
+  recHistos->Save("out/testSlicing.root","update");
+
+}

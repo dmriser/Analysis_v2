@@ -10,6 +10,7 @@
 #include "common/HistogramLoader.h"
 #include "common/MCLoader.h"
 #include "common/DIS1DHistograms.h"
+#include "common/ModelCrossSectionLoader.h"
 
 #include <iostream>
 #include <vector>
@@ -150,4 +151,14 @@ void test1DHistograms(){
   purity->ScaleByBinWidth();
   purity->Save("out/testSlicing.root","update");
 
+  ModelCrossSectionLoader modelLoader;
+  modelLoader.provideBinningTemplate(purity); 
+  modelLoader.loadCrossSection(1,1,5.498); 
+  //  modelLoader.Save("out/modelTest.root","recreate"); 
+  
+  DIS1DHistograms * crossSection = modelLoader.getCrossSection(); 
+  DIS1DHistograms * crossSectionAverage = modelLoader.getCrossSectionAverage(); 
+  DIS1DHistograms * binCenterCorrection = new DIS1DHistograms(); 
+  binCenterCorrection->CreateByDivision(crossSection, crossSectionAverage, "binCenterCorrection", "Bin Centering Correction"); 
+  binCenterCorrection->Save("out/testSlicing.root","update"); 
 }

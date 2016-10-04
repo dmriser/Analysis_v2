@@ -9,6 +9,8 @@ using std::string;
 using std::vector; 
 
 #include "BaseDISHistograms.h"
+
+#include "TDirectory.h"
 #include "TFile.h"
 #include "TH1.h"
 #include "TH2.h"
@@ -32,6 +34,8 @@ class DIS1DHistograms{
 
   int numberOfQQBins; 
   double qqMin, qqMax, qqWidth;
+  
+  string nameOfHistograms; 
 
  public:
   void Create(BaseDISHistograms * baseHistograms); 
@@ -61,6 +65,8 @@ DIS1DHistograms::~DIS1DHistograms(){
 }
 
 void DIS1DHistograms::Create(BaseDISHistograms * baseHistograms){
+
+  nameOfHistograms = baseHistograms->baseName; 
 
   for (int sector=0; sector<7; sector++){
     vector<TH1D*> xContainer; 
@@ -124,6 +130,8 @@ void DIS1DHistograms::Load(string inputFilenameWithExtension, string title){
 
 void DIS1DHistograms::Save(string outputFilenameWithExtension, string saveOption){
   TFile * outputFile = TFile::Open(outputFilenameWithExtension.c_str(),saveOption.c_str());
+  TDirectory * outputDirectory = new TDirectory(); 
+
 
   if (outputFile->IsOpen()){
     for (int sector=0; sector<7; sector++){
@@ -187,6 +195,7 @@ void DIS1DHistograms::Divide(DIS1DHistograms * denominator){
 
 void DIS1DHistograms::CreateFromExisting(DIS1DHistograms * sourceHistograms, string newName, string newTitle){
 
+  nameOfHistograms = newName; 
   numberOfXBins = sourceHistograms->numberOfXBins; 
   xMin = sourceHistograms->xMin; 
   xMax = sourceHistograms->xMax; 
@@ -230,7 +239,6 @@ void DIS1DHistograms::CreateFromExisting(DIS1DHistograms * sourceHistograms, str
     xByQQ.push_back(xContainer);
     wByQQ.push_back(wContainer);
   }
-
 }
 
 void DIS1DHistograms::CreateByDivision(DIS1DHistograms *numerator, DIS1DHistograms *denominator, string name, string title){
@@ -257,15 +265,23 @@ void DIS1DHistograms::CreateByDivision(DIS1DHistograms *numerator, DIS1DHistogra
 void DIS1DHistograms::Scale(double scaleValue){
 
   for (int sector=0; sector<7; sector++){
-    allxByQQ[sector]->Scale(scaleValue/6.0);
-    allwByQQ[sector]->Scale(scaleValue/6.0);
+    allxByQQ[sector]->Scale(scaleValue);
+    allwByQQ[sector]->Scale(scaleValue);
+
+    if (sector == 0){
+      allxByQQ[sector]->Scale(1/6.0);
+      allwByQQ[sector]->Scale(1/6.0);
+    }
+
 
     for (int slice=0; slice<xByQQ[sector].size(); slice++){
       xByQQ[sector][slice]->Scale(scaleValue);
+      if (sector == 0) { xByQQ[sector][slice]->Scale(1/6.0); } 
     }
 
     for (int slice=0; slice<wByQQ[sector].size(); slice++){
       wByQQ[sector][slice]->Scale(scaleValue);
+      if (sector == 0) { wByQQ[sector][slice]->Scale(1/6.0); } 
     }
   }
 }
@@ -283,10 +299,7 @@ void DIS1DHistograms::ScaleByBinWidth(){
     for (int slice=0; slice<wByQQ[sector].size(); slice++){
       wByQQ[sector][slice]->Scale(1/(wWidth*qqWidth));
     }
-
   }
-  
-
 }
 
 #endif

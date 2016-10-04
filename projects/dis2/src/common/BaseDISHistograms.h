@@ -26,6 +26,8 @@ class BaseDISHistograms{
   const static double xMin  = 0.1;  const static double xMax  = 0.6; 
   const static double qqMin = 1.0;  const static double qqMax = 4.8;
   const static double wMin  = 2.05; const static double wMax  = 3.1; 
+
+  string baseName; 
   
   TFile * inputFile; 
   TH2I * xByQQ[7]; 
@@ -44,14 +46,9 @@ class BaseDISHistograms{
   
   //ClassDef(BaseDISHistograms, 1); 
 };
-/*
-#endif
 
-#ifndef base_dis_histograms_cxx
-#define base_dis_histograms_cxx
-*/
 BaseDISHistograms::BaseDISHistograms(){
-
+  inputFile = new TFile();
 }
 
 BaseDISHistograms::~BaseDISHistograms(){
@@ -61,10 +58,16 @@ BaseDISHistograms::~BaseDISHistograms(){
 }
 
 void BaseDISHistograms::Init(string name, string title){
+  baseName = name; 
+
   for (int isect = 0; isect < 7; isect++){
     xByQQ[isect] = new TH2I(Form("%s_xByQQ_s%d",name.c_str(),isect),Form("%s x vs. Q^{2} Sect. %d",title.c_str(),isect), numberOfXBins, xMin, xMax, numberOfQQBins, qqMin, qqMax);
     wByQQ[isect] = new TH2I(Form("%s_wByQQ_s%d",name.c_str(),isect),Form("%s w vs. Q^{2} Sect. %d",title.c_str(),isect), numberOfWBins, wMin, wMax, numberOfQQBins, qqMin, qqMax);
   }
+
+  // Unused but has to be here for the event that 
+  // class is instantiated in loading mode. 
+  inputFile = new TFile(); 
 }
 
 void BaseDISHistograms::Save(string filename, string option){
@@ -86,7 +89,8 @@ void BaseDISHistograms::Save(string filename, string option){
 
 void BaseDISHistograms::Load(string filename, string name){
 
-  TFile * inputFile = TFile::Open(filename.c_str());
+  inputFile = TFile::Open(filename.c_str());
+  baseName = name; 
 
   if (inputFile->IsOpen()){
     for (int isect = 0; isect < 7; isect++){

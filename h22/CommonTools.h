@@ -105,5 +105,10 @@ inline double convert_x_qq_to_w(double x, double qq)
   return sqrt(pow(proton_mass,2) + (qq/x)*(1-x));
 }
 
+inline double convert_w_qq_to_x(double w, double qq)
+{
+  return qq/(qq+ pow(w,2)-pow(proton_mass,2));
+}
+
 #endif
 

@@ -67,7 +67,8 @@ void MCLoader::ProcessEvent(){
   TLorentzVector genElectron = event.gen_particle(11);   
   PhysicsEvent genPhysicsEvent = builder.getPhysicsEvent(genElectron); 
 
-  genEvents.Fill(genPhysicsEvent, event.mcSectorByPID(11));
+  int mcSector = event.mcSectorByPID(11);
+  if (mcSector > -1 && mcSector < 7) { genEvents.Fill(genPhysicsEvent, mcSector); }
 
   // Dealing directly with histograms in base histograms here
   // is not ideal, think of a better way. 

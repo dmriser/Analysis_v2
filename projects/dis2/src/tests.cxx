@@ -106,19 +106,19 @@ void testFaradayCupLoader(){
 
 void test1DHistograms(){
   BaseDISHistograms * dataEvents = new BaseDISHistograms();
-  dataEvents->Load("out/pass1.root","dataEvents"); 
+  dataEvents->Load("out/testFile.root","dataEvents"); 
   dataEvents->Rebin2D(2,2);
 
   BaseDISHistograms * recEvents = new BaseDISHistograms();
-  recEvents->Load("out/pass1.root","recEventsRad"); 
+  recEvents->Load("out/testFile.root","recEventsRad"); 
   recEvents->Rebin2D(2,2);
 
   BaseDISHistograms * genEvents = new BaseDISHistograms();
-  genEvents->Load("out/pass1.root","genEventsRad"); 
+  genEvents->Load("out/testFile.root","genEventsRad"); 
   genEvents->Rebin2D(2,2);
 
   BaseDISHistograms * recAndGenEvents = new BaseDISHistograms();
-  recAndGenEvents->Load("out/pass1.root","recAndGenEventsRad"); 
+  recAndGenEvents->Load("out/testFile.root","recAndGenEventsRad"); 
 
   DIS1DHistograms * dataHistos = new DIS1DHistograms(); 
   dataHistos->Create(dataEvents);
@@ -160,5 +160,5 @@ void test1DHistograms(){
   DIS1DHistograms * crossSectionAverage = modelLoader.getCrossSectionAverage(); 
   DIS1DHistograms * binCenterCorrection = new DIS1DHistograms(); 
   binCenterCorrection->CreateByDivision(crossSection, crossSectionAverage, "binCenterCorrection", "Bin Centering Correction"); 
-  binCenterCorrection->Save("out/testSlicing.root","update"); 
+  binCenterCorrection->Save("out/testSlicing.root","recreate"); 
 }

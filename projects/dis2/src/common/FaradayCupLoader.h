@@ -29,13 +29,8 @@ class FaradayCupAppender{
  public:
   void AddFiles(std::vector<std::string> dataFiles); 
   void AppendToFile(std::string outputFilenameWithExtension); 
-  
 };
-/*
-#endif
-#ifndef faraday_cup_appender_cxx
-#define faraday_cup_appender_cxx
-*/
+
 FaradayCupAppender::FaradayCupAppender(DInformation * runInfo){
   runInfoDatabase = runInfo;
   totalCharge = 0;
@@ -77,6 +72,27 @@ void FaradayCupAppender::AppendToFile(std::string outputFilenameWithExtension){
   outputFile->Write();
   outputFile->Close();
 } 
+
+class FaradayCupQuickLoader{
+ public:
+  FaradayCupQuickLoader(){
+
+  }
+
+  ~FaradayCupQuickLoader(){
+
+  }
+
+  double openFileGetCharge(string file){
+    TFile * inputFile = TFile::Open(file.c_str());
+    TH1D * chargeHistogram = (TH1D*) inputFile->Get("totalCharge");
+    double charge = chargeHistogram->GetBinContent(1);
+    inputFile->Close();
+    return charge; 
+  }
+
+
+};
 
 #endif
 

@@ -7,6 +7,7 @@ using std::endl;
 using std::string; 
 using std::vector; 
 
+#include "CommonTools.h"
 #include "DIS1DHistograms.h"
 #include "F1F209Wrapper.hh"
 
@@ -38,8 +39,8 @@ ModelCrossSectionLoader::~ModelCrossSectionLoader(){
 }
 
 void ModelCrossSectionLoader::provideBinningTemplate(DIS1DHistograms * templateHistograms){
-  crossSection->CreateFromExisting(templateHistograms,"crossSection","crossSection");
-  crossSectionAverage->CreateFromExisting(templateHistograms,"crossSectionAverage","crossSectionAverage");
+  crossSection->CreateFromExisting(templateHistograms,"modelCrossSection","crossSection");
+  crossSectionAverage->CreateFromExisting(templateHistograms,"modelCrossSectionAverage","crossSectionAverage");
 }
 
 void ModelCrossSectionLoader::loadCrossSection(double A, double Z, double beamEnergy){
@@ -59,10 +60,10 @@ void ModelCrossSectionLoader::loadCrossSection(double A, double Z, double beamEn
 	double qqUp = crossSection->qqMin + (1+slice)*crossSection->qqWidth;
 	double qqMid = crossSection->qqWidth/2 + qqLow;
 
-	double csLow = model->GetXS(A, Z, beamEnergy, xLow, qqMid);
-	double csUp = model->GetXS(A, Z, beamEnergy, xUp, qqMid);
-	double csMid = model->GetXS(A, Z, beamEnergy, xMid, qqMid);
-	double csAverage = (csUp-csLow)/2; 
+	double csLow = model->GetXS(A, Z, beamEnergy, xLow, qqMid)/mev_to_gev;
+	double csUp = model->GetXS(A, Z, beamEnergy, xUp, qqMid)/mev_to_gev;
+	double csMid = model->GetXS(A, Z, beamEnergy, xMid, qqMid)/mev_to_gev;
+	double csAverage = (csUp+csLow)/2; 
 
 	if (csMid > CS_MIN_VALUE && csMid < CS_MAX_VALUE) {
 	  crossSection->xByQQ[sector][slice]->SetBinContent(xBin,csMid);
@@ -78,17 +79,17 @@ void ModelCrossSectionLoader::loadCrossSection(double A, double Z, double beamEn
     for (int slice=0; slice<crossSection->wByQQ[sector].size(); slice++){
       for (int wBin=1; wBin<=crossSection->numberOfWBins; wBin++){
 	double wLow = crossSection->wByQQ[sector][slice]->GetBinLowEdge(wBin);
-	double wUp = wLow + crossSection->wByQQ[sector][slice]->GetBinCenter(wBin);
+	double wUp = wLow + crossSection->wByQQ[sector][slice]->GetBinWidth(wBin);
 	double wMid = crossSection->wByQQ[sector][slice]->GetBinCenter(wBin);
 
 	double qqLow = crossSection->qqMin + slice*crossSection->qqWidth; 
 	double qqUp = crossSection->qqMin + (1+slice)*crossSection->qqWidth;
 	double qqMid = crossSection->qqWidth/2 + qqLow; 
 	
-	double csLow = model->GetXSByWQQ(A, Z, beamEnergy, wLow, qqMid);
-	double csUp = model->GetXSByWQQ(A, Z, beamEnergy, wUp, qqMid);
-	double csMid = model->GetXSByWQQ(A, Z, beamEnergy, wMid, qqMid);
-	double csAverage = (csUp-csLow)/2; 
+	double csLow = model->GetXS(A, Z, beamEnergy, convert_w_qq_to_x(wLow, qqMid), qqMid)/mev_to_gev;
+	double csUp = model->GetXS(A, Z, beamEnergy, convert_w_qq_to_x(wUp, qqMid), qqMid)/mev_to_gev;
+	double csMid = model->GetXS(A, Z, beamEnergy, convert_w_qq_to_x(wMid, qqMid), qqMid)/mev_to_gev;
+	double csAverage = (csUp+csLow)/2; 
   
 	if (csMid > CS_MIN_VALUE && csMid < CS_MAX_VALUE) {
 	  crossSection->wByQQ[sector][slice]->SetBinContent(wBin,csMid);

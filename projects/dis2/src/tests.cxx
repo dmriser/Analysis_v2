@@ -35,6 +35,7 @@ int main(){
   //  testFaradayCupLoader();
   test1DHistograms();  
 
+
   return 0; 
 }
 
@@ -160,5 +161,9 @@ void test1DHistograms(){
   DIS1DHistograms * crossSectionAverage = modelLoader.getCrossSectionAverage(); 
   DIS1DHistograms * binCenterCorrection = new DIS1DHistograms(); 
   binCenterCorrection->CreateByDivision(crossSection, crossSectionAverage, "binCenterCorrection", "Bin Centering Correction"); 
-  binCenterCorrection->Save("out/testSlicing.root","recreate"); 
+  binCenterCorrection->Save("out/testSlicing.root","update"); 
+
+  DIS1DHistograms * loadingTest = new DIS1DHistograms(); 
+  loadingTest->Load("out/crossSectionTest.root","crossSection"); 
+  loadingTest->PrintPDF("thisTestPDF.pdf");
 }

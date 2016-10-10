@@ -1,6 +1,7 @@
 #ifndef dis_1d_histograms_h
 #define dis_1d_histograms_h
 
+#include <cmath>
 #include <iostream>
 #include <vector>
 using std::cout; 
@@ -10,10 +11,16 @@ using std::vector;
 
 #include "BaseDISHistograms.h"
 
+#include "TCanvas.h"
 #include "TDirectory.h"
 #include "TFile.h"
 #include "TH1.h"
 #include "TH2.h"
+#include "TKey.h"
+#include "TList.h"
+#include "TRegexp.h"
+#include "TString.h"
+#include "TStyle.h"
 
 class DIS1DHistograms{
  public:
@@ -43,6 +50,7 @@ class DIS1DHistograms{
   void CreateFromExisting(DIS1DHistograms * sourceHistograms, string newName, string newTitle);
   void Divide(DIS1DHistograms * denominator);
   void Load(string inputFilenameWithExtension, string title);
+  void PrintPDF(string pdfTitle);
   void Save(string outputFilenameWithExtension, string saveOption); 
   void Scale(double scaleValue);
   void ScaleByBinWidth();
@@ -120,12 +128,50 @@ void DIS1DHistograms::Create(BaseDISHistograms * baseHistograms){
 
 void DIS1DHistograms::Load(string inputFilenameWithExtension, string title){
   
-  if (!inputFile->IsOpen()){
-    inputFile = new TFile(inputFilenameWithExtension.c_str());
+  inputFile = new TFile(inputFilenameWithExtension.c_str());
+
+  for (int sector=0; sector<7; sector++) {
+    allxByQQ[sector] = (TH1D*) inputFile->Get(Form("%s_xByQQ_s%d",title.c_str(),sector));
+    allwByQQ[sector] = (TH1D*) inputFile->Get(Form("%s_wByQQ_s%d",title.c_str(),sector));
   }
 
-  // How do we load unspecified number of slices?
+  // Load unspecified number of slices. 
+  TList * tableOfContents = inputFile->GetListOfKeys(); 
 
+  for (int sector=0; sector<7; sector++){
+    TIter next(tableOfContents);
+    TString targetTitle(Form("%s_xByQQ_s%d",title.c_str(),sector)); 
+    vector<TH1D*> foundHistos;
+    while(TObject *objectFromFile = next()){
+      
+      TString currentObjectName = objectFromFile->GetName();
+      
+      if (currentObjectName.Contains(targetTitle)){
+	foundHistos.push_back((TH1D*) inputFile->Get(currentObjectName));
+      }
+    }
+    xByQQ.push_back(foundHistos);
+    cout << "For title=" << targetTitle << " sector=" << sector << " " << foundHistos.size() << " histograms were loaded. " << endl; 
+  }
+
+  for (int sector=0; sector<7; sector++){
+    TIter next(tableOfContents);
+    TString targetTitle(Form("%s_wByQQ_s%d",title.c_str(),sector)); 
+    vector<TH1D*> foundHistos;
+    while(TObject *objectFromFile = next()){
+      
+      TString currentObjectName = objectFromFile->GetName();
+      
+      if (currentObjectName.Contains(targetTitle)){
+	foundHistos.push_back((TH1D*) inputFile->Get(currentObjectName));
+      }
+    }
+    wByQQ.push_back(foundHistos);
+    cout << "For title=" << targetTitle << " sector=" << sector << " " << foundHistos.size() << " histograms were loaded. " << endl; 
+  }
+
+
+  
 }
 
 void DIS1DHistograms::Save(string outputFilenameWithExtension, string saveOption){
@@ -300,6 +346,46 @@ void DIS1DHistograms::ScaleByBinWidth(){
       wByQQ[sector][slice]->Scale(1/(wWidth*qqWidth));
     }
   }
+}
+
+void DIS1DHistograms::PrintPDF(string pdfTitle){
+  
+  // getting size of grid 
+  int gridSize=0; 
+  while(gridSize*(gridSize+1) < xByQQ[0].size()){
+    gridSize++;
+  }
+
+  cout << "found grid size " << gridSize << endl;
+
+  gStyle->SetOptStat(0);
+
+  TCanvas * canvas = new TCanvas("canvas","",1000,800);
+  canvas->Divide(gridSize+1,gridSize);
+  canvas->Print(Form("%s[",pdfTitle.c_str()));
+  
+  for (int sector=0; sector<7; sector++){
+    for (int slice=0; slice<xByQQ[sector].size()-1; slice++){
+      canvas->cd(slice+1);
+      //      xByQQ[sector][slice]->SetMarkerStyle(7);
+      xByQQ[sector][slice]->Draw();
+    }
+    canvas->Print(pdfTitle.c_str());
+  }
+  canvas->Clear();
+  canvas->Divide(gridSize+1,gridSize);
+  
+  for (int sector=0; sector<7; sector++){
+    for (int slice=0; slice<xByQQ[sector].size()-1; slice++){
+      canvas->cd(slice+1);
+      //      wByQQ[sector][slice]->SetMarkerStyle(7);
+      wByQQ[sector][slice]->Draw();
+    }
+    canvas->Print(pdfTitle.c_str());
+  }
+  canvas->Clear();
+
+  canvas->Print(Form("%s]",pdfTitle.c_str()));
 }
 
 #endif

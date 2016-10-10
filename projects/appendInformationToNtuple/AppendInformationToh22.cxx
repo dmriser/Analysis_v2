@@ -10,6 +10,7 @@ using std::cout;
 using std::endl;
 using std::vector;
 using std::string; 
+using std::flush; 
 
 #include "AppendInformationToh22.h"
 
@@ -38,33 +39,41 @@ void AppendInformationToh22::Loop(){
 
   GeneratedEvents genEvents = LoadEventFile("events.gen"); 
 
-  cout << "Detected type:" << GSIM << endl; 
-  
   TFile * newNtuple = TFile::Open("modifiedFile.root","recreate");
   TChain * newChain = (TChain*) fchain->CloneTree(0);
   TTree * newTree   = newChain->GetTree();
-  
 
+  cout << "Looping on " << GetEntries() << " events." << endl;
 
-  cout << "Looping on " << GetEntries() << " events. " << endl;
   // Event loop below. 
   for(int ievent=0; ievent<GetEntries(); ievent++){
     GetEntry(ievent); 
     
+    int jevent = event.evntid-1;
+
     // Calculate true
-    int true_pid = genEvents[ievent].pid; 
-    double true_mcp = sqrt( pow(genEvents[ievent].px,2) + pow(genEvents[ievent].py,2) + pow(genEvents[ievent].pz,2) );
-    double true_cx = genEvents[ievent].px/true_mcp;
-    double true_cy = genEvents[ievent].py/true_mcp;
-    double true_cz = genEvents[ievent].pz/true_mcp; 
+    int true_pid = genEvents[jevent].pid; 
+    double true_mcp = sqrt( pow(genEvents[jevent].px,2) + pow(genEvents[jevent].py,2) + pow(genEvents[jevent].pz,2) );
+    double true_cx = genEvents[jevent].px/true_mcp;
+    double true_cy = genEvents[jevent].py/true_mcp;
+    double true_cz = genEvents[jevent].pz/true_mcp; 
     double true_mctheta = acos(true_cz)*to_degrees;
     double true_mcphi = atan(true_cy/true_cx)*to_degrees; 
+
+    event.mcpid[0] = (Float_t) true_pid; 
+    event.mcp[0] = (Float_t) true_mcp; 
+    event.mcphi[0] = (Float_t) true_mcphi; 
+    event.mctheta[0] = (Float_t) true_mctheta; 
+
+    cout << "deltaP/P=" << (true_mcp-event.p[0])/event.p[0] << endl; 
     
     newTree->Fill();
   }
-  
+   
   newTree->AutoSave();
   newNtuple->Close(); 
+  
+  cout << "Done loop."  << endl; 
 
 }
 
@@ -91,7 +100,7 @@ GeneratedEvents AppendInformationToh22::LoadEventFile(string inputFile){
   
   eventFile.close();
 
-  cout << " Done loading gen events " << theseEvents.size() << endl; 
+  cout << "Done loading gen events " << theseEvents.size() << endl; 
   return theseEvents; 
 }
 #endif

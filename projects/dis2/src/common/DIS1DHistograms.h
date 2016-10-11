@@ -176,13 +176,13 @@ void DIS1DHistograms::Load(string inputFilenameWithExtension, string title){
 
 void DIS1DHistograms::Save(string outputFilenameWithExtension, string saveOption){
   TFile * outputFile = TFile::Open(outputFilenameWithExtension.c_str(),saveOption.c_str());
-  TDirectory * outputDirectory = new TDirectory(); 
-
 
   if (outputFile->IsOpen()){
     for (int sector=0; sector<7; sector++){
       allxByQQ[sector]->Write();
       allwByQQ[sector]->Write();
+      cout << "Saving" << allxByQQ[sector]->GetName() << " to file=" << outputFilenameWithExtension << endl;
+      cout << "Saving" << allwByQQ[sector]->GetName() << " to file=" << outputFilenameWithExtension << endl;
     }
   
 
@@ -198,7 +198,8 @@ void DIS1DHistograms::Save(string outputFilenameWithExtension, string saveOption
       }
     }
   }
- 
+
+  outputFile->Write();
   outputFile->Close();
 }
 
@@ -258,14 +259,16 @@ void DIS1DHistograms::CreateFromExisting(DIS1DHistograms * sourceHistograms, str
   qqWidth = sourceHistograms->qqWidth; 
 
   for (int sector=0; sector<7; sector++){
-    allxByQQ[sector] = (TH1D*) sourceHistograms->allxByQQ[sector]->Clone();
+    allxByQQ[sector] = (TH1D*) (sourceHistograms->allxByQQ[sector]->Clone());
     allxByQQ[sector]->SetName(Form("%s_xByQQ_s%d",newName.c_str(),sector));
-    allxByQQ[sector]->SetName(Form("%s x vs. Q^{2} Sect. %d",newTitle.c_str(),sector));
+    allxByQQ[sector]->SetTitle(Form("%s x vs. Q^{2} Sect. %d",newTitle.c_str(),sector));
+    allxByQQ[sector]->SetDirectory(0);
 
-    allwByQQ[sector] = (TH1D*) sourceHistograms->allwByQQ[sector]->Clone();
+    allwByQQ[sector] = (TH1D*) (sourceHistograms->allwByQQ[sector]->Clone());
     allwByQQ[sector]->SetName(Form("%s_wByQQ_s%d",newName.c_str(),sector));
-    allwByQQ[sector]->SetName(Form("%s w vs. Q^{2} Sect. %d",newTitle.c_str(),sector));
-  
+    allwByQQ[sector]->SetTitle(Form("%s w vs. Q^{2} Sect. %d",newTitle.c_str(),sector));
+    allwByQQ[sector]->SetDirectory(0);
+
     vector<TH1D*> xContainer; 
     vector<TH1D*> wContainer; 
     for (int slice=0; slice<sourceHistograms->xByQQ[sector].size(); slice++){
@@ -306,6 +309,9 @@ void DIS1DHistograms::CreateByDivision(DIS1DHistograms *numerator, DIS1DHistogra
 
   CreateFromExisting(numerator,name,title);
   Divide(denominator);
+
+  cout << allxByQQ[0]->GetName() << " has been created with entries=" << allxByQQ[0]->GetEntries() << endl;
+  cout << allwByQQ[0]->GetName() << " has been created with entries=" << allwByQQ[0]->GetEntries() << endl;
 }
 
 void DIS1DHistograms::Scale(double scaleValue){

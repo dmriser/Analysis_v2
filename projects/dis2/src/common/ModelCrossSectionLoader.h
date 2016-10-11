@@ -49,7 +49,56 @@ void ModelCrossSectionLoader::loadCrossSection(double A, double Z, double beamEn
   double CS_MAX_VALUE = 1e10;
   
   for (int sector=0; sector<7; sector++){
+    for (int xBin=1; xBin<=crossSection->numberOfXBins; xBin++){
+      double xLow = crossSection->allxByQQ[sector]->GetBinLowEdge(xBin);
+      double xUp = xLow + crossSection->allxByQQ[sector]->GetBinWidth(xBin);
+      double xMid = crossSection->allxByQQ[sector]->GetBinCenter(xBin);
+      
+      double qqMid = -1*crossSection->qqMin/2 + crossSection->qqMax;
+      
+      double csLow = model->GetXS(A, Z, beamEnergy, xLow, qqMid)/mev_to_gev;
+      double csUp = model->GetXS(A, Z, beamEnergy, xUp, qqMid)/mev_to_gev;
+      double csMid = model->GetXS(A, Z, beamEnergy, xMid, qqMid)/mev_to_gev;
+      double csAverage = (csUp+csLow)/2; 
 
+      if (csMid > CS_MIN_VALUE && csMid < CS_MAX_VALUE) {
+	crossSection->allxByQQ[sector]->SetBinContent(xBin,csMid);
+	crossSection->allxByQQ[sector]->SetBinError(xBin,0.0);
+	}
+      if (csAverage > CS_MIN_VALUE && csAverage < CS_MAX_VALUE) {
+	crossSectionAverage->allxByQQ[sector]->SetBinContent(xBin,csAverage);
+	crossSectionAverage->allxByQQ[sector]->SetBinError(xBin,0.0);
+      }      
+    }
+  }
+
+  for (int sector=0; sector<7; sector++){
+    for (int wBin=1; wBin<=crossSection->numberOfWBins; wBin++){
+      double wLow = crossSection->allwByQQ[sector]->GetBinLowEdge(wBin);
+      double wUp = wLow + crossSection->allwByQQ[sector]->GetBinWidth(wBin);
+      double wMid = crossSection->allwByQQ[sector]->GetBinCenter(wBin);
+      
+      double qqMid = crossSection->qqWidth/2 + crossSection->qqMin; 
+      
+      double csLow = model->GetXS(A, Z, beamEnergy, convert_w_qq_to_x(wLow, qqMid), qqMid)/mev_to_gev;
+      double csUp = model->GetXS(A, Z, beamEnergy, convert_w_qq_to_x(wUp, qqMid), qqMid)/mev_to_gev;
+      double csMid = model->GetXS(A, Z, beamEnergy, convert_w_qq_to_x(wMid, qqMid), qqMid)/mev_to_gev;
+      double csAverage = (csUp+csLow)/2; 
+      
+	if (csMid > CS_MIN_VALUE && csMid < CS_MAX_VALUE) {
+	  crossSection->allwByQQ[sector]->SetBinContent(wBin,csMid);
+	  crossSection->allwByQQ[sector]->SetBinError(wBin,0.0);
+	}
+	if (csAverage > CS_MIN_VALUE && csAverage < CS_MAX_VALUE) {
+	  crossSectionAverage->allwByQQ[sector]->SetBinContent(wBin,csAverage);
+	  crossSectionAverage->allwByQQ[sector]->SetBinError(wBin,0.0);
+	}      
+
+      }
+ 
+  }
+
+  for (int sector=0; sector<7; sector++){
     for (int slice=0; slice<crossSection->xByQQ[sector].size(); slice++){
       for (int xBin=1; xBin<=crossSection->numberOfXBins; xBin++){
 	double xLow = crossSection->xByQQ[sector][slice]->GetBinLowEdge(xBin);

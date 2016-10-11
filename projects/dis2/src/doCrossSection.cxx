@@ -47,6 +47,7 @@ int main(int argc, char * argv[]){
   if (inputFilename != "UNSET"){
     FaradayCupQuickLoader fcup; 
     normalizationScale /= fcup.openFileGetCharge(inputFilename); 
+    cout << "Normalization Scale=" << normalizationScale << endl;
 
     BaseDISHistograms * dataEvents2D = new BaseDISHistograms();
     dataEvents2D->Load(inputFilename.c_str(),"dataEvents");

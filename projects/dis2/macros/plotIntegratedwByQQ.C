@@ -11,11 +11,11 @@
   TH1D *binCorrectedCrossSection_xByQQ[numberSector];
   TH1D *binCorrectedCrossSectionRatio_xByQQ[numberSector];
   
-  readIntegratedHisto(acceptance_xByQQ, inputFile, numberSector,"acceptance_xByQQ");
-  readIntegratedHisto(crossSection_xByQQ, inputFile, numberSector,"crossSection_xByQQ");
-  readIntegratedHisto(crossSectionRatio_xByQQ, inputFile, numberSector,"crossSectionRatio_xByQQ");
-  readIntegratedHisto(binCorrectedCrossSection_xByQQ, inputFile, numberSector,"binCorrectedCrossSection_xByQQ");
-  readIntegratedHisto(binCorrectedCrossSectionRatio_xByQQ, inputFile, numberSector,"binCorrectedCrossSectionRatio_xByQQ");
+  readIntegratedHisto(acceptance_xByQQ, inputFile, numberSector,"acceptance_wByQQ");
+  readIntegratedHisto(crossSection_xByQQ, inputFile, numberSector,"crossSection_wByQQ");
+  readIntegratedHisto(crossSectionRatio_xByQQ, inputFile, numberSector,"crossSectionRatio_wByQQ");
+  readIntegratedHisto(binCorrectedCrossSection_xByQQ, inputFile, numberSector,"binCorrectedCrossSection_wByQQ");
+  readIntegratedHisto(binCorrectedCrossSectionRatio_xByQQ, inputFile, numberSector,"binCorrectedCrossSectionRatio_wByQQ");
 
   TControlBar * bar = new TControlBar("vertical","Plot Integrated Histos");
   bar->AddButton("","");

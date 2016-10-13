@@ -90,6 +90,7 @@ int main(int argc, char * argv[]){
     crossSection->CreateByDivision(dataEvents,acceptance,"crossSection","Cross Section W/ Acceptance");
     crossSection->Scale(normalizationScale);
     crossSection->ScaleByBinWidth();
+    crossSection->ScaleAllByNumberBins();
     crossSection->Save(outputFilename.c_str(),"update");
 
     ModelCrossSectionLoader * modelLoader = new ModelCrossSectionLoader();

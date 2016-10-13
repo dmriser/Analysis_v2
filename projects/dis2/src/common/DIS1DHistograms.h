@@ -54,6 +54,7 @@ class DIS1DHistograms{
   void Save(string outputFilenameWithExtension, string saveOption); 
   void Scale(double scaleValue);
   void ScaleByBinWidth();
+  void ScaleAllByNumberBins();
   void SetErrors(); 
 };
 
@@ -181,8 +182,8 @@ void DIS1DHistograms::Save(string outputFilenameWithExtension, string saveOption
     for (int sector=0; sector<7; sector++){
       allxByQQ[sector]->Write();
       allwByQQ[sector]->Write();
-      cout << "Saving" << allxByQQ[sector]->GetName() << " to file=" << outputFilenameWithExtension << endl;
-      cout << "Saving" << allwByQQ[sector]->GetName() << " to file=" << outputFilenameWithExtension << endl;
+      cout << "Saving " << allxByQQ[sector]->GetName() << " to file=" << outputFilenameWithExtension << endl;
+      cout << "Saving " << allwByQQ[sector]->GetName() << " to file=" << outputFilenameWithExtension << endl;
     }
   
 
@@ -392,6 +393,15 @@ void DIS1DHistograms::PrintPDF(string pdfTitle){
   canvas->Clear();
 
   canvas->Print(Form("%s]",pdfTitle.c_str()));
+}
+
+void DIS1DHistograms::ScaleAllByNumberBins(){
+  
+  for (int s=0; s<7; s++){
+    allxByQQ[s]->Scale((double)1.0/numberOfQQBins);
+    allwByQQ[s]->Scale((double)1.0/numberOfQQBins);
+  }
+
 }
 
 #endif

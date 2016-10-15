@@ -17,6 +17,14 @@ void readHisto(TH1D *histo[numberSector][numberSlices], TFile *file, const int n
   }
 }
 
+void readEvents(TH2D *histo[numberSector], TFile *file, const int numberSector, string title){
+  for (int s=0; s< numberSector; s++){
+    string fullTitle = Form("%s_s%d",title.c_str(),s);
+    histo[s] = (TH2D*) file->Get(fullTitle.c_str());
+    cout << " >>> Getting "  << fullTitle << " with " << histo[s]->GetEntries() << " entries. " << endl; 
+  }
+}
+
 void showIntegratedHisto(TH1D *histo[numberSector], const int numberSector){
   TCanvas * can = new TCanvas("can","",1200,800);
   can->Divide(3,2);
@@ -34,6 +42,24 @@ void showIntegratedHisto(TH1D *histo[numberSector], const int numberSector){
   }
 
 }
+
+void showEvents(TH2D *histo[numberSector], const int numberSector){
+  TCanvas * can = new TCanvas("can","",1200,800);
+  can->Divide(3,2);
+  
+  TLatex sectorCaption;
+  sectorCaption.SetNDC();
+  sectorCaption.SetTextFont(12);
+
+  for (int s=1; s<numberSector; s++){
+    can->cd(s);
+    histo[s]->Draw("colz");
+    sectorCaption.DrawLatex(0.4, 0.925, Form("Sector %d",s));
+  }
+
+}
+
+
 void showHisto(TH1D *histo[numberSector][numberSlices], const int numberSector, const int numberSlices){
   int canHeight=0;
   while(canHeight*(canHeight+1) < numberSlices){canHeight++;}

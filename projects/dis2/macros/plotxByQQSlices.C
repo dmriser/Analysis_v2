@@ -3,7 +3,7 @@
   gROOT->LoadMacro("utils.C");
 
   const int numberSector = 7;
-  const int numberSlices = 40;
+  const int numberSlices = 10;
 
   TH1D *acceptance[numberSector][numberSlices];
   TH1D *crossSection[numberSector][numberSlices];
@@ -13,7 +13,7 @@
   TH1D *binCorrectedCrossSectionRatio[numberSector][numberSlices];
 
 
-  TFile *inputFile = TFile::Open("crossSectionPass1.root");
+  TFile *inputFile = TFile::Open("crossSectionPass1-10Bins.root");
   
   readHisto(acceptance, inputFile, numberSector, numberSlices, "acceptance_xByQQ");
   readHisto(crossSection, inputFile, numberSector, numberSlices, "crossSection_xByQQ");

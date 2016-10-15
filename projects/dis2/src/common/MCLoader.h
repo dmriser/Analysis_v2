@@ -33,10 +33,11 @@ class MCLoader : public HistogramLoader{
   NathanEIDWrapper eID; 
   std::string mcType; 
   
- protected:
+ public:
   void Initialize();
   void ProcessEvent();
   void Save();
+  void Rebin(int xFactor, int yFactor);
 
 };
 /*
@@ -57,7 +58,7 @@ void MCLoader::Initialize(){
   recEvents.Init(Form("recEvents%s",mcType.c_str()),"Reconstructed MC Hits");
   genEvents.Init(Form("genEvents%s",mcType.c_str()),"Generated MC Events");
   recAndGenEvents.Init(Form("recAndGenEvents%s",mcType.c_str()),"Rec/Gen Same Bin Events");
-  recAndGenEvents.Rebin2D(2,2);
+  //  recAndGenEvents.Rebin2D(2,2);
 }
 
 // This is the core routine which conditionally fills histograms. 
@@ -106,6 +107,12 @@ void MCLoader::Save(){
   recEvents.Save(outputFilenameWithExtension, saveOption);
   genEvents.Save(outputFilenameWithExtension, "UPDATE");   
   recAndGenEvents.Save(outputFilenameWithExtension, "UPDATE");
+}
+
+void MCLoader::Rebin(int xFactor, int yFactor){
+  recEvents.Rebin2D(xFactor, yFactor);
+  genEvents.Rebin2D(xFactor, yFactor);
+  recAndGenEvents.Rebin2D(xFactor, yFactor);
 }
 
 #endif

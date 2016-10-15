@@ -28,12 +28,11 @@ class HistogramLoader : public h22Reader{
  public:
   void Execute();
 
- protected:
+ public:
   virtual void Initialize();
   virtual void Loop();
   virtual void ProcessEvent(); /** We don't need to pass in the event because h22Reader has access to the events already. */
   virtual void Save();
-
 };
 /*
 #endif

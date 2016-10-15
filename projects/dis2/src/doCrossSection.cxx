@@ -23,8 +23,8 @@ void configureCommandLineOptions(h22Options * theseOpts);
 int main(int argc, char * argv[]){
 
   // ------------- Physics Options -------------
-  int numberOfXBins = 40; 
-  int numberOfWBins = 40; 
+  int numberOfXBins = 80; 
+  int numberOfWBins = 80; 
 
   double normalizationScale = cm_to_outhouse*(hydrogen_molar_weight*electron_c*1e6)/(5.00*avogadro*hydrogen_density);
   // -------------------------------------------

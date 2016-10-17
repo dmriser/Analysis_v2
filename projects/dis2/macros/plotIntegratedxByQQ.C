@@ -3,7 +3,7 @@
   gROOT->LoadMacro("utils.C");
 
   const int numberSector = 7;
-  TFile * inputFile = TFile::Open("crossSectionPass1.root");
+  TFile * inputFile = TFile::Open("../out/crossSectionResultNewModelPass1.root");
 
   TH1D *acceptance_xByQQ[numberSector];
   TH1D *crossSection_xByQQ[numberSector];

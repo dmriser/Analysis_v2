@@ -87,4 +87,10 @@ void showIntegratedCombinedHisto(TH1D *histo[numberSector], const int numberSect
   histo[0]->Draw("pe");
 }
 
-
+void showRatio0To1(TH1D *histo[numberSector], const int numberSector){
+  TCanvas *can = new TCanvas("can","",800,800);
+  histo[0]->SetMinimum(0.0);
+  histo[0]->SetMaximum(1.1);
+  histo[0]->SetLineColor(kRed);
+  histo[0]->Draw("hist");
+} 

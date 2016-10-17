@@ -24,13 +24,11 @@ void f1f2in09_(double* Z, double* A, double* Q2, double* W2, double* F1, double*
 void f1f2qe09_(double* Z, double* A, double* Q2, double* W2, double* F1, double* F2);
 }
 
-F1F209Wrapper::F1F209Wrapper()
-{
+F1F209Wrapper::F1F209Wrapper(){
     // Nothing to do
 }
 
-F1F209Wrapper::~F1F209Wrapper()
-{
+F1F209Wrapper::~F1F209Wrapper(){
     // Nothing to do
 }
 
@@ -51,21 +49,23 @@ void F1F209Wrapper::GetF1F2QE09(double Z, double A, double Q2, double W2, double
     F2 = F2o;
 }
 
-double F1F209Wrapper::GetXS(double Z, double A, double Ei, double x, double qq)
-{
+double F1F209Wrapper::GetXS(double Z, double A, double Ei, double x, double qq){
     const double M = 0.93825;
+    const double alpha = 1/137.0;
+    const double pi = 3.141592;
 
     double Q2 = qq; 
     double w2 = M*M + (1-x)*(Q2/x);
     double nu = Q2/(2*M*x);
     double Ef = Ei-nu;
     double theta = 2*asin(sqrt(Q2)/(2*sqrt(Ei*Ef)));
+    double y = nu/Ei;
     
     double F1, F2, r;
     double xs1, xs2;
 
+    /*
     GetF1F2IN09(Z, A, Q2, w2, F1, F2, r);
-
     xs1 = (2. / 137. * Ef / Q2 * cos(theta / 2.))*(2. / 137. * Ef / Q2 * cos(theta / 2.)); // mott
     xs1 = xs1 * (2. / M * F1 * tan(abs(theta) / 2.) * tan(abs(theta) / 2.) + F2 / nu);
     xs1 = xs1 * 389.379;
@@ -74,8 +74,17 @@ double F1F209Wrapper::GetXS(double Z, double A, double Ei, double x, double qq)
     xs2 = (2. / 137. * Ef / Q2 * cos(theta / 2.))*(2. / 137. * Ef / Q2 * cos(theta / 2.)); // mott
     xs2 = xs2 * (2. / M * F1 * tan(abs(theta) / 2.) * tan(abs(theta) / 2.) + F2 / nu);
     xs2 = xs2 * 389.379;
-
+    
     return (xs1 + xs2) / 1000.; // ub/MeV-sr
+    */    
+    
+    // Modern Particle Physics, Thomson 
+    // Eq. 8.12
+    GetF1F2QE09(Z, A, Q2, w2, F1, F2);
+    double crossSectionGeV = (4*alpha*pi/pow(Q2,2))*((1-y)/x*F2 + pow(y,2)*F1);
+
+    // uBarn/MeV  
+    return crossSectionGeV/1000; 
 }
 
 double F1F209Wrapper::GetXSByWQQ(double Z, double A, double Ei, double w, double qq)

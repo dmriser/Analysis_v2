@@ -3,11 +3,11 @@
 # compiling libraries 
 scons 
 
-set NLIBS    = `ls -l lib/*.so | wc -l`
-set NHEADERS = `ls -l */*.h | wc -l`
+set NLIBS    = `ls -l *.so | wc -l`
+set NHEADERS = `ls -l */*.f | wc -l`
 
 # moving to dest
-cp lib/*.so $h22libs/lib/
-cp */*.h    $h22libs/include/
+cp *.so $h22libs/lib/
+cp */*.f $h22libs/include/
 
 echo " >> Finished! Installed $NLIBS libraries and $NHEADERS header files! "

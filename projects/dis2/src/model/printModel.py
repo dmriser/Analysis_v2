@@ -1,6 +1,6 @@
 #!/usr/bin/python 
 
-import KeppelModel 
+import KeppelModel, BostedModel  
 
 # beam energy 
 beam = 5.75
@@ -13,21 +13,18 @@ qqWidth = (qqMax-qqMin)/numberQQBins
 
 # W Binning Parameters 
 numberWBins = 40
-wMin = 2.05
-wMax = 3.1 
+wMin = 1.1
+wMax = 2.7 
 wWidth = (wMax-wMin)/numberWBins
 
 keppel = []
-print "# Keppel Model for Inclusive Events"
-print "# numberQQBins={0} Min={1} Max={2}".format(numberQQBins, qqMin, qqMax) 
-print "# numberWBins={0} Min={1} Max={2}".format(numberWBins, wMin, wMax) 
 
 for i in range(1,numberQQBins):
     for j in range(1, numberWBins):
         qq = qqMin + i*qqWidth
         w = wMin + j*wWidth 
 
-        xs = KeppelModel.tkeppel(beam,qq,w)
-        keppel.append(xs)
-        print "{0} {1} {2}".format(i, j, xs)
+        xsKeppel = KeppelModel.tkeppel(beam,qq,w)
+        keppel.append(xsKeppel)
+        print "{0} {1} {2}".format(i, j, xsKeppel)
 

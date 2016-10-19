@@ -1,0 +1,26 @@
+#######################################################
+
+	READEME for using FortranModels 
+
+	David Riser, University of Connecticut 
+  	      	Wed Oct 19, 2016
+
+#######################################################
+
+(1) Configure library path in your system for where the 
+    library will be stored, in my case its an environment 
+    variable called $h22libs.  You need to change the 
+    SConstruct to import your environment variable.  Check 
+    also the install.csh script to ensure that the object file 
+    is moved and the header files are moved to your folder. 
+    This location should be in your $LD_LIBRARY_PATH so c++
+    can locate the shared object files at the run-time. 
+
+
+(2) Run install.csh, this will compile fortran libraries first
+    and then build the testModel.cxx code.  The install script 
+    will also copy the .so and .f files to your specified libray 
+    location.  
+
+(3) Run the test code, use it as an example of how to include the 
+    libraries using the extern"C" block at the top.  

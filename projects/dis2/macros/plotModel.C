@@ -9,14 +9,14 @@
 
   TFile *inputFile = TFile::Open("../out/crossSectionPass1.root");
 
-  TH2D *model = new TH2D("model","",numberQQBins,1.0,4.8,numberWBins,2.05,3.1);
+  TH2D *model = new TH2D("model","",numberQQBins,1.0,4.8,numberWBins,1.1,2.7);
   TH1D *modelQQSlices[numberSlices]; 
   TH1D *modelWSlices[numberSlices]; 
 
   TH1D *crossSection_wByQQ[numberSector][numberSlices];
   
   readHisto(crossSection_wByQQ, inputFile, numberSector, numberSlices, "crossSection_wByQQ");
-  loadModel(model,numberQQBins,numberWBins,"KeppelTheory.dat");
+  loadModel(model,numberQQBins,numberWBins,"KeppelTheoryWithResonance.dat");
   makeSlicesX(model, modelQQSlices, numberSlices, 1);
   makeSlicesY(model, modelWSlices, numberSlices, 1);
 

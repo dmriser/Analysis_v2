@@ -1,0 +1,17 @@
+# Compile model. 
+
+import os, glob 
+
+# Compline the Fortran Code
+fort_env = Environment(ENV = {'PATH':os.environ['PATH']})
+fort_env.Append(FLAGS = ['-fno-leading-underscore','-fno-second-underscore'])
+fort_env.SharedLibrary('libBrasse','brasse.f')
+
+# Compile the C++ Code 
+env = Environment(ENV = {'PATH':os.environ['PATH']})
+env.ParseConfig("root-config --glibs --cflags")
+env.Append(CCFLAGS = ['-g','-lgfortran'])
+env.Append(CPPPATH = ['.'], LIBPATH = ['.'],LIBS = ['Brasse'])
+
+sources  = glob.glob('testModel.cxx')
+env.Program('testModel',sources)

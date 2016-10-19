@@ -1,17 +1,17 @@
-# Compile libraries for analysis classes. 
+# Compile fortran models. 
 
 import os, glob 
 
 # Compline the Fortran Code
 fort_env = Environment(ENV = {'PATH':os.environ['PATH']})
 fort_env.Append(FLAGS = ['-fno-leading-underscore','-fno-second-underscore'])
-fort_env.SharedLibrary('libBrasse','brasse.f')
+fort_env.Library('libKeppel','keppel.f')
 
 # Compile the C++ Code 
 env = Environment(ENV = {'PATH':os.environ['PATH']})
 env.ParseConfig("root-config --glibs --cflags")
 env.Append(CCFLAGS = ['-g','-lgfortran'])
-env.Append(CPPPATH = ['.'], LIBPATH = ['.'],LIBS = ['Brasse'])
+env.Append(CPPPATH = ['.'], LIBPATH = ['.'],LIBS = ['Keppel'])
 
-sources  = glob.glob('*.cc')
-env.SharedLibrary('CPP_BRASSE',sources)
+sources  = glob.glob('testModel.cxx')
+env.Program('testModel',sources)

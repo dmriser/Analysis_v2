@@ -2,10 +2,10 @@
 
 import os, glob 
 
-# Compile PB Model / Brasse Model from fortran 
-fort_env = Environment(ENV = {'PATH':os.environ['PATH']})
-fort_env.SharedLibrary('models/pbmodel/libF1F209','models/pbmodel/F1F209.f')
-fort_env.SharedLibrary('models/Brasse/libBrasse','models/Brasse/brasse.f')
+# Moved to it's own SConscript in models/
+#fort_env = Environment(ENV = {'PATH':os.environ['PATH']})
+#fort_env.SharedLibrary('models/pbmodel/libF1F209','models/pbmodel/F1F209.f')
+#fort_env.SharedLibrary('models/Brasse/libBrasse','models/Brasse/brasse.f')
 
 # Config h22 environment 
 env = Environment(ENV = {'PATH':os.environ['PATH']})

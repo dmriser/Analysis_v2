@@ -24,7 +24,7 @@ class BaseDISHistograms{
 
   const static double xMin  = 0.1;  const static double xMax  = 0.6; 
   const static double qqMin = 1.0;  const static double qqMax = 4.8;
-  const static double wMin  = 2.05; const static double wMax  = 3.1; 
+  const static double wMin  = 1.1; const static double wMax  = 2.7; 
 
   string baseName; 
   

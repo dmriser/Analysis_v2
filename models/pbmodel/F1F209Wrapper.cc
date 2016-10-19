@@ -14,6 +14,9 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cmath>
+#include <iostream>
+using std::cout; 
+using std::endl; 
 
 #include "F1F209Wrapper.hh"
 
@@ -41,8 +44,7 @@ void F1F209Wrapper::GetF1F2IN09(double Z, double A, double Q2, double W2, double
     rc = rco;
 }
 
-void F1F209Wrapper::GetF1F2QE09(double Z, double A, double Q2, double W2, double &F1, double &F2)
-{
+void F1F209Wrapper::GetF1F2QE09(double Z, double A, double Q2, double W2, double &F1, double &F2){
     double F1o, F2o, rco;
     f1f2qe09_(&Z, &A, &Q2, &W2, &F1o, &F2o);
     F1 = F1o;
@@ -64,7 +66,7 @@ double F1F209Wrapper::GetXS(double Z, double A, double Ei, double x, double qq){
     double F1, F2, r;
     double xs1, xs2;
 
-    /*
+
     GetF1F2IN09(Z, A, Q2, w2, F1, F2, r);
     xs1 = (2. / 137. * Ef / Q2 * cos(theta / 2.))*(2. / 137. * Ef / Q2 * cos(theta / 2.)); // mott
     xs1 = xs1 * (2. / M * F1 * tan(abs(theta) / 2.) * tan(abs(theta) / 2.) + F2 / nu);
@@ -74,21 +76,12 @@ double F1F209Wrapper::GetXS(double Z, double A, double Ei, double x, double qq){
     xs2 = (2. / 137. * Ef / Q2 * cos(theta / 2.))*(2. / 137. * Ef / Q2 * cos(theta / 2.)); // mott
     xs2 = xs2 * (2. / M * F1 * tan(abs(theta) / 2.) * tan(abs(theta) / 2.) + F2 / nu);
     xs2 = xs2 * 389.379;
-    
+        
     return (xs1 + xs2) / 1000.; // ub/MeV-sr
-    */    
-    
-    // Modern Particle Physics, Thomson 
-    // Eq. 8.12
-    GetF1F2QE09(Z, A, Q2, w2, F1, F2);
-    double crossSectionGeV = (4*alpha*pi/pow(Q2,2))*((1-y)/x*F2 + pow(y,2)*F1);
-
-    // uBarn/MeV  
-    return crossSectionGeV/1000; 
 }
 
-double F1F209Wrapper::GetXSByWQQ(double Z, double A, double Ei, double w, double qq)
-{
+// Needs to be fixed, working on x-Q2 cross section first. 
+double F1F209Wrapper::GetXSByWQQ(double Z, double A, double Ei, double w, double qq){
     const double M = 0.93825;
 
     double Q2 = qq; 
@@ -115,8 +108,7 @@ double F1F209Wrapper::GetXSByWQQ(double Z, double A, double Ei, double w, double
     return (xs1 + xs2) / 1000.; // ub/MeV-sr
 }
 
-double F1F209Wrapper::GetXSByAngle(double Z, double A, double Ei, double Ef, double theta)
-{
+double F1F209Wrapper::GetXSByAngle(double Z, double A, double Ei, double Ef, double theta){
     const double M = 0.93825;
 
     // Going to rad.
@@ -130,7 +122,6 @@ double F1F209Wrapper::GetXSByAngle(double Z, double A, double Ei, double Ef, dou
     double xs1, xs2;
 
     GetF1F2IN09(Z, A, Q2, w2, F1, F2, r);
-
     xs1 = (2. / 137. * Ef / Q2 * cos(theta / 2.))*(2. / 137. * Ef / Q2 * cos(theta / 2.)); // mott
     xs1 = xs1 * (2. / M * F1 * tan(abs(theta) / 2.) * tan(abs(theta) / 2.) + F2 / nu);
     xs1 = xs1 * 389.379;

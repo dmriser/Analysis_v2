@@ -100,7 +100,7 @@ int main(int argc, char * argv[]){
   loader4.Loop();
   loader4.Save();
 
-  MCLoader loader5(eventSelector, outputFilename, "UPDATE", "33Bins");
+  MCLoader loader5(eventSelector, outputFilename, "UPDATE", "34Bins");
   for (int ifile = 0; ifile < files.size(); ifile++) { loader5.AddFile(files[ifile]); }
   loader5.Initialize();
   loader5.Rebin(6,6);

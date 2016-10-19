@@ -10,6 +10,7 @@ using std::string;
 using std::vector; 
 
 #include "BaseDISHistograms.h"
+#include "CommonTools.h"
 
 #include "TCanvas.h"
 #include "TDirectory.h"
@@ -55,6 +56,7 @@ class DIS1DHistograms{
   void Scale(double scaleValue);
   void ScaleByBinWidth();
   void ScaleAllByNumberBins();
+  void ScaleByPhotonFlux(double beamEnergy);
   void SetErrors(); 
 };
 
@@ -400,6 +402,24 @@ void DIS1DHistograms::ScaleAllByNumberBins(){
   for (int s=0; s<7; s++){
     allxByQQ[s]->Scale((double)1.0/numberOfQQBins);
     allwByQQ[s]->Scale((double)1.0/numberOfQQBins);
+  }
+
+}
+
+void DIS1DHistograms::ScaleByPhotonFlux(double beamEnergy){
+  
+  for (int sector=0; sector<7; sector++){
+    for (int qqBin=0; qqBin< numberOfQQBins; qqBin++){
+      double qq = qqMin + qqBin*qqWidth;
+      for (int wBin=0; wBin< numberOfWBins; wBin++){
+	double scaledContent = wByQQ[sector][qqBin]->GetBinContent(wBin+1);
+	double w = wBin*wWidth + wMin; 
+	cout << "xs=" << scaledContent;
+	scaledContent /= calculatePhotonFlux(beamEnergy,w,qq);
+	cout << "xs/GAMMA=" << scaledContent << endl;
+	wByQQ[sector][qqBin]->SetBinContent(wBin+1,scaledContent);
+      }
+    }
   }
 
 }

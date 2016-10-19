@@ -14,7 +14,7 @@ using namespace std;
 
 #include "common/BaseDISHistograms.h"
 #include "common/DIS1DHistograms.h"
-#include "common/ModelCrossSectionLoader.h"
+//#include "common/ModelCrossSectionLoader.h"
 #include "common/FaradayCupLoader.h"
 
 int PrintUsage();
@@ -23,8 +23,8 @@ void configureCommandLineOptions(h22Options * theseOpts);
 int main(int argc, char * argv[]){
 
   // ------------- Physics Options -------------
-  int numberOfXBins = 80; 
-  int numberOfWBins = 80; 
+  int numberOfXBins = 40; 
+  int numberOfWBins = 40; 
 
   double normalizationScale = cm_to_outhouse*(hydrogen_molar_weight*electron_c*1e6)/(5.00*avogadro*hydrogen_density);
   // -------------------------------------------
@@ -91,8 +91,10 @@ int main(int argc, char * argv[]){
     crossSection->Scale(normalizationScale);
     crossSection->ScaleByBinWidth();
     crossSection->ScaleAllByNumberBins();
+    //    crossSection->ScaleByPhotonFlux(5.498);
     crossSection->Save(outputFilename.c_str(),"update");
 
+    /*
     ModelCrossSectionLoader * modelLoader = new ModelCrossSectionLoader();
     modelLoader->provideBinningTemplate(dataEvents);
     modelLoader->loadCrossSection(1,1,5.498);
@@ -100,11 +102,11 @@ int main(int argc, char * argv[]){
 
     DIS1DHistograms * modelCrossSection = modelLoader->getCrossSection();
     DIS1DHistograms * modelCrossSectionAverage = modelLoader->getCrossSectionAverage();
-
+  
     DIS1DHistograms * crossSectionRatio = new DIS1DHistograms();
     crossSectionRatio->CreateByDivision(crossSection,modelCrossSection,"crossSectionRatio","Cross Section Ratio W/ Acceptance");
     crossSectionRatio->Save(outputFilename.c_str(),"update");
-
+    
 
     if (binCenteringStatus == "true"){
       DIS1DHistograms * binCenterCorrection = new DIS1DHistograms();
@@ -130,6 +132,7 @@ int main(int argc, char * argv[]){
       BaseDISHistograms * recAndGenEventsNoRad2D = new BaseDISHistograms();
       recAndGenEventsNoRad2D->Load(inputFilename.c_str(),"recAndGenEventsNoRad");
     }
+    */
 
   } else {
     return PrintUsage();

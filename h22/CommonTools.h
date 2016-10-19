@@ -110,5 +110,15 @@ inline double convert_w_qq_to_x(double w, double qq)
   return qq/(qq+ pow(w,2)-pow(proton_mass,2));
 }
 
+inline double calculatePhotonFlux(double beamEnergy, double w, double qq){
+
+  double nu = (pow(w,2) - pow(proton_mass, 2) + qq)/(2*proton_mass);
+  double finalEnergy = beamEnergy - nu; 
+  double theta = 2*asin( sqrt(qq/(4 * beamEnergy * finalEnergy)) ); 
+  double epsilon = 1/(1+2*(1+pow(nu,2)/qq)*pow(tan(theta/2),2));
+
+  return (ALPHA/pow(pi,2)) * (finalEnergy/beamEnergy) * (pow(w,2) - pow(proton_mass,2))/(2*proton_mass)/qq * (1/(1-epsilon));
+}
+
 #endif
 

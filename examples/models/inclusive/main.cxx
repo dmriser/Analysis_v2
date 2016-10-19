@@ -8,7 +8,9 @@ using std::vector;
 using std::string;
 
 // model
-#include "F1F209Wrapper.hh"
+extern"C"{
+  double brasse_(double *beamEnergy, double *qq, double *w);
+}
 
 // my stuff
 #include "CommonTools.h"

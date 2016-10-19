@@ -29,11 +29,11 @@ int main(int argc, char * argv[]){
   // ---------------------------- Setup Physics Options -------------------------------
 
   PhysicsEventSelector * eventSelector = new PhysicsEventSelector();
-  PhysicsEventCut_w * w_cut = new PhysicsEventCut_w();
-  PhysicsEventCut_y * y_cut = new PhysicsEventCut_y();
-  PhysicsEventCut_qq * qq_cut = new PhysicsEventCut_qq();
+  PhysicsEventCut_w *w_cut = new PhysicsEventCut_w();
+  PhysicsEventCut_y *y_cut = new PhysicsEventCut_y();
+  PhysicsEventCut_qq *qq_cut = new PhysicsEventCut_qq();
 
-  w_cut->set_min( 2.05 );
+  w_cut->set_min( 1.1 );
   w_cut->set_max( 99.9 ); 
   y_cut->set_min( 0.00 );
   y_cut->set_max( 0.85 ); 

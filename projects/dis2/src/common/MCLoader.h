@@ -92,8 +92,8 @@ void MCLoader::ProcessEvent(){
     int recxByQQBin = recAndGenEvents.xByQQ[0]->FindBin(recPhysicsEvent.x, recPhysicsEvent.qq);
     int recwByQQBin = recAndGenEvents.wByQQ[0]->FindBin(recPhysicsEvent.w, recPhysicsEvent.qq);
 
-    if (recxByQQBin == genxByQQBin){ recAndGenEvents.FillxByQQ(recPhysicsEvent.x, recPhysicsEvent.qq, sector); }
-    if (recwByQQBin == genwByQQBin){ recAndGenEvents.FillwByQQ(recPhysicsEvent.w, recPhysicsEvent.qq, sector); } 
+    if (recxByQQBin == genxByQQBin){ recAndGenEvents.FillxByQQ(genPhysicsEvent.x, genPhysicsEvent.qq, sector); }
+    if (recwByQQBin == genwByQQBin){ recAndGenEvents.FillwByQQ(genPhysicsEvent.w, genPhysicsEvent.qq, sector); } 
     
     if (eventSelector->passes(recPhysicsEvent) && sector > 0) {
       recEvents.Fill(recPhysicsEvent, sector);

@@ -59,6 +59,25 @@ void showEvents(TH2D *histo[numberSector], const int numberSector){
 
 }
 
+void makeSlicesX(TH2D *histo, TH1D *slices[numberSlices], const int numberSlices, int histoType){
+  
+  string sliceTitle;
+  for (int slice=0; slice< numberSlices; slice++){
+    if (histoType == 1){ sliceTitle = Form("keppelModel_wSlice%d",slice); }
+    slices[slice] = histo->ProjectionX(sliceTitle.c_str(),slice+1,slice+2);
+  }
+  
+}
+
+void makeSlicesY(TH2D *histo, TH1D *slices[numberSlices], const int numberSlices, int histoType){
+  
+  string sliceTitle;
+  for (int slice=0; slice< numberSlices; slice++){
+    if (histoType == 1){ sliceTitle = Form("keppelModel_qqSlice%d",slice); }
+    slices[slice] = histo->ProjectionY(sliceTitle.c_str(),slice+1,slice+2);
+  }
+  
+}
 
 void showHisto(TH1D *histo[numberSector][numberSlices], const int numberSector, const int numberSlices){
   int canHeight=0;
@@ -93,4 +112,98 @@ void showRatio0To1(TH1D *histo[numberSector], const int numberSector){
   histo[0]->SetMaximum(1.1);
   histo[0]->SetLineColor(kRed);
   histo[0]->Draw("hist");
+}
+
+void printPurityStudy(TH1D *purity[numberSector][numberSlices], TH1D* rec[numberSector][numberSlices],
+		      TH1D* gen[numberSector][numberSlices],TH1D* recAndGen[numberSector][numberSlices], const int numberSector, const int numberSlices, const int sectorToPrint, string pdfTitle){
+
+
+  TCanvas *purityCanvas = new TCanvas("purityCanvas","",1600,800);
+  purityCanvas->Divide(4,3);
+
+  string openPdf = Form("%s[",pdfTitle.c_str());
+  string closePdf = Form("%s]",pdfTitle.c_str());
+  purityCanvas->Print(openPdf.c_str());
+  purityCanvas->SetGridx();
+  purityCanvas->SetGridy();
+
+  TLatex xCaption, yCaption, sectorCaption;
+  xCaption.SetNDC();
+  xCaption.SetTextFont(22);
+  yCaption.SetNDC();
+  yCaption.SetTextAngle(90.0);
+  yCaption.SetTextFont(22);
+  sectorCaption.SetNDC();
+  sectorCaption.SetTextFont(22);
+
+  // For calculating which QQ bins we're in
+  double qqMin = 1.0; double qqMax = 5.0; 
+  double qqWidth = (qqMax-qqMin)/numberSlices; 
+
+  int currentPad = 1; 
+  for (int slice=0; slice<numberSlices; slice++){
+
+    if (currentPad > 12){ 
+      currentPad = 1; 
+      purityCanvas->Print(pdfTitle.c_str());
+    }
+
+    double qq = qqMin + slice*qqWidth/2; 
+    purityCanvas->cd(currentPad);
+
+    gen[sectorToPrint][slice]->SetLineColor(kRed);
+    rec[sectorToPrint][slice]->SetLineColor(kBlue);
+    recAndGen[sectorToPrint][slice]->SetLineColor(kBlack);
+
+    purityCanvas->SetLogy(1);
+    gen[sectorToPrint][slice]->Draw("hist");
+    rec[sectorToPrint][slice]->Draw("histsame");
+    recAndGen[sectorToPrint][slice]->Draw("histsame");
+    xCaption.DrawLatex(0.65, 0.05, "W (GeV/c^{2})");
+    yCaption.DrawLatex(0.05, 0.65, "Events");
+    purityCanvas->SetLogy(0);
+
+    sectorCaption.SetTextColor(kBlue);
+    sectorCaption.DrawLatex(0.6, 0.8, "#rightarrow rec");
+    sectorCaption.SetTextColor(kRed);
+    sectorCaption.DrawLatex(0.6, 0.75, "#rightarrow gen");
+    sectorCaption.SetTextColor(kBlack);
+    sectorCaption.DrawLatex(0.6, 0.7, "#rightarrow rec+gen");
+    sectorCaption.DrawLatex(0.4, 0.95,Form("Q^{2} = %.3f (GeV^{2}/c^{2})",qq));
+
+    purityCanvas->cd(currentPad+1);
+    purity[sectorToPrint][slice]->SetLineColor(kBlack);
+    purity[sectorToPrint][slice]->SetMinimum(0.0);
+    purity[sectorToPrint][slice]->SetMaximum(1.0);
+    purity[sectorToPrint][slice]->Draw("hist");
+    xCaption.DrawLatex(0.65, 0.05, "W (GeV/c)");
+    yCaption.DrawLatex(0.05, 0.65, "Purity");
+    sectorCaption.DrawLatex(0.4, 0.95,Form("Q^{2} = %.3f (GeV^{2}/c^{2})",qq));
+
+    currentPad += 2;
+  }
+
+  purityCanvas->Print(closePdf.c_str());
+
 } 
+
+void loadModel(TH2D *model, const int numberQQBins, const int numberWBins, string modelFile){
+  ifstream inputDataFile(modelFile.c_str());
+
+
+  int xBin, yBin; 
+  double val;
+  for (int qqBin=1; qqBin<= numberQQBins; qqBin++){
+    for (int wBin=1; wBin<= numberWBins; wBin++){
+      inputDataFile >> xBin; 
+      inputDataFile >> yBin; 
+      inputDataFile >> val; 
+      cout << Form("Filling (%d, %d) = %f",xBin, yBin, val) << endl; 
+      model->SetBinContent(xBin, yBin, val);
+      model->SetBinError(xBin, yBin, 0.00);
+    }
+  }
+
+  inputDataFile.close();
+}
+

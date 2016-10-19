@@ -10,7 +10,7 @@
 #include "common/HistogramLoader.h"
 #include "common/MCLoader.h"
 #include "common/DIS1DHistograms.h"
-#include "common/ModelCrossSectionLoader.h"
+//#include "common/ModelCrossSectionLoader.h"
 
 #include <iostream>
 #include <vector>
@@ -151,7 +151,7 @@ void test1DHistograms(){
   purity->Scale(1.0);
   purity->ScaleByBinWidth();
   purity->Save("out/testSlicing.root","update");
-
+  /*
   ModelCrossSectionLoader modelLoader;
   modelLoader.provideBinningTemplate(purity); 
   modelLoader.loadCrossSection(1,1,5.498); 
@@ -166,4 +166,5 @@ void test1DHistograms(){
   DIS1DHistograms * loadingTest = new DIS1DHistograms(); 
   loadingTest->Load("out/crossSectionTest.root","crossSection"); 
   loadingTest->PrintPDF("thisTestPDF.pdf");
+  */
 }

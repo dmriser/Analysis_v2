@@ -15,7 +15,6 @@ using namespace std;
 
 #include "common/BaseDISHistograms.h"
 #include "common/DIS1DHistograms.h"
-#include "common/ModelCrossSectionLoader.h"
 #include "common/FaradayCupLoader.h"
 
 int PrintUsage();
@@ -75,6 +74,9 @@ int main(int argc, char * argv[]){
       recEvents[conf]->SetErrors();
       genEvents[conf]->SetErrors();
       recAndGenEvents[conf]->SetErrors();
+      recEvents[conf]->Save(outputFilename.c_str(),"update");
+      genEvents[conf]->Save(outputFilename.c_str(),"update");
+      recAndGenEvents[conf]->Save(outputFilename.c_str(),"update");
 
       purity[conf]->CreateByDivision(recAndGenEvents[conf],recEvents[conf],purityTitle,purityTitle);
       purity[conf]->Save(outputFilename.c_str(),"update");

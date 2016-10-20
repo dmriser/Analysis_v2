@@ -17,7 +17,13 @@ env.ParseConfig("root-config --glibs --cflags")
 env.Append(CCFLAGS = ['-g','-lgfortran'])
 env.Append(CPPPATH = ['.'], LIBPATH = ['.'],LIBS = ['FortranModel'])
 
-sources  = glob.glob('testModel.cxx')
-env.Program('testModel',sources)
+libSources = glob.glob('*/*.cxx')
+env.SharedLibrary('libCppModel',libSources)
+
+#sources  = glob.glob('*.cxx')
+#env.Append(CPPPATH = ['.'], LIBPATH = ['.'],LIBS = ['CppModel'])
+
+#for source in sources:
+#    env.Program(source)	
 
 

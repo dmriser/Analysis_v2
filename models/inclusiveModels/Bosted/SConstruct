@@ -2,16 +2,11 @@
 
 import os, glob 
 
-# Compline the Fortran Code
-fort_env = Environment(ENV = {'PATH':os.environ['PATH']})
-fort_env.Append(FLAGS = ['-fno-leading-underscore','-fno-second-underscore'])
-fort_env.SharedLibrary('libF1F209','F1F209.f')
-
 # Compile the C++ Code 
 env = Environment(ENV = {'PATH':os.environ['PATH']})
 env.ParseConfig("root-config --glibs --cflags")
 env.Append(CCFLAGS = ['-g','-lgfortran'])
-env.Append(CPPPATH = ['.'], LIBPATH = ['.'],LIBS = ['F1F209'])
+env.Append(CPPPATH = ['../'], LIBPATH = ['../'],LIBS = ['FortranModel'])
 
 sources  = glob.glob('*.cc')
-env.SharedLibrary('CPP_F1F209',sources)
+env.SharedLibrary('CppModel',sources)

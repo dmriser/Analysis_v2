@@ -7,7 +7,7 @@
   const int numberSlices = 40; 
   const int numberSector = 7; 
 
-  TFile *inputFile = TFile::Open("../out/crossSectionPass1.root");
+  TFile *inputFile = TFile::Open("../out/crossSectionWithResonancePass1.root");
 
   TH2D *model = new TH2D("model","",numberQQBins,1.0,4.8,numberWBins,1.1,2.7);
   TH1D *modelQQSlices[numberSlices]; 

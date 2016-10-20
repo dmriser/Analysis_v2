@@ -21,8 +21,7 @@ public:
 
   void GetF1F2IN09(double Z, double A, double Q2, double W2, double &F1, double &F2, double &rc);
   void GetF1F2QE09(double Z, double A, double Q2, double W2, double &F1, double &F2);
-  double GetXS(double Z, double A, double Ei, double x, double qq);
-  double GetXSByAngle(double Z, double A, double Ei, double Ef, double theta);
+  double GetXS(double Z, double A, double Ei, double Ef, double theta);
   double GetXSByWQQ(double Z, double A, double Ei, double w, double qq);
 };
 

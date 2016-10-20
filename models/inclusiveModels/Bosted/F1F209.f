@@ -88,6 +88,45 @@ c
 
 
 C=======================================================================
+
+      real function bosted(Z,A,e,q2,w1)
+
+      real eprime,theta,alpha,pi,r,mp
+      real f1,f2,nu,w2,sigma1,sigma2,jacob
+
+      mp = 0.938
+      pi = 3.14159
+      alpha = 1.0/137
+      w2 = w1**2
+      nu = (w2+q2-mp**2)/(2*mp)
+      eprime = e-nu
+      theta = 2*asin(sqrt(q2/(4*e*eprime)))
+
+c     Using jacobian to convert to dsigma/(dW * dQ2)
+      jacob = 2*mp*e*eprime/w1
+
+c      print *, 'w2=',w2, 'nu=',nu, 'eprime=',eprime, 'theta=',theta 
+
+      CALL F1F2IN09(Z,A,q2,w2,f1,f2,r)
+c      print *, f1, f2
+      sigma1 = (2/alpha*eprime/q2*cos(theta/2))**2
+      sigma1 = sigma1*(2/mp*f1*tan(abs(theta/2))**2 + f2/nu)
+      sigma1 = sigma1*389.379
+      
+      CALL F1F2QE09(Z,A,q2,w2,f1,f2)
+c      print *, f1, f2
+      sigma2 = (2/alpha * eprime/q2 * cos(theta/2))**2
+      sigma2 = sigma2 * (2/mp * f1 * tan(abs(theta/2))**2 + f2/nu)
+      sigma2 = sigma2*389.379
+
+      bosted = sigma1+sigma2
+      bosted = bosted*jacob
+
+c      print *, 'sigma1=', sigma1, 'sigma2=', sigma2, 'jacob=',jacob
+
+      end 
+
+C=======================================================================
                                                                         
       SUBROUTINE F1F2IN09(Z, A, QSQ, Wsq, F1, F2, rc)                       
 !--------------------------------------------------------------------

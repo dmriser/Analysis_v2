@@ -19,6 +19,8 @@
 // C++ headers
 #include <iostream>
 #include <sstream>
+#include <string>
+#include <vector>
 #include <cmath>
 
 #define pi 3.14159265359
@@ -118,6 +120,22 @@ inline double calculatePhotonFlux(double beamEnergy, double w, double qq){
   double epsilon = 1/(1+2*(1+pow(nu,2)/qq)*pow(tan(theta/2),2));
 
   return (ALPHA/pow(pi,2)) * (finalEnergy/beamEnergy) * (pow(w,2) - pow(proton_mass,2))/(2*proton_mass)/qq * (1/(1-epsilon));
+}
+
+inline void split(const std::string &s, char delim, std::vector<std::string> &elems) {
+  std::stringstream ss;
+  ss.str(s);
+  std::string item;
+  while (std::getline(ss, item, delim)) {
+    elems.push_back(item);
+  }
+}
+
+
+inline std::vector<std::string> split(const std::string &s, char delim) {
+  std::vector<std::string> elems;
+  split(s, delim, elems);
+  return elems;
 }
 
 #endif

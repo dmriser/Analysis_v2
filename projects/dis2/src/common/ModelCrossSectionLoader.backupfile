@@ -9,16 +9,21 @@ using std::vector;
 
 #include "CommonTools.h"
 #include "DIS1DHistograms.h"
-#include "F1F209Wrapper.hh"
+#include "BostedInclusiveWrapper.h"
+#include "KeppelInclusiveWrapper.h"
 
 class ModelCrossSectionLoader{
  public:
   ModelCrossSectionLoader();
   ~ModelCrossSectionLoader();
 
-  F1F209Wrapper * model; 
-  DIS1DHistograms * crossSection; 
-  DIS1DHistograms * crossSectionAverage; 
+  F1F209Wrapper *bostedModel; 
+  DIS1DHistograms *bostedCrossSection; 
+  DIS1DHistograms *bostedCrossSectionAverage; 
+
+  KeppelInclusiveModel *keppelModel; 
+  DIS1DHistograms *keppelCrossSection; 
+  DIS1DHistograms *keppelCrossSectionAverage; 
 
   void provideBinningTemplate(DIS1DHistograms * templateHistograms);
   void loadCrossSection(double A, double Z, double beamEnergy);

@@ -207,3 +207,63 @@ void loadModel(TH2D *model, const int numberQQBins, const int numberWBins, strin
   inputDataFile.close();
 }
 
+int getNumberOfCanvasDivisions(const int numberOfHistograms){
+  int divs = 1;
+  while( divs*(divs+1) < numberOfHistograms){ divs++; }
+  return divs; 
+}
+
+void plot2Histos(TH1D *histo1[numberSector][numberSlices], TH1D *histo2[numberSector][numberSlices], const int numberSector, const int numberSlices, int histoType){
+
+  // histoType 
+  // 1 - Data & Simulation 
+  TCanvas *compareCanvas = new TCanvas("compareCanvas","",1600,1200);
+  TCanvas *singleCanvas = new TCanvas("singleCanvas","",800,800);
+  TLatex xCaption, sectorCaption, histo1Caption, histo2Caption; 
+
+  xCaption.SetNDC();
+  sectorCaption.SetNDC();
+  histo1Caption.SetNDC();
+  histo2Caption.SetNDC();
+
+  xCaption.SetTextFont(12);
+  sectorCaption.SetTextFont(12);
+  histo1Caption.SetTextFont(12);
+  histo2Caption.SetTextFont(12);
+  histo1Caption.SetTextColor(kRed);
+
+  int divs = getNumberOfCanvasDivisions(numberSlices);
+  compareCanvas->Divide(divs+1,divs);
+
+  for (int s=1; s< numberSector; s++){
+    double nEvents1 = 0; double nEvents2 = 0;
+
+    for (int sl=0; sl< numberSlices; sl++){
+      nEvents1 += histo1[s][sl]->Integral();
+      nEvents2 += histo2[s][sl]->Integral();
+    }
+
+    for (int sl=0; sl< numberSlices; sl++){
+      //      compareCanvas->cd(sl+1);
+      histo1[s][sl]->Scale(numberSlices/nEvents1);
+      histo2[s][sl]->Scale(numberSlices/nEvents2);
+      histo1[s][sl]->SetLineColor(kRed);
+      histo1[s][sl]->Draw("hist");
+      histo2[s][sl]->Draw("histsame");
+
+      sectorCaption.DrawLatex(0.4,0.95,Form("Sector %d Q^{2} Bin %d",s,sl));
+      xCaption.DrawLatex(0.65, 0.025, "W (GeV/c^{2})");
+
+      if (histoType == 1){
+	histo1Caption.DrawLatex(0.18, 0.78, Form("Data Events = %.0f",histo1[s][sl]->GetEntries()));
+	histo2Caption.DrawLatex(0.18, 0.72, Form("Sim Events = %.0f",histo2[s][sl]->GetEntries()));
+      }
+
+      if (histoType == 1) { singleCanvas->Print(Form("compareDataAndSim/compareDataSimSector%dSlice%d.png",s,sl)); }
+    }
+
+    //    if (histoType == 1){ compareCanvas->Print(Form("compareDataAndSim/compareDataSimSector%d.png",s)); }
+  }
+
+}
+

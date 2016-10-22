@@ -111,11 +111,13 @@ int main(){
   modelCanvas->cd(3);
   gPad->SetLogy();
   gPad->SetMargin(0.12, 0.12, 0.12, 0.12);
-  bostedModelWWithFlux->SetLineColor(kRed);
+  //  bostedModelWWithFlux->SetLineColor(kRed);
+  keppelModelW->SetLineColor(kBlue);
   keppelModelW->Draw("l");
   bostedModelWWithFlux->Draw("lsame");
+  caption.SetTextColor(kBlue);
   caption.DrawLatex(0.56, 0.83, "#rightarrow Keppel");
-  caption.SetTextColor(kRed);
+  caption.SetTextColor(kBlack);
   caption.DrawLatex(0.56, 0.78, "#rightarrow Bosted+Flux");
   caption.SetTextColor(kBlack);
   caption.DrawLatex(0.7, 0.025, "W [GeV/c^{2}]");
@@ -125,7 +127,7 @@ int main(){
   gPad->SetMargin(0.12, 0.12, 0.12, 0.12);
   ratioW->Draw("l");
   caption.DrawLatex(0.7, 0.025, "W [GeV/c^{2}]");
-  caption.DrawLatex(0.56, 0.83, "#rightarrow Keppel");
+  caption.DrawLatex(0.56, 0.83, "#rightarrow Ratio");
   caption.DrawLatex(0.4, 0.95, Form("Q^{2} = %.3f ",qqFixed));
 
   modelCanvas->Print("compareModels.png");

@@ -1,6 +1,7 @@
 #include <iostream>
 using namespace std; 
 
+#include "LundEvent.h"
 #include "LundReader.h"
 
 int main(int argc, char *argv[]){
@@ -12,6 +13,13 @@ int main(int argc, char *argv[]){
 
   string fileName(argv[1]);
   LundReader testReader(fileName);
+
+  while(testReader.HasEvent()){
+    LundEvent event = testReader.GetEvent();
+    event.PrintEvent();
+  }
+
+  cout << "Events processed: " << testReader.GetNumberOfEvents() << endl; 
 
   return 0;
 }

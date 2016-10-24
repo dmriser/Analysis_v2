@@ -2,7 +2,7 @@
 
   gROOT->LoadMacro("utils.C");
 
-  TFile * inputFile = TFile::Open("../out/pass1.root");
+  TFile * inputFile = TFile::Open("../out/pass1WithResonance.root");
   const int numberSector = 7;
 
   TH2D *dataEvents[numberSector];

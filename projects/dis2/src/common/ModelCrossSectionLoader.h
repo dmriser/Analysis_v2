@@ -9,7 +9,7 @@ using std::vector;
 
 #include "CommonTools.h"
 #include "DIS1DHistograms.h"
-#include "BostedInclusiveWrapper.h"
+//#include "BostedInclusiveWrapper.h"
 #include "KeppelInclusiveWrapper.h"
 
 class ModelCrossSectionLoader{
@@ -17,24 +17,25 @@ class ModelCrossSectionLoader{
   ModelCrossSectionLoader();
   ~ModelCrossSectionLoader();
 
-  F1F209Wrapper *bostedModel; 
-  DIS1DHistograms *bostedCrossSection; 
-  DIS1DHistograms *bostedCrossSectionAverage; 
+//  F1F209Wrapper *bostedModel; 
+//  DIS1DHistograms *bostedCrossSection; 
+//  DIS1DHistograms *bostedCrossSectionAverage; 
 
-  KeppelInclusiveModel *keppelModel; 
-  DIS1DHistograms *keppelCrossSection; 
-  DIS1DHistograms *keppelCrossSectionAverage; 
+  KeppelInclusiveWrapper *keppelModel; 
+  DIS1DHistograms *crossSection; 
+  DIS1DHistograms *crossSectionAverage; 
 
   void provideBinningTemplate(DIS1DHistograms * templateHistograms);
   void loadCrossSection(double A, double Z, double beamEnergy);
   void Save(string outputFilenameWithExtension, string saveOption); 
-  DIS1DHistograms * getCrossSection(){ return crossSection; } 
-  DIS1DHistograms * getCrossSectionAverage(){ return crossSectionAverage; }
+  DIS1DHistograms *getCrossSection(){ return crossSection; } 
+  DIS1DHistograms *getCrossSectionAverage(){ return crossSectionAverage; }
  
 };
 
 ModelCrossSectionLoader::ModelCrossSectionLoader(){
-  model = new F1F209Wrapper();
+//  bostedModel = new F1F209Wrapper();
+  keppelModel = new KeppelInclusiveWrapper();
   crossSection = new DIS1DHistograms(); 
   crossSectionAverage = new DIS1DHistograms(); 
 }
@@ -60,12 +61,12 @@ void ModelCrossSectionLoader::loadCrossSection(double A, double Z, double beamEn
       double xMid = crossSection->allxByQQ[sector]->GetBinCenter(xBin);
       
       double qqMid = -1*crossSection->qqMin/2 + crossSection->qqMax;
-      
-      double csLow = model->GetXS(A, Z, beamEnergy, xLow, qqMid)/mev_to_gev;
-      double csUp = model->GetXS(A, Z, beamEnergy, xUp, qqMid)/mev_to_gev;
-      double csMid = model->GetXS(A, Z, beamEnergy, xMid, qqMid)/mev_to_gev;
+  
+      double csLow = keppelModel->GetXSByX(beamEnergy, qqMid, xLow); //*calculatePhotonFlux(beamEnergy, convert_x_qq_to_w(xLow, qqMid), qqMid);
+      double csUp = keppelModel->GetXSByX(beamEnergy, qqMid, xUp); //*calculatePhotonFlux(beamEnergy, convert_x_qq_to_w(xUp, qqMid), qqMid);
+      double csMid = keppelModel->GetXSByX(beamEnergy, qqMid, xMid); //*calculatePhotonFlux(beamEnergy, convert_x_qq_to_w(xMid, qqMid), qqMid);
       double csAverage = (csUp+csLow)/2; 
-
+ 
       if (csMid > CS_MIN_VALUE && csMid < CS_MAX_VALUE) {
 	crossSection->allxByQQ[sector]->SetBinContent(xBin,csMid);
 	crossSection->allxByQQ[sector]->SetBinError(xBin,0.0);
@@ -85,9 +86,9 @@ void ModelCrossSectionLoader::loadCrossSection(double A, double Z, double beamEn
       
       double qqMid = crossSection->qqWidth/2 + crossSection->qqMin; 
       
-      double csLow = model->GetXS(A, Z, beamEnergy, convert_w_qq_to_x(wLow, qqMid), qqMid)/mev_to_gev;
-      double csUp = model->GetXS(A, Z, beamEnergy, convert_w_qq_to_x(wUp, qqMid), qqMid)/mev_to_gev;
-      double csMid = model->GetXS(A, Z, beamEnergy, convert_w_qq_to_x(wMid, qqMid), qqMid)/mev_to_gev;
+      double csLow = keppelModel->GetXS(beamEnergy, qqMid, wLow);// * calculatePhotonFlux(beamEnergy, wLow, qqMid);
+      double csUp = keppelModel->GetXS(beamEnergy, qqMid, wUp);// * calculatePhotonFlux(beamEnergy, wUp, qqMid);
+      double csMid = keppelModel->GetXS(beamEnergy, qqMid, wMid);// * calculatePhotonFlux(beamEnergy, wMid, qqMid);
       double csAverage = (csUp+csLow)/2; 
       
 	if (csMid > CS_MIN_VALUE && csMid < CS_MAX_VALUE) {
@@ -114,11 +115,11 @@ void ModelCrossSectionLoader::loadCrossSection(double A, double Z, double beamEn
 	double qqUp = crossSection->qqMin + (1+slice)*crossSection->qqWidth;
 	double qqMid = crossSection->qqWidth/2 + qqLow;
 
-	double csLow = model->GetXS(A, Z, beamEnergy, xLow, qqMid)/mev_to_gev;
-	double csUp = model->GetXS(A, Z, beamEnergy, xUp, qqMid)/mev_to_gev;
-	double csMid = model->GetXS(A, Z, beamEnergy, xMid, qqMid)/mev_to_gev;
+	double csLow = keppelModel->GetXSByX(beamEnergy, qqMid, xLow); //*calculatePhotonFlux(beamEnergy, convert_x_qq_to_w(xLow, qqMid), qqMid);
+	double csUp = keppelModel->GetXSByX(beamEnergy, qqMid, xUp); //*calculatePhotonFlux(beamEnergy, convert_x_qq_to_w(xUp, qqMid), qqMid);
+	double csMid = keppelModel->GetXSByX(beamEnergy, qqMid, xMid); //*calculatePhotonFlux(beamEnergy, convert_x_qq_to_w(xMid, qqMid), qqMid);
 	double csAverage = (csUp+csLow)/2; 
-
+	
 	if (csMid > CS_MIN_VALUE && csMid < CS_MAX_VALUE) {
 	  crossSection->xByQQ[sector][slice]->SetBinContent(xBin,csMid);
 	  crossSection->xByQQ[sector][slice]->SetBinError(xBin,0.0);
@@ -140,9 +141,9 @@ void ModelCrossSectionLoader::loadCrossSection(double A, double Z, double beamEn
 	double qqUp = crossSection->qqMin + (1+slice)*crossSection->qqWidth;
 	double qqMid = crossSection->qqWidth/2 + qqLow; 
 	
-	double csLow = model->GetXS(A, Z, beamEnergy, convert_w_qq_to_x(wLow, qqMid), qqMid)/mev_to_gev;
-	double csUp = model->GetXS(A, Z, beamEnergy, convert_w_qq_to_x(wUp, qqMid), qqMid)/mev_to_gev;
-	double csMid = model->GetXS(A, Z, beamEnergy, convert_w_qq_to_x(wMid, qqMid), qqMid)/mev_to_gev;
+	double csLow = keppelModel->GetXS(beamEnergy, qqMid, wLow);// * calculatePhotonFlux(beamEnergy, wLow, qqMid);
+	double csUp = keppelModel->GetXS(beamEnergy, qqMid, wUp);// * calculatePhotonFlux(beamEnergy, wUp, qqMid);
+	double csMid = keppelModel->GetXS(beamEnergy, qqMid, wMid);// * calculatePhotonFlux(beamEnergy, wMid, qqMid);
 	double csAverage = (csUp+csLow)/2; 
   
 	if (csMid > CS_MIN_VALUE && csMid < CS_MAX_VALUE) {

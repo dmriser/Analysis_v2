@@ -14,7 +14,7 @@ using namespace std;
 
 #include "common/BaseDISHistograms.h"
 #include "common/DIS1DHistograms.h"
-//#include "common/ModelCrossSectionLoader.h"
+#include "common/ModelCrossSectionLoader.h"
 #include "common/FaradayCupLoader.h"
 
 int PrintUsage();
@@ -23,8 +23,8 @@ void configureCommandLineOptions(h22Options * theseOpts);
 int main(int argc, char * argv[]){
 
   // ------------- Physics Options -------------
-  int numberOfXBins = 40; 
-  int numberOfWBins = 40; 
+  int numberOfXBins = 80; 
+  int numberOfYBins = 40; 
 
   double normalizationScale = cm_to_outhouse*(hydrogen_molar_weight*electron_c*1e6)/(5.00*avogadro*hydrogen_density);
   // -------------------------------------------
@@ -53,16 +53,16 @@ int main(int argc, char * argv[]){
     dataEvents2D->Load(inputFilename.c_str(),"dataEvents");
     
     int xRebinFactor = floor(dataEvents2D->numberOfXBins/numberOfXBins); 
-    int wRebinFactor = floor(dataEvents2D->numberOfWBins/numberOfWBins); 
-    dataEvents2D->Rebin2D(xRebinFactor, wRebinFactor); 
+    int yRebinFactor = floor(dataEvents2D->numberOfQQBins/numberOfYBins); 
+    dataEvents2D->Rebin2D(xRebinFactor, yRebinFactor); 
 
     BaseDISHistograms * recEventsRad2D = new BaseDISHistograms();
     recEventsRad2D->Load(inputFilename.c_str(),"recEventsRad");
-    recEventsRad2D->Rebin2D(xRebinFactor, wRebinFactor); 
+    recEventsRad2D->Rebin2D(xRebinFactor, yRebinFactor); 
 
     BaseDISHistograms * genEventsRad2D = new BaseDISHistograms();
     genEventsRad2D->Load(inputFilename.c_str(),"genEventsRad");
-    genEventsRad2D->Rebin2D(xRebinFactor, wRebinFactor); 
+    genEventsRad2D->Rebin2D(xRebinFactor, yRebinFactor); 
 
     BaseDISHistograms * recAndGenEventsRad2D = new BaseDISHistograms();
     recAndGenEventsRad2D->Load(inputFilename.c_str(),"recAndGenEventsRad");
@@ -90,12 +90,11 @@ int main(int argc, char * argv[]){
     crossSection->CreateByDivision(dataEvents,acceptance,"crossSection","Cross Section W/ Acceptance");
     crossSection->Scale(normalizationScale);
     crossSection->ScaleByBinWidth();
+    crossSection->ScaleByNumberSectors();
     crossSection->ScaleAllByNumberBins();
-    //    crossSection->ScaleByPhotonFlux(5.498);
     crossSection->Save(outputFilename.c_str(),"update");
 
-    /*
-    ModelCrossSectionLoader * modelLoader = new ModelCrossSectionLoader();
+    ModelCrossSectionLoader *modelLoader = new ModelCrossSectionLoader();
     modelLoader->provideBinningTemplate(dataEvents);
     modelLoader->loadCrossSection(1,1,5.498);
     modelLoader->Save(outputFilename.c_str(),"update");
@@ -132,7 +131,7 @@ int main(int argc, char * argv[]){
       BaseDISHistograms * recAndGenEventsNoRad2D = new BaseDISHistograms();
       recAndGenEventsNoRad2D->Load(inputFilename.c_str(),"recAndGenEventsNoRad");
     }
-    */
+    
 
   } else {
     return PrintUsage();

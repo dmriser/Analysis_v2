@@ -7,6 +7,7 @@ class KeppelInclusiveWrapper{
   ~KeppelInclusiveWrapper();
 
   float GetXS(float beamEnergy, float qq, float w);
+  float GetXSByX(float beamEnergy, float qq, float x);
 };
 
 #endif

@@ -55,6 +55,7 @@ class DIS1DHistograms{
   void Save(string outputFilenameWithExtension, string saveOption); 
   void Scale(double scaleValue);
   void ScaleByBinWidth();
+  void ScaleByNumberSectors();
   void ScaleAllByNumberBins();
   void ScaleByPhotonFlux(double beamEnergy);
   void SetErrors(); 
@@ -129,6 +130,9 @@ void DIS1DHistograms::Create(BaseDISHistograms * baseHistograms){
   }  
 }
 
+// Note to self
+// This routine uses a lot of tools which I am not that familiar with, 
+// it took me a while to write and I should make sure I can reproduce it. 
 void DIS1DHistograms::Load(string inputFilenameWithExtension, string title){
   
   inputFile = new TFile(inputFilenameWithExtension.c_str());
@@ -323,20 +327,39 @@ void DIS1DHistograms::Scale(double scaleValue){
     allxByQQ[sector]->Scale(scaleValue);
     allwByQQ[sector]->Scale(scaleValue);
 
-    if (sector == 0){
-      allxByQQ[sector]->Scale(1/6.0);
-      allwByQQ[sector]->Scale(1/6.0);
-    }
-
+    
+    //    if (sector != 0){
+    //      allxByQQ[sector]->Scale(6.0);
+    //      allwByQQ[sector]->Scale(6.0);
+    //    }
 
     for (int slice=0; slice<xByQQ[sector].size(); slice++){
       xByQQ[sector][slice]->Scale(scaleValue);
-      if (sector == 0) { xByQQ[sector][slice]->Scale(1/6.0); } 
+      //      if (sector != 0) { xByQQ[sector][slice]->Scale(6.0); } 
     }
 
     for (int slice=0; slice<wByQQ[sector].size(); slice++){
       wByQQ[sector][slice]->Scale(scaleValue);
-      if (sector == 0) { wByQQ[sector][slice]->Scale(1/6.0); } 
+      //      if (sector != 0) { wByQQ[sector][slice]->Scale(6.0); } 
+    }
+  }
+}
+
+void DIS1DHistograms::ScaleByNumberSectors(){
+
+  for (int sector=0; sector<7; sector++){
+    
+    if (sector != 0){
+      allxByQQ[sector]->Scale(6.0);
+      allwByQQ[sector]->Scale(6.0);
+    }
+
+    for (int slice=0; slice<xByQQ[sector].size(); slice++){
+      if (sector != 0) { xByQQ[sector][slice]->Scale(6.0); } 
+    }
+
+    for (int slice=0; slice<wByQQ[sector].size(); slice++){
+      if (sector != 0) { wByQQ[sector][slice]->Scale(6.0); } 
     }
   }
 }

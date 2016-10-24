@@ -24,6 +24,7 @@ class LundHeader{
   }
 
   std::string toString();
+  void Print();
 };
 
 class LundParticle{
@@ -50,6 +51,7 @@ class LundParticle{
   }
 
   std::string toString();
+  void Print();
 };
 
 class LundEvent{
@@ -62,6 +64,8 @@ class LundEvent{
   std::vector<LundParticle> eventParticles; 
 
   void PrintEvent();
+  void SetHeader(LundHeader thisHeader);
+  void AddParticle(LundParticle thisParticle){ eventParticles.push_back(thisParticle); }
 };
 
 #endif

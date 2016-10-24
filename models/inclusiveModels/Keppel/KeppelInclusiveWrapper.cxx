@@ -2,6 +2,7 @@
 #define keppel_inclusive_wrapper_cxx
  
 #include "KeppelInclusiveWrapper.h"
+#include <cmath>
 
 extern"C"{
   float tkeppel_(float *e,float *q2,float *w1);
@@ -15,9 +16,15 @@ KeppelInclusiveWrapper::~KeppelInclusiveWrapper(){
 
 }
 
-
 float KeppelInclusiveWrapper::GetXS(float beamEnergy, float qq, float w){
   return tkeppel_(&beamEnergy, &qq, &w);
+}
+
+float KeppelInclusiveWrapper::GetXSByX(float beamEnergy, float qq, float x){
+
+  float w = sqrt(pow(0.938,2)-qq+qq/x); 
+  float xs = tkeppel_(&beamEnergy, &qq, &w);
+  return xs*(-0.5*(qq/(pow(x,2)*w)));
 }
 
 

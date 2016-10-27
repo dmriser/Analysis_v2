@@ -99,6 +99,9 @@ void showHisto(TH1D *histo[numberSector][numberSlices], const int numberSector, 
 
 }
 
+
+// Don't forget to change the binning limits for Q^2 here if you change them in the main code. There are 
+// other ways to get around doing it manually but I choose this for now.
 void printSlices(TH1D *histo[numberSector][numberSlices], const int numberSector, const int numberSlices, int distType, int histoType){
 
   // distType: 
@@ -113,6 +116,10 @@ void printSlices(TH1D *histo[numberSector][numberSlices], const int numberSector
   //           5 = cross section 
   //           6 = cross section ratio 
   //           7 = purity 
+
+
+  double qqMin = 1.0; double qqMax = 4.8;
+  double qqWidth = (qqMax-qqMin)/numberSlices; // slices are always Q^2 bins 
 
   TCanvas *can = new TCanvas("can","",800,800);
   
@@ -139,6 +146,7 @@ void printSlices(TH1D *histo[numberSector][numberSlices], const int numberSector
 
   for (int sect=0; sect<numberSector; sect++){
     for (int slice=0; slice<numberSlices; slice++){
+      double qqValue = qqMin + slice*qqWidth;
 
       if (histoType < 4){ 
 	histo[sect][slice]->SetFillStyle(3003); 
@@ -148,6 +156,8 @@ void printSlices(TH1D *histo[numberSector][numberSlices], const int numberSector
       }
       
       if (histoType == 4){ 
+	histo[sect][slice]->SetMinimum(0.0); 
+	histo[sect][slice]->SetMaximum(1.0); 
 	histo[sect][slice]->SetMarkerStyle(7); 
 	histo[sect][slice]->Draw("pe");
       }
@@ -189,7 +199,7 @@ void printSlices(TH1D *histo[numberSector][numberSlices], const int numberSector
       if (histoType == 6){ yCaption.DrawLatex(0.05,0.72,"Ratio"); toleranceCaption.DrawLatex(0.91,0.44,"#pm 15%"); }
       if (histoType == 7){ yCaption.DrawLatex(0.05,0.72,"Purity"); }
 
-      sectorCaption.DrawLatex(0.35, 0.89, Form("Sector %d Slice %d",sect,slice));
+      sectorCaption.DrawLatex(0.31, 0.89, Form("Sector %d Q^{2}=%.3f",sect,qqValue));
 
       if (histoType == 1){ can->Print(Form("data/dataSector%dSlice%d.png",sect,slice)); }
       if (histoType == 2){ can->Print(Form("rec/recSector%dSlice%d.png",sect,slice)); }
@@ -317,11 +327,18 @@ int getNumberOfCanvasDivisions(const int numberOfHistograms){
   return divs; 
 }
 
+// If you change the binning you must change this routine, there are better ways to do it but 
+// this is how i'm doing it for now. 
 void plot2Histos(TH1D *histo1[numberSector][numberSlices], TH1D *histo2[numberSector][numberSlices], const int numberSector, const int numberSlices, int histoType){
 
   // histoType 
   // 1 - Data & Simulation 
   // 2 - Data & Model 
+
+  // For calculating which QQ bins we're in
+  double qqMin = 1.0; double qqMax = 4.8; 
+  double qqWidth = (qqMax-qqMin)/numberSlices; 
+
   TCanvas *singleCanvas = new TCanvas("singleCanvas","",800,800);
   TLatex xCaption, sectorCaption, histo1Caption, histo2Caption; 
 
@@ -341,7 +358,7 @@ void plot2Histos(TH1D *histo1[numberSector][numberSlices], TH1D *histo2[numberSe
 
     for (int sl=0; sl< numberSlices; sl++){
       // The model doesn't really work well above W=1.9 
-      int stopIntegrating = histo1[s][sl]->GetBin(1.9);
+      //      int stopIntegrating = histo1[s][sl]->GetBin(1.9);
       
       //      nEvents1 += histo1[s][sl]->Integral(1,stopIntegrating);
       //      nEvents2 += histo2[s][sl]->Integral(1,stopIntegrating);
@@ -350,9 +367,13 @@ void plot2Histos(TH1D *histo1[numberSector][numberSlices], TH1D *histo2[numberSe
     }
 
     for (int sl=0; sl< numberSlices; sl++){
+      double qqValue = qqMin + sl*qqWidth;
+
       if (histoType == 1) {
 	histo1[s][sl]->Scale(1.0/nEvents1);
 	histo2[s][sl]->Scale(1.0/nEvents2);
+	
+	histo1[s][sl]->SetMaximum( histo2[s][sl]->GetMaximum()*1.2 );
       }   
    
       histo1[s][sl]->SetMarkerStyle(8);
@@ -371,7 +392,7 @@ void plot2Histos(TH1D *histo1[numberSector][numberSlices], TH1D *histo2[numberSe
 	histo2[s][sl]->Draw("lsame"); 
       }
 
-      sectorCaption.DrawLatex(0.61,0.89,Form("Sector %d Q^{2} Bin %d",s,sl));
+      sectorCaption.DrawLatex(0.61,0.89,Form("Sector %d Q^{2}=%.3f",s,qqValue));
       xCaption.DrawLatex(0.62, 0.04, "W (GeV/c^{2})");
 
       if (histoType == 1){

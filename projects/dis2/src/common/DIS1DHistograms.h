@@ -58,6 +58,7 @@ class DIS1DHistograms{
   void ScaleByNumberSectors();
   void ScaleAllByNumberBins();
   void ScaleByPhotonFlux(double beamEnergy);
+  void SetBinsOutsideRangeToValue(double min, double max,double value);
   void SetErrors(); 
 };
 
@@ -441,6 +442,36 @@ void DIS1DHistograms::ScaleByPhotonFlux(double beamEnergy){
 	scaledContent /= calculatePhotonFlux(beamEnergy,w,qq);
 	cout << "xs/GAMMA=" << scaledContent << endl;
 	wByQQ[sector][qqBin]->SetBinContent(wBin+1,scaledContent);
+      }
+    }
+  }
+
+}
+
+void DIS1DHistograms::SetBinsOutsideRangeToValue(double min, double max, double value){
+
+
+  for (int sector=0; sector<7; sector++){
+
+    // For combined 
+    for (int xAxisBin=0; xAxisBin< numberOfWBins; xAxisBin++){
+      if (allxByQQ[sector]->GetBinContent(xAxisBin+1) < min || allxByQQ[sector]->GetBinContent(xAxisBin+1) > max ){
+	allxByQQ[sector]->SetBinContent(xAxisBin+1,value);
+      } 
+      if (allwByQQ[sector]->GetBinContent(xAxisBin+1) < min || allwByQQ[sector]->GetBinContent(xAxisBin+1) > max){
+	allwByQQ[sector]->SetBinContent(xAxisBin+1,value);
+      } 
+    }
+
+    // For slices 
+    for (int qqBin=0; qqBin<  numberOfQQBins; qqBin++){
+      for (int xAxisBin=0; xAxisBin< numberOfWBins; xAxisBin++){
+	if (xByQQ[sector][qqBin]->GetBinContent(xAxisBin+1) < min || xByQQ[sector][qqBin]->GetBinContent(xAxisBin+1) > max ){
+	  xByQQ[sector][qqBin]->SetBinContent(xAxisBin+1,value);
+	} 
+	if (wByQQ[sector][qqBin]->GetBinContent(xAxisBin+1) < min || wByQQ[sector][qqBin]->GetBinContent(xAxisBin+1) > max ){
+	  wByQQ[sector][qqBin]->SetBinContent(xAxisBin+1,value);
+	} 
       }
     }
   }

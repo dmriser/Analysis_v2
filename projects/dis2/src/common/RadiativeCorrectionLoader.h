@@ -10,7 +10,6 @@ using namespace std;
 #include "BaseDISHistograms.h"
 #include "CommonTools.h"
 #include "LundEvent.h"
-#include "LundParticle.h"
 #include "LundReader.h"
 #include "PhysicsEvent.h"
 #include "PhysicsEventBuilder.h"
@@ -21,7 +20,7 @@ using namespace std;
 class RadiativeCorrectionLoader : public LundReader{
 
  public:
-  RadiativeCorrectionLoader(string inputName, string histogramName, string histogramTitle);
+  RadiativeCorrectionLoader(string histogramName, string histogramTitle, string outputName, string saveOpt);
   ~RadiativeCorrectionLoader();
 
  protected:
@@ -65,8 +64,17 @@ void RadiativeCorrectionLoader::Loop(){
   while(HasEvent()){
     TLorentzVector electron = GetEvent().GetParticle(0).GetTLorentzVector(); 
     PhysicsEvent physicsEvent = builder.getPhysicsEvent(electron);
-    int sector = 1+floor(electron.Phi()*to_degrees/60.0);
-    simEvents->Fill(physicsEvent, sector);
+    int sector = 1+floor((180.0 + electron.Phi()*to_degrees)/60.0);
+    if (sector > 0 && sector < 7) { simEvents.Fill(physicsEvent, sector); }
+
+    cout.width(12); cout << electron.X();
+    cout.width(12); cout << electron.Y();
+    cout.width(12); cout << electron.Z();
+    cout.width(12); cout << electron.Theta() * to_degrees;
+    cout.width(12); cout << electron.Phi() * to_degrees;
+    cout.width(12); cout << physicsEvent.x; 
+    cout.width(12); cout << physicsEvent.w; 
+    cout.width(12); cout << physicsEvent.qq << endl; 
   }
 
 }

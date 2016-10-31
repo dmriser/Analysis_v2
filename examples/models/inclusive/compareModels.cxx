@@ -3,6 +3,7 @@ using namespace std;
 
 #include "BostedInclusiveWrapper.h"
 #include "KeppelInclusiveWrapper.h"
+#include "BrasseInclusiveWrapper.h"
 #include "CommonTools.h"
 
 // cern root libs
@@ -16,6 +17,7 @@ int main(){
 
   F1F209Wrapper bosted; 
   KeppelInclusiveWrapper keppel; 
+  BrasseInclusiveWrapper brasse; 
 
   double beamEnergyDouble = 5.75; 
   float beamEnergyFloat = 5.75; 
@@ -46,8 +48,8 @@ int main(){
     
     double bostedValue = bosted.GetXSByWQQ(1,1,beamEnergyDouble,wFixed,qq);
     double bostedValueWithFlux = bosted.GetXSByWQQ(1,1,beamEnergyDouble,wFixed,qq)*calculatePhotonFlux(beamEnergyDouble,wFixed,qq);
-    float keppelValue = keppel.GetXS(beamEnergyFloat,qq,wFixed);      
-    
+    float keppelValue = keppel.GetXS(beamEnergyFloat,qq,wFixed);          
+
     bostedModelQQ->SetBinContent(ibin+1,bostedValue);
     bostedModelQQWithFlux->SetBinContent(ibin+1,bostedValueWithFlux);
     keppelModelQQ->SetBinContent(ibin+1,keppelValue);
@@ -60,7 +62,8 @@ int main(){
     double bostedValue = bosted.GetXSByWQQ(1,1,beamEnergyDouble,w,qqFixed);
     double bostedValueWithFlux = bosted.GetXSByWQQ(1,1,beamEnergyDouble,w,qqFixed)*calculatePhotonFlux(beamEnergyDouble,w,qqFixed);
     float keppelValue = keppel.GetXS(beamEnergyFloat,qqFixed,w);      
-    
+    cout << brasse.GetXS(beamEnergyFloat, qqFixed, w) << endl;    
+
     bostedModelW->SetBinContent(ibin+1,bostedValue);
     bostedModelWWithFlux->SetBinContent(ibin+1,bostedValueWithFlux);
     keppelModelW->SetBinContent(ibin+1,keppelValue);

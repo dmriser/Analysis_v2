@@ -40,12 +40,7 @@ class MCLoader : public HistogramLoader{
   void Rebin(int xFactor, int yFactor);
 
 };
-/*
-#endif
 
-#ifndef mc_loader_cxx
-#define mc_loader_cxx
-*/
 MCLoader::MCLoader(PhysicsEventSelector *eventCriteria, std::string outputFile, std::string saveOpts, std::string monteCarloType) : HistogramLoader(eventCriteria, outputFile, saveOpts){
   mcType = monteCarloType; 
 }

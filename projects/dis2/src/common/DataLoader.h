@@ -52,11 +52,13 @@ DataLoader::~DataLoader(){
 void DataLoader::Initialize(){
   dataEvents.Init("dataEvents","Data Hits");
 
+  /* 
   cout << "[DataLoader] Warning: Running with electron ID strictness alterations. " << endl;
   eID.cc_fid_strict = 9;
   eID.dc_r1_strict = 9;
   eID.dc_r3_strict = 9;
-  
+  */ 
+
 }
 
 // This is the core routine which conditionally fills histograms. 

@@ -1,0 +1,19 @@
+JOBNAME:     radCorr
+TRACK:       simulation 
+OS:          centos65
+PROJECT:     e1f
+TIME:        720
+DISK_SPACE:  1024 MB
+MEMORY:      2048 MB
+MULTI_JOBS:  1000
+
+COMMAND:    chmod +x goSimulate; ./goSimulate /volatile/clas/clas12/dmriser/analysis/mcdata inclusiveRadCorrPass1 
+
+OTHER_FILES: 
+/u/home/dmriser/mydoc/analysis/root_scripts/Analysis_v2/farm/disRadCorr/getJobNumber
+/u/home/dmriser/mydoc/analysis/root_scripts/Analysis_v2/farm/disRadCorr/goSimulate
+/u/home/dmriser/mydoc/analysis/root_scripts/Analysis_v2/farm/disRadCorr/rad.inp 
+/u/home/dmriser/mydoc/analysis/root_scripts/Analysis_v2/farm/disRadCorr/norad.inp 
+/u/home/dmriser/mydoc/analysis/root_scripts/Analysis_v2/farm/disRadCorr/keppel_rad
+/u/home/dmriser/mydoc/analysis/root_scripts/Analysis_v2/farm/disRadCorr/keppel_norad
+/u/home/dmriser/mydoc/analysis/root_scripts/Analysis_v2/projects/dis2/src/doRadiativeCorrection 

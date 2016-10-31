@@ -1,0 +1,29 @@
+#!/bin/tcsh 
+
+set outputDir = $1 
+set project = $2
+
+set number = `getJobNumber $outputDir $project`
+
+mkdir -p $outputDir/$project 
+mkdir -p $outputDir/$project/JOB_$number 
+
+echo "Starting job number $number."
+
+# running non-radiated events 
+./keppel_norad < norad.inp 
+mv fort.88 norad.lund 
+rm keppel_norad.* 
+
+# running radiated events 
+./keppel_rad < rad.inp 
+mv *.gen rad.lund 
+rm keppel_rad.* 
+
+# Do the correction histograms 
+./doRadiativeCorrection -LUND_RAD=rad.lund -LUND_NORAD=norad.lund -OUT=radCorr.$number.root
+
+cp *.root $outputDir/$project/JOB_$number 
+cp *.inp  $outputDir/$project/JOB_$number 
+
+echo "Finished job number $number."

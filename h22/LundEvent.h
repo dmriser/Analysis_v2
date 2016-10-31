@@ -4,6 +4,8 @@
 #include <iostream>
 #include <vector>
 
+#include "TLorentzVector.h"
+
 class LundHeader{
 
  public:
@@ -52,6 +54,8 @@ class LundParticle{
 
   std::string toString();
   void Print();
+  TLorentzVector GetTLorentzVector();
+
 };
 
 class LundEvent{
@@ -66,6 +70,8 @@ class LundEvent{
   void PrintEvent();
   void SetHeader(LundHeader thisHeader);
   void AddParticle(LundParticle thisParticle){ eventParticles.push_back(thisParticle); }
+  LundParticle GetParticle(int particle);
+  LundHeader GetHeader(){ return eventHeader; }
 };
 
 #endif

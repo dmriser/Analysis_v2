@@ -43,6 +43,7 @@ int main(int argc, char * argv[]){
   string outputFilename = options->args["OUT"].args; 
   string binCenteringStatus = options->args["BINCORR"].args; 
   string radCorrStatus = options->args["RADCORR"].args; 
+  string radCorrFile = options->args["RADCORR_FILE"].args; 
 
   if (inputFilename != "UNSET"){
     FaradayCupQuickLoader fcup; 
@@ -84,6 +85,7 @@ int main(int argc, char * argv[]){
 
     DIS1DHistograms * acceptance = new DIS1DHistograms();
     acceptance->CreateByDivision(recEventsRad,genEventsRad,"acceptance","Acceptance");
+    acceptance->SetBinsOutsideRangeToValue(0.1, 1.01, 1.0);
     acceptance->Save(outputFilename.c_str(),"update");
 
     DIS1DHistograms * crossSection = new DIS1DHistograms();
@@ -107,7 +109,7 @@ int main(int argc, char * argv[]){
     crossSectionRatio->Save(outputFilename.c_str(),"update");
     
 
-    if (binCenteringStatus == "true"){
+    if (binCenteringStatus == "true" && radCorrStatus == "false"){
       DIS1DHistograms * binCenterCorrection = new DIS1DHistograms();
       binCenterCorrection->CreateByDivision(modelCrossSection, modelCrossSectionAverage, "binCenterCorrection", "Bin Centering Correction");
       binCenterCorrection->Save(outputFilename.c_str(),"update");
@@ -120,18 +122,81 @@ int main(int argc, char * argv[]){
       binCorrCrossSectionRatio->CreateByDivision(binCorrCS,modelCrossSection,"binCorrectedCrossSectionRatio","Cross Section Ratio W/ Bin Centering Correction");
       binCorrCrossSectionRatio->Save(outputFilename.c_str(),"update");
     }
+ 
+    if (radCorrStatus == "true" && radCorrFile != "UNSET" && binCenteringStatus == "false"){
+      BaseDISHistograms *radEvents2D = new BaseDISHistograms();
+      radEvents2D->Load(radCorrFile.c_str(),"radEvents");
+      radEvents2D->Rebin2D(xRebinFactor, yRebinFactor);
 
-    if (radCorrStatus == "true"){
-      BaseDISHistograms * recEventsNoRad2D = new BaseDISHistograms();
-      recEventsNoRad2D->Load(inputFilename.c_str(),"recEventsNoRad");
-      
-      BaseDISHistograms * genEventsNoRad2D = new BaseDISHistograms();
-      genEventsNoRad2D->Load(inputFilename.c_str(),"genEventsNoRad");
-      
-      BaseDISHistograms * recAndGenEventsNoRad2D = new BaseDISHistograms();
-      recAndGenEventsNoRad2D->Load(inputFilename.c_str(),"recAndGenEventsNoRad");
+      BaseDISHistograms *noRadEvents2D = new BaseDISHistograms();
+      noRadEvents2D->Load(radCorrFile.c_str(),"noRadEvents");
+      noRadEvents2D->Rebin2D(xRebinFactor, yRebinFactor);
+
+      DIS1DHistograms *rad = new DIS1DHistograms();
+      rad->Create(radEvents2D);
+      rad->SetErrors();
+
+      DIS1DHistograms *noRad = new DIS1DHistograms();
+      noRad->Create(noRadEvents2D);
+      noRad->SetErrors();
+
+      DIS1DHistograms *radCorr = new DIS1DHistograms();
+      radCorr->CreateByDivision(rad, noRad,"radCorr","Radiative Correction");
+      radCorr->Save(outputFilename.c_str(),"update");
+
+      DIS1DHistograms *radCorrCrossSection = new DIS1DHistograms();
+      radCorrCrossSection->CreateByDivision(crossSection,radCorr,"radCorrCrossSection","Cross Section w/ Rad Corr."); 
+      radCorrCrossSection->Save(outputFilename.c_str(),"update");
+
+      DIS1DHistograms *radCorrCrossSectionRatio = new DIS1DHistograms(); 
+      radCorrCrossSectionRatio->CreateByDivision(radCorrCrossSection, modelCrossSection, "radCorrCrossSectionRatio", "Cross Section Ratio w/ Rad. Correction");
+      radCorrCrossSectionRatio->Save(outputFilename.c_str(), "update");
     }
     
+    if (binCenteringStatus == "true" && radCorrStatus == "true" && radCorrFile != "UNSET") {
+      DIS1DHistograms * binCenterCorrection = new DIS1DHistograms();
+      binCenterCorrection->CreateByDivision(modelCrossSection, modelCrossSectionAverage, "binCenterCorrection", "Bin Centering Correction");
+      binCenterCorrection->Save(outputFilename.c_str(),"update");
+
+      DIS1DHistograms * binCorrCS = new DIS1DHistograms();
+      binCorrCS->CreateByDivision(crossSection,binCenterCorrection,"binCorrectedCrossSection","Cross Section W/ Bin Centering Corr.");
+      binCorrCS->Save(outputFilename.c_str(),"update");
+      
+      DIS1DHistograms * binCorrCrossSectionRatio = new DIS1DHistograms();
+      binCorrCrossSectionRatio->CreateByDivision(binCorrCS,modelCrossSection,"binCorrectedCrossSectionRatio","Cross Section Ratio W/ Bin Centering Correction");
+      binCorrCrossSectionRatio->Save(outputFilename.c_str(),"update");
+
+      BaseDISHistograms *radEvents2D = new BaseDISHistograms();
+      radEvents2D->Load(radCorrFile.c_str(),"radEvents");
+      radEvents2D->Rebin2D(xRebinFactor, yRebinFactor);
+
+      BaseDISHistograms *noRadEvents2D = new BaseDISHistograms();
+      noRadEvents2D->Load(radCorrFile.c_str(),"noRadEvents");
+      noRadEvents2D->Rebin2D(xRebinFactor, yRebinFactor);
+
+      DIS1DHistograms *rad = new DIS1DHistograms();
+      rad->Create(radEvents2D);
+      rad->SetErrors();
+
+      DIS1DHistograms *noRad = new DIS1DHistograms();
+      noRad->Create(noRadEvents2D);
+      noRad->SetErrors();
+
+      DIS1DHistograms *radCorr = new DIS1DHistograms();
+      radCorr->CreateByDivision(rad, noRad,"radCorr","Radiative Correction");
+      radCorr->SetBinsOutsideRangeToValue(0.1, 2.0, 1.0);
+      radCorr->Save(outputFilename.c_str(),"update");
+
+      DIS1DHistograms *radCorrCrossSection = new DIS1DHistograms();
+      radCorrCrossSection->CreateByDivision(binCorrCS,radCorr,"radCorrCrossSection","Cross Section w/ Rad Corr."); 
+      radCorrCrossSection->Save(outputFilename.c_str(),"update");
+
+      DIS1DHistograms *radCorrCrossSectionRatio = new DIS1DHistograms(); 
+      radCorrCrossSectionRatio->CreateByDivision(radCorrCrossSection, modelCrossSection, "radCorrCrossSectionRatio", "Cross Section Ratio w/ Rad. Correction");
+      radCorrCrossSectionRatio->Save(outputFilename.c_str(), "update");
+
+    }
+
 
   } else {
     return PrintUsage();
@@ -149,7 +214,11 @@ void configureCommandLineOptions(h22Options * theseOpts){
   theseOpts->args["RADCORR"].args = "false";
   theseOpts->args["RADCORR"].type = 1;
   theseOpts->args["RADCORR"].name = "Radiative Corrections status";
-  
+
+  theseOpts->args["RADCORR_FILE"].args = "UNSET";
+  theseOpts->args["RADCORR_FILE"].type = 1;
+  theseOpts->args["RADCORR_FILE"].name = "Radiative Corrections file";
+
   theseOpts->args["BINCORR"].args = "false";
   theseOpts->args["BINCORR"].type = 1;
   theseOpts->args["BINCORR"].name = "Bin Centering Corrections status";

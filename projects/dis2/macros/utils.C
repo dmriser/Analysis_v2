@@ -116,7 +116,7 @@ void printSlices(TH1D *histo[numberSector][numberSlices], const int numberSector
   //           5 = cross section 
   //           6 = cross section ratio 
   //           7 = purity 
-
+  //           8 = rad corr 
 
   double qqMin = 1.0; double qqMax = 4.8;
   double qqWidth = (qqMax-qqMin)/numberSlices; // slices are always Q^2 bins 
@@ -190,6 +190,13 @@ void printSlices(TH1D *histo[numberSector][numberSlices], const int numberSector
 	//	averagePurityLine.Draw();
       }
 
+      if (histoType == 8) {
+	histo[sect][slice]->SetMarkerStyle(7); 
+	histo[sect][slice]->SetMinimum(0.5); 
+	histo[sect][slice]->SetMaximum(2.0); 
+	histo[sect][slice]->Draw("pe");
+      }
+
       if (distType == 1){ xCaption.DrawLatex(0.65,0.06,"X_{Bjorken}"); }
       if (distType == 2){ xCaption.DrawLatex(0.65,0.06,"W (GeV/c^{2})"); }
 
@@ -198,6 +205,7 @@ void printSlices(TH1D *histo[numberSector][numberSlices], const int numberSector
       if (histoType == 5){ yCaption.DrawLatex(0.05,0.72,"#muBarn"); }
       if (histoType == 6){ yCaption.DrawLatex(0.05,0.72,"Ratio"); toleranceCaption.DrawLatex(0.91,0.44,"#pm 15%"); }
       if (histoType == 7){ yCaption.DrawLatex(0.05,0.72,"Purity"); }
+      if (histoType == 8){ yCaption.DrawLatex(0.05,0.72,"Ratio rad/born"); }
 
       sectorCaption.DrawLatex(0.31, 0.89, Form("Sector %d Q^{2}=%.3f",sect,qqValue));
 
@@ -208,6 +216,7 @@ void printSlices(TH1D *histo[numberSector][numberSlices], const int numberSector
       if (histoType == 5){ can->Print(Form("crossSection/crossSectionSector%dSlice%d.png",sect,slice)); }
       if (histoType == 6){ can->Print(Form("crossSectionRatio/crossSectionRatioSector%dSlice%d.png",sect,slice)); }
       if (histoType == 7){ can->Print(Form("purity/purityBins%dSector%dSlice%d.png",numberOfXBins,sect,slice)); }
+      if (histoType == 8){ can->Print(Form("radCorr/radCorrSector%dSlice%d.png",sect,slice)); }
     }
   }
   

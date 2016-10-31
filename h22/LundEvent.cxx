@@ -5,6 +5,7 @@
 #include <iostream>
 using namespace std;
 
+#include "TLorentzVector.h"
 #include "TString.h"
 
 // -------------------------------------------------------------------------
@@ -78,6 +79,11 @@ void LundParticle::Print(){
   cout.width(12); cout << vz << endl; 
 }
 
+TLorentzVector LundParticle::GetTLorentzVector(){
+  double p2 = pow(px,2) + pow(py,2) + pow(pz,2);
+  return TLorentzVector(px, py, pz, sqrt(p2 + pow(mass, 2)));
+}
+
 // -------------------------------------------------------------------------
 // LundEvent
 LundEvent::LundEvent(){
@@ -111,6 +117,18 @@ void LundEvent::SetHeader(LundHeader thisHeader){
   eventHeader.qq = thisHeader.qq; 
   eventHeader.nu = thisHeader.nu;
 
+}
+
+LundParticle LundEvent::GetParticle(int particle){
+
+  LundParticle nullParticle;
+
+  if (particle < eventParticles.size()){
+    return eventParticles[particle];
+  }
+
+  cout << "[LundEvent::GetParticle] Index requested outside of range of particles in event! " << endl;
+  return nullParticle; 
 }
 
 #endif

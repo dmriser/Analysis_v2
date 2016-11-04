@@ -82,7 +82,8 @@ void LundReader::LoadEvents(std::string inputFilename){
     }
 
   }
-
+  
+  file.close();
 }
 
 bool LundReader::isHeader(string lineOfInterest){

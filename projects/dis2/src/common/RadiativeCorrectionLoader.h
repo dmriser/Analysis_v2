@@ -30,9 +30,9 @@ class RadiativeCorrectionLoader : public LundReader{
 
  public:
   void Initialize();
-  void Loop();
+  void Loop(int numberOfEvents);
   void Save();
-  void Execute();
+  void Execute(int numberOfEvents);
 
 };
 
@@ -47,9 +47,9 @@ RadiativeCorrectionLoader::~RadiativeCorrectionLoader(){
   // Anything to do here? 
 }
 
-void RadiativeCorrectionLoader::Execute(){
+void RadiativeCorrectionLoader::Execute(int numberOfEvents){
   Initialize();
-  Loop();
+  Loop(numberOfEvents);
   Save();
 }
 
@@ -57,11 +57,13 @@ void RadiativeCorrectionLoader::Initialize(){
   simEvents.Init(histoName, histoTitle);
 }
 
-void RadiativeCorrectionLoader::Loop(){
+void RadiativeCorrectionLoader::Loop(int numberOfEvents){
+
+  int currentEvent = 0;
 
   // No complicated conditional fill conditions, because 
   // we expect generated events only. 
-  while(HasEvent()){
+  while(HasEvent() && currentEvent < numberOfEvents){
     TLorentzVector electron = GetEvent().GetParticle(0).GetTLorentzVector(); 
     PhysicsEvent physicsEvent = builder.getPhysicsEvent(electron);
     int sector = 1+floor((180.0 + electron.Phi()*to_degrees)/60.0);
@@ -75,6 +77,8 @@ void RadiativeCorrectionLoader::Loop(){
     cout.width(12); cout << physicsEvent.x; 
     cout.width(12); cout << physicsEvent.w; 
     cout.width(12); cout << physicsEvent.qq << endl; 
+    
+    currentEvent++;
   }
 
 }

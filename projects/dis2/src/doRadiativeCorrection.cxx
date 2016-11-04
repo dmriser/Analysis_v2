@@ -33,6 +33,7 @@ int main(int argc, char * argv[]){
   configureCommandLineOptions(options); 
   options->set(argc, argv);
 
+  int numberOfEvents = options->args["N"].arg;
   string inputRadFilename = options->args["LUND_RAD"].args; 
   string inputNoRadFilename = options->args["LUND_NORAD"].args; 
   string outputFilename = options->args["OUT"].args; 
@@ -43,11 +44,11 @@ int main(int argc, char * argv[]){
     // save them in the output file. 
     RadiativeCorrectionLoader radLoader("radEvents","Radiated Gen. Events from LUND",outputFilename,"recreate");
     radLoader.LoadEvents(inputRadFilename);
-    radLoader.Execute();
+    radLoader.Execute(numberOfEvents);
 
     RadiativeCorrectionLoader noRadLoader("noRadEvents","Gen. Events from LUND",outputFilename,"update");
     noRadLoader.LoadEvents(inputNoRadFilename);
-    noRadLoader.Execute();
+    noRadLoader.Execute(numberOfEvents);
 
     //    BaseDISHistograms * radEvents2D = new BaseDISHistograms();
     //    radEvents2D->Load(inputRadFilename.c_str(),"radEvents");

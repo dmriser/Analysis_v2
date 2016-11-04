@@ -26,7 +26,7 @@ class LundReader{
   int GetNumberOfEvents(){ return events.size(); }
   LundEvent GetEvent(){ return events[currentEvent]; }
   LundEvent GetEvent(int eventNumber){return events[eventNumber];}
-  bool HasEvent(){ if (currentEvent < GetNumberOfEvents()){ currentEvent++; return true; } return false; }
+  bool HasEvent(){ if (currentEvent < (GetNumberOfEvents()-1)){ currentEvent++; return true; } return false; }
 
  private:
   bool isHeader(std::string lineOfInterest);

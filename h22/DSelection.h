@@ -21,7 +21,7 @@
 
 // my includes
 #include "DCut.h"
-#include "DEvent.h"
+#include "h22Event.h"
 
 class DSelection
 {
@@ -43,7 +43,7 @@ class DSelection
   void enable_by_regex(std::string);
   void summarize();
   
-  virtual bool passes(DEvent, int); /** I am making this virtual in the event that we need to change something before asking if the events pass (vertex correction ect.) */ 
+  virtual bool passes(h22Event, int); /** I am making this virtual in the event that we need to change something before asking if the events pass (vertex correction ect.) */ 
   std::map<std::string, double> cut_pass_fraction(); 
   
 };

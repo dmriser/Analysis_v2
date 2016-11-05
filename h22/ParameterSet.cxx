@@ -63,10 +63,6 @@ string ParameterSet::getDescription(){
   return description;
 }
 
-void ParameterSet::setName(std::string inputName){
-  name = inputName; 
-}
-
 void ParameterSet::setDescription(std::string inputDescription){
   description = inputDescription; 
 }

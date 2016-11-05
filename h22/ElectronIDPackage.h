@@ -35,7 +35,7 @@
 #include "Corrections.h"
 #include "DBins.h"
 #include "DCut.h"
-#include "DEvent.h"
+#include "h22Event.h"
 #include "DSelection.h"
 #include "h22Event.h"
 #include "h22Reader.h"
@@ -90,7 +90,7 @@ class ElectronSelector : public DSelection
   ZVertexCut * vz_cut;
 
   // Member Functions 
-  bool passes(DEvent, int);
+  bool passes(h22Event, int);
   void set_parfile(std::string s){ parameter_file = s; init(); }
   void set_info(int r, bool m){ runno = r; mc_status = m; }
   void set_runno(int r){ runno = r; }
@@ -145,7 +145,7 @@ class ElectronIDHistograms
   // Member Functions 
  public:
   void draw();
-  void fill(DEvent); /**> Pass in the event, and the cut index (none, passed this, passed all) */
+  void fill(h22Event); /**> Pass in the event, and the cut index (none, passed this, passed all) */
   void init(); /** initialize histograms, must be done */
   void set_name(std::string n) { output_name = n; };
   void set_parfile(std::string pf) { parfile = pf; }

@@ -20,7 +20,7 @@ using namespace std;
 
 // my includes
 #include "DCut.h"
-#include "DEvent.h"
+#include "h22Event.h"
 #include "DSelection.h"
 
 DSelection::DSelection()
@@ -34,7 +34,7 @@ DSelection::~DSelection()
   for (vector<DCut*>::iterator it=cuts.begin(); it!=cuts.end(); it++ ) delete *it; 
 }
 
-bool DSelection::passes(DEvent event, int index)
+bool DSelection::passes(h22Event event, int index)
 {
   // Loop over the cuts we have and make sure all pass.
   bool status = true;

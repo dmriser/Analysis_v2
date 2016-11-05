@@ -25,7 +25,7 @@
 #include <iostream>
 
 // my includes
-#include "DEvent.h"
+#include "h22Event.h"
 
 class DCut
 {
@@ -59,8 +59,8 @@ class DCut
   
   std::string name(){ return cut_name; }
   
-  virtual bool applies(DEvent, int); /** Pass in the event, and the particle index of interest */
-  virtual bool passes(DEvent, int); /** Pass in the event, and the particle index of interest */
+  virtual bool applies(h22Event, int); /** Pass in the event, and the particle index of interest */
+  virtual bool passes(h22Event, int); /** Pass in the event, and the particle index of interest */
 
 };
 
@@ -78,7 +78,7 @@ class ChargeCut : public DCut
   ChargeCut();
   ~ChargeCut();
 
-  bool passes(DEvent, int);
+  bool passes(h22Event, int);
 
 };
 
@@ -96,7 +96,7 @@ class TrackQualityCut : public DCut
   TrackQualityCut();
   ~TrackQualityCut();
 
-  bool passes(DEvent, int);
+  bool passes(h22Event, int);
 
 };
 
@@ -114,7 +114,7 @@ class MomentumCut : public DCut
   MomentumCut();
   ~MomentumCut();
 
-  bool passes(DEvent, int);
+  bool passes(h22Event, int);
 
 };
 
@@ -135,8 +135,8 @@ class SampFracCut : public DCut
 
   int sector; 
   double am, as, bm, bs, cm, cs, dm, ds, nsigma, min, max;
-  bool applies(DEvent, int);
-  bool passes(DEvent, int);
+  bool applies(h22Event, int);
+  bool passes(h22Event, int);
 };
 
 /////////////////////////////////////////////////////////////////////
@@ -153,7 +153,7 @@ class ECUCut : public DCut
   ECUCut();
   ~ECUCut();
 
-  bool passes(DEvent, int);
+  bool passes(h22Event, int);
 
 };
 
@@ -170,7 +170,7 @@ class ECVCut : public DCut
  public:
   ECVCut();
   ~ECVCut();
-  bool passes(DEvent, int);
+  bool passes(h22Event, int);
 
 };
 
@@ -187,7 +187,7 @@ class ECWCut : public DCut
  public:
   ECWCut();
   ~ECWCut();
-  bool passes(DEvent, int);
+  bool passes(h22Event, int);
 
 };
 
@@ -205,7 +205,7 @@ class ZVertexCut : public DCut
  public:
   ZVertexCut();
   ~ZVertexCut();
-  bool passes(DEvent, int);
+  bool passes(h22Event, int);
 
 };
 
@@ -224,7 +224,7 @@ class CCFiducialCut : public DCut
   ~CCFiducialCut();
 
   double a, b; 
-  bool passes(DEvent, int);
+  bool passes(h22Event, int);
 
 };
 
@@ -241,7 +241,7 @@ class ECEdepInnerCut : public DCut
  public:
   ECEdepInnerCut();
   ~ECEdepInnerCut();
-  bool passes(DEvent, int);
+  bool passes(h22Event, int);
 
 };
 
@@ -261,7 +261,7 @@ class DCR1FiducialCut : public DCut
 
   double angle, height; 
 
-  bool passes(DEvent, int);
+  bool passes(h22Event, int);
 
 };
 
@@ -281,7 +281,7 @@ class DCR3FiducialCut : public DCut
 
   double angle, height; 
   
-  bool passes(DEvent, int);
+  bool passes(h22Event, int);
 
 };
 
@@ -299,81 +299,9 @@ class NPheCut : public DCut
   NPheCut();
   ~NPheCut();
 
-  bool passes(DEvent, int);
+  bool passes(h22Event, int);
 
 };
-
-/////////////////////////////////////////////////////////////////////
-/*
-
-  W Cut (Invariant mass of final state)
-
- */
-/////////////////////////////////////////////////////////////////////
-
-class WCut : public DCut 
-{
- public:
-  WCut();
-  ~WCut();
-  bool passes(DEvent, int);
-
-};
-
-/////////////////////////////////////////////////////////////////////
-/*
-
-  Q^2 Cut 
-
- */
-/////////////////////////////////////////////////////////////////////
-
-class VirtualityCut : public DCut 
-{
- public:
-  VirtualityCut();
-  ~VirtualityCut();
-  bool passes(DEvent, int);
-
-};
-
-
-/////////////////////////////////////////////////////////////////////
-/*
-
-  Missing Mass Cut 
-
- */
-/////////////////////////////////////////////////////////////////////
-
-class MissingMassCut : public DCut 
-{
- public:
-  MissingMassCut();
-  ~MissingMassCut();
-
-  bool passes(DEvent, int);
-
-};
-
-/////////////////////////////////////////////////////////////////////
-/*
-
-  Inelasticity Cut 
-
- */
-/////////////////////////////////////////////////////////////////////
-
-class YCut : public DCut 
-{
- public:
-  YCut();
-  ~YCut();
-
-  bool passes(DEvent, int);
-
-};
-
 /////////////////////////////////////////////////////////////////////
 /*
 
@@ -388,7 +316,7 @@ class DCut_DeltaBetaCut : public DCut
   DCut_DeltaBetaCut();
   ~DCut_DeltaBetaCut();
 
-  bool passes(DEvent event, int index, int pid);
+  bool passes(h22Event event, int index, int pid);
 };
 
 /////////////////////////////////////////////////////////////////////
@@ -404,7 +332,7 @@ class DCut_DeltaZVertexCut : public DCut{
   DCut_DeltaZVertexCut();
   ~DCut_DeltaZVertexCut();
 
-  bool passes(DEvent event, int index); 
+  bool passes(h22Event event, int index); 
 };
 
 #endif

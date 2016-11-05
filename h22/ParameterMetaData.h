@@ -21,6 +21,11 @@ class ParameterMetaData{
   void setNameOfFile(std::string name){ nameOfFile = name; }
   void updateTimeOfLastEdit();
 
+  int getNumberOfParameterSets(){ return numberOfParameterSets; }
+  int getNumberOfFilesUsed(){ return numberOfFilesUsed; }
+  std::string getName(){ return nameOfFile; }
+  std::string getTimeOfLastEdit(){ return timeOfLastEdit; }
+
   void print();
 };
 

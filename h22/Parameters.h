@@ -14,14 +14,18 @@ class Parameters{
 
  protected:
   ParameterMetaData metaData; 
-  map<std::string, ParameterSet*> parameters; 
+  std::map<std::string, ParameterSet> parameters; 
 
  public:
-  ParameterSet *getParameter(std::string name);
+  ParameterSet getParameter(std::string name);
   ParameterMetaData getMetaData(){ return metaData; }
+  std::vector<std::string> parseLine(std::string);
 
+  void addParameterSet(ParameterSet inputParameterSet){ parameters[inputParameterSet.getName()] = inputParameterSet; } 
   void loadParameters(std::string inputFilename);
   void saveParameters(std::string outputFilename);
+  void setNumberOfFiles(int numberOfFiles){ metaData.setNumberOfFilesUsed(numberOfFiles); } 
+
 };
 
 #endif

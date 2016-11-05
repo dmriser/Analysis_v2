@@ -4,8 +4,10 @@
 #include <fstream>
 #include <string>
 #include <iostream>
+#include <time.h>
 using std::cout; 
 using std::endl;
+using std::string; 
 
 #include "ParameterMetaData.h"
 
@@ -16,7 +18,12 @@ ParameterMetaData::~ParameterMetaData(){
 }
 
 void ParameterMetaData::updateTimeOfLastEdit(){
-  timeOfLastEdit = "# [ParameterMetaData::updateTimeOfLastEdit] Feature not supported yet!"; 
+  time_t rawtime;
+  struct tm * timeinfo;
+  time (&rawtime);
+  timeinfo = localtime (&rawtime);
+
+  timeOfLastEdit = (string) (asctime(timeinfo));
 }
 
 void ParameterMetaData::print(){

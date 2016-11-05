@@ -27,7 +27,7 @@ using namespace std;
 #include "Corrections.h"
 #include "DBins.h"
 #include "DCut.h"
-#include "DEvent.h"
+#include "h22Event.h"
 #include "DSelection.h"
 #include "ElectronIDPackage.h"
 #include "h22Event.h"
@@ -119,8 +119,8 @@ void ElectronIDManager::calculate_values()
   for (int iev=0; iev<nev; iev++)
     {
       GetEntry(iev);
-      DEvent event(GetEvent());
-      if ( selector.passes(event, 0) ) { int sector = -1+event.tracks.dc_sect[0];  h2_ec_sampling[sector]->Fill(event.tracks.p[0],event.tracks.etot[0]/event.tracks.p[0]); }
+      h22Event event(GetEvent());
+      if ( selector.passes(event, 0) ) { int sector = -1+event.dc_sect[0];  h2_ec_sampling[sector]->Fill(event.p[0],event.etot[0]/event.p[0]); }
     }
 
   // Do the fitting and slicing
@@ -229,77 +229,77 @@ void ElectronIDHistograms::init()
   
 }
 
-void ElectronIDHistograms::fill(DEvent event)
+void ElectronIDHistograms::fill(h22Event event)
 {
   selector.set_info(runno, mc_status);
 
   
-  for (int ipart=0; ipart<event.tracks.gpart; ipart++)
+  for (int ipart=0; ipart<event.gpart; ipart++)
     {
       
       if (selector.qc_cut->passes(event, ipart))
 	{
-	  int s        = event.tracks.dc_sect[ipart]; 
-	  TVector3 uvw = event.tracks.uvw(ipart);
+	  int s        = event.dc_sect[ipart]; 
+	  TVector3 uvw = event.uvw(ipart);
 	  
-	  h1_nphe[0][s]  ->Fill(event.tracks.nphe[ipart]/10);
-	  h1_vz[0][s]    ->Fill(corr.vz(event.tracks, ipart, runno, mc_status)); // This needs to be the correced vz, but I dont want to include corrections class in here 
-	  h1_ec_in[0][s] ->Fill(event.tracks.ec_ei[ipart]);
+	  h1_nphe[0][s]  ->Fill(event.nphe[ipart]/10);
+	  h1_vz[0][s]    ->Fill(corr.vz(event, ipart, runno, mc_status)); // This needs to be the correced vz, but I dont want to include corrections class in here 
+	  h1_ec_in[0][s] ->Fill(event.ec_ei[ipart]);
 	  h1_ecu[0][s]   ->Fill(uvw.X());
 	  h1_ecv[0][s]   ->Fill(uvw.Y());
 	  h1_ecw[0][s]   ->Fill(uvw.Z());
 	  
-	  h2_ec_sampling[0][s] ->Fill(event.tracks.p[ipart], event.tracks.etot[ipart]/event.tracks.p[ipart]);
-	  h2_ec_uvw[0][s]      ->Fill(event.tracks.ech_x[ipart], event.tracks.ech_y[ipart]);
-	  h2_dcr1[0][s]        ->Fill(event.tracks.rot_dc1x(ipart), event.tracks.rot_dc1y(ipart));
-	  h2_dcr3[0][s]        ->Fill(event.tracks.tl3_x[ipart], event.tracks.tl3_y[ipart]);
-	  h2_cc[0][s]          ->Fill(event.tracks.rphi(ipart), event.tracks.theta_cc(ipart));
+	  h2_ec_sampling[0][s] ->Fill(event.p[ipart], event.etot[ipart]/event.p[ipart]);
+	  h2_ec_uvw[0][s]      ->Fill(event.ech_x[ipart], event.ech_y[ipart]);
+	  h2_dcr1[0][s]        ->Fill(event.rot_dc1x(ipart), event.rot_dc1y(ipart));
+	  h2_dcr3[0][s]        ->Fill(event.tl3_x[ipart], event.tl3_y[ipart]);
+	  h2_cc[0][s]          ->Fill(event.rphi(ipart), event.theta_cc(ipart));
 	  
-	  h1_nphe[0][0]  ->Fill(event.tracks.nphe[ipart]/10);
-	  h1_vz[0][0]    ->Fill(corr.vz(event.tracks, ipart, runno, mc_status)); // This needs to be the correced vz, but I dont want to include corrections class in here 
-	  h1_ec_in[0][0] ->Fill(event.tracks.ec_ei[ipart]);
+	  h1_nphe[0][0]  ->Fill(event.nphe[ipart]/10);
+	  h1_vz[0][0]    ->Fill(corr.vz(event, ipart, runno, mc_status)); // This needs to be the correced vz, but I dont want to include corrections class in here 
+	  h1_ec_in[0][0] ->Fill(event.ec_ei[ipart]);
 	  h1_ecu[0][0]   ->Fill(uvw.X());
 	  h1_ecv[0][0]   ->Fill(uvw.Y());
 	  h1_ecw[0][0]   ->Fill(uvw.Z());
 	  
-	  h2_ec_sampling[0][0] ->Fill(event.tracks.p[ipart], event.tracks.etot[ipart]/event.tracks.p[ipart]);
-	  h2_ec_uvw[0][0]      ->Fill(event.tracks.ech_x[ipart], event.tracks.ech_y[ipart]);
-	  h2_dcr1[0][0]        ->Fill(event.tracks.rot_dc1x(ipart), event.tracks.rot_dc1y(ipart));
-	  h2_dcr3[0][0]        ->Fill(event.tracks.tl3_x[ipart], event.tracks.tl3_y[ipart]);
-	  h2_cc[0][0]          ->Fill(event.tracks.rphi(ipart), event.tracks.theta_cc(ipart));
+	  h2_ec_sampling[0][0] ->Fill(event.p[ipart], event.etot[ipart]/event.p[ipart]);
+	  h2_ec_uvw[0][0]      ->Fill(event.ech_x[ipart], event.ech_y[ipart]);
+	  h2_dcr1[0][0]        ->Fill(event.rot_dc1x(ipart), event.rot_dc1y(ipart));
+	  h2_dcr3[0][0]        ->Fill(event.tl3_x[ipart], event.tl3_y[ipart]);
+	  h2_cc[0][0]          ->Fill(event.rphi(ipart), event.theta_cc(ipart));
 	}
     }
 
 
      	
-  for (int ipart=0; ipart<event.tracks.gpart; ipart++) {
+  for (int ipart=0; ipart<event.gpart; ipart++) {
     if (selector.qc_cut->passes(event, ipart) && selector.negativity_cut->passes(event, ipart))
       {
-	int s        = event.tracks.dc_sect[ipart]; 
-	TVector3 uvw = event.tracks.uvw(ipart);
+	int s        = event.dc_sect[ipart]; 
+	TVector3 uvw = event.uvw(ipart);
 	
 	if (selector.cc_fid_cut->passes(event, ipart))
 	  {
-	    h2_cc[1][0] ->Fill(event.tracks.rphi(ipart), event.tracks.theta_cc(ipart));
-	    h2_cc[1][s] ->Fill(event.tracks.rphi(ipart), event.tracks.theta_cc(ipart));
+	    h2_cc[1][0] ->Fill(event.rphi(ipart), event.theta_cc(ipart));
+	    h2_cc[1][s] ->Fill(event.rphi(ipart), event.theta_cc(ipart));
 	  }
 	
 	if (selector.dcr1_fid_cut->passes(event, ipart))
 	  {
-	    h2_dcr1[1][0] ->Fill(event.tracks.rot_dc1x(ipart), event.tracks.rot_dc1y(ipart));
-	    h2_dcr1[1][s] ->Fill(event.tracks.rot_dc1x(ipart), event.tracks.rot_dc1y(ipart));
+	    h2_dcr1[1][0] ->Fill(event.rot_dc1x(ipart), event.rot_dc1y(ipart));
+	    h2_dcr1[1][s] ->Fill(event.rot_dc1x(ipart), event.rot_dc1y(ipart));
 	  }
 	
 	if (selector.dcr3_fid_cut->passes(event, ipart))
 	  {
-	    h2_dcr3[1][0] ->Fill(event.tracks.tl3_x[ipart], event.tracks.tl3_y[ipart]);
-	    h2_dcr3[1][s] ->Fill(event.tracks.tl3_x[ipart], event.tracks.tl3_y[ipart]);
+	    h2_dcr3[1][0] ->Fill(event.tl3_x[ipart], event.tl3_y[ipart]);
+	    h2_dcr3[1][s] ->Fill(event.tl3_x[ipart], event.tl3_y[ipart]);
 	  }
 	
 	if (selector.edep_cut->passes(event, ipart))
 	  {
-	    h1_ec_in[1][0] ->Fill(event.tracks.ec_ei[ipart]);
-	    h1_ec_in[1][s] ->Fill(event.tracks.ec_ei[ipart]);
+	    h1_ec_in[1][0] ->Fill(event.ec_ei[ipart]);
+	    h1_ec_in[1][s] ->Fill(event.ec_ei[ipart]);
 	  }    
 	
 	if (selector.ecu_cut->passes(event, ipart))
@@ -322,93 +322,93 @@ void ElectronIDHistograms::fill(DEvent event)
 	
 	if (selector.ecu_cut->passes(event, ipart) && selector.ecv_cut->passes(event, ipart) && selector.ecw_cut->passes(event, ipart))
 	  {
-	    h2_ec_uvw[1][0] ->Fill(event.tracks.ech_x[ipart], event.tracks.ech_y[ipart]);
-	    h2_ec_uvw[1][s] ->Fill(event.tracks.ech_x[ipart], event.tracks.ech_y[ipart]);
+	    h2_ec_uvw[1][0] ->Fill(event.ech_x[ipart], event.ech_y[ipart]);
+	    h2_ec_uvw[1][s] ->Fill(event.ech_x[ipart], event.ech_y[ipart]);
 	  }
 	      
 	if (selector.nphe_cut->passes(event, ipart))
 	  {
-	    h1_nphe[1][0] ->Fill(event.tracks.nphe[ipart]/10);
-	    h1_nphe[1][s] ->Fill(event.tracks.nphe[ipart]/10);
+	    h1_nphe[1][0] ->Fill(event.nphe[ipart]/10);
+	    h1_nphe[1][s] ->Fill(event.nphe[ipart]/10);
 	  }    
 	
 	if (selector.sf_s1_cut->applies(event, ipart) && selector.sf_s1_cut->passes(event, ipart))
 	  {
-	    h2_ec_sampling[1][0] ->Fill(event.tracks.p[ipart],event.tracks.etot[ipart]/event.tracks.p[ipart]);
-		  h2_ec_sampling[1][1] ->Fill(event.tracks.p[ipart],event.tracks.etot[ipart]/event.tracks.p[ipart]);
+	    h2_ec_sampling[1][0] ->Fill(event.p[ipart],event.etot[ipart]/event.p[ipart]);
+		  h2_ec_sampling[1][1] ->Fill(event.p[ipart],event.etot[ipart]/event.p[ipart]);
 	  }
 	
 	if (selector.sf_s2_cut->applies(event, ipart) && selector.sf_s2_cut->passes(event, ipart))
 	  {
-	    h2_ec_sampling[1][0] ->Fill(event.tracks.p[ipart],event.tracks.etot[ipart]/event.tracks.p[ipart]);
-	    h2_ec_sampling[1][2] ->Fill(event.tracks.p[ipart],event.tracks.etot[ipart]/event.tracks.p[ipart]);
+	    h2_ec_sampling[1][0] ->Fill(event.p[ipart],event.etot[ipart]/event.p[ipart]);
+	    h2_ec_sampling[1][2] ->Fill(event.p[ipart],event.etot[ipart]/event.p[ipart]);
 	  }
 	
 	if (selector.sf_s3_cut->applies(event, ipart) && selector.sf_s3_cut->passes(event, ipart))
 	  {
-	    h2_ec_sampling[1][0] ->Fill(event.tracks.p[ipart],event.tracks.etot[ipart]/event.tracks.p[ipart]);
-	    h2_ec_sampling[1][3] ->Fill(event.tracks.p[ipart],event.tracks.etot[ipart]/event.tracks.p[ipart]);
+	    h2_ec_sampling[1][0] ->Fill(event.p[ipart],event.etot[ipart]/event.p[ipart]);
+	    h2_ec_sampling[1][3] ->Fill(event.p[ipart],event.etot[ipart]/event.p[ipart]);
 	  }
 	
 	if (selector.sf_s4_cut->applies(event, ipart) && selector.sf_s4_cut->passes(event, ipart))
 	  {
-	    h2_ec_sampling[1][0] ->Fill(event.tracks.p[ipart],event.tracks.etot[ipart]/event.tracks.p[ipart]);
-	    h2_ec_sampling[1][4] ->Fill(event.tracks.p[ipart],event.tracks.etot[ipart]/event.tracks.p[ipart]);
+	    h2_ec_sampling[1][0] ->Fill(event.p[ipart],event.etot[ipart]/event.p[ipart]);
+	    h2_ec_sampling[1][4] ->Fill(event.p[ipart],event.etot[ipart]/event.p[ipart]);
 	  }
 	
 	if (selector.sf_s5_cut->applies(event, ipart) && selector.sf_s5_cut->passes(event, ipart))
 	  {
-	    h2_ec_sampling[1][0] ->Fill(event.tracks.p[ipart],event.tracks.etot[ipart]/event.tracks.p[ipart]);
-	    h2_ec_sampling[1][5] ->Fill(event.tracks.p[ipart],event.tracks.etot[ipart]/event.tracks.p[ipart]);
+	    h2_ec_sampling[1][0] ->Fill(event.p[ipart],event.etot[ipart]/event.p[ipart]);
+	    h2_ec_sampling[1][5] ->Fill(event.p[ipart],event.etot[ipart]/event.p[ipart]);
 	  }
 	
 	if (selector.sf_s6_cut->applies(event, ipart) && selector.sf_s6_cut->passes(event, ipart))
 	  {
-	    h2_ec_sampling[1][0] ->Fill(event.tracks.p[ipart],event.tracks.etot[ipart]/event.tracks.p[ipart]);
-	    h2_ec_sampling[1][6] ->Fill(event.tracks.p[ipart],event.tracks.etot[ipart]/event.tracks.p[ipart]);
+	    h2_ec_sampling[1][0] ->Fill(event.p[ipart],event.etot[ipart]/event.p[ipart]);
+	    h2_ec_sampling[1][6] ->Fill(event.p[ipart],event.etot[ipart]/event.p[ipart]);
 	  }
 	
 	if (selector.vz_cut->passes(event, ipart))
 	  {
-	    h1_vz[1][0] ->Fill(corr.vz(event.tracks, ipart, runno, mc_status)); 
-	    h1_vz[1][s] ->Fill(corr.vz(event.tracks, ipart, runno, mc_status)); 
+	    h1_vz[1][0] ->Fill(corr.vz(event, ipart, runno, mc_status)); 
+	    h1_vz[1][s] ->Fill(corr.vz(event, ipart, runno, mc_status)); 
 	  }      
       } 
   }
   
       
-  for (int ipart=0; ipart<event.tracks.gpart; ipart++) 
+  for (int ipart=0; ipart<event.gpart; ipart++) 
     {
       if (selector.passes(event, ipart))
 	{
-	  int s        = event.tracks.dc_sect[ipart]; 
-	  TVector3 uvw = event.tracks.uvw(ipart);
+	  int s        = event.dc_sect[ipart]; 
+	  TVector3 uvw = event.uvw(ipart);
 	  
-	  h1_nphe[2][s]  ->Fill(event.tracks.nphe[ipart]/10);
-	  h1_vz[2][s]    ->Fill(corr.vz(event.tracks, ipart, runno, mc_status)); // This needs to be the correced vz, but I dont want to include corrections class in here 
-	  h1_ec_in[2][s] ->Fill(event.tracks.ec_ei[ipart]);
+	  h1_nphe[2][s]  ->Fill(event.nphe[ipart]/10);
+	  h1_vz[2][s]    ->Fill(corr.vz(event, ipart, runno, mc_status)); // This needs to be the correced vz, but I dont want to include corrections class in here 
+	  h1_ec_in[2][s] ->Fill(event.ec_ei[ipart]);
 	  h1_ecu[2][s]   ->Fill(uvw.X());
 	  h1_ecv[2][s]   ->Fill(uvw.Y());
 	  h1_ecw[2][s]   ->Fill(uvw.Z());
 	  
-	  h2_ec_sampling[2][s] ->Fill(event.tracks.p[ipart],event.tracks.etot[ipart]/event.tracks.p[ipart]);
-	  h2_ec_uvw[2][s]      ->Fill(event.tracks.ech_x[ipart], event.tracks.ech_y[ipart]);
-	  h2_dcr1[2][s]        ->Fill(event.tracks.rot_dc1x(ipart), event.tracks.rot_dc1y(ipart));
-	  h2_dcr3[2][s]        ->Fill(event.tracks.tl3_x[ipart], event.tracks.tl3_y[ipart]);
-	  h2_cc[2][s]          ->Fill(event.tracks.rphi(ipart), event.tracks.theta_cc(ipart));
+	  h2_ec_sampling[2][s] ->Fill(event.p[ipart],event.etot[ipart]/event.p[ipart]);
+	  h2_ec_uvw[2][s]      ->Fill(event.ech_x[ipart], event.ech_y[ipart]);
+	  h2_dcr1[2][s]        ->Fill(event.rot_dc1x(ipart), event.rot_dc1y(ipart));
+	  h2_dcr3[2][s]        ->Fill(event.tl3_x[ipart], event.tl3_y[ipart]);
+	  h2_cc[2][s]          ->Fill(event.rphi(ipart), event.theta_cc(ipart));
 	  
-	  h1_nphe[2][0]  ->Fill(event.tracks.nphe[ipart]/10);
-	  h1_vz[2][0]    ->Fill(corr.vz(event.tracks, ipart, runno, mc_status)); // This needs to be the correced vz, but I dont want to include corrections class in here 
-	  h1_ec_in[2][0] ->Fill(event.tracks.ec_ei[ipart]);
+	  h1_nphe[2][0]  ->Fill(event.nphe[ipart]/10);
+	  h1_vz[2][0]    ->Fill(corr.vz(event, ipart, runno, mc_status)); // This needs to be the correced vz, but I dont want to include corrections class in here 
+	  h1_ec_in[2][0] ->Fill(event.ec_ei[ipart]);
 	  h1_ecu[2][0]   ->Fill(uvw.X());
 	  h1_ecv[2][0]   ->Fill(uvw.Y());
 	  h1_ecw[2][0]   ->Fill(uvw.Z());
 	  
-	  h2_ec_sampling[2][0] ->Fill(event.tracks.p[ipart], event.tracks.etot[ipart]/event.tracks.p[ipart]);
-	  h2_ec_uvw[2][0]      ->Fill(event.tracks.ech_x[ipart], event.tracks.ech_y[ipart]);
-	  h2_dcr1[2][0]        ->Fill(event.tracks.rot_dc1x(ipart), event.tracks.rot_dc1y(ipart));
-	  h2_dcr3[2][0]        ->Fill(event.tracks.tl3_x[ipart], event.tracks.tl3_y[ipart]);
-	  h2_cc[2][0]          ->Fill(event.tracks.rphi(ipart), event.tracks.theta_cc(ipart));
+	  h2_ec_sampling[2][0] ->Fill(event.p[ipart], event.etot[ipart]/event.p[ipart]);
+	  h2_ec_uvw[2][0]      ->Fill(event.ech_x[ipart], event.ech_y[ipart]);
+	  h2_dcr1[2][0]        ->Fill(event.rot_dc1x(ipart), event.rot_dc1y(ipart));
+	  h2_dcr3[2][0]        ->Fill(event.tl3_x[ipart], event.tl3_y[ipart]);
+	  h2_cc[2][0]          ->Fill(event.rphi(ipart), event.theta_cc(ipart));
 	}
     }
 }
@@ -469,14 +469,14 @@ ElectronSelector::ElectronSelector(string file)
   init();
 }
 
-bool ElectronSelector::passes(DEvent event, int index)
+bool ElectronSelector::passes(h22Event event, int index)
 {
   // Loop over the cuts we have and make sure all pass.
   bool status = true;
 
   // Here we need to set the vertex correctly and do any other correction. This keeps the Corrections object out of DCut and DSelector base class.
-  event.tracks.vz[index] = corr.vz(event.tracks,index,runno,mc_status); // corr is an instance of Corrections 
-  if ( !corr.good_sc_paddle(event.tracks, index) ) { return false; }
+  event.vz[index] = corr.vz(event,index,runno,mc_status); // corr is an instance of Corrections 
+  if ( !corr.good_sc_paddle(event, index) ) { return false; }
   
   vector<DCut*>::iterator it;
   for (it = cuts.begin(); it!=cuts.end(); it++)

@@ -40,7 +40,7 @@ class ParameterSet{
   int getNumberOfValues(){ return value.size(); }
   int getNumberOfErrors(){ return error.size(); }
 
-  void setName(std::string inputName);
+  void setName(std::string inputName){ name = inputName; }
   void setDescription(std::string inputDescription);
   void addValue(double inputValue);
   void addError(double inputError);

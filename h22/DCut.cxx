@@ -1,11 +1,8 @@
 ////////////////////////////////////////////////////////////////////
 /*
-
   David Riser, University of Connecticut 
   August 14, 2016 
-
   DCut.cxx -> Writes class methods. 
-
 */
 ////////////////////////////////////////////////////////////////////
 
@@ -22,7 +19,7 @@ using std::string;
 // my includes
 #include "CommonTools.h"
 #include "DCut.h"
-#include "DEvent.h"
+#include "h22Event.h"
 
 DCut::DCut()
 {
@@ -38,7 +35,7 @@ DCut::~DCut()
 }
 
 
-bool DCut::passes(DEvent event, int index)
+bool DCut::passes(h22Event event, int index)
 {
   if ( !is_enabled ){ return false; } 
 
@@ -46,16 +43,14 @@ bool DCut::passes(DEvent event, int index)
   return true;
 }
 
-bool DCut::applies(DEvent event, int index)
+bool DCut::applies(h22Event event, int index)
 {
   return true;
 }
 
 ///////////////////////////////////////////////////////////////
 /*
-
   ChargeCut 
-
 */
 ///////////////////////////////////////////////////////////////
 
@@ -70,9 +65,9 @@ ChargeCut::~ChargeCut()
 }
 
 /** Simply checking if the particle is negative */
-bool ChargeCut::passes(DEvent event, int index)
+bool ChargeCut::passes(h22Event event, int index)
 {
-  if ( event.tracks.q[index] > min() && event.tracks.q[index] < max() ) { n_pass++; return true; }
+  if ( event.q[index] > min() && event.q[index] < max() ) { n_pass++; return true; }
   else { n_fail++; }
   
   return false; 
@@ -80,9 +75,7 @@ bool ChargeCut::passes(DEvent event, int index)
 
 ///////////////////////////////////////////////////////////////
 /*
-
   Track Quality Cut 
-
 */
 ///////////////////////////////////////////////////////////////
 
@@ -97,9 +90,9 @@ TrackQualityCut::~TrackQualityCut()
 }
 
 /** Simply checking if the particle is negative */
-bool TrackQualityCut::passes(DEvent event, int index)
+bool TrackQualityCut::passes(h22Event event, int index)
 {
-  if ( event.tracks.cc_sect[index] > 0 && event.tracks.dc_sect[index] > 0 && event.tracks.ec_sect[index] > 0 ) { n_pass++; return true; }
+  if ( event.cc_sect[index] > 0 && event.dc_sect[index] > 0 && event.ec_sect[index] > 0 ) { n_pass++; return true; }
   else { n_fail++; }
   
   return false; 
@@ -108,9 +101,7 @@ bool TrackQualityCut::passes(DEvent event, int index)
  
 ///////////////////////////////////////////////////////////////
 /*
-
   MomentumCut 
-
 */
 ///////////////////////////////////////////////////////////////
 
@@ -124,9 +115,9 @@ MomentumCut::~MomentumCut()
 
 }
 
-bool MomentumCut::passes(DEvent event, int index)
+bool MomentumCut::passes(h22Event event, int index)
 {
-  if ( event.tracks.p[index] > min() && event.tracks.p[index] < max() ) { n_pass++; return true; }
+  if ( event.p[index] > min() && event.p[index] < max() ) { n_pass++; return true; }
   else { n_fail++; }
   
   return false; 
@@ -135,9 +126,7 @@ bool MomentumCut::passes(DEvent event, int index)
  
 ///////////////////////////////////////////////////////////////
 /*
-
   Number of Photoelectrons Cut 
-
 */
 ///////////////////////////////////////////////////////////////
 
@@ -151,9 +140,9 @@ NPheCut::~NPheCut()
 
 }
 
-bool NPheCut::passes(DEvent event, int index)
+bool NPheCut::passes(h22Event event, int index)
 {
-  if ( event.tracks.nphe[index] > min() ) { n_pass++; return true; }
+  if ( event.nphe[index] > min() ) { n_pass++; return true; }
   else { n_fail++; }
   
   return false; 
@@ -162,9 +151,7 @@ bool NPheCut::passes(DEvent event, int index)
  
 ///////////////////////////////////////////////////////////////
 /*
-
   Sampling Fraction Cut 
-
 */
 ///////////////////////////////////////////////////////////////
 
@@ -187,32 +174,29 @@ SampFracCut::~SampFracCut()
 
 }
 
-bool SampFracCut::passes(DEvent event, int index)
+bool SampFracCut::passes(h22Event event, int index)
 {
-  double samp = event.tracks.etot[index]/event.tracks.p[index];
+  double samp = event.etot[index]/event.p[index];
 
-  min = (am-nsigma*as)*pow(event.tracks.p[index],3) +  (bm-nsigma*bs)*pow(event.tracks.p[index],2) + (cm-nsigma*cs)*event.tracks.p[index] +  (dm-nsigma*ds); 
-  max = (am+nsigma*as)*pow(event.tracks.p[index],3) +  (bm+nsigma*bs)*pow(event.tracks.p[index],2) + (cm+nsigma*cs)*event.tracks.p[index] +  (dm+nsigma*ds); 
+  min = (am-nsigma*as)*pow(event.p[index],3) +  (bm-nsigma*bs)*pow(event.p[index],2) + (cm-nsigma*cs)*event.p[index] +  (dm-nsigma*ds); 
+  max = (am+nsigma*as)*pow(event.p[index],3) +  (bm+nsigma*bs)*pow(event.p[index],2) + (cm+nsigma*cs)*event.p[index] +  (dm+nsigma*ds); 
 
   if (samp > min && samp < max){ n_pass++; return true; } 
   else { n_fail++; return false; } 
 }
 
-bool SampFracCut::applies(DEvent event, int index)
+bool SampFracCut::applies(h22Event event, int index)
 {
-  int s = event.tracks.dc_sect[index];
+  int s = event.dc_sect[index];
   if (s == sector) return true;
   return false;
 }
 
 ///////////////////////////////////////////////////////////////
 /*
-
   EC U, V, W Cuts 
-
 */
 ///////////////////////////////////////////////////////////////
-
 ECUCut::ECUCut()
 {
   set_name("EC-U Cut");
@@ -223,10 +207,10 @@ ECUCut::~ECUCut()
 
 }
 
-bool ECUCut::passes(DEvent event, int index)
+bool ECUCut::passes(h22Event event, int index)
 {
 
-  double u = event.tracks.uvw(index).X();
+  double u = event.uvw(index).X();
     
   if ( u > min() && u < max() ) { n_pass++; return true; }
   else { n_fail++; }
@@ -244,10 +228,10 @@ ECVCut::~ECVCut()
 
 }
 
-bool ECVCut::passes(DEvent event, int index)
+bool ECVCut::passes(h22Event event, int index)
 {
 
-  double v = event.tracks.uvw(index).Y();
+  double v = event.uvw(index).Y();
     
   if ( v > min() && v < max() ) { n_pass++; return true; }
   else { n_fail++; }
@@ -265,10 +249,10 @@ ECWCut::~ECWCut()
 
 }
 
-bool ECWCut::passes(DEvent event, int index)
+bool ECWCut::passes(h22Event event, int index)
 {
 
-  double w = event.tracks.uvw(index).Z();
+  double w = event.uvw(index).Z();
     
   if ( w > min() && w < max() ) { n_pass++; return true; }
   else { n_fail++; }
@@ -278,9 +262,7 @@ bool ECWCut::passes(DEvent event, int index)
 
 ///////////////////////////////////////////////////////////////
 /*
-
   Z-Vertex Cut 
-
 */
 ///////////////////////////////////////////////////////////////
 
@@ -294,10 +276,10 @@ ZVertexCut::~ZVertexCut()
 
 }
 
-bool ZVertexCut::passes(DEvent event, int index)
+bool ZVertexCut::passes(h22Event event, int index)
 {
 
-  if ( event.tracks.vz[index] > min() && event.tracks.vz[index] < max() ) { n_pass++; return true; }
+  if ( event.vz[index] > min() && event.vz[index] < max() ) { n_pass++; return true; }
   else { n_fail++; }
   
   return false; 
@@ -305,9 +287,7 @@ bool ZVertexCut::passes(DEvent event, int index)
 
 ///////////////////////////////////////////////////////////////
 /*
-
   CC Fid Cut
-
 */
 ///////////////////////////////////////////////////////////////
 
@@ -322,19 +302,17 @@ CCFiducialCut::~CCFiducialCut()
 
 }
 
-bool CCFiducialCut::passes(DEvent event, int index)
+bool CCFiducialCut::passes(h22Event event, int index)
 {
-  set_min(a - b*sqrt(1 - pow(event.tracks.rphi(index),2)/360));
+  set_min(a - b*sqrt(1 - pow(event.rphi(index),2)/360));
     
-  if ( event.tracks.theta_cc(index) > min() ) { n_pass++; return true; }
+  if ( event.theta_cc(index) > min() ) { n_pass++; return true; }
   else                                        { n_fail++; return false;}
 }
 
 ///////////////////////////////////////////////////////////////
 /*
-
   EC Edep Inner Cut 
-
 */
 ///////////////////////////////////////////////////////////////
 
@@ -348,10 +326,10 @@ ECEdepInnerCut::~ECEdepInnerCut()
 
 }
 
-bool ECEdepInnerCut::passes(DEvent event, int index)
+bool ECEdepInnerCut::passes(h22Event event, int index)
 {
 
-  if ( event.tracks.ec_ei[index] > min() ) { n_pass++; return true; }
+  if ( event.ec_ei[index] > min() ) { n_pass++; return true; }
   else { n_fail++; }
   
   return false; 
@@ -360,9 +338,7 @@ bool ECEdepInnerCut::passes(DEvent event, int index)
 
 ///////////////////////////////////////////////////////////////
 /*
-
   DCR1FiducialCut 
-
 */
 ///////////////////////////////////////////////////////////////
 
@@ -378,23 +354,21 @@ DCR1FiducialCut::~DCR1FiducialCut()
 
 }
 
-bool DCR1FiducialCut::passes(DEvent event, int index)
+bool DCR1FiducialCut::passes(h22Event event, int index)
 {
 
   double slope = 1/tan(0.5*to_radians*angle);
-  double left  = (height - slope*event.tracks.rot_dc1y(index));
-  double right = (height + slope*event.tracks.rot_dc1y(index));
+  double left  = (height - slope*event.rot_dc1y(index));
+  double right = (height + slope*event.rot_dc1y(index));
   
-  if (event.tracks.rot_dc1x(index) > left && event.tracks.rot_dc1x(index) > right) { n_pass++; return true; }
+  if (event.rot_dc1x(index) > left && event.rot_dc1x(index) > right) { n_pass++; return true; }
   else { n_fail++; return false; }
 }
 
 
 ///////////////////////////////////////////////////////////////
 /*
-
   DCR3FiducialCut 
-
 */
 ///////////////////////////////////////////////////////////////
 
@@ -410,191 +384,16 @@ DCR3FiducialCut::~DCR3FiducialCut()
 
 }
 
-bool DCR3FiducialCut::passes(DEvent event, int index)
+bool DCR3FiducialCut::passes(h22Event event, int index)
 {
 
   double slope = 1/tan(0.5*to_radians*angle);
-  double left  = (height - slope*event.tracks.tl3_y[index]);
-  double right = (height + slope*event.tracks.tl3_y[index]);
+  double left  = (height - slope*event.tl3_y[index]);
+  double right = (height + slope*event.tl3_y[index]);
   
-  if (event.tracks.tl3_x[index] > left && event.tracks.tl3_x[index] > right) { n_pass++; return true; }
+  if (event.tl3_x[index] > left && event.tl3_x[index] > right) { n_pass++; return true; }
   else { n_fail++; return false; }
 }
-
-///////////////////////////////////////////////////////////////
-/*
-
-  W Cut 
-
-*/
-///////////////////////////////////////////////////////////////
-
-WCut::WCut()
-{
-  set_name("W Cut");
-}
-
-WCut::~WCut()
-{
-
-}
-
-bool WCut::passes(DEvent event, int index)
-{
-
-  if ( event.w > min() && event.w < max()) { n_pass++; return true; }
-  else { n_fail++; }
-  
-  return false; 
-}
-
-///////////////////////////////////////////////////////////////
-/*
-
-  Virtuality Cut 
-
-*/
-///////////////////////////////////////////////////////////////
-
-VirtualityCut::VirtualityCut()
-{
-  set_name("Virtuality Cut");
-}
-
-VirtualityCut::~VirtualityCut()
-{
-
-}
-
-bool VirtualityCut::passes(DEvent event, int index)
-{
-
-  if ( event.qq > min() && event.qq < max()) { n_pass++; return true; }
-  else { n_fail++; }
-  
-  return false; 
-}
-
-
-///////////////////////////////////////////////////////////////
-/*
-
-  Virtuality Cut 
-
-*/
-///////////////////////////////////////////////////////////////
-
-
-MissingMassCut::MissingMassCut()
-{
-  set_name("Missing Mass Cut");
-}
-
-MissingMassCut::~MissingMassCut()
-{
-
-}
-
-bool MissingMassCut::passes(DEvent event, int index)
-{
-
-  if ( event.mm2 > min() && event.mm2 < max()) { n_pass++; return true; }
-  else { n_fail++; }
-  
-  return false; 
-}
-
-
-
-///////////////////////////////////////////////////////////////
-/*
-
-  Inelasticity Cut 
-
-*/
-///////////////////////////////////////////////////////////////
-
-
-YCut::YCut()
-{
-  set_name("Inelasticity Cut");
-}
-
-YCut::~YCut()
-{
-
-}
-
-bool YCut::passes(DEvent event, int index)
-{
-
-  if ( event.y < max() && event.y > min()) { n_pass++; return true; }
-  else { n_fail++; }
-  
-  return false; 
-}
-
-///////////////////////////////////////////////////////////////////////////////////////////////////
-/*
-
-  DCut_DeltaBetaCut
-
-*/
-///////////////////////////////////////////////////////////////////////////////////////////////////
-
-DCut_DeltaBetaCut::DCut_DeltaBetaCut(){
-  set_name("Delta Beta Cut"); 
-}
-
-DCut_DeltaBetaCut::~DCut_DeltaBetaCut(){ }
-
-bool DCut_DeltaBetaCut::passes(DEvent event, int index, int pid){
-
-  if (event.e_index == -123){ cout << " Error: Calling DCut_DeltaBetaCut() without having e_index set." << endl; return false; } 
-  
-  // Delta beta is a common cut used for comparing timing of a measured particle
-  // and the theoretical result. 
-  double start_time = event.tracks.sc_t[event.e_index] - event.tracks.sc_r[event.e_index]/speed_of_light; 
-  double beta       = event.tracks.sc_r[index]/(event.tracks.sc_t[index]-start_time);
-  double dbeta      = event.tracks.p[index]/sqrt( pow(event.tracks.p[index],2) + pow(pid_to_mass(pid),2) ) - beta; 
-
-  // Check if passing. 
-  if ( dbeta > min() && dbeta < max() ) { n_pass++; return true; }
-  else { n_fail++; }
-
-  return false; 
-}
-
-
-///////////////////////////////////////////////////////////////////////////////////////////////////
-/*
-
-  DCut_DeltaZVertexCut 
-
-*/
-///////////////////////////////////////////////////////////////////////////////////////////////////
-
-DCut_DeltaZVertexCut::DCut_DeltaZVertexCut(){
-  set_name("Delta Z-Vertex Cut"); 
-}
-
-DCut_DeltaZVertexCut::~DCut_DeltaZVertexCut(){ }
-
-bool DCut_DeltaZVertexCut::passes(DEvent event, int index){
-
-  if (event.e_index == -123){ cout << " Error: Calling DCut_DeltaZVertexCut() without having e_index set." << endl; return false; } 
-   
-  // Delta beta is a common cut used for comparing timing of a measured particle
-  // and the theoretical result. 
-  double dvz = event.tracks.vz[event.e_index] - event.tracks.vz[index];  
-  
-  // Check if passing. 
-  if ( dvz > min() && dvz < max() ) { n_pass++; return true; }
-  else { n_fail++; }
-
-  return false; 
-}
-
  
 
 #endif

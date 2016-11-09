@@ -2,8 +2,8 @@
 
   gROOT->LoadMacro("utils.C");
 
-  TFile *radCorrFile = TFile::Open("../out/radCorrDebugJobs25.root");
-  TFile *simFile = TFile::Open("../out/debugJobs25.root");
+  TFile *radCorrFile = TFile::Open("../out/pass5LundEvents.root");
+  TFile *simFile = TFile::Open("../out/pass5PreliminaryLook.root");
 
   const int numberSector = 7; 
   
@@ -18,12 +18,12 @@
 
   // Rad Corr 
   compareCanvas->cd(1);
-  gPad->SetLogz();
+  //  gPad->SetLogz();
   radCorrEvents[0]->Draw("colz");
 
   // Gen from bos rad 
   compareCanvas->cd(2);
-  gPad->SetLogz();
+  //  gPad->SetLogz();
   simEvents[0]->Draw("colz");
 
 }

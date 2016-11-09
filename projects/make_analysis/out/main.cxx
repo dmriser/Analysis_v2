@@ -1,13 +1,13 @@
 #include <iostream>
 using namespace std;
 
-#include "AppendInformationToh22.h"
-#include "AppendInformationToh22.cxx"
+#include "findElectronIDParameters.h"
+#include "findElectronIDParameters.cxx"
 
 
 int main(int argc, char * argv[]){
 
-        AppendInformationToh22 Analyzer;
+        findElectronIDParameters Analyzer;
         if (argc < 2) { return 0; }
 
         for (int ifile=1; ifile<argc; ifile++){ Analyzer.AddFile(argv[ifile]); } 

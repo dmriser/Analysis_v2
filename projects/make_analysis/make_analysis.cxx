@@ -29,12 +29,18 @@ int main(int argc, char * argv[])
     hfile << "#include \"h22Event.h\" " << endl;
     hfile << "#include \"h22Reader.h\" " << endl; 
     hfile << endl;
+    hfile << "#include \"histos.h\"" << endl;
+    hfile << "#include \"histos.cxx\"" << endl;
+    hfile << endl; 
     hfile << Form("class %s : public h22Reader {",name.c_str()) << endl;  
     hfile << "    public:" << endl;
     hfile << Form("        %s();",name.c_str()) << endl;
     hfile << Form("        ~%s();",name.c_str()) << endl; 
+    hfile << endl; 
+    hfile << "\t Histograms histos;" << endl; 
     hfile << endl;
     hfile << "    void Loop();" << endl;
+    hfile << "    void ProcessEvent();" << endl;
     hfile << "};" << endl;
     hfile << "#endif" << endl;
   }
@@ -48,11 +54,11 @@ int main(int argc, char * argv[])
       cfile << Form("#define %s_cxx",name.c_str()) << endl;
       cfile << endl;
       cfile << Form("#include \"%s.h\"",name.c_str()) << endl;
+      cfile << "#include \"histos.h\"" << endl;
+      cfile << "#include \"histos.cxx\"" << endl;
       cfile << endl; 
       cfile << " // Put your includes here " << endl;
-      cfile << "#include \"DBins.h\" " << endl;
       cfile << "#include \"DCut.h\" " << endl;
-      cfile << "#include \"DEvent.h\" " << endl;
       cfile << "#include \"DSelection.h\" " << endl;
       cfile << "#include \"h22Event.h\" " << endl;
       cfile << "#include \"h22Reader.h\" " << endl; 
@@ -67,13 +73,65 @@ int main(int argc, char * argv[])
       cfile << " // Event loop below. " << endl; 
       cfile << "        for(int ievent=0; ievent<GetEntries(); ievent++){" << endl;
       cfile << "                GetEntry(ievent); " << endl;
-      cfile << "                DEvent event = h22Event(GetEvent()); " << endl; 
+      cfile << "                ProcessEvent(); "   << endl;  
       cfile << "        } " << endl;
+      cfile << "}" << endl;
+      cfile << endl;
+      cfile << Form("void %s::ProcessEvent(){",name.c_str()) << endl;
+      cfile << "\t // Do your stuff here. " << endl;
+      cfile << "\t histos.Fill(event);" << endl; 
       cfile << "}" << endl;
       cfile << "#endif" << endl;
     }
   
   cfile.close(); 
+
+
+  // Doing histograms class 
+  ofstream histoheader("out/histos.h");
+  if (histoheader){
+    histoheader << "#ifndef histo_h" << endl; 
+    histoheader << "#define histo_h" << endl; 
+    histoheader << endl; 
+    histoheader << "#include \"TF1.h\"" << endl; 
+    histoheader << "#include \"TGraphErrors.h\"" << endl; 
+    histoheader << "#include \"TH1.h\"" << endl; 
+    histoheader << "#include \"TH2.h\"" << endl; 
+    histoheader << endl; 
+    histoheader << "#include \"h22Event.h\"" << endl; 
+    histoheader << endl; 
+    histoheader << "class Histograms{" << endl; 
+    histoheader << "\t public:" << endl; 
+    histoheader << "\t Histograms(){}" << endl; 
+    histoheader << "\t ~Histograms(){}" << endl; 
+    histoheader << endl; 
+    histoheader << "\t // Define histograms/graphs here" << endl; 
+    histoheader << "\t void Init();" << endl; 
+    histoheader << "\t void Fill(h22Event event);" << endl; 
+    histoheader << "};"<< endl; 
+    histoheader << endl; 
+    histoheader << "#endif" << endl; 
+    histoheader.close(); 
+  }
+
+  ofstream histobody("out/histos.cxx");
+  if (histobody){
+    histobody << "#ifndef histo_cxx" << endl; 
+    histobody << "#define histo_cxx" << endl; 
+    histobody << endl; 
+    histobody << "#include \"TF1.h\"" << endl; 
+    histobody << "#include \"TGraphErrors.h\"" << endl; 
+    histobody << "#include \"TH1.h\"" << endl; 
+    histobody << "#include \"TH2.h\"" << endl; 
+    histobody << endl; 
+    histobody << "#include \"h22Event.h\"" << endl; 
+    histobody << "#include \"histos.h\"" << endl; 
+    histobody << endl; 
+    histobody << "\t void Histograms::Init(){ }" << endl; 
+    histobody << "\t void Histograms::Fill(h22Event event){ }" << endl; 
+    histobody << "#endif" << endl; 
+    histobody.close(); 
+  }
 
   // Spitting out main! 
   ofstream mainfile("out/main.cxx");

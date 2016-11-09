@@ -1,4 +1,4 @@
-import os, glob
+import os
 
 env = Environment(ENV = {'PATH':os.environ['PATH']}, h22libs=os.environ['h22libs'])
 
@@ -6,7 +6,4 @@ env.ParseConfig("root-config --glibs --cflags")
 env.Append(CCFLAGS = ['-g'])
 env.Append(CPPPATH = ['$h22libs/include/'], LIBPATH = ['$h22libs/lib/'],LIBS = ['h22'])
 
-sources = glob.glob('*.cxx')
-
-for source in sources:
-    env.Program(source)
+env.Program('main.cxx')

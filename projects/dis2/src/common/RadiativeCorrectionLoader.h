@@ -69,6 +69,7 @@ void RadiativeCorrectionLoader::Loop(int numberOfEvents){
     int sector = 1+floor((180.0 + electron.Phi()*to_degrees)/60.0);
     if (sector > 0 && sector < 7) { simEvents.Fill(physicsEvent, sector); }
 
+    /*
     cout.width(12); cout << electron.X();
     cout.width(12); cout << electron.Y();
     cout.width(12); cout << electron.Z();
@@ -77,7 +78,8 @@ void RadiativeCorrectionLoader::Loop(int numberOfEvents){
     cout.width(12); cout << physicsEvent.x; 
     cout.width(12); cout << physicsEvent.w; 
     cout.width(12); cout << physicsEvent.qq << endl; 
-    
+    */
+
     currentEvent++;
   }
 

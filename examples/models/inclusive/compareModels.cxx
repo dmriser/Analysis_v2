@@ -13,24 +13,26 @@ using namespace std;
 #include "TLatex.h"
 #include "TPad.h"
 
+double jacobian(double w, double e, double eprime);
+
 int main(){
 
   F1F209Wrapper bosted; 
   KeppelInclusiveWrapper keppel; 
   BrasseInclusiveWrapper brasse; 
 
-  double beamEnergyDouble = 5.75; 
-  float beamEnergyFloat = 5.75; 
+  double beamEnergyDouble = 5.498; 
+  float beamEnergyFloat = 5.498; 
 
   const int numberQQBins = 200; 
   const double wFixed = 1.21; 
-  const double qqMin = 1.5;  
+  const double qqMin = 1.0;  
   const double qqMax = 4.0;  
 
   const int numberWBins = 200; 
-  const double qqFixed = 2.05; 
+  const double qqFixed = 1.5; 
   const double wMin = 1.1;  
-  const double wMax = 1.9;  
+  const double wMax = 2.9;  
 
   // Histograms 
   TH1D *bostedModelQQ = new TH1D("bostedModelQQ","bostedModelQQ",numberQQBins,qqMin,qqMax);
@@ -45,9 +47,10 @@ int main(){
 
   for (int ibin=0; ibin< numberQQBins; ibin++){
     double qq = qqMin + ibin*(qqMax-qqMin)/numberQQBins; 
-    
-    double bostedValue = bosted.GetXSByWQQ(1,1,beamEnergyDouble,wFixed,qq);
-    double bostedValueWithFlux = bosted.GetXSByWQQ(1,1,beamEnergyDouble,wFixed,qq)*calculatePhotonFlux(beamEnergyDouble,wFixed,qq);
+    double eprime = beamEnergyDouble-(wFixed*wFixed + qq - proton_mass*proton_mass)/(2*proton_mass);
+
+    double bostedValue = bosted.GetXSByWQQ(1,1,beamEnergyDouble,wFixed,qq)*jacobian(wFixed,beamEnergyDouble,eprime);
+    double bostedValueWithFlux = bosted.GetXSByWQQ(1,1,beamEnergyDouble,wFixed,qq)*calculatePhotonFlux(beamEnergyDouble,wFixed,qq)*jacobian(wFixed,beamEnergyDouble,eprime);
     float keppelValue = keppel.GetXS(beamEnergyFloat,qq,wFixed);          
 
     bostedModelQQ->SetBinContent(ibin+1,bostedValue);
@@ -58,11 +61,12 @@ int main(){
 
   for (int ibin=0; ibin< numberWBins; ibin++){
     double w = wMin + ibin*(wMax-wMin)/numberWBins; 
-    
-    double bostedValue = bosted.GetXSByWQQ(1,1,beamEnergyDouble,w,qqFixed);
-    double bostedValueWithFlux = bosted.GetXSByWQQ(1,1,beamEnergyDouble,w,qqFixed)*calculatePhotonFlux(beamEnergyDouble,w,qqFixed);
+    double eprime = beamEnergyDouble - (w*w + qqFixed - proton_mass*proton_mass)/(2*proton_mass);
+
+    double bostedValue = bosted.GetXSByWQQ(1,1,beamEnergyDouble,w,qqFixed)*jacobian(w, beamEnergyDouble, eprime);
+    double bostedValueWithFlux = bosted.GetXSByWQQ(1,1,beamEnergyDouble,w,qqFixed)*calculatePhotonFlux(beamEnergyDouble,w,qqFixed)*jacobian(w, beamEnergyDouble, eprime);
     float keppelValue = keppel.GetXS(beamEnergyFloat,qqFixed,w);      
-    cout << brasse.GetXS(beamEnergyFloat, qqFixed, w) << endl;    
+    //    cout << brasse.GetXS(beamEnergyFloat, qqFixed, w) << endl;    
 
     bostedModelW->SetBinContent(ibin+1,bostedValue);
     bostedModelWWithFlux->SetBinContent(ibin+1,bostedValueWithFlux);
@@ -115,6 +119,11 @@ int main(){
   gPad->SetLogy();
   gPad->SetMargin(0.12, 0.12, 0.12, 0.12);
   //  bostedModelWWithFlux->SetLineColor(kRed);
+
+  double maxScale = biggest(keppelModelW->GetMaximum(), bostedModelWWithFlux->GetMaximum());
+  keppelModelW->SetMaximum(maxScale);
+  bostedModelWWithFlux->SetMaximum(maxScale);
+
   keppelModelW->SetLineColor(kBlue);
   keppelModelW->Draw("l");
   bostedModelWWithFlux->Draw("lsame");
@@ -136,4 +145,8 @@ int main(){
   modelCanvas->Print("compareModels.png");
 
   return 0;
+}
+
+double jacobian(double w, double e, double eprime){
+  return w/(2*proton_mass*e*eprime);
 }

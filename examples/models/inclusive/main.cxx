@@ -53,9 +53,9 @@ int main(int argc, char * argv[]){
     for (int energyBin = 0; energyBin < energyBins.GetNumber(); energyBin++) {
       double xs = model.GetXSByAngle(Z, A, beam_energy, energyBins.GetBin(energyBin).GetCenter(), thetaBins.GetBin(thetaBin).GetCenter());
       
-      cout.width(12); cout << "\r" << thetaBins .GetBin(thetaBin) .GetCenter();
-      cout.width(12); cout << energyBins.GetBin(energyBin).GetCenter();
-      cout.width(12); cout << xs << std::flush;
+      //      cout.width(12); cout << "\r" << thetaBins .GetBin(thetaBin) .GetCenter();
+      //      cout.width(12); cout << energyBins.GetBin(energyBin).GetCenter();
+      //      cout.width(12); cout << xs << std::flush;
 
       h1_xs[thetaBin]->SetBinContent(1+energyBin, xs/mev_to_gev);
       

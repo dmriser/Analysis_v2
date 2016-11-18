@@ -8,6 +8,9 @@
 
 #include "h22Event.h"
 
+#include <iostream>
+#include <vector>
+
 class Histograms{
  public:
   Histograms(){ Init(); }
@@ -20,6 +23,11 @@ class Histograms{
   TH1I *h1_ecu[7];
   TH1I *h1_ecv[7];
   TH1I *h1_ecw[7];
+
+  // For fitting the dist. in etot/p vs p 
+  std::vector<TH1D*> ecSamplingSlices[6];
+  TGraphErrors ecSamplingPol3Mean[6];
+  TGraphErrors ecSamplingPol3Stddev[6];
 
   void Init();
   void Fill(h22Event event, int ipart);

@@ -24,7 +24,9 @@ float KeppelInclusiveWrapper::GetXSByX(float beamEnergy, float qq, float x){
 
   float w = sqrt(pow(0.938,2)-qq+qq/x); 
   float xs = tkeppel_(&beamEnergy, &qq, &w);
-  return xs*(-0.5*(qq/(pow(x,2)*w)));
+  //  float jacobian = (qq/(w*x))*(0.5-1/x); 
+  float jacobian = qq/(2*w*x*x); 
+  return xs*jacobian;
 }
 
 

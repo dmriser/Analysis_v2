@@ -26,27 +26,6 @@ vector<string> loadFilesFromCommandLine(h22Options * theseOpts, int numFiles);
 
 int main(int argc, char * argv[]){
 
-  // ---------------------------- Setup Physics Options -------------------------------
-
-  PhysicsEventSelector * eventSelector = new PhysicsEventSelector();
-  PhysicsEventCut_w *w_cut = new PhysicsEventCut_w();
-  PhysicsEventCut_y *y_cut = new PhysicsEventCut_y();
-  PhysicsEventCut_qq *qq_cut = new PhysicsEventCut_qq();
-
-  w_cut->set_min( 1.1 );
-  w_cut->set_max( 99.9 ); 
-  y_cut->set_min( 0.00 );
-  y_cut->set_max( 0.85 ); 
-  qq_cut->set_min( 1.00 );
-  qq_cut->set_max( 99.9 ); 
-
-  eventSelector->add_cut(w_cut);
-  eventSelector->add_cut(y_cut);
-  eventSelector->add_cut(qq_cut); 
-  eventSelector->enable_all();
-
-  // ----------------------------------------------------------------------------------
-  //  
   // ------------------------ Boring Bits that make shit work -------------------------
   //
   // Check for improper usage of this code. 
@@ -58,6 +37,28 @@ int main(int argc, char * argv[]){
   h22Options * options = new h22Options(); 
   configureCommandLineOptions(options); 
   options->set(argc, argv);
+
+  // ---------------------------- Setup Physics Options -------------------------------
+
+  PhysicsEventSelector * eventSelector = new PhysicsEventSelector();
+  PhysicsEventCut_w *w_cut = new PhysicsEventCut_w();
+  PhysicsEventCut_y *y_cut = new PhysicsEventCut_y();
+  PhysicsEventCut_qq *qq_cut = new PhysicsEventCut_qq();
+
+  w_cut->set_min( 1.1 );
+  w_cut->set_max( 99.9 ); 
+  y_cut->set_min( 0.00 );
+  y_cut->set_max( options->args["YCUT"].arg ); 
+  qq_cut->set_min( 1.00 );
+  qq_cut->set_max( 99.9 ); 
+
+  eventSelector->add_cut(w_cut);
+  eventSelector->add_cut(y_cut);
+  eventSelector->add_cut(qq_cut); 
+  eventSelector->enable_all();
+
+  // ----------------------------------------------------------------------------------
+  //  
 
   // Set local variables to command line flags. 
   string runMode = options->args["TYPE"].args; 
@@ -116,11 +117,15 @@ void configureCommandLineOptions(h22Options * theseOpts){
   theseOpts->args["N"].arg = 0;
   theseOpts->args["N"].type = 0;
   theseOpts->args["N"].name = "Number of files to process";
+ 
+  theseOpts->args["YCUT"].arg = 0.80;
+  theseOpts->args["YCUT"].type = 0;
+  theseOpts->args["YCUT"].name = "Y-Cut";
   
   theseOpts->args["TYPE"].args = "UNSET";
   theseOpts->args["TYPE"].type = 1;
   theseOpts->args["TYPE"].name = "Processing mode";
-  
+   
   theseOpts->args["LIST"].args = "UNSET";
   theseOpts->args["LIST"].type = 1;
   theseOpts->args["LIST"].name = "Process list of files";

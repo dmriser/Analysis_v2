@@ -24,8 +24,7 @@
 
 // root includes
 
-class ParticleFilter
-{
+class ParticleFilter{
 public:
     ParticleFilter();                          //! No parameter file passed
     ParticleFilter(std::string);               //! Passing EID Parameter filename

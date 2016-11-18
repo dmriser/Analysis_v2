@@ -43,6 +43,17 @@ void findElectronIDParameters::ProcessEvent(){
 
 }
 
+void findElectronIDParameters::CalculateSamplingFractionCut(){
+
+  // Routine is supposed to cut slices out of the etot/p vs. p 
+  // then fit with gaussians in each bin and further fit the mean 
+  // with pol3. 
+
+  int numberOfSlices = histos.h2_ecSampling[0]->GetXaxis()->GetNbins();
+  
+  
+}
+
 void findElectronIDParameters::WriteHardCodedParameters(){
   ParameterSet zVertexLimitMin, zVertexLimitMax, ecUCoordMin, ecVCoordMin, ecWCoordMin,
     ecUCoordMax, ecVCoordMax, ecWCoordMax, ecEdepMin; 

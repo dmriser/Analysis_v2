@@ -20,13 +20,13 @@ class findElectronIDParameters : public h22Reader {
   findElectronIDParameters();
   ~findElectronIDParameters();
   
-  Histograms histos;
-  
+  Histograms histos;  
   Parameters eidParameters; 
   
   void Loop();
   void ProcessEvent();
   void WriteHardCodedParameters();
+  void CalculateSamplingFractionCut();
 
 };
 #endif

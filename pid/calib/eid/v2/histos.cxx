@@ -34,8 +34,8 @@ void Histograms::Fill(h22Event event, int ipart){
       h2_ecSampling[0]     ->Fill(event.p[ipart], event.etot[ipart]/event.p[ipart]); 
       h2_ecSampling[sector]->Fill(event.p[ipart], event.etot[ipart]/event.p[ipart]); 
 
-      h2_ccThetaSegment[0]->Fill(event.cc_segm[ipart]%2200, event.theta_cc(ipart));
-      h2_ccThetaSegment[sector]->Fill(event.cc_segm[ipart]%2200, event.theta_cc(ipart));
+      h2_ccThetaSegment[0]->Fill((event.cc_segm[ipart]%1000)/10 -1, event.theta_cc(ipart));
+      h2_ccThetaSegment[sector]->Fill((event.cc_segm[ipart]%1000)/10 -1, event.theta_cc(ipart));
 
       TVector3 uvw = event.uvw(ipart);
       h1_ecu[0]->Fill(uvw.X());

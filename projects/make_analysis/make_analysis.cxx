@@ -71,6 +71,8 @@ int main(int argc, char * argv[])
       cfile << Form("void %s::Loop(){",name.c_str()) << endl;
       cfile << endl;
       cfile << " // Event loop below. " << endl; 
+      cfile << "\t Init(); " << endl; 
+      cfile << "\t histos.Init(); " << endl; 
       cfile << "        for(int ievent=0; ievent<GetEntries(); ievent++){" << endl;
       cfile << "                GetEntry(ievent); " << endl;
       cfile << "                ProcessEvent(); "   << endl;  

@@ -122,6 +122,8 @@ class h22Event
     double rot_dc1y(int);
     
     double theta_cc(int); //! Theta as reported at Cherenkov Counter
+
+    bool hasParticle(int pid){ for(int i=0;i<gpart; i++){ if(id[i]==pid) { return true; } } return false;}
     
    // MC Momenta 
    double mcpx(int);

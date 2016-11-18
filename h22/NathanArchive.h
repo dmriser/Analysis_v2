@@ -18,6 +18,31 @@ class NathanEIDWrapper
   
   void set_info(int, bool); /** Pass in run number and monte carlo status */
   int get_electron(h22Event); /** You supply the event, we supply the electron */
+
+  // getters and setters for strictnesses 
+  int getRunno(){ return runno; }
+  int getStrictZVertex(){ return vz_strict; }
+  int getStrictECSamplingFraction(){ return ec_sf_strict; }
+  int getStrictECEDep(){ return ec_edep_strict; }
+  int getStrictCCTheta(){ return cc_theta_strict; }
+  int getStrictCCPhi(){ return cc_phi_strict; }
+  int getStrictCCFiducial(){ return cc_fid_strict; }
+  int getStrictECUVW(){ return ec_uvw_strict; }
+  int getStrictDCR1Fiducial(){ return dc_r1_strict; }
+  int getStrictDCR3Fiducial(){ return dc_r3_strict; }
+
+  void setStrictZVertex(int s){ vz_strict = s; }
+  void setStrictECSamplingFraction(int s){ ec_sf_strict = s; }
+  void setStrictECEDep(int s){ ec_edep_strict = s; }
+  void setStrictCCTheta(int s){ cc_theta_strict = s; }
+  void setStrictCCPhi(int s){ cc_phi_strict = s; }
+  void setStrictCCFiducial(int s){ cc_fid_strict = s; }
+  void setStrictECUVW(int s){ ec_uvw_strict = s; }
+  void setStrictDCR1Fiducial(int s){ dc_r1_strict = s; }
+  void setStrictDCR3Fiducial(int s){ dc_r3_strict = s; }
+
+
+
 };
 
 // Nathan's Functions 

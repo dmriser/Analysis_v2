@@ -1,13 +1,13 @@
 #include <iostream>
 using namespace std;
 
-#include "Photon.h"
-#include "Photon.cxx"
+#include "EventMonitor.h"
+#include "EventMonitor.cxx"
 
 
 int main(int argc, char * argv[]){
 
-        Photon Analyzer;
+        EventMonitor Analyzer;
         if (argc < 2) { return 0; }
 
         for (int ifile=1; ifile<argc; ifile++){ Analyzer.AddFile(argv[ifile]); } 

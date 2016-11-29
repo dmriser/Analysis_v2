@@ -1,5 +1,5 @@
       real function elas(eb,theta)
-      
+      implicit none
 c     Returns the e-p differential cross section
 c     as a function of the electron scattering angle theta.
 
@@ -16,6 +16,7 @@ c     theta: scattering angle (deg)
       real theta                !electron scattering angle
       real rm_p			!proton mass
       real s2,c2,theta2
+      real corr1,corr2,rmott
 
       data rm_p/.938/
 
@@ -57,68 +58,6 @@ c     Form factor
       return
       end
       
-      double precision function spence(x)
-      
-      double precision x
-      
-      if (abs(x).lt.0.1) then
-        spence = x+x**2/4.
-      elseif (x.gt.0.99.and.x.lt.1.01) then
-        spence = pi*pi/6.
-      elseif (x.gt.-1.01.and.x.lt.-0.99) then
-        spence = -pi*pi/12.
-      elseif (x.gt.0) then
-        spence = 0.1025+sintp(x)
-      else
-        spence = -0.0975+sintn(x)
-      endif
-      
-      end
-      
-      double precision function sintp(x)
-      implicit none
-      double precision x
-      double precision xstep,sum,y,arg
-      integer i
-
-      xstep	= (x-.1)/100.
-      sum	= 0.
-      y		= 0.1-xstep/2.
-      do i=1,100
-        y   	= y+xstep
-        arg 	= abs(1.-y)
-        sum 	= sum-dlog(arg)/y
-      enddo
-      sintp	= sum*xstep
-      
-      end
-
-      double precision function sintn(x)
-      implicit none
-      double precision x,xa,ystep,y,sum
-      integer i
-
-      xa	= abs(x)
-      ystep	= (xa-0.1)/100.
-      sum	= 0.
-      y		= 0.1-ystep/2.
-      do i=1,100
-        y	= y+ystep
-        sum	= sum-dlog(1.+y)/y
-      enddo
-      sintn	= sum*ystep
-      
-      end
-      
-      real function bfunc(z)
-      implicit none
-      real z,xi
-
-      xi = log(1440.)-2.*alog(z)/3.
-      xi = xi/(alog(183.)-alog(z)/3.)
-      bfunc = (4./3.)*(1.+((z+1.)/(z+xi))/(alog(183.)-alog(z)/3.)/9.)
-      
-      end
       
       real function elasrad( es, theta_d, t, wcut )  
       
@@ -131,7 +70,7 @@ c     t: target thickness (radiation lengths)
 c     wcut: upper limit of W (should be > 0.938+W resolution - e.g. 1.0) (GeV)
 
 c     This program calls function elas defined above.
-
+      implicit none
       double precision spence,arg
       real me,mp,pi,alpha,z,t,es,theta_d,theta,delta,wcut
       real b,cst1,eta,bt,sigunp,sigel,eel,qs
@@ -139,9 +78,10 @@ c     This program calls function elas defined above.
       real znuc,deltac(27),del_mo,delta_t,idel
       real arg11,arg15,arg19,arg23
       real epr,e1,e3,e4,gamma4,beta4
-      real radcor
+      real radcor, epcut
       real snth
       real bfunc
+      integer jdel 
 
       data pi/3.1415926/
       data mp/.9382/
@@ -231,8 +171,8 @@ c      write(6,*) 'Received ', es, theta_d, t, wcut
       deltac(27)=znuc**2*spence(-arg)/beta4
 
       del_mo  = 0.
-      do idel=1,2
-         del_mo = del_mo + deltac(idel)
+      do jdel=1,2
+         del_mo = del_mo + deltac(jdel)
       enddo
       del_mo  = -alpha*del_mo/pi
 
@@ -246,6 +186,72 @@ c      print *, qs,del_mo,delta_t
 c      radcor  = 1.+del_mo+delta_t
       radcor = exp(del_mo+delta_t)
       elasrad = radcor*sigunp
+      
+      end
+      
+      double precision function sintp(x)
+      implicit none
+      double precision x
+      double precision xstep,sum,y,arg
+
+      integer i
+
+      xstep	= (x-.1)/100.
+      sum	= 0.
+      y		= 0.1-xstep/2.
+      do i=1,100
+        y   	= y+xstep
+        arg 	= abs(1.-y)
+        sum 	= sum-dlog(arg)/y
+      enddo
+      sintp	= sum*xstep
+      
+      end
+
+      double precision function sintn(x)
+      implicit none
+      double precision x,xa,ystep,y,sum
+      integer i
+
+      xa	= abs(x)
+      ystep	= (xa-0.1)/100.
+      sum	= 0.
+      y		= 0.1-ystep/2.
+      do i=1,100
+        y	= y+ystep
+        sum	= sum-dlog(1.+y)/y
+      enddo
+      sintn	= sum*ystep
+      
+      end
+      
+      real function bfunc(z)
+      implicit none
+      real z,xi
+
+      xi = log(1440.)-2.*alog(z)/3.
+      xi = xi/(alog(183.)-alog(z)/3.)
+      bfunc = (4./3.)*(1.+((z+1.)/(z+xi))/(alog(183.)-alog(z)/3.)/9.)
+      
+      end
+
+      double precision function spence(x)
+      implicit none     
+      double precision x
+      real pi
+      data pi/3.1415926/
+
+      if (abs(x).lt.0.1) then
+        spence = x+x**2/4.
+      elseif (x.gt.0.99.and.x.lt.1.01) then
+        spence = pi*pi/6.
+      elseif (x.gt.-1.01.and.x.lt.-0.99) then
+        spence = -pi*pi/12.
+      elseif (x.gt.0) then
+        spence = 0.1025 +sintp(x)
+      else
+        spence = -0.0975 +sintn(x)
+      endif
       
       end
 

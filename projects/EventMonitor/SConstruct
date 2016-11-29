@@ -1,4 +1,4 @@
-import os, glob
+import os
 
 env = Environment(ENV = {'PATH':os.environ['PATH']}, h22libs=os.environ['h22libs'])
 
@@ -7,7 +7,5 @@ env.Append(CCFLAGS = ['-g'])
 env.Append(CPPPATH = ['$h22libs/include/'], LIBPATH = ['$h22libs/lib/'],LIBS = ['h22'])
 env.Append(CPPPATH = ['$ROOTSYS/include/'], LIBPATH = ['$ROOTSYS/lib/'],LIBS = ['TreePlayer'])
 
-sources = glob.glob('*.cxx')
-
-for prog in sources:
-    env.Program(prog)
+env.Program('EventMonitor','main.cxx')
+env.Install('~/bin/','EventMonitor')

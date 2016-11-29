@@ -11,11 +11,33 @@ void testY(){
   file[2] = TFile::Open("0.8.root");
   file[3] = TFile::Open("0.85.root");
   file[4] = TFile::Open("0.9.root");
-  
+
+  TFile *modelFile = TFile::Open("../out/crossSectionPass1WithResonance.root");
+
   TH2I *wByQQ[5];
   TH1D *projection[5]; 
-  TH1D *model;
+  TH1D *model[3];
+  TH1D *dQhist;
+
+  dQhist = (TH1D*) file[0]->Get("totalCharge");
+  model[0] = (TH1D*) modelFile->Get("modelCrossSection_wByQQ_s1_slice15");
+  model[1] = (TH1D*) modelFile->Get("modelCrossSection_wByQQ_s1_slice22");
+  model[2] = (TH1D*) modelFile->Get("modelCrossSection_wByQQ_s1_slice30");
   
+  double avogadro = 6.022e23; 
+  double molarMass = 1.0;
+  double density = 0.0708;  
+  double cm2ToMicroBarns = 1e30;
+  double electronCharge = 1.602e-13;
+  double lumi = (avogadro*density*dQhist->GetBinContent(1))/(electronCharge*molarMass);
+  lumi /= cm2ToMicroBarns;
+
+  model[0]->Scale(lumi);
+  model[1]->Scale(lumi);
+  model[2]->Scale(lumi);
+
+  cout << " >>> Integrated luminosity =" << lumi << "s^-1 uB^-1" << endl;
+
   const int numberFiles = 5;
   Double_t max = 0.0;
 
@@ -62,5 +84,26 @@ void testY(){
   caption.DrawLatex(0.10,0.7,"Counts");
 
   c1->Print("yCuts.png");
+
+  TCanvas *modelCanvas = new TCanvas("modelCanvas","",1000,500);
+
+  double modelMax = 0.0;
+  for (int f=0; f<3; f++){
+    if (model[f]->GetMaximum() > modelMax){ modelMax = model[f]->GetMaximum(); }
+  }
+  
+  for (int f=0; f<3; f++){
+    model[f]->SetLineColor(lineBase+f*lineStep);
+    model[f]->SetMaximum(modelMax); 
+  }
+
+  model[0]->Draw();
+  model[1]->Draw("same");
+  model[2]->Draw("same");
+
+  for (int f=0; f<3; f++){
+    lab.SetTextColor(lineBase+f*lineStep);
+    lab.DrawLatex(0.18, 0.675+0.03*f,Form("Q^{2} bin %d",f));
+  }
 
 }

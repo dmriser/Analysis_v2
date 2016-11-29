@@ -1,5 +1,5 @@
-#ifndef Photon_h
-#define Photon_h
+#ifndef EventMonitor_h
+#define EventMonitor_h
 
 
  // Put your includes here 
@@ -13,10 +13,10 @@
 #include "histos.h"
 #include "histos.cxx"
 
-class Photon : public h22Reader {
+class EventMonitor : public h22Reader {
     public:
-        Photon();
-        ~Photon();
+        EventMonitor();
+        ~EventMonitor();
 
 	 Histograms histos;
 

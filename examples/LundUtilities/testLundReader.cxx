@@ -3,6 +3,8 @@ using namespace std;
 
 #include "LundEvent.h"
 #include "LundReader.h"
+#include "PhysicsEvent.h"
+#include "PhysicsEventBuilder.h"
 
 #include "TLorentzVector.h"
 #include "TH1.h"
@@ -25,12 +27,14 @@ int main(int argc, char *argv[]){
 
   string fileName(argv[1]);
   LundReader testReader(fileName);
+  PhysicsEventBuilder builder;
 
   while(testReader.HasEvent()){
     LundEvent event = testReader.GetEvent();
     LundHeader header = event.GetHeader();  
 
     TLorentzVector electron = event.GetParticle(0).GetTLorentzVector();
+    PhysicsEvent physicsEvent = builder.getPhysicsEvent(electron);
     cout.width(16); cout << electron.X();
     cout.width(16); cout << electron.Y();
     cout.width(16); cout << electron.Z();
@@ -39,10 +43,15 @@ int main(int argc, char *argv[]){
     checkMomentum->Fill(electron.Z());
     checkDirection->Fill(electron.X(), electron.Y());
 
-    checkX->Fill(header.x);
-    checkY->Fill(header.y);
-    checkW->Fill(header.w);
-    checkQQ->Fill(header.qq);
+    //    checkX->Fill(header.x);
+    //    checkY->Fill(header.y);
+    //    checkW->Fill(header.w);
+    //    checkQQ->Fill(header.qq);
+ 
+    checkX->Fill(physicsEvent.x);
+    checkY->Fill(physicsEvent.y);
+    checkW->Fill(physicsEvent.w);
+    checkQQ->Fill(physicsEvent.qq);
   }
 
   cout << "Events processed: " << testReader.GetNumberOfEvents() << endl; 

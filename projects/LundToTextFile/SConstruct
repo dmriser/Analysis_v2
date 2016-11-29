@@ -9,5 +9,6 @@ env.Append(CPPPATH = ['$ROOTSYS/include/'], LIBPATH = ['$ROOTSYS/lib/'],LIBS = [
 
 sources = glob.glob('*.cxx')
 
-for prog in sources:
-    env.Program(prog)
+env.Program('main',sources)
+
+

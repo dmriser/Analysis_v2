@@ -1,7 +1,7 @@
-#ifndef Photon_cxx
-#define Photon_cxx
+#ifndef EventMonitor_cxx
+#define EventMonitor_cxx
 
-#include "Photon.h"
+#include "EventMonitor.h"
 #include "histos.h"
 #include "histos.cxx"
 
@@ -12,22 +12,24 @@
 #include "h22Reader.h" 
 
  // Class Constructor/Destructor 
-Photon::Photon(){ 
+EventMonitor::EventMonitor(){ 
  }
 
-Photon::~Photon(){ 
+EventMonitor::~EventMonitor(){ 
  }
 
-void Photon::Loop(){
+void EventMonitor::Loop(){
 
  // Event loop below. 
+	 Init(); 
+	 histos.Init(); 
         for(int ievent=0; ievent<GetEntries(); ievent++){
                 GetEntry(ievent); 
                 ProcessEvent(); 
         } 
 }
 
-void Photon::ProcessEvent(){
+void EventMonitor::ProcessEvent(){
 	 // Do your stuff here. 
 	 histos.Fill(event);
 }

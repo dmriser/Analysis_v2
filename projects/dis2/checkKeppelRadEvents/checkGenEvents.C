@@ -1,9 +1,12 @@
 #include "TFile.h"
 #include "TH1.h"
+#include "TTree.h"
 
 void checkGenEvents(){
 
   TFile *inputFile = TFile::Open("generatedOnFarm.root");
+  TTree *h10;
+  inputFile->GetObject("h10",h10);
 
   TH2I *wByQQ = new TH2I("wByQQ","",200,1.0,3,200,1,4.5);
   TH1I *invMass = new TH1I("invMass","",100,1.0,3);

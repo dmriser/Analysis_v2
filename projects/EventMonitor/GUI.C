@@ -5,7 +5,7 @@
 
 void GUI(){
 
-  string inputFile = "rebuildJobs5Gen.root";
+  string inputFile = "rebuildJobs8Gen.root";
 
   // Getting file and events 
   TFile      *file   = TFile::Open(inputFile.c_str());

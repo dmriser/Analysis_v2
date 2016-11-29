@@ -9,7 +9,7 @@ void draw(TH1D *histo, int type){
   // [6] - phi
 
 
-  int color = 62;
+  int color = 97;
 
   TLatex xLabel, yLabel, title;
   xLabel.SetNDC();
@@ -81,6 +81,7 @@ void draw(TH1D *histo, int type){
     yLabel.DrawLatex(yLabelPosX, yLabelPosY, yLabelString.c_str());
     title .DrawLatex(titlePosX,   titlePosY, titleString.c_str());
 
+    gPad->SetMargin(0.15,0.15,0.15,0.15);
     gPad->SetGridx();
     gPad->SetGridy();
 
@@ -134,6 +135,7 @@ void draw(TH2D *histo, int type){
   yLabel.DrawLatex(yLabelPosX, yLabelPosY, yLabelString.c_str());
   title .DrawLatex(titlePosX,   titlePosY, titleString.c_str());
 
+  gPad->SetMargin(0.15,0.15,0.15,0.15);
   gPad->SetLogz();
   gPad->SetGridx();
   gPad->SetGridy();

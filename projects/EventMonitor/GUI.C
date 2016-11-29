@@ -26,8 +26,11 @@ void GUI(){
     
 
   gROOT->LoadMacro("utils.C");
-  //  gStyle->SetPalette(62);
-
+  gStyle->SetPalette(62);
+  gStyle->SetOptFit(0);
+  gStyle->SetOptTitle(0);
+  gStyle->SetOptStat(0);
+  
   // Build and show GUI
   TControlBar *bar = new TControlBar("vertical","Event Monitor by David Riser");
   bar->AddButton("","");

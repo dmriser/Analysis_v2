@@ -27,7 +27,7 @@ void draw(TH1D *histo, int type){
   double yLabelPosX, yLabelPosY;
   double titlePosX,  titlePosY;
 
-  xLabelPosX = 0.82;  xLabelPosY = 0.06;
+  xLabelPosX = 0.74;  xLabelPosY = 0.06;
   yLabelPosX = 0.045; yLabelPosY = 0.72;
   titlePosX = 0.62;    titlePosY = 0.92;
 
@@ -114,9 +114,6 @@ void draw(TH2D *histo, int type){
 
   titleString  = Form(" N_{events} = %.1e ", histo->GetEntries());
 
-  gPad->SetGridx();
-  gPad->SetGridy();
-
   if (type == 0){
     xLabelString = "#phi [Deg]";
     yLabelString = "#theta [Deg]";
@@ -136,4 +133,9 @@ void draw(TH2D *histo, int type){
   xLabel.DrawLatex(xLabelPosX, xLabelPosY, xLabelString.c_str());
   yLabel.DrawLatex(yLabelPosX, yLabelPosY, yLabelString.c_str());
   title .DrawLatex(titlePosX,   titlePosY, titleString.c_str());
+
+  gPad->SetLogz();
+  gPad->SetGridx();
+  gPad->SetGridy();
+
 }

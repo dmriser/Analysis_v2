@@ -24,7 +24,7 @@ echo "Finished running both"               >> $OUTDIR/$PROJ/JOB_$JOBNUMBER/log.d
 ls                                         >> $OUTDIR/$PROJ/JOB_$JOBNUMBER/log.dat
 
 # send output to folder 
-cp elastic.lund    $OUTDIR/$PROJ/JOB_$JOBNUMBER/
-cp keppelRad.lund  $OUTDIR/$PROJ/JOB_$JOBNUMBER/
+cp elast_gen.evt    $OUTDIR/$PROJ/JOB_$JOBNUMBER/
+cp keppel_rad.evt   $OUTDIR/$PROJ/JOB_$JOBNUMBER/
 
 

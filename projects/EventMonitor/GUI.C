@@ -1,29 +1,45 @@
-#include "THnSparse.h"
-#include "TH1.h"
-#include "TH2.h"
-#include "TControlBar.h"
+{
 
-void GUI(){
-
-  string inputFile = "rebuildJobs8Gen.root";
-
-  // Getting file and events 
-  TFile      *file   = TFile::Open(inputFile.c_str());
-  THnSparseI *events = (THnSparseI*) file->Get("events");
-
-  // Create histograms 
-  x     = (TH1I*) events->Projection(0); x     ->SetName("x"); 
-  y     = (TH1I*) events->Projection(1); y     ->SetName("y"); 
-  p     = (TH1I*) events->Projection(2); p     ->SetName("p"); 
-  w     = (TH1I*) events->Projection(3); w     ->SetName("w"); 
-  qq    = (TH1I*) events->Projection(4); qq    ->SetName("qq"); 
-  theta = (TH1I*) events->Projection(5); theta ->SetName("theta"); 
-  phi   = (TH1I*) events->Projection(6); phi   ->SetName("phi"); 
+  const int NCONF          = 3; 
+  string inputFile[NCONF]  = {"out/data.root","out/rebuildJobs2Gen.root","out/rebuildJobs2Rec.root"};
+  string configName[NCONF] = {"data","elast_gen_gen","elast_gen_rec"};
   
-  thetaPhi = (TH2I*) events->Projection(5,6); thetaPhi->SetName("thetaPhi");
-  qqX      = (TH2I*) events->Projection(4,0); qqX     ->SetName("qqX");
-  qqW      = (TH2I*) events->Projection(4,3); qqW     ->SetName("qqW");
+  // Getting file and events 
+  TFile      *file[NCONF];
+  THnSparseI *events[NCONF];
+
+  TH1D *x[NCONF];
+  TH1D *y[NCONF];
+  TH1D *p[NCONF];
+  TH1D *w[NCONF];
+  TH1D *qq[NCONF];
+  TH1D *theta[NCONF];
+  TH1D *phi[NCONF];
+
+  TH2D *thetaPhi[NCONF];
+  TH2D *qqX[NCONF];
+  TH2D *qqW[NCONF];
+  TH2D *wY[NCONF];
+
+  for (int c=0; c<NCONF; ++c){
+    file[c]   = TFile::Open(inputFile[c].c_str());
+    events[c] = (THnSparseI*) file[c]->Get("events");
+    events[c] ->SetName(Form("events_%s",configName[c].c_str()));
+
+    // Grab histograms 
+    x[c]     = (TH1D*) events[c]->Projection(0); x[c]     ->SetName(Form("%s_x",configName[c].c_str())); 
+    y[c]     = (TH1D*) events[c]->Projection(1); y[c]     ->SetName(Form("%s_y",configName[c].c_str())); 
+    p[c]     = (TH1D*) events[c]->Projection(2); p[c]     ->SetName(Form("%s_p",configName[c].c_str())); 
+    w[c]     = (TH1D*) events[c]->Projection(3); w[c]     ->SetName(Form("%s_w",configName[c].c_str())); 
+    qq[c]    = (TH1D*) events[c]->Projection(4); qq[c]    ->SetName(Form("%s_qq",configName[c].c_str())); 
+    theta[c] = (TH1D*) events[c]->Projection(5); theta[c] ->SetName(Form("%s_theta",configName[c].c_str())); 
+    phi[c]   = (TH1D*) events[c]->Projection(6); phi[c]   ->SetName(Form("%s_phi",configName[c].c_str())); 
     
+    thetaPhi[c] = (TH2D*) events[c]->Projection(5,6); thetaPhi[c] ->SetName(Form("%s_thetaPhi",configName[c].c_str()));
+    qqX[c]      = (TH2D*) events[c]->Projection(4,0); qqX[c]      ->SetName(Form("%s_qqX",configName[c].c_str()));
+    qqW[c]      = (TH2D*) events[c]->Projection(4,3); qqW[c]      ->SetName(Form("%s_qqW",configName[c].c_str()));
+    wY[c]       = (TH2D*) events[c]->Projection(1,3); wY[c]       ->SetName(Form("%s_wY",configName[c].c_str()));
+  }
 
   gROOT->LoadMacro("utils.C");
   gStyle->SetPalette(62);
@@ -31,20 +47,34 @@ void GUI(){
   gStyle->SetOptTitle(0);
   gStyle->SetOptStat(0);
   
+  // Variables that live in the CINT universe somewhere 
+  int config = 0;
+  int view = 0;      // 0 or 1, can be viewed alone(0) or together(1) 
+  bool print = false; 
+
+  string histogramTitles1d[7] = {"x","y","p","w","qq","theta","phi"};
+  string histogramTitles2d[4] = {"thetaPhi","qqX","qqW","wY"};
+  int fillColor[5] = {52, 99, 71, 84, 61};
+
   // Build and show GUI
   TControlBar *bar = new TControlBar("vertical","Event Monitor by David Riser");
+  bar->AddButton("Change Conf.","changeConfig()");
+  bar->AddButton("Change View.","changeView()");
   bar->AddButton("","");
-  bar->AddButton("show x",     "draw(x,     0)");
-  bar->AddButton("show y",     "draw(y,     1)");
-  bar->AddButton("show p",     "draw(p,     2)");
-  bar->AddButton("show w",     "draw(w,     3)");
-  bar->AddButton("show Q2",    "draw(qq,    4)");
-  bar->AddButton("show theta", "draw(theta, 5)");
-  bar->AddButton("show phi",   "draw(phi,   6)");
+  bar->AddButton("show x",     "draw(0)");
+  bar->AddButton("show y",     "draw(1)");
+  bar->AddButton("show p",     "draw(2)");
+  bar->AddButton("show w",     "draw(3)");
+  bar->AddButton("show Q2",    "draw(4)");
+  bar->AddButton("show theta", "draw(5)");
+  bar->AddButton("show phi",   "draw(6)");
   bar->AddButton("","");
-  bar->AddButton("show theta vs. phi", "draw(thetaPhi, 0)");
-  bar->AddButton("show Q2 vs. x",      "draw(qqX,      1)");
-  bar->AddButton("show Q2 vs. w",      "draw(qqW,      2)");
+  bar->AddButton("show theta vs. phi", "draw2d(0)");
+  bar->AddButton("show Q2 vs. x",      "draw2d(1)");
+  bar->AddButton("show Q2 vs. w",      "draw2d(2)");
+  bar->AddButton("show y vs. w",       "draw2d(3)");
+  bar->AddButton("","");
+  bar->AddButton("Print","printAll()");
   bar->AddButton("","");
   bar->AddButton("Quit",".q");
   bar->Show();

@@ -78,12 +78,13 @@ void EventMonitor::ProcessEvent(){
 
   if (e_index > -1) {
     TLorentzVector electron; 
-    electron = TLorentzVector(event.cx[e_index]*event.p[e_index],
-			      event.cy[e_index]*event.p[e_index],
-			      event.cz[e_index]*event.p[e_index],
-			      event.p[e_index]);
+    if (!isGenerated) { electron = TLorentzVector(event.cx[e_index]*event.p[e_index],
+						  event.cy[e_index]*event.p[e_index],
+						  event.cz[e_index]*event.p[e_index],
+						  event.p[e_index]);
+    }
     
-    electron = event.gen_particle(11);
+    else { electron = event.gen_particle(11); }
     PhysicsEvent physicsEvent = builder.getPhysicsEvent(electron);
     double dataPoint[7] = {physicsEvent.x, physicsEvent.y, electron.P(),
 			   physicsEvent.w, physicsEvent.qq,electron.Theta()*to_degrees,electron.Phi()*to_degrees};

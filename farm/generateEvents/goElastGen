@@ -35,7 +35,7 @@ foreach arg ($argv)
     endif
 end
 
-cp /u/home/dmriser/mydoc/CLASSourceCode/elasticRebuild/elast_gen . 
+cp /u/home/dmriser/mydoc/CLASSourceCode/elast_gen/elast_gen . 
 
 # Write input file
 echo $FRACTION          > elast.inp

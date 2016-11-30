@@ -29,7 +29,7 @@ foreach arg ($argv)
     endif
 end
 
-cp /u/home/dmriser/mydoc/CLASSourceCode/keppelRebuild/rad/keppel_rad . 
+cp /u/home/dmriser/mydoc/CLASSourceCode/keppel_rad/keppel_rad . 
 
 # Write input file
 echo .25 .14 .11 .1  > rad.inp 

@@ -102,7 +102,21 @@ int main(int argc, char * argv[]){
     for (int ifile = 0; ifile < files.size(); ifile++) { loader.AddFile(files[ifile]); }
     loader.Execute();
   }
+  
+  // Elastic subtraction elastic events
+  else if (runMode == "es_elast"){
+    MCLoader loader(eventSelector, outputFilename, "UPDATE", "Elastic");
+    for (int ifile = 0; ifile < files.size(); ifile++) { loader.AddFile(files[ifile]); }
+    loader.Execute();
+  }
 
+  // Elastic subtraction inelastic events
+  else if (runMode == "es_inelast"){
+    MCLoader loader(eventSelector, outputFilename, "UPDATE", "Inelastic");
+    for (int ifile = 0; ifile < files.size(); ifile++) { loader.AddFile(files[ifile]); }
+    loader.Execute();
+  }
+  
   else {
     cout << " TYPE not recognized: " << runMode << endl;
     return 0; 

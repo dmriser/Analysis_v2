@@ -33,10 +33,10 @@ int main(int argc, char * argv[]){
   configureCommandLineOptions(options); 
   options->set(argc, argv);
 
-  int numberOfEvents = options->args["N"].arg;
-  string inputRadFilename = options->args["LUND_RAD"].args; 
+  int numberOfEvents        = options->args["N"].arg;
+  string inputRadFilename   = options->args["LUND_RAD"].args; 
   string inputNoRadFilename = options->args["LUND_NORAD"].args; 
-  string outputFilename = options->args["OUT"].args; 
+  string outputFilename     = options->args["OUT"].args; 
 
   if (inputRadFilename != "UNSET" && inputNoRadFilename != "UNSET"){
 
@@ -50,10 +50,10 @@ int main(int argc, char * argv[]){
     noRadLoader.LoadEvents(inputNoRadFilename);
     noRadLoader.Execute(numberOfEvents);
 
-    //    BaseDISHistograms * radEvents2D = new BaseDISHistograms();
+    //    BaseDISHistograms *radEvents2D = new BaseDISHistograms();
     //    radEvents2D->Load(inputRadFilename.c_str(),"radEvents");
 
-    //    BaseDISHistograms * noRadEvents2D = new BaseDISHistograms();
+    //    BaseDISHistograms *noRadEvents2D = new BaseDISHistograms();
     //    noRadEvents2D->Load(inputNoRadFilename.c_str(),"noRadEvents");
      
     //    int xRebinFactor = floor(radEvents2D->numberOfXBins/numberOfXBins); 

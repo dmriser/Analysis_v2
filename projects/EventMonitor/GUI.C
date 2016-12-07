@@ -1,8 +1,8 @@
 {
 
-  const int NCONF          = 3; 
-  string inputFile[NCONF]  = {"out/data.root","out/rebuildJobs2Gen.root","out/rebuildJobs2Rec.root"};
-  string configName[NCONF] = {"data","elast_gen_gen","elast_gen_rec"};
+  const int NCONF          = 1; 
+  string inputFile[NCONF]  = {"out/debug_jobs0.root"};
+  string configName[NCONF] = {"debug_jobs0"};
   
   // Getting file and events 
   TFile      *file[NCONF];
@@ -42,37 +42,39 @@
   }
 
   gROOT->LoadMacro("utils.C");
-  gStyle->SetPalette(62);
+  //  gStyle->SetPalette(62);
   gStyle->SetOptFit(0);
   gStyle->SetOptTitle(0);
   gStyle->SetOptStat(0);
   
   // Variables that live in the CINT universe somewhere 
-  int config = 0;
-  int view = 0;      // 0 or 1, can be viewed alone(0) or together(1) 
-  bool print = false; 
+  int config   = 0;
+  int view     = 0;      // 0 or 1, can be viewed alone(0) or together(1) 
+  bool print   = false; 
+  bool setLogZ = true; 
 
   string histogramTitles1d[7] = {"x","y","p","w","qq","theta","phi"};
   string histogramTitles2d[4] = {"thetaPhi","qqX","qqW","wY"};
-  int fillColor[5] = {52, 99, 71, 84, 61};
+  int fillColor[5]            = {52, 99, 71, 84, 61};
 
   // Build and show GUI
   TControlBar *bar = new TControlBar("vertical","Event Monitor by David Riser");
   bar->AddButton("Change Conf.","changeConfig()");
   bar->AddButton("Change View.","changeView()");
+  bar->AddButton("Toggle Log-Z","toggleLogZ()");
   bar->AddButton("","");
-  bar->AddButton("show x",     "draw(0)");
-  bar->AddButton("show y",     "draw(1)");
-  bar->AddButton("show p",     "draw(2)");
-  bar->AddButton("show w",     "draw(3)");
-  bar->AddButton("show Q2",    "draw(4)");
-  bar->AddButton("show theta", "draw(5)");
-  bar->AddButton("show phi",   "draw(6)");
+  bar->AddButton("Show x",     "draw(0)");
+  bar->AddButton("Show y",     "draw(1)");
+  bar->AddButton("Show p",     "draw(2)");
+  bar->AddButton("Show w",     "draw(3)");
+  bar->AddButton("Show Q2",    "draw(4)");
+  bar->AddButton("Show theta", "draw(5)");
+  bar->AddButton("Show phi",   "draw(6)");
   bar->AddButton("","");
-  bar->AddButton("show theta vs. phi", "draw2d(0)");
-  bar->AddButton("show Q2 vs. x",      "draw2d(1)");
-  bar->AddButton("show Q2 vs. w",      "draw2d(2)");
-  bar->AddButton("show y vs. w",       "draw2d(3)");
+  bar->AddButton("Show theta vs. phi", "draw2d(0)");
+  bar->AddButton("Show Q2 vs. x",      "draw2d(1)");
+  bar->AddButton("Show Q2 vs. w",      "draw2d(2)");
+  bar->AddButton("Show y vs. w",       "draw2d(3)");
   bar->AddButton("","");
   bar->AddButton("Print","printAll()");
   bar->AddButton("","");

@@ -39,11 +39,12 @@ int main(int argc, char * argv[]){
   configureCommandLineOptions(options); 
   options->set(argc, argv);
 
-  string inputFilename = options->args["INPUT"].args; 
-  string outputFilename = options->args["OUT"].args; 
+  string inputFilename      = options->args["INPUT"].args; 
+  string elastSubFile       = options->args["ELASTIC_SUB_FILE"].args; 
+  string outputFilename     = options->args["OUT"].args; 
   string binCenteringStatus = options->args["BINCORR"].args; 
-  string radCorrStatus = options->args["RADCORR"].args; 
-  string radCorrFile = options->args["RADCORR_FILE"].args; 
+  string radCorrStatus      = options->args["RADCORR"].args; 
+  string radCorrFile        = options->args["RADCORR_FILE"].args; 
 
   if (inputFilename != "UNSET"){
     FaradayCupQuickLoader fcup; 
@@ -68,10 +69,45 @@ int main(int argc, char * argv[]){
     BaseDISHistograms * recAndGenEventsRad2D = new BaseDISHistograms();
     recAndGenEventsRad2D->Load(inputFilename.c_str(),"recAndGenEventsRad");
 
+    // Create output file 
     DIS1DHistograms * dataEvents = new DIS1DHistograms();
     dataEvents->Create(dataEvents2D);
     dataEvents->SetErrors();
     dataEvents->Save(outputFilename.c_str(),"recreate");
+
+    if (elastSubFile != "UNSET"){
+      BaseDISHistograms *recElasticEvents = new BaseDISHistograms();
+      recElasticEvents->Load(elastSubFile.c_str(),"recEventsElastic");
+      recElasticEvents->Rebin2D(xRebinFactor, yRebinFactor); 
+
+      BaseDISHistograms *recInelasticEvents = new BaseDISHistograms();
+      recInelasticEvents->Load(elastSubFile.c_str(),"recEventsInelastic");
+      recInelasticEvents->Rebin2D(xRebinFactor, yRebinFactor);  
+
+      DIS1DHistograms *elasticEvents = new DIS1DHistograms();
+      elasticEvents->Create(recElasticEvents);
+      elasticEvents->SetErrors();
+      elasticEvents->Save(outputFilename.c_str(),"update");
+      
+      DIS1DHistograms *inelasticEvents = new DIS1DHistograms();
+      inelasticEvents->Create(recInelasticEvents);
+      inelasticEvents->SetErrors();
+      inelasticEvents->Save(outputFilename.c_str(),"update");
+
+      DIS1DHistograms *elasticAndInelasticEvents = new DIS1DHistograms();
+      elasticAndInelasticEvents->CreateFromExisting(elasticEvents,"elasticAndInelasticEvents","elasticAndInelasticEvents");
+      elasticAndInelasticEvents->Add(inelasticEvents);
+      elasticAndInelasticEvents->Save(outputFilename.c_str(),"update");
+
+      DIS1DHistograms *inelasticFraction = new DIS1DHistograms(); 
+      inelasticFraction->CreateFromExisting(inelasticEvents,"inelasticFraction","inelasticFraction");
+      inelasticFraction->Divide(elasticAndInelasticEvents);
+      inelasticFraction->Save(outputFilename.c_str(),"update");
+
+      // Apply the correction to data events 
+      dataEvents->MultiplyByZero( inelasticFraction );
+
+    }
 
     DIS1DHistograms * recEventsRad = new DIS1DHistograms();
     recEventsRad->Create(recEventsRad2D);
@@ -123,7 +159,7 @@ int main(int argc, char * argv[]){
       binCorrCrossSectionRatio->Save(outputFilename.c_str(),"update");
     }
  
-    if (radCorrStatus == "true" && radCorrFile != "UNSET" && binCenteringStatus == "false"){
+    if (radCorrFile != "UNSET" && binCenteringStatus == "false"){
       BaseDISHistograms *radEvents2D = new BaseDISHistograms();
       radEvents2D->Load(radCorrFile.c_str(),"radEvents");
       radEvents2D->Rebin2D(xRebinFactor, yRebinFactor);
@@ -153,7 +189,7 @@ int main(int argc, char * argv[]){
       radCorrCrossSectionRatio->Save(outputFilename.c_str(), "update");
     }
     
-    if (binCenteringStatus == "true" && radCorrStatus == "true" && radCorrFile != "UNSET") {
+    if (binCenteringStatus == "true" && radCorrFile != "UNSET") {
       DIS1DHistograms * binCenterCorrection = new DIS1DHistograms();
       binCenterCorrection->CreateByDivision(modelCrossSection, modelCrossSectionAverage, "binCenterCorrection", "Bin Centering Correction");
       binCenterCorrection->Save(outputFilename.c_str(),"update");
@@ -222,6 +258,10 @@ void configureCommandLineOptions(h22Options * theseOpts){
   theseOpts->args["BINCORR"].args = "false";
   theseOpts->args["BINCORR"].type = 1;
   theseOpts->args["BINCORR"].name = "Bin Centering Corrections status";
+  
+  theseOpts->args["ELASTIC_SUB_FILE"].args = "UNSET";
+  theseOpts->args["ELASTIC_SUB_FILE"].type = 1;
+  theseOpts->args["ELASTIC_SUB_FILE"].name = "Elastic subtraction file ";
   
 }
 

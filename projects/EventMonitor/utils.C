@@ -13,6 +13,10 @@ void changeView(){
   cout << " >>> View changed to " << view << endl;
 }
 
+void toggleLogZ(){
+  setLogZ = !setLogZ;
+}
+
 void draw(int type){
   // type 
   // [0] - x
@@ -256,7 +260,7 @@ void draw2d(int type){
   title .DrawLatex(titlePosX,   titlePosY, titleString.c_str());
 
   gPad->SetMargin(0.15,0.15,0.15,0.15);
-  gPad->SetLogz();
+  if (setLogZ) { gPad->SetLogz(); }
   gPad->SetGridx();
   gPad->SetGridy();
 

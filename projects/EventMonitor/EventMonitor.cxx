@@ -22,13 +22,13 @@ EventMonitor::EventMonitor(bool isGen) : isGenerated(isGen){
 
   builder = PhysicsEventBuilder();
 
-  xBins     = DBins(200,    0.0, 1.0);
-  yBins     = DBins(200,    0.0, 1.0);
-  pBins     = DBins(200,    0.0, 6.0);
-  wBins     = DBins(200,    0.5, 3.8);
-  qqBins    = DBins(200,    0.0, 5.0);
-  thetaBins = DBins(200,   18.0, 60.0);
-  phiBins   = DBins(200, -180.0, 180.0);
+  xBins     = DBins(100,    0.0, 1.0);
+  yBins     = DBins(100,    0.0, 1.0);
+  pBins     = DBins(100,    0.0, 6.0);
+  wBins     = DBins(100,    0.5, 3.8);
+  qqBins    = DBins(100,    0.0, 5.0);
+  thetaBins = DBins(100,   18.0, 60.0);
+  phiBins   = DBins(100, -180.0, 180.0);
 
   int bins[7] = {xBins.number(), yBins.number(), pBins.number(),
 		 wBins.number(), qqBins.number(), thetaBins.number(), phiBins.number()};

@@ -2,7 +2,7 @@
 
   gROOT->LoadMacro("utils.C");
 
-  TFile * inputFile = TFile::Open("../out/crossSectionWithResonancePass1.root");
+  TFile * inputFile = TFile::Open("../out/crossSectionElastSubPass1.root");
   //  TFile * inputFile = TFile::Open("../out/crossSectionNoFidPass1.root");
 
   const int numberSector = 7;

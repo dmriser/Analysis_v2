@@ -4,7 +4,7 @@
 
 void checkGenEvents(){
 
-  TFile *inputFile = TFile::Open("generatedOnFarm.root");
+  TFile *inputFile = TFile::Open("debug_jobs0.root");
   TTree *h10;
   inputFile->GetObject("h10",h10);
 

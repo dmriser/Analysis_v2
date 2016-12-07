@@ -117,6 +117,7 @@ void printSlices(TH1D *histo[numberSector][numberSlices], const int numberSector
   //           6 = cross section ratio 
   //           7 = purity 
   //           8 = rad corr 
+  //           9 = inelastic fraction 
 
   double qqMin = 1.0; double qqMax = 4.8;
   double qqWidth = (qqMax-qqMin)/numberSlices; // slices are always Q^2 bins 
@@ -197,6 +198,13 @@ void printSlices(TH1D *histo[numberSector][numberSlices], const int numberSector
 	histo[sect][slice]->Draw("pe");
       }
 
+      if (histoType == 9) {
+	histo[sect][slice]->SetFillColorAlpha(72,0.5); 
+	histo[sect][slice]->SetMinimum(0.8); 
+	histo[sect][slice]->SetMaximum(1.1); 
+	histo[sect][slice]->Draw("hist");
+      }
+
       if (distType == 1){ xCaption.DrawLatex(0.65,0.06,"X_{Bjorken}"); }
       if (distType == 2){ xCaption.DrawLatex(0.65,0.06,"W (GeV/c^{2})"); }
 
@@ -206,17 +214,19 @@ void printSlices(TH1D *histo[numberSector][numberSlices], const int numberSector
       if (histoType == 6){ yCaption.DrawLatex(0.05,0.72,"Ratio"); toleranceCaption.DrawLatex(0.91,0.44,"#pm 15%"); }
       if (histoType == 7){ yCaption.DrawLatex(0.05,0.72,"Purity"); }
       if (histoType == 8){ yCaption.DrawLatex(0.05,0.72,"Ratio rad/born"); }
+      if (histoType == 9){ yCaption.DrawLatex(0.05,0.62,"Inelastic Fraction"); }
 
       sectorCaption.DrawLatex(0.31, 0.89, Form("Sector %d Q^{2}=%.3f",sect,qqValue));
 
       if (histoType == 1){ can->Print(Form("data/dataSector%dSlice%d.png",sect,slice)); }
-      if (histoType == 2){ can->Print(Form("rec/recSector%dSlice%d.png",sect,slice)); }
-      if (histoType == 3){ can->Print(Form("gen/genSector%dSlice%d.png",sect,slice)); }
-      if (histoType == 4){ can->Print(Form("acceptance/acceptanceSector%dSlice%d.png",sect,slice)); }
-      if (histoType == 5){ can->Print(Form("crossSection/crossSectionSector%dSlice%d.png",sect,slice)); }
-      if (histoType == 6){ can->Print(Form("crossSectionRatio/crossSectionRatioSector%dSlice%d.png",sect,slice)); }
-      if (histoType == 7){ can->Print(Form("purity/purityBins%dSector%dSlice%d.png",numberOfXBins,sect,slice)); }
-      if (histoType == 8){ can->Print(Form("radCorr/radCorrSector%dSlice%d.png",sect,slice)); }
+      else if (histoType == 2){ can->Print(Form("rec/recSector%dSlice%d.png",sect,slice)); }
+      else if (histoType == 3){ can->Print(Form("gen/genSector%dSlice%d.png",sect,slice)); }
+      else if (histoType == 4){ can->Print(Form("acceptance/acceptanceSector%dSlice%d.png",sect,slice)); }
+      else if (histoType == 5){ can->Print(Form("crossSection/crossSectionSector%dSlice%d.png",sect,slice)); }
+      else if (histoType == 6){ can->Print(Form("crossSectionRatio/crossSectionRatioSector%dSlice%d.png",sect,slice)); }
+      else if (histoType == 7){ can->Print(Form("purity/purityBins%dSector%dSlice%d.png",numberOfXBins,sect,slice)); }
+      else if (histoType == 8){ can->Print(Form("radCorr/radCorrSector%dSlice%d.png",sect,slice)); }
+      else if (histoType == 9){ can->Print(Form("elasticSubtraction/inelasticFractionSector%dSlice%d.png",sect,slice)); }
     }
   }
   
@@ -343,6 +353,7 @@ void plot2Histos(TH1D *histo1[numberSector][numberSlices], TH1D *histo2[numberSe
   // histoType 
   // 1 - Data & Simulation 
   // 2 - Data & Model 
+  // 3 - Elastic & Inelastic Simulated Events 
 
   // For calculating which QQ bins we're in
   double qqMin = 1.0; double qqMax = 4.8; 
@@ -395,28 +406,49 @@ void plot2Histos(TH1D *histo1[numberSector][numberSlices], TH1D *histo2[numberSe
 	histo2[s][sl]->Draw("histsame");
       }
 
-      if (histoType == 2) { 
+      else if (histoType == 2) { 
 	histo2[s][sl]->SetLineStyle(8);
 	histo2[s][sl]->SetLineColor(kMagenta);
 	histo2[s][sl]->Draw("lsame"); 
       }
 
+      else if (histoType == 3) {
+	histo1[s][sl]->SetFillColorAlpha(99,0.4);
+	histo1[s][sl]->SetLineColor(99);
+	histo1[s][sl]->SetMaximum( histo2[s][sl]->GetMaximum()*1.2 );
+	histo1Caption.SetTextColor(99);
+	histo1[s][sl]->Draw("hist");
+
+
+	//	histo2[s][sl]->SetFillColorAlpha(58,0.4);
+	histo2[s][sl]->SetLineColor(58);
+	histo2Caption.SetTextColor(58);
+	histo2[s][sl]->Draw("histsame");
+      }
+
       sectorCaption.DrawLatex(0.61,0.89,Form("Sector %d Q^{2}=%.3f",s,qqValue));
       xCaption.DrawLatex(0.62, 0.04, "W (GeV/c^{2})");
+      //      xCaption.DrawLatex(0.62, 0.04, "X_{Bjorken}");
 
       if (histoType == 1){
 	histo1Caption.DrawLatex(0.18, 0.93, Form("Data Events = %.0f",histo1[s][sl]->GetEntries()));
 	histo2Caption.DrawLatex(0.18, 0.89, Form("Sim Events = %.0f",histo2[s][sl]->GetEntries()));
       }
 
-      if (histoType == 2){
+      else if (histoType == 2){
 	histo2Caption.SetTextColor(kMagenta);
 	histo1Caption.DrawLatex(0.18, 0.76, "E1-F Data");
 	histo2Caption.DrawLatex(0.18, 0.72, "Keppel Model");
       }
 
-      if (histoType == 1) { singleCanvas->Print(Form("compareDataAndSim/compareDataSimSector%dSlice%d.png",s,sl)); }
-      if (histoType == 2) { singleCanvas->Print(Form("compareDataAndModel/compareDataModelSector%dSlice%d.png",s,sl)); }
+      else if (histoType == 3){
+	histo1Caption.DrawLatex(0.18, 0.76, "Elastic");
+	histo2Caption.DrawLatex(0.18, 0.72, "Inelastic");
+      }
+
+      if (histoType == 1)      { singleCanvas->Print(Form("compareDataAndSim/compareDataSimSector%dSlice%d.png",s,sl)); }
+      else if (histoType == 2) { singleCanvas->Print(Form("compareDataAndModel/compareDataModelSector%dSlice%d.png",s,sl)); }
+      else if (histoType == 3) { singleCanvas->Print(Form("elasticSubtraction/compareElasticAndInelasticSector%dSlice%d.png",s,sl)); }
     }
   }
 

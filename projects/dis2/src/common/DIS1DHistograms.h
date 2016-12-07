@@ -46,11 +46,14 @@ class DIS1DHistograms{
   string nameOfHistograms; 
 
  public:
+  void Add(DIS1DHistograms *histos);
   void Create(BaseDISHistograms * baseHistograms); 
   void CreateByDivision(DIS1DHistograms *numerator, DIS1DHistograms *demoninator, string name, string title);
   void CreateFromExisting(DIS1DHistograms * sourceHistograms, string newName, string newTitle);
   void Divide(DIS1DHistograms * denominator);
+  void DivideByZero(DIS1DHistograms *histos);
   void Load(string inputFilenameWithExtension, string title);
+  void MultiplyByZero(DIS1DHistograms *histos);
   void PrintPDF(string pdfTitle);
   void Save(string outputFilenameWithExtension, string saveOption); 
   void Scale(double scaleValue);
@@ -75,6 +78,29 @@ DIS1DHistograms::~DIS1DHistograms(){
   if (inputFile->IsOpen()){
     inputFile->Close();
   }
+}
+
+void DIS1DHistograms::Add(DIS1DHistograms *histos){
+
+    for (int sector=0; sector<7; sector++){
+      allxByQQ[sector]->Add(histos->allxByQQ[sector]);
+      allwByQQ[sector]->Add(histos->allwByQQ[sector]);
+    }
+  
+
+    for (int sector=0; sector<xByQQ.size(); sector++){
+      for (int slice=0; slice<xByQQ[sector].size(); slice++){
+	xByQQ[sector][slice]->Add( histos->xByQQ[sector][slice] );
+      }
+    }
+
+    for (int sector=0; sector<wByQQ.size(); sector++){
+      for (int slice=0; slice<wByQQ[sector].size(); slice++){
+	wByQQ[sector][slice]->Add( histos->wByQQ[sector][slice] );
+      }
+    }
+  
+
 }
 
 void DIS1DHistograms::Create(BaseDISHistograms * baseHistograms){
@@ -180,6 +206,44 @@ void DIS1DHistograms::Load(string inputFilenameWithExtension, string title){
 
 
   
+}
+
+void DIS1DHistograms::MultiplyByZero(DIS1DHistograms *histos){
+
+  for (int sector=0; sector<7; sector++){
+
+    allxByQQ[sector]->Multiply(histos->allxByQQ[0]);
+    allwByQQ[sector]->Multiply(histos->allwByQQ[0]);
+
+    for (int slice=0; slice<xByQQ[sector].size(); slice++){
+      xByQQ[sector][slice]->Multiply(histos->xByQQ[0][slice]);
+    }
+
+    for (int slice=0; slice<wByQQ[sector].size(); slice++){
+      wByQQ[sector][slice]->Multiply(histos->wByQQ[0][slice]);
+    }
+
+  }
+
+}
+
+void DIS1DHistograms::DivideByZero(DIS1DHistograms *histos){
+
+  for (int sector=0; sector<7; sector++){
+
+    allxByQQ[sector]->Divide(histos->allxByQQ[0]);
+    allwByQQ[sector]->Divide(histos->allwByQQ[0]);
+
+    for (int slice=0; slice<xByQQ[sector].size(); slice++){
+      xByQQ[sector][slice]->Divide(histos->xByQQ[0][slice]);
+    }
+
+    for (int slice=0; slice<wByQQ[sector].size(); slice++){
+      wByQQ[sector][slice]->Divide(histos->wByQQ[0][slice]);
+    }
+
+  }
+
 }
 
 void DIS1DHistograms::Save(string outputFilenameWithExtension, string saveOption){

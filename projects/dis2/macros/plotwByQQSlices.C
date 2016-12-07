@@ -13,7 +13,7 @@
   TH1D *binCorrectedCrossSectionRatio[numberSector][numberSlices];
 
 
-  TFile *inputFile = TFile::Open("../out/crossSectionWithResonancePass1.root");
+  TFile *inputFile = TFile::Open("../out/crossSectionElastSubPass1.root");
   
   readHisto(acceptance, inputFile, numberSector, numberSlices, "acceptance_wByQQ");
   readHisto(crossSection, inputFile, numberSector, numberSlices, "crossSection_wByQQ");

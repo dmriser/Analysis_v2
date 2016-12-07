@@ -8,8 +8,8 @@ fort_env.Append(FLAGS = ['-fno-leading-underscore','-fno-second-underscore'])
 
 fortranSources = glob.glob('inclusiveModels/Brasse/*.f')
 fortranSources += glob.glob('inclusiveModels/Keppel/*.f')
-fortranSources += glob.glob('inclusiveModels/Bosted/*.f')
-fortranSources += glob.glob('elasticModels/Bosted/*.f')
+#fortranSources += glob.glob('inclusiveModels/Bosted/*.f')
+#fortranSources += glob.glob('elasticModels/Bosted/*.f')
 fort_env.SharedLibrary('libFortranModel',fortranSources)
 
 # Compile the C++ Code w/ the fortran 
@@ -24,6 +24,6 @@ env.Append(CPPPATH = ['.'], LIBPATH = ['.'],LIBS = ['FortranModel'])
 #libSources += glob.glob('elasticModels/*/*.cxx')
 libSources = glob.glob('inclusiveModels/Keppel/*.cxx')
 
-#env.SharedLibrary('libCppModel',libSources)
+env.SharedLibrary('libCppModel',libSources)
 
 

@@ -1,0 +1,16 @@
+#!/bin/tcsh 
+
+set NFILES  = 20000
+set OUTPUT  = $1
+set binName = $2
+
+cp list.*.dat list.dat 
+chmod +x $binName
+./$binName -N=$NFILES -TYPE=mcrad -LIST=list.dat -OUT=$OUTPUT 
+#./$binName $NFILES list.dat $OUTPUT 
+
+
+
+
+
+ 

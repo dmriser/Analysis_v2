@@ -1,3 +1,4 @@
+
 #ifndef mc_loader_h
 #define mc_loader_h
 
@@ -54,6 +55,13 @@ void MCLoader::Initialize(){
   genEvents.Init(Form("genEvents%s",mcType.c_str()),"Generated MC Events");
   recAndGenEvents.Init(Form("recAndGenEvents%s",mcType.c_str()),"Rec/Gen Same Bin Events");
   //  recAndGenEvents.Rebin2D(2,2);
+
+  cout << "[MCLoader] Warning: Running with electron ID strictness alterations. " << endl;
+  //  eID.cc_fid_strict = 2;
+  //  eID.dc_r1_strict  = 2;
+  //  eID.dc_r3_strict  = 2;
+
+  eID.ec_sf_strict = 9; 
 }
 
 // This is the core routine which conditionally fills histograms. 

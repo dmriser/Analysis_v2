@@ -1,0 +1,40 @@
+#!/bin/tcsh 
+
+# User Parameters 
+set numberOfJobs = 10 
+set binDir       = "/u/home/dmriser/mydoc/analysis/root_scripts/Analysis_v2/projects/dis2/src"
+set binName      = "fillHistograms"
+set sourceDir    = "/u/home/dmriser/mydoc/analysis/root_scripts/Analysis_v2/farm/analysis"
+set outDir       = "/volatile/clas/clas12/dmriser/analysis/e1f_analysis/inclusive/noSFonMC/"
+set outName      = "mc"
+set runScript    = "goAnalyze"
+set fileList     = "/u/home/dmriser/mydoc/analysis/root_scripts/Analysis_v2/projects/dis2/MonteCarlo.dat"
+
+# Create the output
+# dir if it doesnt exist
+mkdir -p $outDir
+cp $runScript $outDir/$runScript
+
+# Splits the master list into numberOfJobs
+# smaller lists to be used on the nodes.
+./buildFileList $numberOfJobs $fileList
+
+# Get our list of jobs 
+set allLists = `ls *.dat`
+
+# Send the jobs
+set currentList = 1
+foreach list ($allLists) 
+    ./buildJsub $allLists[$currentList] analysis.$currentList.jsub $binDir $binName $outDir $outName.$currentList.root $sourceDir $runScript
+    mv $list $outDir/$list
+    jsub analysis.$currentList.jsub 
+    @ currentList++
+end
+
+# Clean 
+rm analysis.*.jsub 
+rm list.*.dat
+
+# Brag about it 
+echo " >> Done, output dir created. "
+ls $outDir

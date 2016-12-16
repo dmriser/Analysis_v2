@@ -62,6 +62,7 @@ void Parameters::saveParameters(string outputFilename){
   ofstream file(outputFilename.c_str(), std::ios::trunc);
 
   metaData.setNameOfFile(outputFilename);
+  metaData.updateTimeOfLastEdit(); 
 
   file << "# Filename: " << metaData.getName() << endl;
   file << "# Last edited at: " << metaData.getTimeOfLastEdit() << endl; 

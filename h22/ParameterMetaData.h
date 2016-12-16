@@ -4,6 +4,8 @@
 #include <fstream>
 #include <string>
 
+#include "TDatime.h"
+
 class ParameterMetaData{
  public:
   ParameterMetaData();
@@ -14,6 +16,7 @@ class ParameterMetaData{
   int numberOfFilesUsed; 
   std::string timeOfLastEdit; 
   std::string nameOfFile;
+  TDatime *time; 
 
  public:
   void setNumberOfParameterSets(int numberOfSets){ numberOfParameterSets = numberOfSets; }

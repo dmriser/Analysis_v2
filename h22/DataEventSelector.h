@@ -4,8 +4,8 @@
   David Riser, University of Connecticut 
   August 14, 2016 
 
-  DSelection.h -> Defines class structure for the 
-  selection utility which combines DCut objects to 
+  DataEventSelector.h -> Defines class structure for the 
+  selection utility which combines DataEventCut objects to 
   say yes or no. 
 
 */
@@ -20,20 +20,20 @@
 #include <vector>
 
 // my includes
-#include "DCut.h"
+#include "DataEventCut.h"
 #include "h22Event.h"
 
-class DSelection
+class DataEventSelector
 {
  public:
-  DSelection();
-  ~DSelection();
+  DataEventSelector();
+  ~DataEventSelector();
 
   std::string selection_name; 
-  std::vector<DCut*> cuts;
+  std::vector<DataEventCut*> cuts;
 
  public:
-  void add_cut(DCut *this_cut){ cuts.push_back(this_cut); }
+  void add_cut(DataEventCut *this_cut){ cuts.push_back(this_cut); }
   void set_name(std::string n){ selection_name = n;}
   void enable_all() { for(int i=0; i<cuts.size(); i++) { cuts[i]->enable();  } }
   void disable_all(){ for(int i=0; i<cuts.size(); i++) { cuts[i]->disable(); } }
@@ -44,6 +44,7 @@ class DSelection
   void summarize();
   
   virtual bool passes(h22Event, int); /** I am making this virtual in the event that we need to change something before asking if the events pass (vertex correction ect.) */ 
+  virtual bool passesFast(h22Event, int); /** I am making this virtual in the event that we need to change something before asking if the events pass (vertex correction ect.) */ 
   std::map<std::string, double> cut_pass_fraction(); 
   
 };

@@ -2,7 +2,7 @@
 /*
   David Riser, University of Connecticut 
   August 14, 2016 
-  DCut.cxx -> Writes class methods. 
+  DataEventCut.cxx -> Writes class methods. 
 */
 ////////////////////////////////////////////////////////////////////
 
@@ -18,32 +18,32 @@ using std::string;
 
 // my includes
 #include "CommonTools.h"
-#include "DCut.h"
+#include "DataEventCut.h"
 #include "h22Event.h"
 
-DCut::DCut()
+DataEventCut::DataEventCut()
 {
   // Setup procedure.
   is_enabled = true;
   n_pass = 0; n_fail = 0;
-  cut_name = " DCut Unassigned ";
+  cut_name = " DataEventCut Unassigned ";
 }
 
-DCut::~DCut()
+DataEventCut::~DataEventCut()
 {
 
 }
 
 
-bool DCut::passes(h22Event event, int index)
+bool DataEventCut::passes(h22Event event, int index)
 {
   if ( !is_enabled ){ return false; } 
 
-  cout << " Inside DCut::passes " << endl; 
+  cout << " Inside DataEventCut::passes " << endl; 
   return true;
 }
 
-bool DCut::applies(h22Event event, int index)
+bool DataEventCut::applies(h22Event event, int index)
 {
   return true;
 }

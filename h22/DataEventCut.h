@@ -4,14 +4,14 @@
   David Riser, University of Connecticut 
   August 14, 2016 
 
-  Dcut.h -> Define class structure for DCut class.
+  Dcut.h -> Define class structure for DataEventCut class.
 
-  DCut is a base class not intended to be directly 
+  DataEventCut is a base class not intended to be directly 
   used but rather overwrite the virtual method passes().
 
   For each new cut, a class is created that inherits 
-  from DCut and the method is overwritten.  The 
-  DSelection class then contains a vector<DCut> that
+  from DataEventCut and the method is overwritten.  The 
+  DSelection class then contains a vector<DataEventCut> that
   stores the cuts for a certain selection criteria. 
 
 
@@ -27,11 +27,11 @@
 // my includes
 #include "h22Event.h"
 
-class DCut
+class DataEventCut
 {
  public:
-  DCut();
-  ~DCut();
+  DataEventCut();
+  ~DataEventCut();
 
   int n_pass, n_fail;
   
@@ -72,7 +72,7 @@ class DCut
  */
 /////////////////////////////////////////////////////////////////////
 
-class ChargeCut : public DCut 
+class ChargeCut : public DataEventCut 
 {
  public:
   ChargeCut();
@@ -90,7 +90,7 @@ class ChargeCut : public DCut
  */
 /////////////////////////////////////////////////////////////////////
 
-class TrackQualityCut : public DCut 
+class TrackQualityCut : public DataEventCut 
 {
  public:
   TrackQualityCut();
@@ -108,7 +108,7 @@ class TrackQualityCut : public DCut
  */
 /////////////////////////////////////////////////////////////////////
 
-class MomentumCut : public DCut 
+class MomentumCut : public DataEventCut 
 {
  public:
   MomentumCut();
@@ -127,7 +127,7 @@ class MomentumCut : public DCut
  */
 /////////////////////////////////////////////////////////////////////
 
-class SampFracCut : public DCut 
+class SampFracCut : public DataEventCut 
 {
  public:
   SampFracCut(int);
@@ -147,7 +147,7 @@ class SampFracCut : public DCut
  */
 /////////////////////////////////////////////////////////////////////
 
-class ECUCut : public DCut 
+class ECUCut : public DataEventCut 
 {
  public:
   ECUCut();
@@ -165,7 +165,7 @@ class ECUCut : public DCut
  */
 /////////////////////////////////////////////////////////////////////
 
-class ECVCut : public DCut 
+class ECVCut : public DataEventCut 
 {
  public:
   ECVCut();
@@ -182,7 +182,7 @@ class ECVCut : public DCut
  */
 /////////////////////////////////////////////////////////////////////
 
-class ECWCut : public DCut 
+class ECWCut : public DataEventCut 
 {
  public:
   ECWCut();
@@ -200,7 +200,7 @@ class ECWCut : public DCut
  */
 /////////////////////////////////////////////////////////////////////
 
-class ZVertexCut : public DCut 
+class ZVertexCut : public DataEventCut 
 {
  public:
   ZVertexCut();
@@ -217,7 +217,7 @@ class ZVertexCut : public DCut
  */
 /////////////////////////////////////////////////////////////////////
 
-class CCFiducialCut : public DCut 
+class CCFiducialCut : public DataEventCut 
 {
  public:
   CCFiducialCut();
@@ -236,7 +236,7 @@ class CCFiducialCut : public DCut
  */
 /////////////////////////////////////////////////////////////////////
 
-class ECEdepInnerCut : public DCut 
+class ECEdepInnerCut : public DataEventCut 
 {
  public:
   ECEdepInnerCut();
@@ -253,7 +253,7 @@ class ECEdepInnerCut : public DCut
  */
 /////////////////////////////////////////////////////////////////////
 
-class DCR1FiducialCut : public DCut 
+class DCR1FiducialCut : public DataEventCut 
 {
  public:
   DCR1FiducialCut();
@@ -273,7 +273,7 @@ class DCR1FiducialCut : public DCut
  */
 /////////////////////////////////////////////////////////////////////
 
-class DCR3FiducialCut : public DCut 
+class DCR3FiducialCut : public DataEventCut 
 {
  public:
   DCR3FiducialCut();
@@ -293,7 +293,7 @@ class DCR3FiducialCut : public DCut
  */
 /////////////////////////////////////////////////////////////////////
 
-class NPheCut : public DCut 
+class NPheCut : public DataEventCut 
 {
  public:
   NPheCut();
@@ -310,11 +310,11 @@ class NPheCut : public DCut
  */
 /////////////////////////////////////////////////////////////////////
 
-class DCut_DeltaBetaCut : public DCut 
+class DataEventCut_DeltaBetaCut : public DataEventCut 
 {
  public:
-  DCut_DeltaBetaCut();
-  ~DCut_DeltaBetaCut();
+  DataEventCut_DeltaBetaCut();
+  ~DataEventCut_DeltaBetaCut();
 
   bool passes(h22Event event, int index, int pid);
 };
@@ -327,10 +327,10 @@ class DCut_DeltaBetaCut : public DCut
  */
 /////////////////////////////////////////////////////////////////////
 
-class DCut_DeltaZVertexCut : public DCut{
+class DataEventCut_DeltaZVertexCut : public DataEventCut{
  public:
-  DCut_DeltaZVertexCut();
-  ~DCut_DeltaZVertexCut();
+  DataEventCut_DeltaZVertexCut();
+  ~DataEventCut_DeltaZVertexCut();
 
   bool passes(h22Event event, int index); 
 };

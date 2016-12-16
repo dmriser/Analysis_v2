@@ -4,26 +4,25 @@
 #include <fstream>
 #include <string>
 #include <iostream>
-#include <time.h>
 using std::cout; 
 using std::endl;
 using std::string; 
 
+// My 
 #include "ParameterMetaData.h"
 
+// Root 
+#include "TDatime.h"
+
 ParameterMetaData::ParameterMetaData(){
+  time = new TDatime(); 
 }
 
 ParameterMetaData::~ParameterMetaData(){
 }
 
 void ParameterMetaData::updateTimeOfLastEdit(){
-  time_t rawtime;
-  struct tm * timeinfo;
-  time (&rawtime);
-  timeinfo = localtime (&rawtime);
-
-  timeOfLastEdit = (string) (asctime(timeinfo));
+  timeOfLastEdit = (string) (time->AsString());
 }
 
 void ParameterMetaData::print(){

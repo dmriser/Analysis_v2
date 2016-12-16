@@ -4,8 +4,6 @@
  
  July 17, 2016
  
- template.cxx -> Your info here.
- 
  */
 ////////////////////////////////////////
 
@@ -20,7 +18,7 @@ using namespace std;
 #include "h22Event.h"
 #include "h22Option.h"
 #include "h22Reader.h"
-#include "pars.h"
+#include "Parameters.h"
 #include "ParticleFilter.h"
 
 // root includes
@@ -34,21 +32,23 @@ using namespace std;
 #include "TLegend.h"
 #include "TStopwatch.h"
 
-int main(int argc, char * argv[])
-{
+int main(int argc, char * argv[]){
     
     // Setup Options
     h22Options opts;
+    opts.args["PARS"].type = 1;
+    opts.args["PARS"].args = "data.pars";
+    opts.args["PARS"].name = "Parameter file";
+
     opts.set(argc,argv);
-    int GSIM        = opts.args["MC"].arg;
-    long int nev    = opts.args["N"].arg;
-    string eparfile = opts.args["EPARS"].args;
-    string hparfile = opts.args["HPARS"].args;
-    string outfile  = opts.args["OUT"].args;
+    int GSIM       = opts.args["MC"].arg;
+    long int nev   = opts.args["N"].arg;
+    string parfile = opts.args["PARS"].args;
+    string outfile = opts.args["OUT"].args;
     
     // Setup Reader and Output
-    h22Reader fReader(GSIM);
-    for (auto it=opts.ifiles.begin(); it<opts.ifiles.end(); it++) { fReader.AddFile(*it); }
+    h22Reader fReader;
+    for (int i=0; i<opts.ifiles.size(); i++) { fReader.AddFile(opts.ifiles[i]); }
     fReader.Init();
     TFile out(outfile.c_str(),"recreate",outfile.c_str(),1);
     
@@ -56,10 +56,14 @@ int main(int argc, char * argv[])
     nev = smallest(nev, fReader.GetEntries());
     
     // Setting important constants
-    int runno = fReader.runno();
+    //    int runno = fReader.runno();
+   int runno = 38222;
     
     // Setting up PID and Corrections
-    ParticleFilter filter(eparfile);
+    Parameters *pars = new Parameters();
+    pars->loadParameters(parfile);
+
+    ParticleFilter filter(pars);
     filter.set_info(GSIM, runno);
     Corrections corr;
     
@@ -132,7 +136,7 @@ int main(int argc, char * argv[])
             h2_dcr3[0][sector]        ->Fill(event.tl3_x[0], event.tl3_y[0]);
             h2_cc[0][sector]          ->Fill(event.rphi(0), event.theta_cc(0));
         }
-        
+	/*    
         // Broken up for clarity not speed. Doing This cut histograms now.
         if (event.q[0] < 0 && sector > 0)
         {
@@ -150,7 +154,7 @@ int main(int argc, char * argv[])
             if (results["CC_FID"])      { h2_cc[1][0]          ->Fill(event.rphi(0), event.theta_cc(0));    h2_cc[1][sector]          ->Fill(event.rphi(0), event.theta_cc(0)); }
             
         }
-        
+        */
         
         if (filter.has_electron(event))
         {
@@ -187,9 +191,6 @@ int main(int argc, char * argv[])
 
     TCanvas * c1 = new TCanvas("c1","",800,800);
     
-    epars epars;
-    epars.load(eparfile);
-
     TLine line;
     line.SetLineStyle(9);
     line.SetLineWidth(4);
@@ -207,8 +208,8 @@ int main(int argc, char * argv[])
     h1_vz[0][0]->Draw();
     h1_vz[1][0]->Draw("same");
     h1_vz[2][0]->Draw("same");
-    line.DrawLine(epars.VZMIN,0,epars.VZMIN,h1_vz[0][0]->GetMaximum());
-    line.DrawLine(epars.VZMAX,0,epars.VZMAX,h1_vz[0][0]->GetMaximum());
+    //    line.DrawLine(epars.VZMIN,0,pars.VZMIN,h1_vz[0][0]->GetMaximum());
+    //    line.DrawLine(epars.VZMAX,0,epars.VZMAX,h1_vz[0][0]->GetMaximum());
     latex.SetTextColor(kBlack);
     latex.DrawLatex(0.1, 0.75," #rightarrow all neg. tracks ");
     latex.SetTextColor(kOrange);
@@ -221,8 +222,7 @@ int main(int argc, char * argv[])
     c1->Clear();
     c1->Divide(3,2);
     
-    for (int s=1; s<7; s++)
-    {
+    for (int s=1; s<7; s++){
         c1->cd(s);
 	//        h1_vz[0][s]->SetFillColorAlpha(kRed,0.5);
         h1_vz[1][s]->SetFillColorAlpha(kBlue+1,0.25);
@@ -230,8 +230,8 @@ int main(int argc, char * argv[])
         h1_vz[0][s]->Draw();
         h1_vz[1][s]->Draw("same");
         h1_vz[2][s]->Draw("same");
-        line.DrawLine(epars.VZMIN,0,epars.VZMIN,h1_vz[0][s]->GetMaximum());
-        line.DrawLine(epars.VZMAX,0,epars.VZMAX,h1_vz[0][s]->GetMaximum());
+	//        line.DrawLine(epars.VZMIN,0,epars.VZMIN,h1_vz[0][s]->GetMaximum());
+	//        line.DrawLine(epars.VZMAX,0,epars.VZMAX,h1_vz[0][s]->GetMaximum());
     }
     c1->Print("img/z_vertex_each.pdf");
     
@@ -243,7 +243,7 @@ int main(int argc, char * argv[])
     h1_nphe[0][0]->Draw();
     h1_nphe[1][0]->Draw("same");
     h1_nphe[2][0]->Draw("same");
-    line.DrawLine(epars.CCNPHE,0,epars.CCNPHE,h1_nphe[0][0]->GetMaximum());
+    //    line.DrawLine(epars.CCNPHE,0,epars.CCNPHE,h1_nphe[0][0]->GetMaximum());
     c1->Print("img/cc_nphe_all.pdf");
     
     // Number of CC Photoelectrons Each
@@ -259,7 +259,7 @@ int main(int argc, char * argv[])
         h1_nphe[0][s]->Draw();
         h1_nphe[1][s]->Draw("same");
         h1_nphe[2][s]->Draw("same");
-        line.DrawLine(epars.CCNPHE,0,epars.CCNPHE,h1_nphe[0][s]->GetMaximum());
+	//        line.DrawLine(epars.CCNPHE,0,epars.CCNPHE,h1_nphe[0][s]->GetMaximum());
     }
     c1->Print("img/cc_nphe_each.pdf");
     

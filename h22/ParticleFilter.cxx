@@ -22,219 +22,165 @@
 #include "CommonTools.h"
 #include "Corrections.h"
 #include "h22Event.h"
-#include "Pars.h"
+#include "Parameters.h"
 #include "ParticleFilter.h"
+#include "DataEventSelector.h"
+#include "DataEventCut.h"
 
 // root includes
 #include "TVector3.h"
 
-ParticleFilter::ParticleFilter()
-{
-    eparfile = "eid_default_pars.dat";
-    hparfile = "hid_default_pars.dat";
-    eid.load(eparfile);
-    hid.load(hparfile);
-    
-    MC = false; runno = 0;
+ParticleFilter::ParticleFilter(Parameters *params) : pars(params){
+    MC=false; runno = 0;
+
+    // Setup the selector 
+    electronSelector = new DataEventSelector();
+
+    // Call cut constructors 
+    // These could be split into 2 selectors, 
+    // one for fid cuts that might be used on 
+    // other particles and one for just elec
+    // specific cuts.
+    negativity_cut = new ChargeCut();
+    cc_fid_cut     = new CCFiducialCut();
+    dcr1_fid_cut   = new DCR1FiducialCut();
+    dcr3_fid_cut   = new DCR3FiducialCut();
+    edep_cut       = new ECEdepInnerCut();
+    ecu_cut        = new ECUCut();
+    ecv_cut        = new ECVCut();
+    ecw_cut        = new ECWCut();
+    sf_s1_cut      = new SampFracCut(1);
+    sf_s2_cut      = new SampFracCut(2);
+    sf_s3_cut      = new SampFracCut(3);
+    sf_s4_cut      = new SampFracCut(4);
+    sf_s5_cut      = new SampFracCut(5);
+    sf_s6_cut      = new SampFracCut(6);
+    qc_cut         = new TrackQualityCut();
+    vz_cut         = new ZVertexCut();
+
+    // Set limits on cuts from parameters 
+    negativity_cut->set_min(-1.1);
+    negativity_cut->set_max(-0.9);
+
+    cc_fid_cut->a = params->getParameter("EL_CC_FIDA").getValue(0);
+    cc_fid_cut->b = params->getParameter("EL_CC_FIDB").getValue(0);
+
+    dcr1_fid_cut->height = params->getParameter("EL_DCR1_FIDH").getValue(0);
+    dcr1_fid_cut->angle  = params->getParameter("EL_DCR1_FIDA").getValue(0);
+    dcr3_fid_cut->height = params->getParameter("EL_DCR3_FIDH").getValue(0);
+    dcr3_fid_cut->angle  = params->getParameter("EL_DCR3_FIDA").getValue(0);
+
+    edep_cut->set_min( params->getParameter("EL_EC_EDEP_MIN").getValue(0) );
+    ecu_cut->set_min( params->getParameter("EL_ECU_MIN").getValue(0) );
+    ecu_cut->set_max( params->getParameter("EL_ECU_MAX").getValue(0) ); 
+    ecv_cut->set_min( params->getParameter("EL_ECV_MIN").getValue(0) );
+    ecv_cut->set_max( params->getParameter("EL_ECV_MAX").getValue(0) ); 
+    ecw_cut->set_min( params->getParameter("EL_ECW_MIN").getValue(0) );
+    ecw_cut->set_max( params->getParameter("EL_ECW_MAX").getValue(0) ); 
+
+    sf_s1_cut->am     = params->getParameter("EL_SF_MU_A").getValue(0);
+    sf_s1_cut->bm     = params->getParameter("EL_SF_MU_B").getValue(0);
+    sf_s1_cut->cm     = params->getParameter("EL_SF_MU_C").getValue(0);
+    sf_s1_cut->dm     = params->getParameter("EL_SF_MU_D").getValue(0);
+    sf_s1_cut->as     = params->getParameter("EL_SF_SIGMA_A").getValue(0);
+    sf_s1_cut->bs     = params->getParameter("EL_SF_SIGMA_B").getValue(0);
+    sf_s1_cut->cs     = params->getParameter("EL_SF_SIGMA_C").getValue(0);
+    sf_s1_cut->ds     = params->getParameter("EL_SF_SIGMA_D").getValue(0);
+    sf_s1_cut->nsigma = params->getParameter("EL_EC_NSIGMA").getValue(0);
+
+    sf_s2_cut->am     = params->getParameter("EL_SF_MU_A").getValue(1);
+    sf_s2_cut->bm     = params->getParameter("EL_SF_MU_B").getValue(1);
+    sf_s2_cut->cm     = params->getParameter("EL_SF_MU_C").getValue(1);
+    sf_s2_cut->dm     = params->getParameter("EL_SF_MU_D").getValue(1);
+    sf_s2_cut->as     = params->getParameter("EL_SF_SIGMA_A").getValue(1);
+    sf_s2_cut->bs     = params->getParameter("EL_SF_SIGMA_B").getValue(1);
+    sf_s2_cut->cs     = params->getParameter("EL_SF_SIGMA_C").getValue(1);
+    sf_s2_cut->ds     = params->getParameter("EL_SF_SIGMA_D").getValue(1);
+    sf_s2_cut->nsigma = params->getParameter("EL_EC_NSIGMA").getValue(0);
+
+    sf_s3_cut->am     = params->getParameter("EL_SF_MU_A").getValue(2);
+    sf_s3_cut->bm     = params->getParameter("EL_SF_MU_B").getValue(2);
+    sf_s3_cut->cm     = params->getParameter("EL_SF_MU_C").getValue(2);
+    sf_s3_cut->dm     = params->getParameter("EL_SF_MU_D").getValue(2);
+    sf_s3_cut->as     = params->getParameter("EL_SF_SIGMA_A").getValue(2);
+    sf_s3_cut->bs     = params->getParameter("EL_SF_SIGMA_B").getValue(2);
+    sf_s3_cut->cs     = params->getParameter("EL_SF_SIGMA_C").getValue(2);
+    sf_s3_cut->ds     = params->getParameter("EL_SF_SIGMA_D").getValue(2);
+    sf_s3_cut->nsigma = params->getParameter("EL_EC_NSIGMA").getValue(0);
+
+    sf_s4_cut->am     = params->getParameter("EL_SF_MU_A").getValue(3);
+    sf_s4_cut->bm     = params->getParameter("EL_SF_MU_B").getValue(3);
+    sf_s4_cut->cm     = params->getParameter("EL_SF_MU_C").getValue(3);
+    sf_s4_cut->dm     = params->getParameter("EL_SF_MU_D").getValue(3);
+    sf_s4_cut->as     = params->getParameter("EL_SF_SIGMA_A").getValue(3);
+    sf_s4_cut->bs     = params->getParameter("EL_SF_SIGMA_B").getValue(3);
+    sf_s4_cut->cs     = params->getParameter("EL_SF_SIGMA_C").getValue(3);
+    sf_s4_cut->ds     = params->getParameter("EL_SF_SIGMA_D").getValue(3);
+    sf_s4_cut->nsigma = params->getParameter("EL_EC_NSIGMA").getValue(0);
+
+    sf_s5_cut->am     = params->getParameter("EL_SF_MU_A").getValue(4);
+    sf_s5_cut->bm     = params->getParameter("EL_SF_MU_B").getValue(4);
+    sf_s5_cut->cm     = params->getParameter("EL_SF_MU_C").getValue(4);
+    sf_s5_cut->dm     = params->getParameter("EL_SF_MU_D").getValue(4);
+    sf_s5_cut->as     = params->getParameter("EL_SF_SIGMA_A").getValue(4);
+    sf_s5_cut->bs     = params->getParameter("EL_SF_SIGMA_B").getValue(4);
+    sf_s5_cut->cs     = params->getParameter("EL_SF_SIGMA_C").getValue(4);
+    sf_s5_cut->ds     = params->getParameter("EL_SF_SIGMA_D").getValue(4);
+    sf_s5_cut->nsigma = params->getParameter("EL_EC_NSIGMA").getValue(0);
+
+    sf_s6_cut->am     = params->getParameter("EL_SF_MU_A").getValue(5);
+    sf_s6_cut->bm     = params->getParameter("EL_SF_MU_B").getValue(5);
+    sf_s6_cut->cm     = params->getParameter("EL_SF_MU_C").getValue(5);
+    sf_s6_cut->dm     = params->getParameter("EL_SF_MU_D").getValue(5);
+    sf_s6_cut->as     = params->getParameter("EL_SF_SIGMA_A").getValue(5);
+    sf_s6_cut->bs     = params->getParameter("EL_SF_SIGMA_B").getValue(5);
+    sf_s6_cut->cs     = params->getParameter("EL_SF_SIGMA_C").getValue(5);
+    sf_s6_cut->ds     = params->getParameter("EL_SF_SIGMA_D").getValue(5);
+    sf_s6_cut->nsigma = params->getParameter("EL_EC_NSIGMA").getValue(0);
+
+    vz_cut->set_min( params->getParameter("EL_VZ_MIN").getValue(0) );
+    vz_cut->set_max( params->getParameter("EL_VZ_MAX").getValue(0) );
+
+    // Push back the cuts 
+    electronSelector->add_cut( negativity_cut );
+    electronSelector->add_cut( cc_fid_cut );
+    electronSelector->add_cut( dcr1_fid_cut );
+    electronSelector->add_cut( dcr3_fid_cut );
+    electronSelector->add_cut( edep_cut );
+    electronSelector->add_cut( ecu_cut );
+    electronSelector->add_cut( ecv_cut );
+    electronSelector->add_cut( ecw_cut );
+    electronSelector->add_cut( sf_s1_cut );
+    electronSelector->add_cut( sf_s2_cut );
+    electronSelector->add_cut( sf_s3_cut );
+    electronSelector->add_cut( sf_s4_cut );
+    electronSelector->add_cut( sf_s5_cut );
+    electronSelector->add_cut( sf_s6_cut );
+    electronSelector->add_cut( qc_cut );
+    electronSelector->add_cut( vz_cut );
 }
 
-ParticleFilter::ParticleFilter(std::string efile)
-{
-    eparfile = efile;
-    eid.load(eparfile);
-    hparfile = "hid_default_pars.dat";
-    hid.load(hparfile);
-    
-    MC = false; runno = 0;
-}
-
-ParticleFilter::ParticleFilter(std::string efile, std::string hfile)
-{
-    eparfile = efile; hparfile = hfile;
-    eid.load(eparfile);
-    hid.load(hparfile);
-    
-    MC = false; runno = 0;
-}
-
-
-ParticleFilter::~ParticleFilter()
-{
-    // Don't need to save EID pars because it shouldnt be changing them.
+ParticleFilter::~ParticleFilter(){
+  electronSelector->summarize();
 }
 
 // setting mc and run number status internally, mostly used for interfacing with corrections class
-void ParticleFilter::set_info(bool GSIM, int run)
-{
+void ParticleFilter::set_info(bool GSIM, int run){
     runno = run; MC = GSIM;
 }
 
-bool ParticleFilter::has_electron(h22Event event)
-{
+bool ParticleFilter::has_electron(h22Event event){
     
-    if (event.q[0] < 0)                                  //! Particle is Neg.
-        if (event.nphe[0] > eid.CCNPHE)                     //! Number of Photoelectrons
-            if (event.ec_ei[0] > eid.ECEDEPMIN)
-                if (corr.vz(event,0,runno,MC) > eid.VZMIN && corr.vz(event,0,runno,MC) < eid.VZMAX)
-                    if (event.theta_cc(0) > eid.cc_min(event.rphi(0)))
-                        if (event.ec_sect[0] > 0 && event.dc_sect[0] > 0 && event.cc_sect[0] > 0 && corr.good_sc_paddle(event,0)) //! Particle hit all major detector systems
-                            if (event.rot_dc1x(0) > eid.dc_left(event.rot_dc1y(0),1) && event.rot_dc1x(0) > eid.dc_right(event.rot_dc1y(0),1)) //! DCR1 Fid
-                                if (event.tl3_x[0] > eid.dc_left(event.tl3_y[0],3) && event.tl3_x[0] > eid.dc_right(event.tl3_y[0],3))//! DCR3 Fid
-                                    if (event.etot[0]/event.p[0] > eid.ec_samp_min(event.p[0],event.ec_sect[0]-1) && event.etot[0]/event.p[0] < eid.ec_samp_max(event.p[0],event.ec_sect[0]-1))//! Ec Sampling
-                                    {
-                                        TVector3 uvw = event.uvw(0); //! Getting U, V, W Coords. for Particle 0
-                                        int s=event.ec_sect[0]-1;
-                                        if (uvw.X() > eid.ECUMIN[s] && uvw.X() < eid.ECUMAX[s])         //! EC U, V, W Cuts
-                                            if (uvw.Y() > eid.ECVMIN[s] && uvw.Y() < eid.ECVMAX[s])
-                                                if (uvw.Z() > eid.ECWMIN[s] && uvw.Z() < eid.ECWMAX[s])
-                                                    return true;
-                                    }
-    
-    
-    
-    return false;
+  // Simply check 0 for now, later add support for 
+  // loop over gpart.
+  if (electronSelector->passesFast(event, 0)) 
+    return true;
+  
+  return false;
 }
 
-int ParticleFilter::getByPID(h22Event event, int pid)
-{
+int ParticleFilter::getByPID(h22Event event, int pid){
     int index = -123;
-    
-    if (pid == 11)
-    {
-        /*
-         Doing electron ID here based on parameters loaded from file. Trying to do cheap and easy cuts first which avoid doing the
-         expensive ones.  Only checking 0th particle because it's almost always where reconstruction puts the electron.  One can also
-         loop on ipart<gpart and then choose the fastest electron candidate.
-         
-         */
-        
-        if (event.q[0] < 0)                                  //! Particle is Neg.
-            if (event.nphe[0] > eid.CCNPHE)                     //! Number of Photoelectrons
-                if (event.ec_ei[0] > eid.ECEDEPMIN)
-                    if (corr.vz(event,0,runno,MC) > eid.VZMIN && corr.vz(event,0,runno,MC) < eid.VZMAX)
-                        if (event.theta_cc(0) > eid.cc_min(event.rphi(0)))
-                            if (event.ec_sect[0] > 0 && event.dc_sect[0] > 0 && event.cc_sect[0] > 0 && corr.good_sc_paddle(event,0)) //! Particle hit all major detector systems
-                                if (event.rot_dc1x(0) > eid.dc_left(event.rot_dc1y(0),1) && event.rot_dc1x(0) > eid.dc_right(event.rot_dc1y(0),1)) //! DCR1 Fid
-                                    if (event.tl3_x[0] > eid.dc_left(event.tl3_y[0],3) && event.tl3_x[0] > eid.dc_right(event.tl3_y[0],3))//! DCR3 Fid
-                                        if (event.etot[0]/event.p[0] > eid.ec_samp_min(event.p[0],event.ec_sect[0]-1) && event.etot[0]/event.p[0] < eid.ec_samp_max(event.p[0],event.ec_sect[0]-1))//! Ec Sampling
-                                        {
-                                            TVector3 uvw = event.uvw(0); //! Getting U, V, W Coords. for Particle 0
-                                            int s=event.ec_sect[0]-1;
-                                            if (uvw.X() > eid.ECUMIN[s] && uvw.X() < eid.ECUMAX[s])         //! EC U, V, W Cuts
-                                                if (uvw.Y() > eid.ECVMIN[s] && uvw.Y() < eid.ECVMAX[s])
-                                                    if (uvw.Z() > eid.ECWMIN[s] && uvw.Z() < eid.ECWMAX[s])
-                                                        index = 0;
-                                        }
-    }
-    
-    // Routines Assume that 0 is electron, you should check it before proceeding, can be done with ParticleFilter::has_electron()
-    if (pid == 211)
-    {
-        std::vector<int> particles;
-        
-        for (int ipart=1; ipart < event.gpart; ipart++)
-        {
-            int sector = event.dc_sect[ipart]-1;
-            double dvz = corr.vz(event,0,runno,MC) - corr.vz(event,ipart,runno,MC);
-            double start_time = corr.electron_sct(event,0,runno,MC) - event.sc_r[0]/speed_of_light;
-            
-            if (event.q[ipart] > 0)
-                if (dvz > hid.DVZMIN && dvz < hid.DVZMAX)
-                    if (event.rot_dc1x(ipart) > hid.dc_left(event.rot_dc1y(ipart)) && event.rot_dc1x(ipart) > hid.dc_right(event.rot_dc1y(ipart)))
-                    {
-                        double beta  = (event.sc_r[ipart]/(corr.hadron_sct(event,ipart,runno,MC)-start_time))/speed_of_light;
-                        double dbeta = event.p[ipart]/sqrt(event.p[ipart]*event.p[ipart] + pid_to_mass(pid)*pid_to_mass(pid)) - beta;
-                        if ( dbeta > hid.PIP_DBMIN[sector] && dbeta < hid.PIP_DBMAX[sector] ) particles.push_back(ipart);
-                    }
-        }
-        
-        int candidate = -123;
-        
-        // Take fastest pi+
-        if (particles.size() > 0)
-        {
-            candidate = particles[0];
-            for (int i=1; i<particles.size(); i++)
-            {
-                if (event.p[particles[i]] > event.p[candidate]) candidate = i;
-            }
-        }
-        
-        index = candidate;
-    }
-    
-    if (pid == -211)
-    {
-        std::vector<int> particles;
-        
-        for (int ipart=1; ipart < event.gpart; ipart++)
-        {
-            int sector = event.dc_sect[ipart]-1;
-            double dvz = corr.vz(event,0,runno,MC) - corr.vz(event,ipart,runno,MC);
-            double start_time = corr.electron_sct(event,0,runno,MC) - event.sc_r[0]/speed_of_light;
-            
-            if (event.q[ipart] < 0)
-                if (dvz > hid.DVZMIN && dvz < hid.DVZMAX)
-                    if (event.rot_dc1x(ipart) > hid.dc_left(event.rot_dc1y(ipart)) && event.rot_dc1x(ipart) > hid.dc_right(event.rot_dc1y(ipart)))
-                    {
-                        double beta  = (event.sc_r[ipart]/(corr.hadron_sct(event,ipart,runno,MC)-start_time))/speed_of_light;
-                        double dbeta = event.p[ipart]/sqrt(event.p[ipart]*event.p[ipart] + pid_to_mass(pid)*pid_to_mass(pid)) - beta;
-                        if (dbeta > hid.PIM_DBMIN[sector] && dbeta < hid.PIM_DBMAX[sector] ) particles.push_back(ipart);
-                    }
-        }
-        
-        int candidate = -123;
-        
-        // Take fastest pi-
-        if (particles.size() > 0)
-        {
-            candidate = particles[0];
-            for (int i=1; i<particles.size(); i++)
-            {
-                if (event.p[particles[i]] > event.p[candidate]) candidate = i;
-            }
-        }
-        
-        index = candidate;
-        
-    }
-    
-    if (pid == 2212)
-    {
-        std::vector<int> particles;
-        
-        for (int ipart=1; ipart < event.gpart; ipart++)
-        {
-            int sector = event.dc_sect[ipart]-1;
-            double dvz = corr.vz(event,0,runno,MC) - corr.vz(event,ipart,runno,MC);
-            double start_time = corr.electron_sct(event,0,runno,MC) - event.sc_r[0]/speed_of_light;
-            
-            if (event.q[ipart] > 0)
-                if (dvz > hid.DVZMIN && dvz < hid.DVZMAX)
-                    if (event.rot_dc1x(ipart) > hid.dc_left(event.rot_dc1y(ipart)) && event.rot_dc1x(ipart) > hid.dc_right(event.rot_dc1y(ipart)))
-                    {
-                        double beta  = (event.sc_r[ipart]/(corr.hadron_sct(event,ipart,runno,MC)-start_time))/speed_of_light;
-                        double dbeta = event.p[ipart]/sqrt(event.p[ipart]*event.p[ipart] + pid_to_mass(pid)*pid_to_mass(pid)) - beta;
-                        if (dbeta > hid.PROT_DBMIN[sector] && dbeta < hid.PROT_DBMAX[sector] ) particles.push_back(ipart);
-                    }
-        }
-        
-        int candidate = -123;
-        
-        // Take slowest proton
-        if (particles.size() > 0)
-        {
-            candidate = particles[0];
-            for (int i=1; i<particles.size(); i++)
-            {
-                if (event.p[particles[i]] < event.p[candidate]) candidate = i;
-            }
-        }
-        
-        index = candidate;
-        
-    }
-    
     return index;   //! Default Case & Nathan Harrison Convention (-123 -> for nothing found)
 }
 
@@ -252,84 +198,8 @@ std::map<std::string, bool> ParticleFilter::eid_map(h22Event event)
     cc_fid_pass      = false;
     
     std::map<std::string, bool> eid_results;
-    
-    // Start doing Electron Identification Routines
-    
-    TVector3 uvw = event.uvw(0);
-    int s=event.ec_sect[0]-1;
-    if (s > -1){
-        if (uvw.X() > eid.ECUMIN[s] && uvw.X() < eid.ECUMAX[s])         //! EC U, V, W Cuts
-            if (uvw.Y() > eid.ECVMIN[s] && uvw.Y() < eid.ECVMAX[s])
-                if (uvw.Z() > eid.ECWMIN[s] && uvw.Z() < eid.ECWMAX[s])
-                    ec_geo_pass = true;
-    }
-    
-    if (event.ec_ei[0] > eid.ECEDEPMIN) ec_edep_pass = true;
-    if (event.etot[0]/event.p[0] > eid.ec_samp_min(event.p[0],event.ec_sect[0]-1) && event.etot[0]/event.p[0] < eid.ec_samp_max(event.p[0],event.ec_sect[0]-1)) ec_sampling_pass = true;
-    if (corr.vz(event,0,runno,MC) > eid.VZMIN && corr.vz(event,0,runno,MC) < eid.VZMAX) vz_pass = true;
-    if (event.rot_dc1x(0) > eid.dc_left(event.rot_dc1y(0),1) && event.rot_dc1x(0) > eid.dc_right(event.rot_dc1y(0),1)) dcr1_fid_pass = true;
-    if (event.tl3_x[0] > eid.dc_left(event.tl3_y[0],3) && event.tl3_x[0] > eid.dc_right(event.tl3_y[0],3)) dcr3_fid_pass = true;
-    if (event.nphe[0] > eid.CCNPHE) cc_nphe_pass = true;
-    if (event.theta_cc(0) > eid.cc_min(0)) cc_fid_pass = true;
-    
-    eid_results["EC_GEO"]      = ec_geo_pass;
-    eid_results["EC_EDEP"]     = ec_edep_pass;
-    eid_results["EC_SAMPLING"] = ec_sampling_pass;
-    eid_results["VZ"]          = vz_pass;
-    eid_results["DCR1_FID"]    = dcr1_fid_pass;
-    eid_results["DCR3_FID"]    = dcr3_fid_pass;
-    eid_results["CC_NPHE"]     = cc_nphe_pass;
-    eid_results["CC_FID"]      = cc_fid_pass;
-    
-    return eid_results;
-    
-}
 
-std::map<std::string, bool> ParticleFilter::hid_map(h22Event event, int ipart)
-{
-    bool prot_dvz, prot_dbeta, prot_dcfid, prot_qc;
-    bool pip_dvz, pip_dbeta, pip_dcfid, pip_qc;
-    bool pim_dvz, pim_dbeta, pim_dcfid, pim_qc;
-    
-    prot_dvz = false; prot_dbeta = false; prot_dcfid = false;
-    pip_dvz  = false; pip_dbeta  = false; pip_dcfid  = false;
-    pim_dvz  = false; pim_dbeta  = false; pim_dcfid  = false;
-    prot_qc = false; pip_qc = false; pim_qc = false;
-    
-    double start_time = corr.electron_sct(event,0,runno,MC) - event.sc_r[0]/speed_of_light;
-    
-    int sector   = event.dc_sect[ipart]-1;
-    double dvz   = corr.vz(event,0,runno,MC) - corr.vz(event,ipart,runno,MC);
-    double beta  = (event.sc_r[ipart]/(corr.hadron_sct(event,ipart,runno,MC)-start_time))/speed_of_light;
-    double dbeta_pim  = event.p[ipart]/sqrt(event.p[ipart]*event.p[ipart] + pid_to_mass(-211)*pid_to_mass(-211)) - beta;
-    double dbeta_pip  = event.p[ipart]/sqrt(event.p[ipart]*event.p[ipart] + pid_to_mass(211)*pid_to_mass(211))   - beta;
-    double dbeta_prot = event.p[ipart]/sqrt(event.p[ipart]*event.p[ipart] + pid_to_mass(2212)*pid_to_mass(2212)) - beta;
-    
-    if (event.q[ipart] < 0)
-    {
-        if (corr.good_sc_paddle(event,ipart)) { pim_qc = true; }
-        if (dvz > hid.DVZMIN && dvz < hid.DVZMAX ) { pim_dvz = true; }
-        if (event.rot_dc1x(ipart) > hid.dc_left(event.rot_dc1y(ipart)) && event.rot_dc1x(ipart) > hid.dc_right(event.rot_dc1y(ipart))) { pim_dcfid = true; }
-        if (dbeta_pim > hid.PIM_DBMIN[sector] && dbeta_pim < hid.PIM_DBMAX[sector]) { pim_dbeta = true; }
-    }
-    
-    if (event.q[ipart] > 0)
-    {
-        if (corr.good_sc_paddle(event,ipart)) { pip_qc = true; prot_qc = true; }
-        if (dvz > hid.DVZMIN && dvz < hid.DVZMAX) { pip_dvz = true; prot_dvz = true;}
-        if (event.rot_dc1x(ipart) > hid.dc_left(event.rot_dc1y(ipart)) && event.rot_dc1x(ipart) > hid.dc_right(event.rot_dc1y(ipart))) { pip_dcfid = true; prot_dcfid = true; }
-        if (dbeta_pip  > hid.PIP_DBMIN[sector]  && dbeta_pip  < hid.PIP_DBMAX[sector] ) { pip_dbeta  = true; }
-        if (dbeta_prot > hid.PROT_DBMIN[sector] && dbeta_prot < hid.PROT_DBMAX[sector]) { prot_dbeta = true; }
-    }
-    
-    std::map<std::string, bool> results;
-    
-    results["PROT_QC"] = prot_qc; results["PROT_DVZ"] = prot_dvz; results["PROT_DCFID"] = prot_dcfid; results["PROT_DBETA"] = prot_dbeta;
-    results["PIP_QC"] = pip_qc; results["PIP_DVZ"] = pip_dvz; results["PIP_DCFID"] = pip_dcfid; results["PIP_DBETA"] = pip_dbeta;
-    results["PIM_QC"] = pim_qc; results["PIM_DVZ"] = pim_dvz; results["PIM_DCFID"] = pim_dcfid; results["PIM_DBETA"] = pim_dbeta;
-    
-    return results;
-    
+    return eid_results;    
 }
 
 #endif

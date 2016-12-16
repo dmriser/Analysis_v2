@@ -4,7 +4,7 @@
   David Riser, University of Connecticut 
   August 14, 2016 
 
-  DSelection.cxx 
+  DataEventSelector.cxx 
 
 */
 //////////////////////////////////////////////////////
@@ -19,37 +19,44 @@
 using namespace std; 
 
 // my includes
-#include "DCut.h"
+#include "DataEventCut.h"
 #include "h22Event.h"
-#include "DSelection.h"
+#include "DataEventSelector.h"
 
-DSelection::DSelection()
-{
+DataEventSelector::DataEventSelector(){
   // Setup 
 }
 
-DSelection::~DSelection()
-{
+DataEventSelector::~DataEventSelector(){
   // Destroy
-  for (vector<DCut*>::iterator it=cuts.begin(); it!=cuts.end(); it++ ) delete *it; 
+  for (vector<DataEventCut*>::iterator it=cuts.begin(); it!=cuts.end(); it++ ) delete *it; 
 }
 
-bool DSelection::passes(h22Event event, int index)
-{
+bool DataEventSelector::passes(h22Event event, int index){
   // Loop over the cuts we have and make sure all pass.
   bool status = true;
   
-  vector<DCut*>::iterator it;
-  for (it = cuts.begin(); it!=cuts.end(); it++)
-    {
-      if ( (*it)->is_on() && (*it)->applies(event, index) && !(*it)->passes(event, index)) { status = false; }
-    }
+  vector<DataEventCut*>::iterator it;
+  for (it = cuts.begin(); it!=cuts.end(); it++){
+    if ( (*it)->is_on() && (*it)->applies(event, index) && !(*it)->passes(event, index)) { status = false; }
+  }
 
   return status;
 }
 
-map<string, double> DSelection::cut_pass_fraction()
-{
+bool DataEventSelector::passesFast(h22Event event, int index){
+  // Loop over the cuts we have and make sure all pass.
+  bool status = true;
+  
+  vector<DataEventCut*>::iterator it;
+  for (it = cuts.begin(); it!=cuts.end(); it++){
+    if ( (*it)->is_on() && (*it)->applies(event, index) && !(*it)->passes(event, index)) { status = false; return status; }
+  }
+
+  return status;
+}
+
+map<string, double> DataEventSelector::cut_pass_fraction(){
 
   map<string, double> results;
   for (int icut=0; icut<cuts.size(); icut++)
@@ -60,7 +67,7 @@ map<string, double> DSelection::cut_pass_fraction()
   return results; 
 }
 
-void DSelection::enable_by_regex(string regex)
+void DataEventSelector::enable_by_regex(string regex)
 {
   
   for (int icut=0; icut<cuts.size(); icut++)
@@ -69,7 +76,7 @@ void DSelection::enable_by_regex(string regex)
     }
 }
 
-void DSelection::disable_by_regex(string regex)
+void DataEventSelector::disable_by_regex(string regex)
 {
   
   for (int icut=0; icut<cuts.size(); icut++)
@@ -78,7 +85,7 @@ void DSelection::disable_by_regex(string regex)
     }
 }
 
-void DSelection::summarize()
+void DataEventSelector::summarize()
 {
 
   cout << "<--------------------- DSelector Summary ------------------------>" << endl; 

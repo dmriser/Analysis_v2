@@ -1,10 +1,12 @@
-import os
+import os, glob
 
-env = Environment(ENV = {'PATH':os.environ['PATH']})
+env = Environment(ENV = {'PATH':os.environ['PATH']}, h22libs=os.environ['h22libs'])
 
 env.ParseConfig("root-config --glibs --cflags")
 env.Append(CCFLAGS = ['-g'])
-#env.Append(CPPPATH = ['/u/home/dmriser/include/'], LIBPATH = ['/u/home/dmriser/lib/'],LIBS = ['h22'])
-env.Append(CPPPATH = ['/usr/local/include/'], LIBPATH = ['/usr/local/lib/'],LIBS = ['h22'])
+env.Append(CPPPATH = ['$h22libs/include/'], LIBPATH = ['$h22libs/lib/'],LIBS = ['h22'])
 
-env.Program('eid_histos','eid_histos.cxx')
+sources = glob.glob('*.cxx')
+
+for prog in sources:
+    env.Program(prog)

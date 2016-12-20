@@ -6,8 +6,8 @@ set binName = $2
 
 cp list.*.dat list.dat 
 chmod +x $binName
-./$binName -N=$NFILES -TYPE=mcrad -LIST=list.dat -OUT=$OUTPUT 
-#./$binName $NFILES list.dat $OUTPUT 
+./$binName -N=$NFILES -TYPE=mcrad -LIST=list.dat -PARS=/u/home/dmriser/mydoc/analysis/root_scripts/Analysis_v2/lists/keppelRad.pars -OUT=$OUTPUT 
+#./$binName -N=$NFILES -LIST=list.dat -OUT=$OUTPUT 
 
 
 

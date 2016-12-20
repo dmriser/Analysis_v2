@@ -29,26 +29,21 @@ using namespace std;
 #include <TFile.h>
 #include <TRegexp.h>
 
-h22Reader::h22Reader() 
-{
+h22Reader::h22Reader(){
   GSIM   = -1;
   fchain = new TChain("h22");
 }
 
-h22Reader::h22Reader(int mc) 
-{
+h22Reader::h22Reader(int mc) {
   GSIM   = mc;
   fchain = new TChain("h22");
 }
 
-h22Reader::~h22Reader()
-{
+h22Reader::~h22Reader(){
   fchain->Delete();
 }
 
-/**< AddList takes the name of a text file and adds an integer nfiles from that list to the current TChain */
-void h22Reader::AddList(string _file, int nfiles)
-{
+void h22Reader::AddList(string _file, int nfiles){
   string type[2] = {"data", "GSIM"};
 
   ifstream file;
@@ -61,7 +56,7 @@ void h22Reader::AddList(string _file, int nfiles)
     {
       file >> line;
       fchain->AddFile( line.c_str() );
-      cout << " > Added " << line.c_str() << " to the TChain as type " << type[GSIM] << endl;
+      cout << "[h22Reader::AddList] Added " << line.c_str() << " to the TChain as type " << type[GSIM] << endl;
       ifile++;
     }
 
@@ -69,8 +64,7 @@ void h22Reader::AddList(string _file, int nfiles)
 
 }
 
-void h22Reader::AddList(string _file, int nfiles, int startfile)
-{
+void h22Reader::AddList(string _file, int nfiles, int startfile){
   string type[2] = {"data", "GSIM"};
 
   ifstream file;
@@ -96,9 +90,8 @@ void h22Reader::AddList(string _file, int nfiles, int startfile)
   file.close();
 
 }
-/**< AddFile can be used to add 1 file to the current TChain by passing the file path in */
-void h22Reader::AddFile(TString _fname)
-{
+
+void h22Reader::AddFile(TString _fname){
   fchain->AddFile(_fname);
   return;
 }
@@ -112,17 +105,15 @@ void h22Reader::AddFile(string _fname)
 */
 
 /**< Init() must be run once to link the branches of the TChain to the h22Event class members*/
-void h22Reader::Init()
-{
+void h22Reader::Init(){
 
-  // Try to set GSIM automagically 
   if ( GetEntries() > 0 ) {
-    if ( runno() > 37000 && runno() < 39000 ) GSIM = 0;
+    if ( runno() > 37000 && runno() < 39000 )      GSIM = 0;
     else if ( runno() > 50000 && runno() < 60000 ) GSIM = 0; 
-    else GSIM = 1;
+    else                                           GSIM = 1;
   } 
 
-  else { cout << " Warning: h22Reader::GSIM not set before Init() routine called, defaulting to GSIM = 0 " << endl; }
+  else { cout << "[h22Reader::Init] Defaulting to GSIM = 0, Entries =" << GetEntries() << endl; }
   
   // Set branch addresses and branch pointers
    fchain->SetBranchAddress("evntid", &event.evntid, &b_evntid);
@@ -198,13 +189,13 @@ string h22Reader::GetFilenameChunk(int stringStart, int stringLen)
   return fname.substr(stringStart,stringLen); ;
 }
 
-int h22Reader::runno()
-{
+int h22Reader::runno(){
+  int runno = 0;
 
   TString filename = fchain->GetFile()->GetName(); 
   TRegexp runno_regex("[1-9][0-9][0-9][0-9][0-9]");
   TString srunno = filename( runno_regex );
-  int runno = srunno.Atoi();
+  runno = srunno.Atoi();
 
   return runno; 
 }

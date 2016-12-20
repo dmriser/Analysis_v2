@@ -1,6 +1,6 @@
 {
 
-  TFile *inputFile = TFile::Open("eid.root");
+  TFile *inputFile = TFile::Open("data.root");
 
   TH2I *ecSampling[6];
   TF1  *mu[6];
@@ -8,7 +8,7 @@
   TF1  *upper[6];
   TF1  *lower[6];
 
-  double NSIGMA = 3.00; 
+  double NSIGMA = 1.50; 
 
   TCanvas *compareCanvas = new TCanvas("compareCanvas","",800,1200);  
   compareCanvas->Divide(2,3);
@@ -34,6 +34,12 @@
     lower[sector]->SetParameter(2, mu[sector]->GetParameter(2)-NSIGMA*sigma[sector]->GetParameter(2));
     lower[sector]->SetParameter(3, mu[sector]->GetParameter(3)-NSIGMA*sigma[sector]->GetParameter(3));
 
+    cout << "[Pol3 Params] UPPER, Sector=" << sector << " A=" << upper[sector]->GetParameter(3) << 
+      " B=" << upper[sector]->GetParameter(2) << 
+      " C=" << upper[sector]->GetParameter(1) << 
+      " D=" << upper[sector]->GetParameter(0) << endl;
+
+
     compareCanvas      ->cd(sector+1);
     ecSampling[sector] ->Draw("colz"); 
     mu[sector]         ->Draw("same");
@@ -41,6 +47,5 @@
     lower[sector]      ->Draw("same");
   }
 
-  
 
 }

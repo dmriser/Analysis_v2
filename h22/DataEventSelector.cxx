@@ -16,6 +16,7 @@
 #include <iostream>
 #include <map>
 #include <vector>
+#include <algorithm>
 using namespace std; 
 
 // my includes
@@ -42,6 +43,21 @@ bool DataEventSelector::passes(h22Event event, int index){
   }
 
   return status;
+}
+
+DataEventCut * DataEventSelector::getCut(string cutName){
+  vector<DataEventCut*>::iterator it;
+  for (it = cuts.begin(); it!=cuts.end(); it++){
+    if ((*it)->name() == cutName) { return (*it); }
+  }
+
+  cout << "[DataEventSelector::getCut] Couldn't find " << cutName << endl;
+  return new DataEventCut();
+}
+
+
+void DataEventSelector::optimize(){
+  std::sort(cuts.begin(), cuts.end());
 }
 
 bool DataEventSelector::passesFast(h22Event event, int index){

@@ -185,7 +185,7 @@ void DIS1DHistograms::Load(string inputFilenameWithExtension, string title){
       }
     }
     xByQQ.push_back(foundHistos);
-    cout << "For title=" << targetTitle << " sector=" << sector << " " << foundHistos.size() << " histograms were loaded. " << endl; 
+    cout << "[DIS1DHistograms::Load] For title=" << targetTitle << " sector=" << sector << " " << foundHistos.size() << " histograms were loaded. " << endl; 
   }
 
   for (int sector=0; sector<7; sector++){
@@ -201,7 +201,7 @@ void DIS1DHistograms::Load(string inputFilenameWithExtension, string title){
       }
     }
     wByQQ.push_back(foundHistos);
-    cout << "For title=" << targetTitle << " sector=" << sector << " " << foundHistos.size() << " histograms were loaded. " << endl; 
+    cout << "[DIS1DHistograms::Load] For title=" << targetTitle << " sector=" << sector << " " << foundHistos.size() << " histograms were loaded. " << endl; 
   }
 
 
@@ -382,8 +382,8 @@ void DIS1DHistograms::CreateByDivision(DIS1DHistograms *numerator, DIS1DHistogra
   CreateFromExisting(numerator,name,title);
   Divide(denominator);
 
-  cout << allxByQQ[0]->GetName() << " has been created with entries=" << allxByQQ[0]->GetEntries() << endl;
-  cout << allwByQQ[0]->GetName() << " has been created with entries=" << allwByQQ[0]->GetEntries() << endl;
+  cout << "[DIS1DHistograms::CreateByDivision] " << allxByQQ[0]->GetName() << " has been created with entries=" << allxByQQ[0]->GetEntries() << endl;
+  cout << "[DIS1DHistograms::CreateByDivision] " << allwByQQ[0]->GetName() << " has been created with entries=" << allwByQQ[0]->GetEntries() << endl;
 }
 
 void DIS1DHistograms::Scale(double scaleValue){
@@ -453,7 +453,7 @@ void DIS1DHistograms::PrintPDF(string pdfTitle){
     gridSize++;
   }
 
-  cout << "found grid size " << gridSize << endl;
+  cout << "[DIS1DHistograms::PrintPDF] found grid size " << gridSize << endl;
 
   gStyle->SetOptStat(0);
 

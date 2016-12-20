@@ -49,6 +49,8 @@ class DataEventCut
   void set_max( double x ) { max_value = x; }
   void set_name( std::string n ){ cut_name = n; }
   bool is_on(){ return is_enabled; }
+  bool operator<(DataEventCut *otherCut);
+  bool operator>(DataEventCut *otherCut);
   
   int number_pass(){ return n_pass; }
   int number_fail(){ return n_fail; }
@@ -56,6 +58,7 @@ class DataEventCut
   
   double min(){ return min_value; }
   double max(){ return max_value; }
+  double passFraction(){ return n_pass/(n_pass+n_fail); }
   
   std::string name(){ return cut_name; }
   
@@ -132,6 +135,26 @@ class SampFracCut : public DataEventCut
  public:
   SampFracCut(int);
   ~SampFracCut();
+
+  int sector; 
+  double am, as, bm, bs, cm, cs, dm, ds, nsigma, min, max;
+  bool applies(h22Event, int);
+  bool passes(h22Event, int);
+};
+
+/////////////////////////////////////////////////////////////////////
+/*
+
+  CCThetaMatchingCut
+
+ */
+/////////////////////////////////////////////////////////////////////
+
+class CCThetaMatchingCut : public DataEventCut 
+{
+ public:
+  CCThetaMatchingCut(int);
+  ~CCThetaMatchingCut();
 
   int sector; 
   double am, as, bm, bs, cm, cs, dm, ds, nsigma, min, max;
@@ -298,6 +321,24 @@ class NPheCut : public DataEventCut
  public:
   NPheCut();
   ~NPheCut();
+
+  bool passes(h22Event, int);
+
+};
+
+/////////////////////////////////////////////////////////////////////
+/*
+
+  CC Phi Matching Cut 
+
+ */
+/////////////////////////////////////////////////////////////////////
+
+class CCPhiMatchingCut : public DataEventCut 
+{
+ public:
+  CCPhiMatchingCut();
+  ~CCPhiMatchingCut();
 
   bool passes(h22Event, int);
 

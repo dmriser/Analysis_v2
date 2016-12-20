@@ -35,7 +35,7 @@ double ParameterSet::getValue(int index){
   if (index < value.size()){
     return value[index];
   }
-  cout << "[ParameterSet::getValue] Error: Requested parameter index exceeds size of vector of parameters! " << endl;
+  cout << "[ParameterSet::getValue] Error: Requested parameter index exceeds size of vector of parameters, name=" << getName() << " index=" << index << " size=" << value.size() << endl;
   return 0.0; 
 }
 

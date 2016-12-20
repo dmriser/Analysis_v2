@@ -12,6 +12,8 @@ using namespace std;
 #include "HistogramLoader.h"
 #include "NathanArchive.h"
 #include "MomCorr.h"
+#include "Parameters.h"
+#include "ParticleFilter.h"
 #include "PhysicsEvent.h"
 #include "PhysicsEventBuilder.h"
 #include "PhysicsEventSelector.h"
@@ -21,13 +23,14 @@ using namespace std;
 
 class DataLoader : public HistogramLoader{
  public:
-  DataLoader(PhysicsEventSelector *eventCriteria, MomCorr_e1f * momCorr, std::string outputFile, std::string saveOpts);
+  DataLoader(PhysicsEventSelector *eventCriteria, MomCorr_e1f * momCorr, Parameters *pars, std::string outputFile, std::string saveOpts);
   ~DataLoader();
 
  protected:
   BaseDISHistograms dataEvents;
   NathanEIDWrapper eID; 
-  MomCorr_e1f * momCorrector; 
+  MomCorr_e1f *momCorrector; 
+  ParticleFilter *filter; 
 
  protected:
   void Initialize();
@@ -35,14 +38,10 @@ class DataLoader : public HistogramLoader{
   void Save();
 
 };
-/*
-#endif
-#ifndef data_loader_cxx
-#define data_loader_cxx
-*/
 
-DataLoader::DataLoader(PhysicsEventSelector *eventCriteria, MomCorr_e1f * momCorr, std::string outputFile, std::string saveOpts) : HistogramLoader(eventCriteria, outputFile, saveOpts){
+DataLoader::DataLoader(PhysicsEventSelector *eventCriteria, MomCorr_e1f * momCorr, Parameters *pars, std::string outputFile, std::string saveOpts) : HistogramLoader(eventCriteria, outputFile, saveOpts){
   momCorrector = momCorr; 
+  filter       = new ParticleFilter(pars);
 }
 
 DataLoader::~DataLoader(){
@@ -53,18 +52,21 @@ void DataLoader::Initialize(){
   dataEvents.Init("dataEvents","Data Hits");
 
   
-  cout << "[DataLoader] Warning: Running with electron ID strictness alterations. " << endl;
-  eID.cc_fid_strict = 2;
-  eID.dc_r1_strict  = 2;
-  eID.dc_r3_strict  = 2;
+  //  cout << "[DataLoader] Warning: Running with electron ID strictness alterations. " << endl;
+  //  eID.cc_fid_strict = 2;
+  //  eID.dc_r1_strict  = 2;
+  //  eID.dc_r3_strict  = 2;
 
 }
 
 // This is the core routine which conditionally fills histograms. 
 void DataLoader::ProcessEvent(){
 
-  eID.set_info(runno(),GSIM);
-  int e_index = eID.get_electron(event);
+  //  eID.set_info(runno(),GSIM);
+  //  int e_index = eID.get_electron(event);
+
+  filter->set_info(runno(), GSIM);
+  int e_index = filter->getByPID(event, 11);
   if (e_index > -123){
     TLorentzVector electron(event.cx[e_index]*event.p[e_index],
 			    event.cy[e_index]*event.p[e_index],

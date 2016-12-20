@@ -17,7 +17,7 @@ PhysicsEvent::PhysicsEvent(){
   w = 0.0; 
   mm2 = 0.0; 
   phiHadron = 0.0;
-  pTransverse = 0.0;
+  pT = 0.0;
   targetMass = 0.0; 
   
 }
@@ -39,7 +39,7 @@ void PhysicsEvent::ClearKinematics(){
   w = 0.0; 
   mm2 = 0.0; 
   phiHadron = 0.0;
-  pTransverse = 0.0;
+  pT = 0.0;
   
 }
 

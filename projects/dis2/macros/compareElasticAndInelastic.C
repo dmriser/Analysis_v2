@@ -2,7 +2,7 @@
 
   gROOT->LoadMacro("utils.C");
 
-  TFile * inputFile = TFile::Open("../out/xs3.root");
+  TFile * inputFile = TFile::Open("../out/xsNewEID.root");
 
   const int numberSector = 1;
   const int numberSlices = 40;

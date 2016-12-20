@@ -12,6 +12,7 @@ using namespace std;
 #include "h22Option.h"
 #include "DInformation.h"
 #include "MomCorr.h"
+#include "Parameters.h"
 #include "PhysicsEventCut.h"
 #include "PhysicsEventSelector.h"
 
@@ -64,6 +65,9 @@ int main(int argc, char * argv[]){
   string outputFilename = options->args["OUT"].args;
   int numberOfFilesToProcess = options->args["N"].arg; 
 
+  Parameters *pars = new Parameters();
+  pars->loadParameters(options->args["PARS"].args); 
+
   // Check for no files, then setup the list of files to process correctly. 
   if (numberOfFilesToProcess == 0){ cout << " No files/list detected. " << endl; return 0; }
   vector<string> files;
@@ -75,53 +79,53 @@ int main(int argc, char * argv[]){
   }
 
   // Start running the correct type
-  MCLoader loader(eventSelector, outputFilename, "UPDATE", "200Bins");
+  MCLoader loader(eventSelector, pars, outputFilename, "UPDATE", "200Bins");
   for (int ifile = 0; ifile < files.size(); ifile++) { loader.AddFile(files[ifile]); }
   loader.Execute();
 
-  MCLoader loader2(eventSelector, outputFilename, "UPDATE", "100Bins");
+  MCLoader loader2(eventSelector, pars, outputFilename, "UPDATE", "100Bins");
   for (int ifile = 0; ifile < files.size(); ifile++) { loader2.AddFile(files[ifile]); }
   loader2.Initialize();
   loader2.Rebin(2,2);
   loader2.Loop();
   loader2.Save();
 
-  MCLoader loader3(eventSelector, outputFilename, "UPDATE", "50Bins");
+  MCLoader loader3(eventSelector, pars, outputFilename, "UPDATE", "50Bins");
   for (int ifile = 0; ifile < files.size(); ifile++) { loader3.AddFile(files[ifile]); }
   loader3.Initialize();
   loader3.Rebin(4,4);
   loader3.Loop();
   loader3.Save();
 
-  MCLoader loader4(eventSelector, outputFilename, "UPDATE", "40Bins");
+  MCLoader loader4(eventSelector, pars, outputFilename, "UPDATE", "40Bins");
   for (int ifile = 0; ifile < files.size(); ifile++) { loader4.AddFile(files[ifile]); }
   loader4.Initialize();
   loader4.Rebin(5,5);
   loader4.Loop();
   loader4.Save();
 
-  MCLoader loader5(eventSelector, outputFilename, "UPDATE", "34Bins");
+  MCLoader loader5(eventSelector, pars, outputFilename, "UPDATE", "34Bins");
   for (int ifile = 0; ifile < files.size(); ifile++) { loader5.AddFile(files[ifile]); }
   loader5.Initialize();
   loader5.Rebin(6,6);
   loader5.Loop();
   loader5.Save();
 
-  MCLoader loader6(eventSelector, outputFilename, "UPDATE", "20Bins");
+  MCLoader loader6(eventSelector, pars, outputFilename, "UPDATE", "20Bins");
   for (int ifile = 0; ifile < files.size(); ifile++) { loader6.AddFile(files[ifile]); }
   loader6.Initialize();
   loader6.Rebin(10,10);
   loader6.Loop();
   loader6.Save();
 
-  MCLoader loader7(eventSelector, outputFilename, "UPDATE", "66Bins");
+  MCLoader loader7(eventSelector, pars, outputFilename, "UPDATE", "66Bins");
   for (int ifile = 0; ifile < files.size(); ifile++) { loader7.AddFile(files[ifile]); }
   loader7.Initialize();
   loader7.Rebin(3,3);
   loader7.Loop();
   loader7.Save();
 
-  MCLoader loader8(eventSelector, outputFilename, "UPDATE", "10Bins");
+  MCLoader loader8(eventSelector, pars, outputFilename, "UPDATE", "10Bins");
   for (int ifile = 0; ifile < files.size(); ifile++) { loader8.AddFile(files[ifile]); }
   loader8.Initialize();
   loader8.Rebin(20,20);
@@ -141,6 +145,10 @@ void configureCommandLineOptions(h22Options * theseOpts){
   theseOpts->args["LIST"].args = "UNSET";
   theseOpts->args["LIST"].type = 1;
   theseOpts->args["LIST"].name = "Process list of files";
+  
+  theseOpts->args["PARS"].args = "/u/home/dmriser/mydoc/analysis/root_scripts/Analysis_v2/lists/keppelRad.pars";
+  theseOpts->args["PARS"].type = 1;
+  theseOpts->args["PARS"].name = "Parameter file";
   
 }
 

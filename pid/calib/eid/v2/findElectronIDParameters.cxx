@@ -22,24 +22,22 @@
 #include "TH2.h"
 
  // Class Constructor/Destructor 
-findElectronIDParameters::findElectronIDParameters(){ 
-  
+findElectronIDParameters::findElectronIDParameters(){   
   for (int sect=0; sect<6; sect++){
     ecSamplingFraction[sect] = new TH2I(Form("ecSamplingFraction_%d",sect),"",100,0.5,4.5,100,0.01,0.5);
     ccThetaCorrelation[sect] = new TH2I(Form("ccThetaCorrelation_%d",sect),"",18,0,17,100,5,47);
   }
-
-
 }
 
 findElectronIDParameters::~findElectronIDParameters(){ 
 
 }
 
-void findElectronIDParameters::Loop(){
+void findElectronIDParameters::Loop(int numberEvents){
 
   // Event loop below. 
   int nen = GetEntries(); 
+  if (numberEvents < nen){ nen = numberEvents; }
 
   for(int ievent=0; ievent<nen; ievent++){
     GetEntry(ievent); 
@@ -86,8 +84,9 @@ void findElectronIDParameters::CalculateCCThetaCut(){
   double sigmaError[numberSlices];
 
   ParameterSet muParA, muParB, muParC, muParD, 
-    sigmaParA, sigmaParB, sigmaParC, sigmaParD;
+    sigmaParA, sigmaParB, sigmaParC, sigmaParD, nSigma;
 
+  nSigma   .setName("EL_CCT_NSIGMA"); 
   muParA   .setName("EL_CCT_MU_A");
   muParB   .setName("EL_CCT_MU_B");
   muParC   .setName("EL_CCT_MU_C");
@@ -138,7 +137,10 @@ void findElectronIDParameters::CalculateCCThetaCut(){
   }
 
 
+  nSigma.addValueAndError(4.00, 0.00);
+
   // Save those values
+  eidParameters.addParameterSet(nSigma);
   eidParameters.addParameterSet(muParA);
   eidParameters.addParameterSet(muParB);
   eidParameters.addParameterSet(muParC);
@@ -158,9 +160,14 @@ void findElectronIDParameters::CalculateSamplingFractionCut(){
   double binWidth  = ecSamplingFraction[0]->GetXaxis()->GetBinWidth(0)*binsPerSlice;
   double pMin      = ecSamplingFraction[0]->GetXaxis()->GetBinLowEdge(0);
 
-  TF1 *fitGauss = new TF1("fitGauss","gaus",0.1,0.45);  
-  //  TF1 *fitGauss = new TF1("fitGauss","gaus",0.25,0.45);  
-  TF1 *fitPol3  = new TF1("fitPol3","pol3", 0.50,3.85);
+  // For data use 0.25-0.45
+  double yMin = 0.15;
+  double yMax = 0.45;
+
+  //  TF1 *fitGauss = new TF1("fitGauss","gaus",0.1,0.45);  
+  TF1 *fitGauss = new TF1("fitGauss","gaus",yMin,yMax);  
+  //  TF1 *fitPol3  = new TF1("fitPol3","pol3", 0.50,3.5);
+
 
   // Used for TGraphErrors constructor
   double dummyAxis[numberSlices];
@@ -202,8 +209,8 @@ void findElectronIDParameters::CalculateSamplingFractionCut(){
     
     ecMuGraph[sector]    = new TGraphErrors(numberSlices, dummyAxis,    mu, dummyAxisError, muError);
     ecSigmaGraph[sector] = new TGraphErrors(numberSlices, dummyAxis, sigma, dummyAxisError, sigmaError);
-    ecPol3Mu[sector]     = new TF1(Form("ecPol3Mu%d",sector),"pol3",0.50,3.85);
-    ecPol3Sigma[sector]  = new TF1(Form("ecPol3Sigma%d",sector),"pol3",0.50,3.85);
+    ecPol3Mu[sector]     = new TF1(Form("ecPol3Mu%d",sector),   "pol3",0.50,4.5);
+    ecPol3Sigma[sector]  = new TF1(Form("ecPol3Sigma%d",sector),"pol3",0.50,4.5);
 
     ecMuGraph[sector]   ->SetName(Form("ecMuGraph%d",sector));
     ecSigmaGraph[sector]->SetName(Form("ecSigmaGraph%d",sector));
@@ -245,7 +252,13 @@ void findElectronIDParameters::CalculateSamplingFractionCut(){
 void findElectronIDParameters::WriteHardCodedParameters(){
   ParameterSet zVertexLimitMin, zVertexLimitMax, ecUCoordMin, ecVCoordMin, ecWCoordMin,
     ecUCoordMax, ecVCoordMax, ecWCoordMax, ecEdepMin, ecNSigma, dcr1FidH, dcr1FidA, 
-    dcr3FidH, dcr3FidA, ccFidA, ccFidB; 
+    dcr3FidH, dcr3FidA, ccFidA, ccFidB, NPheMin, NPheMax; 
+
+  NPheMin.setName("EL_NPHE_MIN");
+  NPheMin.addValueAndError(25.0, 0.0);
+
+  NPheMax.setName("EL_NPHE_MAX");
+  NPheMax.addValueAndError(999.0, 0.0);
 
   ecNSigma.setName("EL_EC_NSIGMA");
   ecNSigma.addValue(3.00);
@@ -309,6 +322,8 @@ void findElectronIDParameters::WriteHardCodedParameters(){
   ecEdepMin.addError(0.00); 
 
   eidParameters.addParameterSet(ecNSigma);
+  eidParameters.addParameterSet(NPheMin);
+  eidParameters.addParameterSet(NPheMax);
   eidParameters.addParameterSet(ccFidA);
   eidParameters.addParameterSet(ccFidB);
   eidParameters.addParameterSet(dcr1FidA);

@@ -84,7 +84,7 @@ void BaseDISHistograms::Save(string filename, string option){
       wByQQ[isect]->Write();
     }
   } else {
-    cout << " Error opening file... " << filename << endl; 
+    cout << "[BaseDISHistograms::Save] Error opening file... " << filename << endl; 
   }
 
   file->Write();
@@ -102,7 +102,7 @@ void BaseDISHistograms::Load(string filename, string name){
       wByQQ[isect] = (TH2I*) inputFile->Get(Form("%s_wByQQ_s%d",name.c_str(),isect));
     }
   } else {
-    cout << " Error opening file... " << filename << endl; 
+    cout << "[BaseDISHistograms::Load] Error opening file... " << filename << endl; 
   }
 
   //  file->Close();

@@ -21,26 +21,31 @@ using std::string;
 #include "DataEventCut.h"
 #include "h22Event.h"
 
-DataEventCut::DataEventCut()
-{
+DataEventCut::DataEventCut(){
   // Setup procedure.
   is_enabled = true;
   n_pass = 0; n_fail = 0;
   cut_name = " DataEventCut Unassigned ";
 }
 
-DataEventCut::~DataEventCut()
-{
+DataEventCut::~DataEventCut(){
 
 }
 
 
-bool DataEventCut::passes(h22Event event, int index)
-{
+bool DataEventCut::passes(h22Event event, int index){
   if ( !is_enabled ){ return false; } 
 
   cout << " Inside DataEventCut::passes " << endl; 
   return true;
+}
+
+bool DataEventCut::operator<(DataEventCut *otherCut){
+  return (this->passFraction() < otherCut->passFraction());
+}
+
+bool DataEventCut::operator>(DataEventCut *otherCut){
+  return (this->passFraction() > otherCut->passFraction());
 }
 
 bool DataEventCut::applies(h22Event event, int index)
@@ -151,6 +156,38 @@ bool NPheCut::passes(h22Event event, int index)
  
 ///////////////////////////////////////////////////////////////
 /*
+  CC Phi Matching Cut 
+*/
+///////////////////////////////////////////////////////////////
+
+CCPhiMatchingCut::CCPhiMatchingCut(){
+  set_name("CCPhiPMT Match Cut");
+}
+
+CCPhiMatchingCut::~CCPhiMatchingCut(){
+
+}
+
+bool CCPhiMatchingCut::passes(h22Event event, int index){
+
+  double rphi = event.rphi(index);
+
+  // PMT is -1 left, +1 right, 0 both
+  bool angleMatchesPMT = false; 
+  int PMT              = event.cc_segm[index]/1000 -1; 
+
+  if (PMT == -1 && rphi <= 0.0)     { angleMatchesPMT = true; } // Good match left
+  else if (PMT ==  1 && rphi >= 0.0){ angleMatchesPMT = true; } // Good match right
+  else if (PMT == 0 || rphi == 0.0) { angleMatchesPMT = true; } // Good match both
+
+  if (angleMatchesPMT) { n_pass++; return true; }
+  else { n_fail++; }
+  return false; 
+}
+ 
+ 
+///////////////////////////////////////////////////////////////
+/*
   Sampling Fraction Cut 
 */
 ///////////////////////////////////////////////////////////////
@@ -186,6 +223,47 @@ bool SampFracCut::passes(h22Event event, int index)
 }
 
 bool SampFracCut::applies(h22Event event, int index)
+{
+  int s = event.dc_sect[index];
+  if (s == sector) return true;
+  return false;
+}
+ 
+ 
+///////////////////////////////////////////////////////////////
+/*
+  CCThetaMatchingCut 
+*/
+///////////////////////////////////////////////////////////////
+
+CCThetaMatchingCut::CCThetaMatchingCut(int s){
+  sector = s; 
+
+  min = 0; max = 0;
+  am = 0; as = 0;
+  bm = 0; bs = 0;
+  cm = 0; cs = 0;
+  dm = 0; ds = 0;
+  nsigma = 0;
+  
+  set_name(Form("CCTheta Cut %d",s));
+}
+
+CCThetaMatchingCut::~CCThetaMatchingCut(){
+}
+
+bool CCThetaMatchingCut::passes(h22Event event, int index){
+  double thetaCC = event.theta_cc(index);
+  int segment    = (event.cc_segm[index]%1000/10);
+
+  min = (am-nsigma*as)*pow(segment,3) +  (bm-nsigma*bs)*pow(segment,2) + (cm-nsigma*cs)*segment +  (dm-nsigma*ds); 
+  max = (am+nsigma*as)*pow(segment,3) +  (bm+nsigma*bs)*pow(segment,2) + (cm+nsigma*cs)*segment +  (dm+nsigma*ds); 
+
+  if (thetaCC > min && thetaCC < max){ n_pass++; return true; } 
+  else { n_fail++; return false; } 
+}
+
+bool CCThetaMatchingCut::applies(h22Event event, int index)
 {
   int s = event.dc_sect[index];
   if (s == sector) return true;

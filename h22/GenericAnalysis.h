@@ -36,7 +36,7 @@ class GenericAnalysis : public h22Reader {
   virtual void Loop(int numberOfEvents);
   virtual void ProcessEvent();
   virtual void Save();
-
+  virtual void Initialize();
 };
 
 #endif

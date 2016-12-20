@@ -13,7 +13,7 @@ class PhysicsEvent{
   double x, y, z;
   double beamEnergy, finalEnergy;
   double nu, qq, w, mm2;
-  double phiHadron, pTransverse; 
+  double phiHadron, pT; 
   double targetMass; 
 
   /* Add anything general about the event here, no sector, no paddle number just physics, 

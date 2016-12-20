@@ -312,17 +312,16 @@ if(sector == 6) phi = phi - 300;
 return phi;
 }
 
-Int_t ccphimatching(Int_t cc_segm, Float_t phi)
-{
-Int_t ccpmt = cc_segm/1000 - 1; // -1 left pmt; +1 right pmt; 0 both
-Float_t relphi = get_rel_phi(phi);
-
-if(relphi > 0 && ccpmt > 0) return 1;
-if(relphi > 0 && ccpmt < 0) return 2;
-if(relphi < 0 && ccpmt < 0) return -1;
-if(relphi < 0 && ccpmt > 0) return -2;
-if(ccpmt == 0 || relphi == 0) return 0;
-return 0;
+Int_t ccphimatching(Int_t cc_segm, Float_t phi){
+  Int_t ccpmt    = cc_segm/1000 - 1; // -1 left pmt; +1 right pmt; 0 both
+  Float_t relphi = get_rel_phi(phi);
+  
+  if(relphi > 0 && ccpmt > 0) return 1;
+  if(relphi > 0 && ccpmt < 0) return 2;
+  if(relphi < 0 && ccpmt < 0) return -1;
+  if(relphi < 0 && ccpmt > 0) return -2;
+  if(ccpmt == 0 || relphi == 0) return 0;
+  return 0;
 }
 
 Float_t atan3(Float_t y, Float_t x) // same as atan2 but returns a value between 0 and 2pi instead of between -pi and pi

@@ -15,6 +15,8 @@
 #ifndef h22Event_h
 #define h22Event_h
 
+
+#include <vector>
 #include <TROOT.h>
 #include "TLorentzVector.h"
 #include "TVector3.h"
@@ -118,17 +120,21 @@ class h22Event
    TLorentzVector gen_particle(int);
    int mcSectorByPID(int index);
    
-    double rot_dc1x(int);
-    double rot_dc1y(int);
-    
-    double theta_cc(int); //! Theta as reported at Cherenkov Counter
-
-    bool hasParticle(int pid){ for(int i=0;i<gpart; i++){ if(id[i]==pid) { return true; } } return false;}
-    
+   double rot_dc1x(int);
+   double rot_dc1y(int);
+   
+   double theta_cc(int); //! Theta as reported at Cherenkov Counter
+   
+   bool hasParticle(int pid){ for(int i=0;i<gpart; i++){ if(id[i]==pid) { return true; } } return false;}
+   
    // MC Momenta 
    double mcpx(int);
    double mcpy(int);
    double mcpz(int);
+
+   // Sorting functions 
+   std::vector<int> sortByMomentum(std::vector<int>);
+   TLorentzVector getTLorentzVector(int index, int pid);
 
 };
 

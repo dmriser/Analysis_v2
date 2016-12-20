@@ -17,6 +17,8 @@
 #include <iostream>
 #include <map>
 #include <vector>
+using std::string; 
+using std::vector; 
 
 // my includes
 #include "CommonTools.h"
@@ -29,6 +31,7 @@
 
 // root includes
 #include "TVector3.h"
+#include "TLorentzVector.h"
 
 ParticleFilter::ParticleFilter(Parameters *params) : pars(params){
     MC=false; runno = 0;
@@ -41,22 +44,30 @@ ParticleFilter::ParticleFilter(Parameters *params) : pars(params){
     // one for fid cuts that might be used on 
     // other particles and one for just elec
     // specific cuts.
-    negativity_cut = new ChargeCut();
-    cc_fid_cut     = new CCFiducialCut();
-    dcr1_fid_cut   = new DCR1FiducialCut();
-    dcr3_fid_cut   = new DCR3FiducialCut();
-    edep_cut       = new ECEdepInnerCut();
-    ecu_cut        = new ECUCut();
-    ecv_cut        = new ECVCut();
-    ecw_cut        = new ECWCut();
-    sf_s1_cut      = new SampFracCut(1);
-    sf_s2_cut      = new SampFracCut(2);
-    sf_s3_cut      = new SampFracCut(3);
-    sf_s4_cut      = new SampFracCut(4);
-    sf_s5_cut      = new SampFracCut(5);
-    sf_s6_cut      = new SampFracCut(6);
-    qc_cut         = new TrackQualityCut();
-    vz_cut         = new ZVertexCut();
+    negativity_cut     = new ChargeCut();
+    cc_fid_cut         = new CCFiducialCut();
+    cc_phi_match_cut   = new CCPhiMatchingCut();
+    cc_theta_s1_cut    = new CCThetaMatchingCut(1);
+    cc_theta_s2_cut    = new CCThetaMatchingCut(2);
+    cc_theta_s3_cut    = new CCThetaMatchingCut(3);
+    cc_theta_s4_cut    = new CCThetaMatchingCut(4);
+    cc_theta_s5_cut    = new CCThetaMatchingCut(5);
+    cc_theta_s6_cut    = new CCThetaMatchingCut(6);
+    dcr1_fid_cut       = new DCR1FiducialCut();
+    dcr3_fid_cut       = new DCR3FiducialCut();
+    edep_cut           = new ECEdepInnerCut();
+    ecu_cut            = new ECUCut();
+    ecv_cut            = new ECVCut();
+    ecw_cut            = new ECWCut();
+    nphe_cut           = new NPheCut();
+    sf_s1_cut          = new SampFracCut(1);
+    sf_s2_cut          = new SampFracCut(2);
+    sf_s3_cut          = new SampFracCut(3);
+    sf_s4_cut          = new SampFracCut(4);
+    sf_s5_cut          = new SampFracCut(5);
+    sf_s6_cut          = new SampFracCut(6);
+    qc_cut             = new TrackQualityCut();
+    vz_cut             = new ZVertexCut();
 
     // Set limits on cuts from parameters 
     negativity_cut->set_min(-1.1);
@@ -138,12 +149,83 @@ ParticleFilter::ParticleFilter(Parameters *params) : pars(params){
     sf_s6_cut->ds     = params->getParameter("EL_SF_SIGMA_D").getValue(5);
     sf_s6_cut->nsigma = params->getParameter("EL_EC_NSIGMA").getValue(0);
 
+    cc_theta_s1_cut->am     = params->getParameter("EL_CCT_MU_A").getValue(0);
+    cc_theta_s1_cut->bm     = params->getParameter("EL_CCT_MU_B").getValue(0);
+    cc_theta_s1_cut->cm     = params->getParameter("EL_CCT_MU_C").getValue(0);
+    cc_theta_s1_cut->dm     = params->getParameter("EL_CCT_MU_D").getValue(0);
+    cc_theta_s1_cut->as     = params->getParameter("EL_CCT_SIGMA_A").getValue(0);
+    cc_theta_s1_cut->bs     = params->getParameter("EL_CCT_SIGMA_B").getValue(0);
+    cc_theta_s1_cut->cs     = params->getParameter("EL_CCT_SIGMA_C").getValue(0);
+    cc_theta_s1_cut->ds     = params->getParameter("EL_CCT_SIGMA_D").getValue(0);
+    cc_theta_s1_cut->nsigma = params->getParameter("EL_CCT_NSIGMA").getValue(0);
+
+    cc_theta_s2_cut->am     = params->getParameter("EL_CCT_MU_A").getValue(1);
+    cc_theta_s2_cut->bm     = params->getParameter("EL_CCT_MU_B").getValue(1);
+    cc_theta_s2_cut->cm     = params->getParameter("EL_CCT_MU_C").getValue(1);
+    cc_theta_s2_cut->dm     = params->getParameter("EL_CCT_MU_D").getValue(1);
+    cc_theta_s2_cut->as     = params->getParameter("EL_CCT_SIGMA_A").getValue(1);
+    cc_theta_s2_cut->bs     = params->getParameter("EL_CCT_SIGMA_B").getValue(1);
+    cc_theta_s2_cut->cs     = params->getParameter("EL_CCT_SIGMA_C").getValue(1);
+    cc_theta_s2_cut->ds     = params->getParameter("EL_CCT_SIGMA_D").getValue(1);
+    cc_theta_s2_cut->nsigma = params->getParameter("EL_CCT_NSIGMA").getValue(0);
+
+    cc_theta_s3_cut->am     = params->getParameter("EL_CCT_MU_A").getValue(2);
+    cc_theta_s3_cut->bm     = params->getParameter("EL_CCT_MU_B").getValue(2);
+    cc_theta_s3_cut->cm     = params->getParameter("EL_CCT_MU_C").getValue(2);
+    cc_theta_s3_cut->dm     = params->getParameter("EL_CCT_MU_D").getValue(2);
+    cc_theta_s3_cut->as     = params->getParameter("EL_CCT_SIGMA_A").getValue(2);
+    cc_theta_s3_cut->bs     = params->getParameter("EL_CCT_SIGMA_B").getValue(2);
+    cc_theta_s3_cut->cs     = params->getParameter("EL_CCT_SIGMA_C").getValue(2);
+    cc_theta_s3_cut->ds     = params->getParameter("EL_CCT_SIGMA_D").getValue(2);
+    cc_theta_s3_cut->nsigma = params->getParameter("EL_CCT_NSIGMA").getValue(0);
+
+    cc_theta_s4_cut->am     = params->getParameter("EL_CCT_MU_A").getValue(3);
+    cc_theta_s4_cut->bm     = params->getParameter("EL_CCT_MU_B").getValue(3);
+    cc_theta_s4_cut->cm     = params->getParameter("EL_CCT_MU_C").getValue(3);
+    cc_theta_s4_cut->dm     = params->getParameter("EL_CCT_MU_D").getValue(3);
+    cc_theta_s4_cut->as     = params->getParameter("EL_CCT_SIGMA_A").getValue(3);
+    cc_theta_s4_cut->bs     = params->getParameter("EL_CCT_SIGMA_B").getValue(3);
+    cc_theta_s4_cut->cs     = params->getParameter("EL_CCT_SIGMA_C").getValue(3);
+    cc_theta_s4_cut->ds     = params->getParameter("EL_CCT_SIGMA_D").getValue(3);
+    cc_theta_s4_cut->nsigma = params->getParameter("EL_CCT_NSIGMA").getValue(0);
+
+    cc_theta_s5_cut->am     = params->getParameter("EL_CCT_MU_A").getValue(4);
+    cc_theta_s5_cut->bm     = params->getParameter("EL_CCT_MU_B").getValue(4);
+    cc_theta_s5_cut->cm     = params->getParameter("EL_CCT_MU_C").getValue(4);
+    cc_theta_s5_cut->dm     = params->getParameter("EL_CCT_MU_D").getValue(4);
+    cc_theta_s5_cut->as     = params->getParameter("EL_CCT_SIGMA_A").getValue(4);
+    cc_theta_s5_cut->bs     = params->getParameter("EL_CCT_SIGMA_B").getValue(4);
+    cc_theta_s5_cut->cs     = params->getParameter("EL_CCT_SIGMA_C").getValue(4);
+    cc_theta_s5_cut->ds     = params->getParameter("EL_CCT_SIGMA_D").getValue(4);
+    cc_theta_s5_cut->nsigma = params->getParameter("EL_CCT_NSIGMA").getValue(0);
+
+    cc_theta_s6_cut->am     = params->getParameter("EL_CCT_MU_A").getValue(5);
+    cc_theta_s6_cut->bm     = params->getParameter("EL_CCT_MU_B").getValue(5);
+    cc_theta_s6_cut->cm     = params->getParameter("EL_CCT_MU_C").getValue(5);
+    cc_theta_s6_cut->dm     = params->getParameter("EL_CCT_MU_D").getValue(5);
+    cc_theta_s6_cut->as     = params->getParameter("EL_CCT_SIGMA_A").getValue(5);
+    cc_theta_s6_cut->bs     = params->getParameter("EL_CCT_SIGMA_B").getValue(5);
+    cc_theta_s6_cut->cs     = params->getParameter("EL_CCT_SIGMA_C").getValue(5);
+    cc_theta_s6_cut->ds     = params->getParameter("EL_CCT_SIGMA_D").getValue(5);
+    cc_theta_s6_cut->nsigma = params->getParameter("EL_CCT_NSIGMA").getValue(0);
+
     vz_cut->set_min( params->getParameter("EL_VZ_MIN").getValue(0) );
     vz_cut->set_max( params->getParameter("EL_VZ_MAX").getValue(0) );
 
+    nphe_cut->set_min(25);
+    nphe_cut->set_max(1000);
+
     // Push back the cuts 
     electronSelector->add_cut( negativity_cut );
+    electronSelector->add_cut( nphe_cut );
     electronSelector->add_cut( cc_fid_cut );
+    electronSelector->add_cut( cc_phi_match_cut );
+    electronSelector->add_cut( cc_theta_s1_cut );
+    electronSelector->add_cut( cc_theta_s2_cut );
+    electronSelector->add_cut( cc_theta_s3_cut );
+    electronSelector->add_cut( cc_theta_s4_cut );
+    electronSelector->add_cut( cc_theta_s5_cut );
+    electronSelector->add_cut( cc_theta_s6_cut );
     electronSelector->add_cut( dcr1_fid_cut );
     electronSelector->add_cut( dcr3_fid_cut );
     electronSelector->add_cut( edep_cut );
@@ -158,6 +240,13 @@ ParticleFilter::ParticleFilter(Parameters *params) : pars(params){
     electronSelector->add_cut( sf_s6_cut );
     electronSelector->add_cut( qc_cut );
     electronSelector->add_cut( vz_cut );
+
+    // This can be overridden by the user by just 
+    // turning off the ones you don't want. This 
+    // happens at the time of construction so your
+    // call will be after.
+    electronSelector->enable_all();
+    electronSelector->disable_by_name("NPhe Cut");
 }
 
 ParticleFilter::~ParticleFilter(){
@@ -173,33 +262,119 @@ bool ParticleFilter::has_electron(h22Event event){
     
   // Simply check 0 for now, later add support for 
   // loop over gpart.
-  if (electronSelector->passesFast(event, 0)) 
-    return true;
+
+    if (electronSelector->passesFast(event, 0)) 
+      return true;
   
   return false;
 }
 
+vector<int> ParticleFilter::getVectorOfParticleIndices(h22Event event, int pid){
+  
+  vector<int> particles;
+  
+  if(pid == 11){
+    for(int ipart=0; ipart<event.gpart; ++ipart){
+      if (electronSelector->passesFast(event, ipart)){ particles.push_back(ipart); }
+    }
+  } 
+
+  // Use the built-in PID
+  else{
+    for(int ipart=0; ipart<event.gpart; ++ipart){
+      if (event.id[ipart] == pid){ particles.push_back(ipart); }
+    }
+  }
+
+  // Sort the particles by momentum
+  if (!particles.empty()){
+    particles = event.sortByMomentum(particles);
+  }
+  
+
+  return particles;
+}
+
+vector<TLorentzVector> ParticleFilter::getVectorOfTLorentzVectors(h22Event event, int pid){
+  vector<TLorentzVector> particles; 
+  vector<int> particleIndices = getVectorOfParticleIndices(event, pid);
+
+  for (int ipart=0; ipart<particleIndices.size(); ipart++){
+    particles.push_back(event.getTLorentzVector(particleIndices[ipart], pid));
+  }
+  return particles; 
+}
+
 int ParticleFilter::getByPID(h22Event event, int pid){
     int index = -123;
+
+    vector<int> candidates = getVectorOfParticleIndices(event, pid);
+    if(!candidates.empty()){
+      // Spit back fastest by default.
+      // Much more control using the entire vector.
+      index = candidates[0];
+    }
+
+    /*
+    // check for electrons
+    if(pid == 11){
+      vector<int> candidates;
+      for (int ipart=0; ipart<event.gpart; ++ipart){
+	if (electronSelector->passes(event, ipart)) candidates.push_back(ipart); 
+      }
+
+      // Spit back the fastest track 
+      if (candidates.size() == 1){ index = candidates[0]; }
+
+      else if (candidates.size() > 1){
+	int fast = candidates[0]; 
+	for (int i=1; i<candidates.size(); ++i){ if (event.p[candidates[i]] > event.p[fast]){ fast = candidates[i]; } }
+
+	index = fast; 
+      }
+    
+    } // End of electron
+    */
+
     return index;   //! Default Case & Nathan Harrison Convention (-123 -> for nothing found)
 }
 
-std::map<std::string, bool> ParticleFilter::eid_map(h22Event event)
-{
-    bool ec_geo_pass, ec_edep_pass, ec_sampling_pass, vz_pass, dcr1_fid_pass, dcr3_fid_pass, cc_nphe_pass, cc_fid_pass;
-    
-    ec_geo_pass      = false;
-    ec_edep_pass     = false;
-    ec_sampling_pass = false;
-    vz_pass          = false;
-    dcr1_fid_pass    = false;
-    dcr3_fid_pass    = false;
-    cc_nphe_pass     = false;
-    cc_fid_pass      = false;
-    
-    std::map<std::string, bool> eid_results;
+std::map<std::string, bool> ParticleFilter::eid_map(h22Event event, int index){
 
-    return eid_results;    
+  int sector = event.dc_sect[index];
+  std::map<std::string, bool> results;
+    
+  // Probably dirt slow
+  string title = Form("CCTheta Cut %d", sector); 
+  results["CC_THETA"] = (electronSelector->getCut(title.c_str())->passes(event, index));
+  
+  title = Form("Samp Frac Cut %d", sector); 
+  results["EC_SAMPLING"] = (electronSelector->getCut(title.c_str())->passes(event, index));
+
+  title = "Z-Vertex Cut";
+  results["Z_VERTEX"] = (electronSelector->getCut(title.c_str())->passes(event, index));
+
+  title = "EC Edep Inner Cut";
+  results["EC_IN_OUT"] = (electronSelector->getCut(title.c_str())->passes(event, index));
+
+  title = "DC Region 1 Fid Cut";
+  results["DC_R1_FID"] = (electronSelector->getCut(title.c_str())->passes(event, index));
+
+  title = "DC Region 3 Fid Cut";
+  results["DC_R3_FID"] = (electronSelector->getCut(title.c_str())->passes(event, index));
+
+  title = "CC Fid Cut";
+  results["CC_FID"] = (electronSelector->getCut(title.c_str())->passes(event, index));
+
+  title = "CCPhiPMT Match Cut";
+  results["CC_PHI"] = (electronSelector->getCut(title.c_str())->passes(event, index));
+
+  results["EC_FID"] = ( electronSelector->getCut("EC-U Cut")->passes(event, index) && 
+			electronSelector->getCut("EC-V Cut")->passes(event, index) &&
+			electronSelector->getCut("EC-W Cut")->passes(event, index) );
+
+
+  return results;    
 }
 
 #endif

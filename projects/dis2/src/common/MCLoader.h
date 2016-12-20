@@ -13,6 +13,8 @@ using namespace std;
 #include "h22Reader.h"
 #include "HistogramLoader.h"
 #include "NathanArchive.h"
+#include "Parameters.h"
+#include "ParticleFilter.h"
 #include "PhysicsEventBuilder.h"
 #include "PhysicsEventSelector.h"
 #include "CommonTools.h"
@@ -24,7 +26,7 @@ using namespace std;
 
 class MCLoader : public HistogramLoader{
  public:
-  MCLoader(PhysicsEventSelector *eventCriteria, std::string outputFile, std::string saveOpts, std::string monteCarloType);
+  MCLoader(PhysicsEventSelector *eventCriteria, Parameters *pars, std::string outputFile, std::string saveOpts, std::string monteCarloType);
   ~MCLoader();
 
  protected:
@@ -32,6 +34,7 @@ class MCLoader : public HistogramLoader{
   BaseDISHistograms genEvents;
   BaseDISHistograms recAndGenEvents;
   NathanEIDWrapper eID; 
+  ParticleFilter *filter; 
   std::string mcType; 
   
  public:
@@ -42,8 +45,9 @@ class MCLoader : public HistogramLoader{
 
 };
 
-MCLoader::MCLoader(PhysicsEventSelector *eventCriteria, std::string outputFile, std::string saveOpts, std::string monteCarloType) : HistogramLoader(eventCriteria, outputFile, saveOpts){
+MCLoader::MCLoader(PhysicsEventSelector *eventCriteria, Parameters *pars, std::string outputFile, std::string saveOpts, std::string monteCarloType) : HistogramLoader(eventCriteria, outputFile, saveOpts){
   mcType = monteCarloType; 
+  filter = new ParticleFilter(pars);
 }
 
 MCLoader::~MCLoader(){
@@ -56,19 +60,21 @@ void MCLoader::Initialize(){
   recAndGenEvents.Init(Form("recAndGenEvents%s",mcType.c_str()),"Rec/Gen Same Bin Events");
   //  recAndGenEvents.Rebin2D(2,2);
 
-  cout << "[MCLoader] Warning: Running with electron ID strictness alterations. " << endl;
+
+  filter->set_info(0,GSIM);
+  //  cout << "[MCLoader] Warning: Running with electron ID strictness alterations. " << endl;
   //  eID.cc_fid_strict = 2;
   //  eID.dc_r1_strict  = 2;
   //  eID.dc_r3_strict  = 2;
 
-  eID.ec_sf_strict = 9; 
+  //  eID.ec_sf_strict = 9; 
 }
 
 // This is the core routine which conditionally fills histograms. 
 void MCLoader::ProcessEvent(){
 
   // Deal with the generated first.
-  TLorentzVector genElectron = event.gen_particle(11);   
+  TLorentzVector genElectron   = event.gen_particle(11);   
   PhysicsEvent genPhysicsEvent = builder.getPhysicsEvent(genElectron); 
 
   // Maybe here we should check that the track was reconstructed 
@@ -83,8 +89,11 @@ void MCLoader::ProcessEvent(){
   int genxByQQBin = recAndGenEvents.xByQQ[0]->FindBin(genPhysicsEvent.x, genPhysicsEvent.qq);
   int genwByQQBin = recAndGenEvents.wByQQ[0]->FindBin(genPhysicsEvent.w, genPhysicsEvent.qq);
   
-  eID.set_info(runno(),GSIM);
-  int e_index = eID.get_electron(event);
+  //  eID.set_info(runno(),GSIM);
+  //  int e_index = eID.get_electron(event);
+
+
+  int e_index = filter->getByPID(event, 11);
   if (e_index > -123){
     TLorentzVector recElectron(event.cx[e_index]*event.p[e_index],
 			       event.cy[e_index]*event.p[e_index],

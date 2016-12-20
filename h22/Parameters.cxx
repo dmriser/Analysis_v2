@@ -74,12 +74,12 @@ void Parameters::saveParameters(string outputFilename){
     file.width(6);  file << currentParameterSet.getNumberOfValues();
     file.width(6);  file << 'v';
 
-    for (int param = 0; param < currentParameterSet.getNumberOfValues(); param++){ file.width(12); file << currentParameterSet.getValue(param); }
+    for (int param = 0; param < currentParameterSet.getNumberOfValues(); param++){ file.width(20); file << currentParameterSet.getValue(param); }
     file << endl;
     file.width(20); file << currentParameterSet.getName(); 
     file.width(6);  file << currentParameterSet.getNumberOfValues();
     file.width(6); file << 'e';
-    for (int param = 0; param < currentParameterSet.getNumberOfValues(); param++){ file.width(12); file << currentParameterSet.getError(param); }
+    for (int param = 0; param < currentParameterSet.getNumberOfValues(); param++){ file.width(20); file << currentParameterSet.getError(param); }
     file << endl;
     file << endl;
   }

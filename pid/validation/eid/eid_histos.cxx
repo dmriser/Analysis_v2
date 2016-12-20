@@ -99,6 +99,23 @@ int main(int argc, char * argv[]){
             
         }
     
+    
+    // Optimization of cuts to save time if we have enough events
+    if (nev > 1e4){
+      for (int iev=0; iev<10000; ++iev){
+	fReader.GetEntry(iev);
+	h22Event event = fReader.GetEvent(); 
+
+	// Dummy call 
+	filter.has_electron(event); 
+      }
+      filter.electronSelector->summarize();
+      filter.electronSelector->optimize();
+      std::cout << "DataEventSelector has been optimized." << std::endl; 
+      filter.electronSelector->summarize();
+    }
+    
+
     // Keep track of time.
     TStopwatch timer;
     timer.Reset();

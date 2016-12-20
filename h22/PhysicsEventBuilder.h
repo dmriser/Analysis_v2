@@ -20,8 +20,8 @@ class PhysicsEventBuilder{
   
  public:
   PhysicsEvent getPhysicsEvent(TLorentzVector detectedElectron);
-  //    PhysicsEvent getPhysicsEvent(TLorentzVector detectedElectron, TLorentzVector detectedParticle);
-  //    PhysicsEvent getPhysicsEvent(TLorentzVector detectedElectron, TLorentzVector detectedParticle1, TLorentzVector detectedParticle2);
+  PhysicsEvent getPhysicsEvent(TLorentzVector detectedElectron, TLorentzVector detectedParticle);
+  PhysicsEvent getPhysicsEvent(TLorentzVector detectedElectron, TLorentzVector detectedParticle1, TLorentzVector detectedParticle2);
 
 };
 

@@ -12,6 +12,7 @@ using namespace std;
 #include "h22Option.h"
 #include "DInformation.h"
 #include "MomCorr.h"
+#include "Parameters.h"
 #include "PhysicsEventCut.h"
 #include "PhysicsEventSelector.h"
 
@@ -42,9 +43,9 @@ int main(int argc, char * argv[]){
   // ---------------------------- Setup Physics Options -------------------------------
 
   PhysicsEventSelector * eventSelector = new PhysicsEventSelector();
-  PhysicsEventCut_w *w_cut = new PhysicsEventCut_w();
-  PhysicsEventCut_y *y_cut = new PhysicsEventCut_y();
-  PhysicsEventCut_qq *qq_cut = new PhysicsEventCut_qq();
+  PhysicsEventCut_w *w_cut             = new PhysicsEventCut_w();
+  PhysicsEventCut_y *y_cut             = new PhysicsEventCut_y();
+  PhysicsEventCut_qq *qq_cut           = new PhysicsEventCut_qq();
 
   w_cut->set_min( 1.1 );
   w_cut->set_max( 99.9 ); 
@@ -62,10 +63,14 @@ int main(int argc, char * argv[]){
   //  
 
   // Set local variables to command line flags. 
-  string runMode = options->args["TYPE"].args; 
-  string fileList = options->args["LIST"].args; 
-  string outputFilename = options->args["OUT"].args;
+  string runMode             = options->args["TYPE"].args; 
+  string fileList            = options->args["LIST"].args; 
+  string outputFilename      = options->args["OUT"].args;
   int numberOfFilesToProcess = options->args["N"].arg; 
+
+  // Load PID parameters 
+  Parameters *pars = new Parameters();
+  pars->loadParameters(options->args["PARS"].args);
 
   // Check for no files, then setup the list of files to process correctly. 
   if (numberOfFilesToProcess == 0){ cout << " No files/list detected. " << endl; return 0; }
@@ -80,7 +85,7 @@ int main(int argc, char * argv[]){
   // Start running the correct type
   if (runMode == "data"){
     MomCorr_e1f * momentumCorrection = new MomCorr_e1f("/u/home/dmriser/mydoc/analysis/root_scripts/Analysis_v2/momCorr/"); 
-    DataLoader loader(eventSelector, momentumCorrection, outputFilename, "RECREATE");
+    DataLoader loader(eventSelector, momentumCorrection, pars, outputFilename, "RECREATE");
     for (int ifile = 0; ifile < files.size(); ifile++) { loader.AddFile(files[ifile]); }
     loader.Execute();
 
@@ -107,33 +112,33 @@ int main(int argc, char * argv[]){
   }
 
   else if (runMode == "mcrad"){
-    MCLoader loader(eventSelector, outputFilename, "UPDATE", "Rad");
+    MCLoader loader(eventSelector, pars, outputFilename, "UPDATE", "Rad");
     for (int ifile = 0; ifile < files.size(); ifile++) { loader.AddFile(files[ifile]); }
     loader.Execute();
   }
 
   else if (runMode == "mcnorad"){
-    MCLoader loader(eventSelector, outputFilename, "UPDATE", "NoRad");
+    MCLoader loader(eventSelector, pars, outputFilename, "UPDATE", "NoRad");
     for (int ifile = 0; ifile < files.size(); ifile++) { loader.AddFile(files[ifile]); }
     loader.Execute();
   }
   
   // Elastic subtraction elastic events
   else if (runMode == "es_elast"){
-    MCLoader loader(eventSelector, outputFilename, "UPDATE", "Elastic");
+    MCLoader loader(eventSelector, pars, outputFilename, "UPDATE", "Elastic");
     for (int ifile = 0; ifile < files.size(); ifile++) { loader.AddFile(files[ifile]); }
     loader.Execute();
   }
 
   // Elastic subtraction inelastic events
   else if (runMode == "es_inelast"){
-    MCLoader loader(eventSelector, outputFilename, "UPDATE", "Inelastic");
+    MCLoader loader(eventSelector, pars, outputFilename, "UPDATE", "Inelastic");
     for (int ifile = 0; ifile < files.size(); ifile++) { loader.AddFile(files[ifile]); }
     loader.Execute();
   }
   
   else {
-    cout << " TYPE not recognized: " << runMode << endl;
+    cout << "[FillHistograms] TYPE not recognized: " << runMode << endl;
     return 0; 
   }
 
@@ -158,6 +163,10 @@ void configureCommandLineOptions(h22Options * theseOpts){
   theseOpts->args["LIST"].args = "UNSET";
   theseOpts->args["LIST"].type = 1;
   theseOpts->args["LIST"].name = "Process list of files";
+
+  theseOpts->args["PARS"].args = "/u/home/dmriser/mydoc/analysis/root_scripts/Analysis_v2/pid/calib/eid/v2/data.pars";
+  theseOpts->args["PARS"].type = 1;
+  theseOpts->args["PARS"].name = "Particle ID parameters file";
   
 }
 

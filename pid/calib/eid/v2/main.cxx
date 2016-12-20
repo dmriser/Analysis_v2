@@ -23,7 +23,7 @@ int main(int argc, char *argv[]){
 	} 
         
 	Analyzer.Init(); 
-        Analyzer.Loop(); 
+        Analyzer.Loop(opts.args["N"].arg); 
 	Analyzer.WriteHardCodedParameters(); 
 	Analyzer.CalculateSamplingFractionCut();
 	Analyzer.CalculateCCThetaCut();

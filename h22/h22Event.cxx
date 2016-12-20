@@ -16,6 +16,8 @@
 // c++ includes
 #include <cmath>
 #include <iostream>
+#include <vector>
+#include <algorithm>
 using namespace std;
 
 // root includes
@@ -204,6 +206,40 @@ int h22Event::mcSectorByPID(int pid){
   int mcsect = 1+floor(mcphi[index]/60);
   
   return mcsect;
+}
+
+vector<int> h22Event::sortByMomentum(vector<int> particles){
+
+  // Just takes input list of indices and sorts them 
+  // according to descending particles momenta. 
+  //
+  // There is no safety check like, 
+  // if (particles.size() <= gpart){ }
+  // because this should only be used on the same event.
+  
+  vector<pair<double, int> > particlePairs;
+  
+  for(int ipart=0; ipart<particles.size(); ++ipart){
+    pair<double, int> currentPair; 
+    currentPair.first  = p[particles[ipart]];
+    currentPair.second = particles[ipart];
+    particlePairs.push_back(currentPair);
+  }
+  
+  std::sort(particlePairs.begin(), particlePairs.end());
+
+  particles.clear();  
+  vector<pair<double, int> >::iterator it; 
+  for (it = particlePairs.begin(); it != particlePairs.end(); it++){
+    particles.push_back( (*it).second );
+  }
+  reverse(particles.begin(), particles.end());
+
+  return particles; 
+}
+
+TLorentzVector h22Event::getTLorentzVector(int index, int pid){
+  return TLorentzVector(p[index]*cx[index], p[index]*cy[index], p[index]*cz[index], sqrt(pow(p[index],2) + pow(pid_to_mass(pid),2)));
 }
 
 #endif

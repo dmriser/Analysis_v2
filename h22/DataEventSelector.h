@@ -42,6 +42,9 @@ class DataEventSelector
   void disable_by_regex(std::string);
   void enable_by_regex(std::string);
   void summarize();
+  void optimize();
+
+  DataEventCut *getCut(std::string cutName); 
   
   virtual bool passes(h22Event, int); /** I am making this virtual in the event that we need to change something before asking if the events pass (vertex correction ect.) */ 
   virtual bool passesFast(h22Event, int); /** I am making this virtual in the event that we need to change something before asking if the events pass (vertex correction ect.) */ 

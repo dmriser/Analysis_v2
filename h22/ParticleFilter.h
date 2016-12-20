@@ -16,6 +16,7 @@
 // c++ includes
 #include <iostream>
 #include <map>
+#include <vector>
 
 // my includes
 #include "Corrections.h"
@@ -24,10 +25,11 @@
 #include "DataEventSelector.h"
 
 // root includes
+#include "TLorentzVector.h"
 
 class ParticleFilter{
 public:
-    ParticleFilter(Parameters *params);               //! Passing EID Parameter filename
+    ParticleFilter(Parameters *params);              
     ~ParticleFilter();
     
     // Data Members
@@ -41,29 +43,39 @@ public:
     DataEventSelector *electronSelector;
 
     // List of the cuts used for electrons.
-    ChargeCut       *negativity_cut;
-    CCFiducialCut   *cc_fid_cut;
-    DCR1FiducialCut *dcr1_fid_cut;
-    DCR3FiducialCut *dcr3_fid_cut;
-    ECEdepInnerCut  *edep_cut;
-    ECUCut          *ecu_cut;
-    ECVCut          *ecv_cut;
-    ECWCut          *ecw_cut;
-    SampFracCut     *sf_s1_cut;
-    SampFracCut     *sf_s2_cut;
-    SampFracCut     *sf_s3_cut;
-    SampFracCut     *sf_s4_cut;
-    SampFracCut     *sf_s5_cut;
-    SampFracCut     *sf_s6_cut;
-    TrackQualityCut *qc_cut;
-    ZVertexCut      *vz_cut;
+    ChargeCut          *negativity_cut;
+    CCFiducialCut      *cc_fid_cut;
+    CCPhiMatchingCut   *cc_phi_match_cut;
+    CCThetaMatchingCut *cc_theta_s1_cut;
+    CCThetaMatchingCut *cc_theta_s2_cut;
+    CCThetaMatchingCut *cc_theta_s3_cut;
+    CCThetaMatchingCut *cc_theta_s4_cut;
+    CCThetaMatchingCut *cc_theta_s5_cut;
+    CCThetaMatchingCut *cc_theta_s6_cut;
+    DCR1FiducialCut    *dcr1_fid_cut;
+    DCR3FiducialCut    *dcr3_fid_cut;
+    ECEdepInnerCut     *edep_cut;
+    ECUCut             *ecu_cut;
+    ECVCut             *ecv_cut;
+    ECWCut             *ecw_cut;
+    NPheCut            *nphe_cut; 
+    SampFracCut        *sf_s1_cut;
+    SampFracCut        *sf_s2_cut;
+    SampFracCut        *sf_s3_cut;
+    SampFracCut        *sf_s4_cut;
+    SampFracCut        *sf_s5_cut;
+    SampFracCut        *sf_s6_cut;
+    TrackQualityCut    *qc_cut;
+    ZVertexCut         *vz_cut;
 
     // Member Functions
-    bool has_electron(h22Event);       //! yes or no, always particle 0
-    int getByPID(h22Event, int);//! get by PID
+    bool has_electron(h22Event);
+    int getByPID(h22Event, int);
     void set_info(bool, int);
-    std::map<std::string,bool> eid_map(h22Event);
+    std::vector<int> getVectorOfParticleIndices(h22Event event, int pid);
+    std::map<std::string,bool> eid_map(h22Event, int);
     std::map<std::string,bool> hid_map(h22Event, int);
+    std::vector<TLorentzVector> getVectorOfTLorentzVectors(h22Event, int pid);
 
 };
 #endif

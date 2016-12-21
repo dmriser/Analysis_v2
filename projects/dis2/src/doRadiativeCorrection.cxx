@@ -3,14 +3,18 @@
    #               David Riser, University of Connecticut                 #
    #                         October 27, 2016                             #
    #                                                                      #
+   #                       Updated Dec 20, 2016                           #
    ######################################################################## */
+
 #include <cmath>
 #include <iostream>
+#include <vector>
 #include <fstream>
 using namespace std;
 
 #include "CommonTools.h"
 #include "h22Option.h"
+#include "KeppelRadReader.h"
 
 #include "common/BaseDISHistograms.h"
 #include "common/DIS1DHistograms.h"
@@ -18,6 +22,7 @@ using namespace std;
 
 int PrintUsage();
 void configureCommandLineOptions(h22Options *theseOpts); 
+vector<string> loadFilesFromList(string fileList);
 
 int main(int argc, char * argv[]){
 
@@ -33,38 +38,28 @@ int main(int argc, char * argv[]){
   configureCommandLineOptions(options); 
   options->set(argc, argv);
 
-  int numberOfEvents        = options->args["N"].arg;
-  string inputRadFilename   = options->args["LUND_RAD"].args; 
-  string inputNoRadFilename = options->args["LUND_NORAD"].args; 
-  string outputFilename     = options->args["OUT"].args; 
+  int numberOfEvents    = options->args["N"].arg;
+  string inputRadList   = options->args["RAD"].args; 
+  string inputNoRadList = options->args["NORAD"].args; 
+  string outputFilename = options->args["OUT"].args; 
 
-  if (inputRadFilename != "UNSET" && inputNoRadFilename != "UNSET"){
+  if (inputRadList != "UNSET" && inputNoRadList != "UNSET"){
 
     // Generate 2-D Histograms for both radiaited and unradiated events and 
     // save them in the output file. 
-    RadiativeCorrectionLoader radLoader("radEvents","Radiated Gen. Events from LUND",outputFilename,"recreate");
-    radLoader.LoadEvents(inputRadFilename);
+    RadiativeCorrectionLoader radLoader("radEvents","Radiated Gen. Events",outputFilename,"recreate");
+    vector<string> radFiles = loadFilesFromList(inputRadList);
+    for (int currentFile=0; currentFile<radFiles.size(); ++currentFile) { radLoader.AddFile(radFiles[currentFile]); }
+    radLoader.Initialize();
     radLoader.Execute(numberOfEvents);
+    radLoader.Save();
 
-    RadiativeCorrectionLoader noRadLoader("noRadEvents","Gen. Events from LUND",outputFilename,"update");
-    noRadLoader.LoadEvents(inputNoRadFilename);
+    RadiativeCorrectionLoader noRadLoader("noRadEvents","Gen. Events",outputFilename,"update");
+    vector<string> noRadFiles = loadFilesFromList(inputNoRadList);
+    for (int currentFile=0; currentFile<noRadFiles.size(); ++currentFile) { noRadLoader.AddFile(noRadFiles[currentFile]); }
+    noRadLoader.Initialize();
     noRadLoader.Execute(numberOfEvents);
-
-    //    BaseDISHistograms *radEvents2D = new BaseDISHistograms();
-    //    radEvents2D->Load(inputRadFilename.c_str(),"radEvents");
-
-    //    BaseDISHistograms *noRadEvents2D = new BaseDISHistograms();
-    //    noRadEvents2D->Load(inputNoRadFilename.c_str(),"noRadEvents");
-     
-    //    int xRebinFactor = floor(radEvents2D->numberOfXBins/numberOfXBins); 
-    //    int yRebinFactor = floor(radEvents2D->numberOfQQBins/numberOfYBins); 
-    //    radEvents2D->Rebin2D(xRebinFactor, yRebinFactor); 
-    //    noRadEvents2D->Rebin2D(xRebinFactor, yRebinFactor); 
-
-    //    DIS1DHistograms * dataEvents = new DIS1DHistograms();
-    //    dataEvents->Create(dataEvents2D);
-    //    dataEvents->SetErrors();
-    //    dataEvents->Save(outputFilename.c_str(),"recreate");
+    noRadLoader.Save();
 
   } else {
     return PrintUsage();
@@ -73,15 +68,29 @@ int main(int argc, char * argv[]){
   return 0;
 }
 
-void configureCommandLineOptions(h22Options * theseOpts){
-  
-  theseOpts->args["LUND_RAD"].args = "UNSET";
-  theseOpts->args["LUND_RAD"].type = 1;
-  theseOpts->args["LUND_RAD"].name = "Radiaited lund events";
+void configureCommandLineOptions(h22Options *theseOpts){
+  theseOpts->args["RAD"].args = "UNSET";
+  theseOpts->args["RAD"].type = 1;
+  theseOpts->args["RAD"].name = "Radiaited list";
 
-  theseOpts->args["LUND_NORAD"].args = "UNSET";
-  theseOpts->args["LUND_NORAD"].type = 1;
-  theseOpts->args["LUND_NORAD"].name = "Unradiated lund events";
+  theseOpts->args["NORAD"].args = "UNSET";
+  theseOpts->args["NORAD"].type = 1;
+  theseOpts->args["NORAD"].name = "Unradiated list";
+}
+
+vector<string> loadFilesFromList(string fileList){
+  vector<string> theseFiles;
+
+  ifstream inputFile;
+  inputFile.open(fileList.c_str());
+
+  string line;
+  while (getline(inputFile, line)){
+    theseFiles.push_back(line);
+  }
+
+  inputFile.close();
+  return theseFiles;
 }
 
 int PrintUsage(){
@@ -93,7 +102,7 @@ int PrintUsage(){
   cout << "#    doRadiativeCorrection                           #" << endl;
   cout << "#                                                    #" << endl;
   cout << "#   This code requires an input/output flagged       #" << endl;
-  cout << "#   -LUND_RAD=rad.lund -LUND_NORAD=norad.lund        #" << endl;
+  cout << "#   -RAD=rad.dat -RAD=norad.dat                      #" << endl;
   cout << "#       -OUT=out/radCorr.root                        #" << endl;
   cout << "#                                                    #" << endl;
   cout << "######################################################" << endl;

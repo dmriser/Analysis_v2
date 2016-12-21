@@ -9,15 +9,16 @@ using namespace std;
 // My Libs 
 #include "BaseDISHistograms.h"
 #include "CommonTools.h"
-#include "LundEvent.h"
-#include "LundReader.h"
+#include "KeppelRadReader.h"
 #include "PhysicsEvent.h"
 #include "PhysicsEventBuilder.h"
 
 // CERN Root Libs
 #include "TLorentzVector.h"
+#include "TRandom3.h"
+#include "TMath.h"
 
-class RadiativeCorrectionLoader : public LundReader{
+class RadiativeCorrectionLoader : public KeppelRadReader {
 
  public:
   RadiativeCorrectionLoader(string histogramName, string histogramTitle, string outputName, string saveOpt);
@@ -27,62 +28,43 @@ class RadiativeCorrectionLoader : public LundReader{
   BaseDISHistograms simEvents; 
   PhysicsEventBuilder builder; 
   string histoName, histoTitle, outputFilenameWithExtension, saveOption; 
+  TRandom3 rand;
 
  public:
   void Initialize();
-  void Loop(int numberOfEvents);
+  void ProcessEvent();
   void Save();
-  void Execute(int numberOfEvents);
-
 };
 
 RadiativeCorrectionLoader::RadiativeCorrectionLoader(string histogramName, string histogramTitle, string outputName, string saveOpt){
-  histoName = histogramName; 
-  histoTitle = histogramTitle; 
+  histoName                   = histogramName; 
+  histoTitle                  = histogramTitle; 
   outputFilenameWithExtension = outputName; 
-  saveOption = saveOpt;
+  saveOption                  = saveOpt;
+
+  //  Initialize();
 }
 
 RadiativeCorrectionLoader::~RadiativeCorrectionLoader(){
   // Anything to do here? 
 }
 
-void RadiativeCorrectionLoader::Execute(int numberOfEvents){
-  Initialize();
-  Loop(numberOfEvents);
-  Save();
-}
-
 void RadiativeCorrectionLoader::Initialize(){
   simEvents.Init(histoName, histoTitle);
 }
 
-void RadiativeCorrectionLoader::Loop(int numberOfEvents){
+void RadiativeCorrectionLoader::ProcessEvent(){
 
-  int currentEvent = 0;
+  // I don't think phi is provided for us
+  double phi = rand.Uniform(360.0)-180.0;
+  double px  = ep*TMath::Sin(thete*to_radians)*TMath::Cos(phi*to_radians); 
+  double py  = ep*TMath::Sin(thete*to_radians)*TMath::Sin(phi*to_radians); 
+  double pz  = ep*TMath::Cos(thete*to_radians); 
 
-  // No complicated conditional fill conditions, because 
-  // we expect generated events only. 
-  while(HasEvent() && currentEvent < numberOfEvents){
-    TLorentzVector electron = GetEvent().GetParticle(0).GetTLorentzVector(); 
-    PhysicsEvent physicsEvent = builder.getPhysicsEvent(electron);
-    int sector = 1+floor((180.0 + electron.Phi()*to_degrees)/60.0);
-    if (sector > 0 && sector < 7) { simEvents.Fill(physicsEvent, sector); }
-
-    /*
-    cout.width(12); cout << electron.X();
-    cout.width(12); cout << electron.Y();
-    cout.width(12); cout << electron.Z();
-    cout.width(12); cout << electron.Theta() * to_degrees;
-    cout.width(12); cout << electron.Phi() * to_degrees;
-    cout.width(12); cout << physicsEvent.x; 
-    cout.width(12); cout << physicsEvent.w; 
-    cout.width(12); cout << physicsEvent.qq << endl; 
-    */
-
-    currentEvent++;
-  }
-
+  TLorentzVector electron(px, py, pz, ep); 
+  PhysicsEvent physicsEvent = builder.getPhysicsEvent(electron);
+  int sector = 1+floor((180.0 + electron.Phi()*to_degrees)/60.0);
+  if (sector > 0 && sector < 7) { simEvents.Fill(physicsEvent, sector); }
 }
 
 void RadiativeCorrectionLoader::Save(){

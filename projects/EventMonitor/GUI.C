@@ -1,8 +1,8 @@
 {
 
-  const int NCONF          = 3; 
-  string inputFile[NCONF]  = {"out/debug_jobs6_gen.root","out/debug_jobs6_rec.root","out/dataOnlyNathansElectrons.root"};
-  string configName[NCONF] = {"debug_jobs6_gen","debug_jobs6_rec","data_eid"};
+  const int NCONF          = 4; 
+  string inputFile[NCONF]  = {"out/debug_jobs6_gen.root","out/debug_jobs6_rec.root","out/dataOnlyNathansElectrons.root","newCook.root"};
+  string configName[NCONF] = {"debug_jobs6_gen","debug_jobs6_rec","data_eid","newCook"};
   
   // Getting file and events 
   TFile      *file[NCONF];

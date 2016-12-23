@@ -24,7 +24,7 @@ int main(int argc, char * argv[]){
 
   // ------------- Physics Options -------------
   int numberOfXBins = 80; 
-  int numberOfYBins = 40; 
+  int numberOfYBins = 20; 
 
   double normalizationScale = cm_to_outhouse*(hydrogen_molar_weight*electron_c*1e6)/(5.00*avogadro*hydrogen_density);
   // -------------------------------------------
@@ -58,19 +58,19 @@ int main(int argc, char * argv[]){
     int yRebinFactor = floor(dataEvents2D->numberOfQQBins/numberOfYBins); 
     dataEvents2D->Rebin2D(xRebinFactor, yRebinFactor); 
 
-    BaseDISHistograms * recEventsRad2D = new BaseDISHistograms();
+    BaseDISHistograms *recEventsRad2D = new BaseDISHistograms();
     recEventsRad2D->Load(inputFilename.c_str(),"recEventsRad");
     recEventsRad2D->Rebin2D(xRebinFactor, yRebinFactor); 
 
-    BaseDISHistograms * genEventsRad2D = new BaseDISHistograms();
+    BaseDISHistograms *genEventsRad2D = new BaseDISHistograms();
     genEventsRad2D->Load(inputFilename.c_str(),"genEventsRad");
     genEventsRad2D->Rebin2D(xRebinFactor, yRebinFactor); 
 
-    BaseDISHistograms * recAndGenEventsRad2D = new BaseDISHistograms();
+    BaseDISHistograms *recAndGenEventsRad2D = new BaseDISHistograms();
     recAndGenEventsRad2D->Load(inputFilename.c_str(),"recAndGenEventsRad");
 
     // Create output file 
-    DIS1DHistograms * dataEvents = new DIS1DHistograms();
+    DIS1DHistograms *dataEvents = new DIS1DHistograms();
     dataEvents->Create(dataEvents2D);
     dataEvents->SetErrors();
     dataEvents->Save(outputFilename.c_str(),"recreate");

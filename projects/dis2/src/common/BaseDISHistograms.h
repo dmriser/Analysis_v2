@@ -18,14 +18,14 @@ class BaseDISHistograms{
   BaseDISHistograms();
   ~BaseDISHistograms();
 
-  const static int numberOfXBins = 200;
+  const static int numberOfXBins  = 200;
   const static int numberOfQQBins = 200; 
-  const static int numberOfWBins = 200;
+  const static int numberOfWBins  = 200;
 
   // c++ 11 Standrd 
   static constexpr double xMin  = 0.1;  static constexpr double xMax  = 0.6; 
-  static constexpr double qqMin = 1.0;  static constexpr double qqMax = 4.8;
-  static constexpr double wMin  = 1.1;  static constexpr double wMax  = 2.7; 
+  static constexpr double qqMin = 1.4;  static constexpr double qqMax = 4.8;
+  static constexpr double wMin  = 1.1;  static constexpr double wMax  = 2.0; 
   
   /*
   const static double xMin  = 0.1;  const static double xMax  = 0.6; 

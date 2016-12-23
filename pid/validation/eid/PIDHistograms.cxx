@@ -62,10 +62,10 @@ public:
 PIDHistograms::PIDHistograms(){
 
   TMVAReader = new TMVA::Reader("");
-  TMVAReader->AddVariable("ec_ei/p",&input1);
-  TMVAReader->AddVariable("ec_eo/p",&input2);
-  TMVAReader->AddVariable("nphe",   &input3);  
-  TMVAReader->BookMVA("SVM","/u/home/dmriser/mydoc/analysis/root_scripts/Analysis_v2/pid/calib/eid/v2/weights/TMVAClassification_SVM.weights.xml");
+  //  TMVAReader->AddVariable("ec_ei/p",&input1);
+  //  TMVAReader->AddVariable("ec_eo/p",&input2);
+  //  TMVAReader->AddVariable("nphe",   &input3);  
+  //  TMVAReader->BookMVA("SVM","/u/home/dmriser/mydoc/analysis/root_scripts/Analysis_v2/pid/calib/eid/v2/weights/TMVAClassification_SVM.weights.xml");
 
   string type[12]   = {"allNegatives", "cuts","Z_VERTEX","CC_FID","CC_PHI","CC_THETA","DC_R1_FID","DC_R3_FID","EC_FID","EC_IN_OUT","EC_SAMPLING","SVM"};
     string sect[7]  = {"all", "s1", "s2", "s3", "s4", "s5", "s6"};
@@ -226,12 +226,12 @@ int main (int argc, char * argv[]){
 	      if(eID_Status["EC_FID"]){      histos.Fill(event, ipart, 8); }
 	      if(eID_Status["EC_IN_OUT"]){   histos.Fill(event, ipart, 9); }
 	      if(eID_Status["EC_SAMPLING"]){ histos.Fill(event, ipart, 10); }
-
+	      /*
 	      if(eID_Status["CC_FID"] && 
 		 eID_Status["EC_FID"] && 
 		 eID_Status["DC_R1_FID"] && 
 		 histos.TMVAReader->EvaluateMVA("SVM") > 0.75){ histos.Fill(event, ipart, 11); }
-
+	      */
 	    }
 	} // end ipart loop 
       

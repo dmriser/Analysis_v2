@@ -3,7 +3,7 @@
   gROOT->LoadMacro("utils.C");
 
   const int numberSector = 7;
-  const int numberSlices = 40;
+  const int numberSlices = 20;
 
   TH1D *data[numberSector][numberSlices];
   TH1D *rec[numberSector][numberSlices];
@@ -14,7 +14,7 @@
   TH1D *radCorr[numberSector][numberSlices];
 
 
-  TFile *inputFile = TFile::Open("../out/xsNewEID.root");
+  TFile *inputFile = TFile::Open("../out/xsNoRes.root");
   //  TFile *inputFile = TFile::Open("../out/crossSectionNoFidPass1.root");
 
   readHisto(data, inputFile, numberSector, numberSlices, "dataEvents_wByQQ");

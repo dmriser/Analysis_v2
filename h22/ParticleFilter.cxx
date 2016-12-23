@@ -269,6 +269,17 @@ bool ParticleFilter::has_electron(h22Event event){
   return false;
 }
 
+DataEventSelector * ParticleFilter::getSelector(int pid){
+
+  if (pid == 11){
+    return electronSelector; 
+  }
+  else {
+    return new DataEventSelector();
+  }
+
+}
+
 vector<int> ParticleFilter::getVectorOfParticleIndices(h22Event event, int pid){
   
   vector<int> particles;

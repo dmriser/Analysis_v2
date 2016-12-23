@@ -2,10 +2,10 @@
 
   gROOT->LoadMacro("utils.C");
 
-  TFile * inputFile = TFile::Open("../out/xsNewEID.root");
+  TFile * inputFile = TFile::Open("../out/xsNoRes.root");
 
   const int numberSector = 1;
-  const int numberSlices = 40;
+  const int numberSlices = 20;
 
   TH1D *elastic[numberSector][numberSlices];
   TH1D *inelastic[numberSector][numberSlices];

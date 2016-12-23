@@ -7,7 +7,6 @@ void readIntegratedHisto(TH1D *histo[numberSector], TFile *file, const int numbe
 }
 
 void readHisto(TH1D *histo[numberSector][numberSlices], TFile *file, const int numberSector, const int numberSlices, string title){
-
   for (int s=0; s< numberSector; s++){
     for (int b=0; b< numberSlices; b++) {
       string fullTitle = Form("%s_s%d_slice%d",title.c_str(),s,b);
@@ -119,7 +118,7 @@ void printSlices(TH1D *histo[numberSector][numberSlices], const int numberSector
   //           8 = rad corr 
   //           9 = inelastic fraction 
 
-  double qqMin = 1.0; double qqMax = 4.8;
+  double qqMin = 1.4; double qqMax = 4.8;
   double qqWidth = (qqMax-qqMin)/numberSlices; // slices are always Q^2 bins 
 
   TCanvas *can = new TCanvas("can","",800,800);
@@ -138,8 +137,8 @@ void printSlices(TH1D *histo[numberSector][numberSlices], const int numberSector
   toleranceCaption.SetTextSize(0.025);
   toleranceCaption.SetTextAngle(90.0);
 
-  TLine ratioLower(1.1, 0.85, 2.7, 0.85);
-  TLine ratioUpper(1.1, 1.15, 2.7, 1.15);
+  TLine ratioLower(histo[0][0]->GetXaxis()->GetXmin(), 0.85, histo[0][0]->GetXaxis()->GetXmax(), 0.85);
+  TLine ratioUpper(histo[0][0]->GetXaxis()->GetXmin(), 1.15, histo[0][0]->GetXaxis()->GetXmax(), 1.15);
   ratioLower.SetLineStyle(8);
   ratioUpper.SetLineStyle(8);
 
@@ -431,8 +430,8 @@ void plot2Histos(TH1D *histo1[numberSector][numberSlices], TH1D *histo2[numberSe
       //      xCaption.DrawLatex(0.62, 0.04, "X_{Bjorken}");
 
       if (histoType == 1){
-	histo1Caption.DrawLatex(0.18, 0.93, Form("Data Events = %.0f",histo1[s][sl]->GetEntries()));
-	histo2Caption.DrawLatex(0.18, 0.89, Form("Sim Events = %.0f",histo2[s][sl]->GetEntries()));
+	histo1Caption.DrawLatex(0.18, 0.93, Form("Data Events = %.2E",histo1[s][sl]->GetEntries()));
+	histo2Caption.DrawLatex(0.18, 0.89, Form("Sim Events = %.2E",histo2[s][sl]->GetEntries()));
       }
 
       else if (histoType == 2){

@@ -3,10 +3,10 @@
   gROOT->LoadMacro("utils.C");
 
   //  TFile * inputFile = TFile::Open("../out/crossSectionWithResonancePass1.root");
-  TFile * inputFile = TFile::Open("../out/xsNewEID.root");
+  TFile * inputFile = TFile::Open("../out/xsNoRes.root");
 
   const int numberSector = 7;
-  const int numberSlices = 40;
+  const int numberSlices = 20;
 
   TH1D *sim[numberSector][numberSlices];
   TH1D *data[numberSector][numberSlices];

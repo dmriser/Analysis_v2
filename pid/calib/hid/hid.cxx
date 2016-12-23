@@ -20,7 +20,8 @@ using namespace std;
 #include "h22Option.h"
 #include "h22Reader.h"
 #include "ParticleFilter.h"
-#include "pars.h"
+#include "Parameters.h"
+#include "Pars.h"
 
 // root includes
 #include "TCanvas.h"
@@ -34,17 +35,24 @@ int main(int argc, char * argv[])
     
     // Setup Options
     h22Options opts;
+    opts.args["PARS"].args = "/u/home/dmriser/mydoc/analysis/root_scripts/Analysis_v2/lists/data.pars";
+    opts.args["PARS"].type = 1;
+    opts.args["PARS"].name = "Parameter file";
     opts.set(argc,argv);
-    int GSIM     = opts.args["MC"].arg;
-    long int nev = opts.args["N"].arg;
+
+    int GSIM        = opts.args["MC"].arg;
+    long int nev    = opts.args["N"].arg;
     string eparfile = opts.args["EPARS"].args;
     string hparfile = opts.args["HPARS"].args;
-    
+
     hpars pars;
     pars.load(hparfile);
     
+    Parameters electronPars; 
+    electronPars.loadParameters(opts.args["PARS"].args);
+
     // Setup Reader
-    h22Reader * fReader = new h22Reader(GSIM);
+    h22Reader *fReader = new h22Reader();
     for (auto it=opts.ifiles.begin(); it<opts.ifiles.end(); it++) { fReader->AddFile(*it); }
     fReader->Init();
     
@@ -52,7 +60,7 @@ int main(int argc, char * argv[])
     
     // Setting important constants
     int runno = fReader->runno();
-    ParticleFilter filter(eparfile);
+    ParticleFilter filter(&electronPars);
     filter.set_info(GSIM, runno);
     Corrections corr;
     
@@ -122,10 +130,14 @@ int main(int argc, char * argv[])
         if ( runno != fReader->runno() ){ runno = fReader->runno(); filter.set_info(GSIM, runno); }
         
         // Load up hadrons if we've electron.
-        if (filter.has_electron(event))
-        {
+	vector<int> electronCandidates = filter.getVectorOfParticleIndices(event, 11);
+        if ( !electronCandidates.empty() ){
             electrons++;
-            double start_time = corr.electron_sct(event,0,runno,GSIM) - event.sc_r[0]/speed_of_light;
+
+	    // Take the fastest one
+	    int electronIndex = electronCandidates[0];
+
+            double start_time = corr.electron_sct(event,electronIndex,runno,GSIM) - event.sc_r[electronIndex]/speed_of_light;
             for (int ipart=1; ipart<event.gpart; ipart++)
             {
                 int sector = event.sc_sect[ipart]-1;
@@ -147,13 +159,13 @@ int main(int argc, char * argv[])
                     
                     if (event.q[ipart] == 0) { h2_p_b_neu[sector]->Fill(event.p[ipart],beta); }
                     
-                    h1_dvz[sector]->Fill(corr.vz(event,0,runno,GSIM)-corr.vz(event,ipart,runno,GSIM));
+                    h1_dvz[sector]->Fill(corr.vz(event,electronIndex,runno,GSIM)-corr.vz(event,ipart,runno,GSIM));
                 }
             }
         }
     }
     
-    
+    /*    
     // Fitting Happens Here.
     for (int s=0; s<6; s++)
     {
@@ -243,7 +255,8 @@ int main(int argc, char * argv[])
     }
     
       pars.save(hparfile);
-    
+    */
+
     TCanvas * c1 = new TCanvas("c1","",1200,800);
     c1->Divide(3,2);
     c1->Print("test.pdf[");

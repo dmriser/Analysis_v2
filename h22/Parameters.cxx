@@ -79,9 +79,10 @@ void Parameters::saveParameters(string outputFilename){
     file.width(20); file << currentParameterSet.getName(); 
     file.width(6);  file << currentParameterSet.getNumberOfValues();
     file.width(6); file << 'e';
+
     for (int param = 0; param < currentParameterSet.getNumberOfValues(); param++){ file.width(20); file << currentParameterSet.getError(param); }
     file << endl;
-    file << endl;
+    //    file << endl;
   }
 
   file.close();

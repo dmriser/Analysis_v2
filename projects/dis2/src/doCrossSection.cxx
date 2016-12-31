@@ -114,6 +114,15 @@ int main(int argc, char * argv[]){
     recEventsRad->SetErrors();
     recEventsRad->Save(outputFilename.c_str(),"update");
 
+    DIS1DHistograms *recEventsRadNorm = new DIS1DHistograms();
+    recEventsRadNorm->Create(recEventsRad2D);
+    recEventsRadNorm->SetErrors();
+    recEventsRadNorm->SetNumberOfEventsSame(dataEvents);
+
+    DIS1DHistograms *dataSimRatio = new DIS1DHistograms();
+    dataSimRatio->CreateByDivision(dataEvents, recEventsRadNorm,"dataSimRatio", "dataSimRatio"); 
+    dataSimRatio->Save(outputFilename.c_str(),"update"); 
+
     DIS1DHistograms * genEventsRad = new DIS1DHistograms();
     genEventsRad->Create(genEventsRad2D);
     genEventsRad->SetErrors();

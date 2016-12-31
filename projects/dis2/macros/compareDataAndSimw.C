@@ -3,7 +3,7 @@
   gROOT->LoadMacro("utils.C");
 
   //  TFile * inputFile = TFile::Open("../out/crossSectionWithResonancePass1.root");
-  TFile * inputFile = TFile::Open("../out/xsNoRes.root");
+  TFile * inputFile = TFile::Open("../out/xsLoose.root");
 
   const int numberSector = 7;
   const int numberSlices = 20;

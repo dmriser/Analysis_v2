@@ -2,11 +2,11 @@
 
 # User Parameters 
 set numberOfJobs = 50 
-set binDir       = "/u/home/dmriser/mydoc/analysis/root_scripts/Analysis_v2/pid/validation/eid"
-set binName      = "PIDHistograms"
+set binDir       = "/u/home/dmriser/mydoc/analysis/root_scripts/Analysis_v2/projects/dis2/src"
+set binName      = "fillHistograms"
 set sourceDir    = "/u/home/dmriser/mydoc/analysis/root_scripts/Analysis_v2/farm/analysis"
-set outDir       = "/volatile/clas/clas12/dmriser/analysis/e1f_analysis/PID/mc/myEID"
-set outName      = "mc"
+set outDir       = "/volatile/clas/clas12/dmriser/analysis/e1f_analysis/inclusive/loose/"
+set outName      = "MC"
 set runScript    = "goAnalyze"
 set fileList     = "/u/home/dmriser/mydoc/analysis/root_scripts/Analysis_v2/projects/dis2/MonteCarlo.dat"
 

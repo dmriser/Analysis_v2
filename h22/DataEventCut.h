@@ -246,7 +246,7 @@ class CCFiducialCut : public DataEventCut
   CCFiducialCut();
   ~CCFiducialCut();
 
-  double a, b; 
+  double a, b, c; 
   bool passes(h22Event, int);
 
 };

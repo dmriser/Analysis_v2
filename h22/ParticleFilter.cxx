@@ -75,6 +75,7 @@ ParticleFilter::ParticleFilter(Parameters *params) : pars(params){
 
     cc_fid_cut->a = params->getParameter("EL_CC_FIDA").getValue(0);
     cc_fid_cut->b = params->getParameter("EL_CC_FIDB").getValue(0);
+    cc_fid_cut->c = params->getParameter("EL_CC_FIDC").getValue(0);
 
     dcr1_fid_cut->height = params->getParameter("EL_DCR1_FIDH").getValue(0);
     dcr1_fid_cut->angle  = params->getParameter("EL_DCR1_FIDA").getValue(0);

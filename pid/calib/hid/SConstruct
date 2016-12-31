@@ -4,8 +4,7 @@ exeEnv = Environment(ENV = {'PATH':os.environ['PATH']}, h22libs=os.environ['h22l
 exeEnv.ParseConfig("root-config --glibs --cflags")
 exeEnv.Append(CCFLAGS = ['-g'])
 exeEnv.Append(CPPPATH = ['$h22libs/include/'], LIBPATH = ['$h22libs/lib/'],LIBS = ['h22'])
-#exeEnv.Append(CPPPATH = ['$h22libs/include/'], LIBPATH = ['$h22libs/lib/'],LIBS = ['FortranModel'])
-#exeEnv.Append(CPPPATH = ['$h22libs/include/'], LIBPATH = ['$h22libs/lib/'],LIBS = ['CppModel'])
+exeEnv.Append(LIBPATH = ['$ROOTSYS/lib/'],LIBS = ['TreePlayer'])
 
 sources = glob.glob('*.cxx')
 

@@ -252,7 +252,7 @@ void findElectronIDParameters::CalculateSamplingFractionCut(){
 void findElectronIDParameters::WriteHardCodedParameters(){
   ParameterSet zVertexLimitMin, zVertexLimitMax, ecUCoordMin, ecVCoordMin, ecWCoordMin,
     ecUCoordMax, ecVCoordMax, ecWCoordMax, ecEdepMin, ecNSigma, dcr1FidH, dcr1FidA, 
-    dcr3FidH, dcr3FidA, ccFidA, ccFidB, NPheMin, NPheMax; 
+    dcr3FidH, dcr3FidA, ccFidA, ccFidB, ccFidC, NPheMin, NPheMax; 
 
   NPheMin.setName("EL_NPHE_MIN");
   NPheMin.addValueAndError(25.0, 0.0);
@@ -286,6 +286,10 @@ void findElectronIDParameters::WriteHardCodedParameters(){
  
   ccFidB.setName("EL_CC_FIDB");
   ccFidB.addValue(35.0);
+  ccFidB.addError(0.0);
+
+  ccFidB.setName("EL_CC_FIDC");
+  ccFidB.addValue(360.0);
   ccFidB.addError(0.0);
 
   zVertexLimitMin.setName("EL_VZ_MIN"); 
@@ -326,6 +330,7 @@ void findElectronIDParameters::WriteHardCodedParameters(){
   eidParameters.addParameterSet(NPheMax);
   eidParameters.addParameterSet(ccFidA);
   eidParameters.addParameterSet(ccFidB);
+  eidParameters.addParameterSet(ccFidC);
   eidParameters.addParameterSet(dcr1FidA);
   eidParameters.addParameterSet(dcr1FidH);
   eidParameters.addParameterSet(dcr3FidA);

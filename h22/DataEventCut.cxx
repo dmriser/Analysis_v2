@@ -371,7 +371,7 @@ bool ZVertexCut::passes(h22Event event, int index)
 
 CCFiducialCut::CCFiducialCut()
 {
-  a = 0; b = 0;
+  a = 0; b = 0, c = 0;
   set_name("CC Fid Cut"); 
 }
 
@@ -382,7 +382,7 @@ CCFiducialCut::~CCFiducialCut()
 
 bool CCFiducialCut::passes(h22Event event, int index)
 {
-  set_min(a - b*sqrt(1 - pow(event.rphi(index),2)/360));
+  set_min(a - b*sqrt(1 - pow(event.rphi(index),2)/c));
     
   if ( event.theta_cc(index) > min() ) { n_pass++; return true; }
   else                                        { n_fail++; return false;}

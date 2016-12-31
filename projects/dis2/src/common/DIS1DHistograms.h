@@ -63,6 +63,7 @@ class DIS1DHistograms{
   void ScaleByPhotonFlux(double beamEnergy);
   void SetBinsOutsideRangeToValue(double min, double max,double value);
   void SetErrors(); 
+  void SetNumberOfEventsSame(DIS1DHistograms *histos);
 };
 
 DIS1DHistograms::DIS1DHistograms(){
@@ -243,6 +244,28 @@ void DIS1DHistograms::DivideByZero(DIS1DHistograms *histos){
     }
 
   }
+
+}
+
+void DIS1DHistograms::SetNumberOfEventsSame(DIS1DHistograms *histos){  
+
+    for (int sector=0; sector<7; sector++){
+      allxByQQ[sector]->Scale( histos->allxByQQ[sector]->Integral()/allxByQQ[sector]->Integral() );
+      allwByQQ[sector]->Scale( histos->allwByQQ[sector]->Integral()/allwByQQ[sector]->Integral() );
+    }
+  
+
+    for (int sector=0; sector<xByQQ.size(); sector++){
+      for (int slice=0; slice<xByQQ[sector].size(); slice++){
+	xByQQ[sector][slice]->Scale( histos->xByQQ[sector][slice]->Integral()/xByQQ[sector][slice]->Integral() );
+      }
+    }
+
+    for (int sector=0; sector<wByQQ.size(); sector++){
+      for (int slice=0; slice<wByQQ[sector].size(); slice++){
+	wByQQ[sector][slice]->Scale( histos->wByQQ[sector][slice]->Integral()/wByQQ[sector][slice]->Integral() );
+      }
+    }
 
 }
 

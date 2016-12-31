@@ -5,6 +5,7 @@ using std::endl;
 using std::vector;
 
 // My libs
+#include "CommonTools.h"
 #include "DataEventCut.h"
 #include "DataEventSelector.h"
 #include "GenericAnalysis.h"
@@ -14,12 +15,13 @@ using std::vector;
 
 // Root 
 #include "TFile.h"
+#include "TMath.h"
 #include "TH1.h"
 
 class Efficiency : public GenericAnalysis {
   
 public:
-  TH1F *allP;
+  TH1F *allP, *combinedP;
   vector<TH1F*> effP;
 
   Parameters        *pars;
@@ -34,7 +36,7 @@ public:
 
 void Efficiency::Initialize(){
   pars = new Parameters();
-  pars->loadParameters("/u/home/dmriser/mydoc/analysis/root_scripts/Analysis_v2/lists/keppelRad.pars");
+  pars->loadParameters("/u/home/dmriser/mydoc/analysis/root_scripts/Analysis_v2/lists/keppelRadLoose.pars");
 
   filter = new ParticleFilter(pars);
   filter->set_info(0,1);
@@ -43,15 +45,16 @@ void Efficiency::Initialize(){
   selector = filter->getSelector(11);
   selector->enable_all();
 
-  int numberPBins = 30; 
-  double pMin = 1.0; double pMax = 4.5;
+  int numberPBins = 80; 
+  double pMin = 0.7; double pMax = 4.5;
 
-  allP = new TH1F("allP","",numberPBins,pMin,pMax);
+  allP      = new TH1F("pAll","pAll",numberPBins,pMin,pMax);
+  combinedP = new TH1F("pCombined","pCombined",numberPBins,pMin,pMax);
 
   for(int icut=0; icut<selector->cuts.size(); ++icut){
     std::string cutName = selector->cuts[icut]->name();
-    TH1F *currentHisto  = new TH1F(cutName.c_str(),cutName.c_str(),numberPBins, pMin, pMax);
-    effP.push_back(currentHisto);
+    TH1F *currentHistoP = new TH1F(Form("pCut%d",icut),cutName.c_str(),numberPBins,pMin,pMax);
+    effP.push_back(currentHistoP);
   }
 
 }
@@ -67,7 +70,8 @@ void Efficiency::ProcessEvent(){
 	effP[icut]->Fill(event.p[ipart]);
       }
     }
-
+    
+    //    if (selector->passes(event, ipart)){ combinedP->Fill(event.p[ipart]); }
   }
 
 }
@@ -78,7 +82,7 @@ void Efficiency::Save(){
     effP[ihist]->Divide(allP); 
   }
 
-  TFile *outputFile = new TFile("Efficiency.root","recreate"); 
+  TFile *outputFile = new TFile("EfficiencyLoose.root","recreate"); 
   allP->Write();
 
   for (int ihist=0; ihist<effP.size(); ++ihist){

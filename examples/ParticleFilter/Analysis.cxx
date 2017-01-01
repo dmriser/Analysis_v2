@@ -30,9 +30,9 @@ public:
   ParticleFilter *filter;
   PhysicsEventBuilder *builder;
 
-  TH1I *pTpip, *pTpim;
-  TH1I *phiPip, *phiPim;
-  TH2I *pTzPip, *pTzPim, *xQQ, *wQQ;
+  TH1I *pTpip, *pTpim, *pTpi0;
+  TH1I *phiPip, *phiPim, *phiPi0;
+  TH2I *pTzPip, *pTzPim, *pTzPi0, *xQQ, *wQQ;
 
   void ProcessEvent();
   void Initialize();
@@ -48,10 +48,13 @@ void MyAnalysis::Initialize(){
 
   pTpip  = new TH1I("pTpip","",100,0,1.1);
   pTpim  = new TH1I("pTpim","",100,0,1.1);
+  pTpi0  = new TH1I("pTpi0","",100,0,1.1);
   phiPip = new TH1I("phiPip","",100,-180,180);
   phiPim = new TH1I("phiPim","",100,-180,180);
+  phiPi0 = new TH1I("phiPi0","",100,-180,180);
   pTzPip = new TH2I("pTzPip","",100,0.0,1.1,100,0.0,1.1);
   pTzPim = new TH2I("pTzPim","",100,0.0,1.1,100,0.0,1.1);
+  pTzPi0 = new TH2I("pTzPi0","",100,0.0,1.1,100,0.0,1.1);
   xQQ    = new TH2I("xQQ","",100,0.0,0.7,100,0.5,4.5);
   wQQ    = new TH2I("wQQ","",100,0.5,3.0,100,0.5,4.5);
 
@@ -60,10 +63,11 @@ void MyAnalysis::Initialize(){
 
 // Example overwriting the event action 
 void MyAnalysis::ProcessEvent(){  
-  std::vector<TLorentzVector> pims, pips, electrons; 
+  std::vector<TLorentzVector> pims, pips, pi0s, electrons; 
   electrons = filter->getVectorOfTLorentzVectors(event,   11);
   pims      = filter->getVectorOfTLorentzVectors(event, -211);
   pips      = filter->getVectorOfTLorentzVectors(event,  211);
+  pi0s      = filter->getVectorOfTLorentzVectors(event,  111);
 
   if (electrons.size()>0){
     PhysicsEvent elEvent = builder->getPhysicsEvent(electrons[0]);
@@ -84,6 +88,13 @@ void MyAnalysis::ProcessEvent(){
     phiPip ->Fill(pipEvent.phiHadron);
     pTzPip ->Fill(pipEvent.z, pipEvent.pT*pipEvent.pT); 
   } 
+  
+  if( pi0s.size()>0 && electrons.size()>0) {
+    PhysicsEvent pi0Event = builder->getPhysicsEvent(electrons[0], pi0s[0]);    
+    pTpi0  ->Fill(pi0Event.pT);
+    phiPi0 ->Fill(pi0Event.phiHadron);
+    pTzPi0 ->Fill(pi0Event.z, pi0Event.pT*pi0Event.pT); 
+  } 
 
 }
 
@@ -97,14 +108,18 @@ void MyAnalysis::Display(){
   display->cd(1);
   pTpip->SetLineColor(95);
   pTpim->SetLineColor(65);
+  pTpi0->SetLineColor(75);
   pTpip->Draw();
   pTpim->Draw("same");
+  pTpi0->Draw("same");
 
   display->cd(2);
   phiPip->SetLineColor(95);
   phiPim->SetLineColor(65);
+  phiPi0->SetLineColor(75);
   phiPip->Draw();
   phiPim->Draw("same");
+  phiPi0->Draw("same");
 
   display->cd(3);
   gPad->SetLogz();
@@ -113,12 +128,13 @@ void MyAnalysis::Display(){
   display->cd(4);
   gPad->SetLogz();
   pTzPim->Draw("colz");
-  
-  display->cd(5);
-  xQQ->Draw("colz");
 
-  display->cd(6);
-  wQQ->Draw("colz");
+  display->cd(5);
+  gPad->SetLogz();
+  pTzPi0->Draw("colz");
+  
+
+
 }
 
 int main(int argc, char *argv[]){

@@ -132,38 +132,43 @@ void HIDCalibration::ProcessEvent(){
     int electronIndex = electronCandidates[0];    
     double start_time = corr.electron_sct(event,electronIndex,runno(),GSIM) - event.sc_r[electronIndex]/speed_of_light;
 
-    for (int ipart=1; ipart<event.gpart; ipart++){
+    for (int ipart=0; ipart<event.gpart; ipart++){
 
-      int sector = event.sc_sect[ipart]-1; 
-      if (sector > -1){
-	double cbeta = event.sc_r[ipart]/(corr.hadron_sct(event,ipart,runno(),GSIM)-start_time);
-	double beta  = cbeta/speed_of_light;
-	double tofmass = sqrt(pow(event.p[ipart],2)*(1-pow(beta,2))/pow(beta,2)); 
+      // This important line stops other electrons from 
+      // getting added to the plots.
+      if ( std::find(electronCandidates.begin(), electronCandidates.end(), ipart) == electronCandidates.end() ) {
 
-	if (event.q[ipart] < 0) {
-	  h2_p_b_neg[sector]  ->Fill(event.p[ipart],beta);
-	  h2_p_db_pim[sector] ->Fill(event.p[ipart],(event.p[ipart])/sqrt(event.p[ipart]*event.p[ipart]+pi_mass*pi_mass)-beta);
-	  h2_tofmass_neg[sector]->Fill(event.p[ipart], tofmass); 
-	  h1_tofmass_neg[sector]->Fill(tofmass); 
-	}
+	int sector = event.sc_sect[ipart]-1; 
+	if (sector > -1){
+	  double cbeta = event.sc_r[ipart]/(corr.hadron_sct(event,ipart,runno(),GSIM)-start_time);
+	  double beta  = cbeta/speed_of_light;
+	  double tofmass = sqrt(pow(event.p[ipart],2)*(1-pow(beta,2))/pow(beta,2)); 
+	  
+	  if (event.q[ipart] < 0) {
+	    h2_p_b_neg[sector]  ->Fill(event.p[ipart],beta);
+	    h2_p_db_pim[sector] ->Fill(event.p[ipart],(event.p[ipart])/sqrt(event.p[ipart]*event.p[ipart]+pi_mass*pi_mass)-beta);
+	    h2_tofmass_neg[sector]->Fill(event.p[ipart], tofmass); 
+	    h1_tofmass_neg[sector]->Fill(tofmass); 
+	  }
+	  
+	  if (event.q[ipart] > 0) {
+	    h2_p_b_pos[sector]   ->Fill(event.p[ipart],beta);
+	    h2_p_db_prot[sector] ->Fill(event.p[ipart],(event.p[ipart])/sqrt(event.p[ipart]*event.p[ipart]+proton_mass*proton_mass)-beta);
+	    h2_p_db_pip[sector]  ->Fill(event.p[ipart],(event.p[ipart])/sqrt(event.p[ipart]*event.p[ipart]+pi_mass*pi_mass)-beta);
+	    h2_tofmass_pos[sector]->Fill(event.p[ipart], tofmass); 
+	    h1_tofmass_pos[sector]->Fill(tofmass); 
+	  }
+	  
+	  if (event.q[ipart] == 0) { 
+	    h2_p_b_neu[sector]->Fill(event.p[ipart],beta); 
+	    h2_tofmass_neu[sector]->Fill(event.p[ipart], tofmass); 
+	    h1_tofmass_neu[sector]->Fill(tofmass); 
+	  }
         
-	if (event.q[ipart] > 0) {
-	  h2_p_b_pos[sector]   ->Fill(event.p[ipart],beta);
-	  h2_p_db_prot[sector] ->Fill(event.p[ipart],(event.p[ipart])/sqrt(event.p[ipart]*event.p[ipart]+proton_mass*proton_mass)-beta);
-	  h2_p_db_pip[sector]  ->Fill(event.p[ipart],(event.p[ipart])/sqrt(event.p[ipart]*event.p[ipart]+pi_mass*pi_mass)-beta);
-	  h2_tofmass_pos[sector]->Fill(event.p[ipart], tofmass); 
-	  h1_tofmass_pos[sector]->Fill(tofmass); 
+	  h1_dvz[sector]->Fill(corr.vz(event,electronIndex,runno(),GSIM)-corr.vz(event,ipart,runno(),GSIM));
 	}
-        
-	if (event.q[ipart] == 0) { 
-	  h2_p_b_neu[sector]->Fill(event.p[ipart],beta); 
-	  h2_tofmass_neu[sector]->Fill(event.p[ipart], tofmass); 
-	  h1_tofmass_neu[sector]->Fill(tofmass); 
-	}
-        
-	h1_dvz[sector]->Fill(corr.vz(event,electronIndex,runno(),GSIM)-corr.vz(event,ipart,runno(),GSIM));
-
       }
+      
     }
   }
 }

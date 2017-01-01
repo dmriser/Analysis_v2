@@ -68,6 +68,10 @@ public:
     TrackQualityCut    *qc_cut;
     ZVertexCut         *vz_cut;
 
+    // Parameters for Pi-0 Invariant Mass
+    // There should be a better way to do it. 
+    double pi0_invmass_mu[6], pi0_invmass_sigma[6], pi0_invmass_nsigma;
+    
     // Member Functions
     bool has_electron(h22Event);
     int getByPID(h22Event, int);

@@ -248,6 +248,13 @@ ParticleFilter::ParticleFilter(Parameters *params) : pars(params){
     // call will be after.
     electronSelector->enable_all();
     electronSelector->disable_by_name("NPhe Cut");
+
+    for(int s=0; s<6; s++){
+      pi0_invmass_mu[s]    = params->getParameter("PI0_INVMASS_MU")   .getValue(s);
+      pi0_invmass_sigma[s] = params->getParameter("PI0_INVMASS_SIGMA").getValue(s);
+    }
+      pi0_invmass_nsigma   = params->getParameter("PI0_INVMASS_NSIGMA").getValue(0);
+
 }
 
 ParticleFilter::~ParticleFilter(){
@@ -309,11 +316,39 @@ vector<int> ParticleFilter::getVectorOfParticleIndices(h22Event event, int pid){
 
 vector<TLorentzVector> ParticleFilter::getVectorOfTLorentzVectors(h22Event event, int pid){
   vector<TLorentzVector> particles; 
-  vector<int> particleIndices = getVectorOfParticleIndices(event, pid);
+  vector<int> particleIndices;
 
-  for (int ipart=0; ipart<particleIndices.size(); ipart++){
-    particles.push_back(event.getTLorentzVector(particleIndices[ipart], pid));
+  if (pid != 111) {
+    particleIndices = getVectorOfParticleIndices(event, pid);
+    for (int ipart=0; ipart<particleIndices.size(); ipart++){
+      particles.push_back(event.getTLorentzVector(particleIndices[ipart], pid));
+    }
   }
+
+  // Pi-0 
+  else if (pid == 111){
+    vector<int> photons = getVectorOfParticleIndices(event, 22);
+
+    if (photons.size() >= 2){
+      for(int iphot=0; iphot<photons.size(); iphot++){
+	TLorentzVector firstPhoton = event.getTLorentzVector(photons[iphot], 22); 
+	for(int jphot=iphot+1; jphot<photons.size(); jphot++){
+	  TLorentzVector secondPhoton = event.getTLorentzVector(photons[jphot], 22); 
+	  TLorentzVector pi0 = firstPhoton+secondPhoton; 
+
+	  int sector = floor((180.0 + pi0.Phi()*to_degrees)/60.0);
+
+	  if (pi0.Mag() > pi0_invmass_mu[sector]-pi0_invmass_nsigma*pi0_invmass_sigma[sector] && 
+	      pi0.Mag() < pi0_invmass_mu[sector]+pi0_invmass_nsigma*pi0_invmass_sigma[sector]){
+	    particles.push_back(pi0); 
+	  }
+	}
+      }
+    }
+
+  }
+
+
   return particles; 
 }
 

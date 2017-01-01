@@ -1,5 +1,5 @@
-# Filename: /u/home/dmriser/mydoc/analysis/root_scripts/Analysis_v2/lists/data.pars
-# Last edited at: Sat Dec 31 22:47:33 2016
+# Filename: data.pars
+# Last edited at: Sat Dec 31 17:49:27 2016
          EL_CCT_MU_A     6     v          -0.0013386        -0.000923056         -0.00135841          -0.0017197         -0.00602789         -0.00109203
          EL_CCT_MU_A     6     e         4.63479e-05         4.37945e-05         4.70284e-05         4.74124e-05         5.04046e-05         4.87023e-05
          EL_CCT_MU_B     6     v           0.0854206           0.0699763           0.0901968            0.095318            0.221136           0.0843542
@@ -72,9 +72,3 @@
            EL_VZ_MAX     1     e                   0
            EL_VZ_MIN     1     v            -27.7302
            EL_VZ_MIN     1     e                   0
-      PI0_INVMASS_MU     6     v            0.147969            0.140534            0.142274            0.148054            0.150795            0.157553
-      PI0_INVMASS_MU     6     e         0.000491004         0.000390491         0.000384758         0.000391842         0.000368228         0.000522183
-  PI0_INVMASS_NSIGMA     1     v                 1.5
-  PI0_INVMASS_NSIGMA     1     e                   0
-   PI0_INVMASS_SIGMA     6     v           0.0326472           0.0277883           0.0274016           0.0283801           0.0278345           0.0324048
-   PI0_INVMASS_SIGMA     6     e         0.000653775         0.000489116         0.000478819         0.000466036         0.000424774         0.000620355

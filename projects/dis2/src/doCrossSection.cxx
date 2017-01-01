@@ -23,8 +23,8 @@ void configureCommandLineOptions(h22Options * theseOpts);
 int main(int argc, char * argv[]){
 
   // ------------- Physics Options -------------
-  int numberOfXBins = 80; 
-  int numberOfYBins = 20; 
+  int numberOfXBins = 80;     //   x, W
+  int numberOfYBins = 20;     //    Q^2
 
   double normalizationScale = cm_to_outhouse*(hydrogen_molar_weight*electron_c*1e6)/(5.00*avogadro*hydrogen_density);
   // -------------------------------------------
@@ -190,7 +190,8 @@ int main(int argc, char * argv[]){
       radCorr->Save(outputFilename.c_str(),"update");
 
       DIS1DHistograms *radCorrCrossSection = new DIS1DHistograms();
-      radCorrCrossSection->CreateByDivision(crossSection,radCorr,"radCorrCrossSection","Cross Section w/ Rad Corr."); 
+      radCorrCrossSection->CreateFromExisting(crossSection,"radCorrCrossSection","Cross Section w/ Rad Corr."); 
+      radCorrCrossSection->DivideByZero(radCorr); // This just uses all -> [0]
       radCorrCrossSection->Save(outputFilename.c_str(),"update");
 
       DIS1DHistograms *radCorrCrossSectionRatio = new DIS1DHistograms(); 
@@ -233,13 +234,13 @@ int main(int argc, char * argv[]){
       radCorr->Save(outputFilename.c_str(),"update");
 
       DIS1DHistograms *radCorrCrossSection = new DIS1DHistograms();
-      radCorrCrossSection->CreateByDivision(binCorrCS,radCorr,"radCorrCrossSection","Cross Section w/ Rad Corr."); 
+      radCorrCrossSection->CreateFromExisting(binCorrCS,"radCorrCrossSection","Cross Section w/ Rad Corr."); 
+      radCorrCrossSection->DivideByZero(radCorr); // Divides all by [0] instead of [1-6]
       radCorrCrossSection->Save(outputFilename.c_str(),"update");
 
       DIS1DHistograms *radCorrCrossSectionRatio = new DIS1DHistograms(); 
       radCorrCrossSectionRatio->CreateByDivision(radCorrCrossSection, modelCrossSection, "radCorrCrossSectionRatio", "Cross Section Ratio w/ Rad. Correction");
       radCorrCrossSectionRatio->Save(outputFilename.c_str(), "update");
-
     }
 
 

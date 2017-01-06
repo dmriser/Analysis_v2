@@ -198,6 +198,8 @@ int main (int argc, char * argv[]){
   
   ParticleFilter filter(pars);
   filter.set_info(reader.GSIM, reader.runno()); 
+  //  filter.getCut("Track Quality Cut")->disable();
+
   PIDHistograms histos;
   
   // loop over events

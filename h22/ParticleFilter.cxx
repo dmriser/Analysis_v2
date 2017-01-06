@@ -239,7 +239,7 @@ ParticleFilter::ParticleFilter(Parameters *params) : pars(params){
     electronSelector->add_cut( sf_s4_cut );
     electronSelector->add_cut( sf_s5_cut );
     electronSelector->add_cut( sf_s6_cut );
-    electronSelector->add_cut( qc_cut );
+    //    electronSelector->add_cut( qc_cut );
     electronSelector->add_cut( vz_cut );
 
     // This can be overridden by the user by just 
@@ -316,17 +316,16 @@ vector<int> ParticleFilter::getVectorOfParticleIndices(h22Event event, int pid){
 
 vector<TLorentzVector> ParticleFilter::getVectorOfTLorentzVectors(h22Event event, int pid){
   vector<TLorentzVector> particles; 
-  vector<int> particleIndices;
+  vector<int> particleIndices = getVectorOfParticleIndices(event, pid);
 
-  if (pid != 111) {
-    particleIndices = getVectorOfParticleIndices(event, pid);
-    for (int ipart=0; ipart<particleIndices.size(); ipart++){
-      particles.push_back(event.getTLorentzVector(particleIndices[ipart], pid));
-    }
+  for (int ipart=0; ipart<particleIndices.size(); ipart++){
+    particles.push_back(event.getTLorentzVector(particleIndices[ipart], pid));
   }
+  
 
   // Pi-0 
-  else if (pid == 111){
+  if (pid == 111){
+    particleIndices.clear();
     vector<int> photons = getVectorOfParticleIndices(event, 22);
 
     if (photons.size() >= 2){

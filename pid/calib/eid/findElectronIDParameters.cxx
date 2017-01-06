@@ -288,9 +288,9 @@ void findElectronIDParameters::WriteHardCodedParameters(){
   ccFidB.addValue(35.0);
   ccFidB.addError(0.0);
 
-  ccFidB.setName("EL_CC_FIDC");
-  ccFidB.addValue(360.0);
-  ccFidB.addError(0.0);
+  ccFidC.setName("EL_CC_FIDC");
+  ccFidC.addValue(360.0);
+  ccFidC.addError(0.0);
 
   zVertexLimitMin.setName("EL_VZ_MIN"); 
   zVertexLimitMin.addValue(-27.7302); 

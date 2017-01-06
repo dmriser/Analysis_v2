@@ -1,6 +1,6 @@
 {
 
-  TFile * file = TFile::Open("keppelRad.root");
+  TFile * file = TFile::Open("elastGen.root");
   TCanvas * c1 = new TCanvas("c1", "", 800, 800);
 
 
@@ -35,7 +35,7 @@
   for (int itype = 0; itype < 12; itype++)
     for(int isect = 0; isect < 7; isect++){
 	// 1d                                                                                                                                                                                                   
-	h1_nphe[itype][isect]          = (TH1D*) file.Get(Form("h1_nphe_%s_%s",type[itype].c_str(),sect[isect].c_str()));
+	h1_nphe[itype][isect]          = (TH1D*) file->Get(Form("h1_nphe_%s_%s",type[itype].c_str(),sect[isect].c_str()));
 	h1_nphe[itype][isect]->SetFillColorAlpha(85, 0.4);
 	gPad->SetGridx(1);
 	gPad->SetGridy(1);
@@ -44,7 +44,7 @@
 	lab.DrawLatex(0.5, 0.9, printer.c_str());
 	c1->Print(Form("img/h1_nphe_%s_%s.png",type[itype].c_str(),sect[isect].c_str()));
 
-	h1_ec_edep_inner[itype][isect] = (TH1F*) file.Get(Form("h1_ec_edep_inner_%s_%s",type[itype].c_str(),sect[isect].c_str()));
+	h1_ec_edep_inner[itype][isect] = (TH1F*) file->Get(Form("h1_ec_edep_inner_%s_%s",type[itype].c_str(),sect[isect].c_str()));
 	gPad->SetGridx(1);
 	gPad->SetGridy(1);
 	h1_ec_edep_inner[itype][isect]->Draw();
@@ -52,7 +52,7 @@
 	lab.DrawLatex(0.5, 0.9, printer.c_str());
 	c1->Print(Form("img/h1_ec_edep_inner_%s_%s.png",type[itype].c_str(),sect[isect].c_str())); 
 
-	h1_ec_edep_outer[itype][isect] = (TH1F*) file.Get(Form("h1_ec_edep_outer_%s_%s",type[itype].c_str(),sect[isect].c_str()));
+	h1_ec_edep_outer[itype][isect] = (TH1F*) file->Get(Form("h1_ec_edep_outer_%s_%s",type[itype].c_str(),sect[isect].c_str()));
 	gPad->SetGridx(1);
 	gPad->SetGridy(1);
 	h1_ec_edep_outer[itype][isect]->Draw();
@@ -60,7 +60,7 @@
 	lab.DrawLatex(0.5, 0.9, printer.c_str());
 	c1->Print(Form("img/h1_ec_edep_outer_%s_%s.png",type[itype].c_str(),sect[isect].c_str()));
 
-	h1_p[itype][isect]             = (TH1F*) file.Get(Form("h1_p_%s_%s",type[itype].c_str(),sect[isect].c_str()));
+	h1_p[itype][isect]             = (TH1F*) file->Get(Form("h1_p_%s_%s",type[itype].c_str(),sect[isect].c_str()));
 	gPad->SetGridx(1);
 	gPad->SetGridy(1);
 	h1_p[itype][isect]->SetFillColorAlpha(62, 0.4);
@@ -69,7 +69,7 @@
 	lab.DrawLatex(0.5, 0.9, printer.c_str());
 	c1->Print(Form("img/h1_p_%s_%s.png",type[itype].c_str(),sect[isect].c_str()));
 
-	h1_z_vertex[itype][isect]      = (TH1F*) file.Get(Form("h1_z_vertex_%s_%s",type[itype].c_str(),sect[isect].c_str()));
+	h1_z_vertex[itype][isect]      = (TH1F*) file->Get(Form("h1_z_vertex_%s_%s",type[itype].c_str(),sect[isect].c_str()));
 	gPad->SetGridx(1);
 	gPad->SetGridy(1);
 	h1_z_vertex[itype][isect]->SetFillColorAlpha(55, 0.4);
@@ -79,25 +79,25 @@
 	c1->Print(Form("img/h1_z_vertex_%s_%s.png",type[itype].c_str(),sect[isect].c_str()));
 	
 	// 2d                                                                                                                                                                                                   
-	h2_cc_theta[itype][isect] = (TH2F*) file.Get(Form("h_cc_theta_%s_%s",type[itype].c_str(),sect[isect].c_str()));
+	h2_cc_theta[itype][isect] = (TH2F*) file->Get(Form("h_cc_theta_%s_%s",type[itype].c_str(),sect[isect].c_str()));
 	h2_cc_theta[itype][isect]->Draw("colz");
 	printer = Form(" #rightarrow pass: %f ", (double) h2_cc_theta[itype][isect]->GetEntries()/h1_nphe[0][isect]->GetEntries() );
 	lab.DrawLatex(0.5, 0.9, printer.c_str());
 	c1->Print(Form("img/h_cc_theta_%s_%s.png",type[itype].c_str(),sect[isect].c_str()));
 
-	h2_etot_p[itype][isect]   = (TH2F*) file.Get(Form("h_etot_p_%s_%s",type[itype].c_str(),sect[isect].c_str()));
+	h2_etot_p[itype][isect]   = (TH2F*) file->Get(Form("h_etot_p_%s_%s",type[itype].c_str(),sect[isect].c_str()));
 	h2_etot_p[itype][isect]->Draw("colz");
 	printer = Form(" #rightarrow pass: %f ", (double) h2_etot_p[itype][isect]->GetEntries()/h1_nphe[0][isect]->GetEntries() );
 	lab.DrawLatex(0.5, 0.9, printer.c_str());
 	c1->Print(Form("img/h_etot_p_%s_%s.png",type[itype].c_str(),sect[isect].c_str()));
 
-	h2_ang_fid[itype][isect]  = (TH2F*) file.Get(Form("h_ang_fid_%s_%s",type[itype].c_str(),sect[isect].c_str()));
+	h2_ang_fid[itype][isect]  = (TH2F*) file->Get(Form("h_ang_fid_%s_%s",type[itype].c_str(),sect[isect].c_str()));
 	h2_ang_fid[itype][isect]->Draw("colz");
 	printer = Form(" #rightarrow pass: %f ", (double) h2_ang_fid[itype][isect]->GetEntries()/h1_nphe[0][isect]->GetEntries() );
 	lab.DrawLatex(0.5, 0.9, printer.c_str());
 	c1->Print(Form("img/h_ang_fid_%s_%s.png",type[itype].c_str(),sect[isect].c_str()));
 
-	h2_ec_edep[itype][isect]  = (TH2F*) file.Get(Form("h_ec_edep_%s_%s",type[itype].c_str(),sect[isect].c_str()));
+	h2_ec_edep[itype][isect]  = (TH2F*) file->Get(Form("h_ec_edep_%s_%s",type[itype].c_str(),sect[isect].c_str()));
 	gPad->SetGridx();
 	gPad->SetGridy();
 	gPad->SetLogz(); 
@@ -106,7 +106,7 @@
 	lab.DrawLatex(0.5, 0.9, printer.c_str());
 	c1->Print(Form("img/h_ec_edep_%s_%s.png",type[itype].c_str(),sect[isect].c_str()));
 
-	h2_dcr1_fid[itype][isect] = (TH2F*) file.Get(Form("h_dcr1_fid_%s_%s",type[itype].c_str(),sect[isect].c_str()));
+	h2_dcr1_fid[itype][isect] = (TH2F*) file->Get(Form("h_dcr1_fid_%s_%s",type[itype].c_str(),sect[isect].c_str()));
 	h2_dcr1_fid[itype][isect]->Draw("colz");
 	gPad->SetGridx();
 	gPad->SetGridy();
@@ -115,7 +115,7 @@
 	lab.DrawLatex(0.5, 0.9, printer.c_str());
 	c1->Print(Form("img/h_dcr1_fid_%s_%s.png",type[itype].c_str(),sect[isect].c_str()));
 
-	h2_dcr3_fid[itype][isect] = (TH2F*) file.Get(Form("h_dcr3_fid_%s_%s",type[itype].c_str(),sect[isect].c_str()));
+	h2_dcr3_fid[itype][isect] = (TH2F*) file->Get(Form("h_dcr3_fid_%s_%s",type[itype].c_str(),sect[isect].c_str()));
 	h2_dcr3_fid[itype][isect]->Draw("colz");
 	gPad->SetGridx();
 	gPad->SetGridy();
@@ -124,7 +124,7 @@
 	lab.DrawLatex(0.5, 0.9, printer.c_str());
 	c1->Print(Form("img/h_dcr3_fid_%s_%s.png",type[itype].c_str(),sect[isect].c_str()));
 
-	h2_ec_fid[itype][isect]   = (TH2F*) file.Get(Form("h_ec_fid_%s_%s",type[itype].c_str(),sect[isect].c_str()));
+	h2_ec_fid[itype][isect]   = (TH2F*) file->Get(Form("h_ec_fid_%s_%s",type[itype].c_str(),sect[isect].c_str()));
 	h2_ec_fid[itype][isect]->Draw("colz");
 	gPad->SetGridx();
 	gPad->SetGridy();

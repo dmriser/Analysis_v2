@@ -2,13 +2,13 @@
 
 # User Parameters 
 set numberOfJobs = 50 
-set binDir       = "/u/home/dmriser/mydoc/analysis/root_scripts/Analysis_v2/projects/dis2/src"
-set binName      = "fillHistograms"
+set binDir       = "/u/home/dmriser/mydoc/analysis/root_scripts/Analysis_v2/projects/EventMonitor/"
+set binName      = "EventMonitor"
 set sourceDir    = "/u/home/dmriser/mydoc/analysis/root_scripts/Analysis_v2/farm/analysis"
-set outDir       = "/volatile/clas/clas12/dmriser/analysis/e1f_analysis/inclusive/loose/"
-set outName      = "MC"
+set outDir       = "/volatile/clas/clas12/dmriser/analysis/e1f_analysis/EventMonitor/data/"
+set outName      = "data"
 set runScript    = "goAnalyze"
-set fileList     = "/u/home/dmriser/mydoc/analysis/root_scripts/Analysis_v2/projects/dis2/MonteCarlo.dat"
+set fileList     = "/u/home/dmriser/mydoc/analysis/root_scripts/Analysis_v2/projects/dis2/allGoodEvents.dat"
 
 # Create the output
 # dir if it doesnt exist

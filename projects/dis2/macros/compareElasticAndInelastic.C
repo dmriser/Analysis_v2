@@ -2,7 +2,7 @@
 
   gROOT->LoadMacro("utils.C");
 
-  TFile * inputFile = TFile::Open("../out/xsNoRes.root");
+  TFile * inputFile = TFile::Open("../out/xs/xsNominalES.root");
 
   const int numberSector = 1;
   const int numberSlices = 20;

@@ -205,6 +205,7 @@ void draw2d(int type){
   // [1] - qqX
   // [2] - qqW
   // [3] - wY
+  // [4] - theta phi
 
   TLatex xLabel, yLabel, title;
   xLabel.SetNDC();
@@ -255,6 +256,12 @@ void draw2d(int type){
     yLabelString = "y";
   } 
 
+  else if (type == 4){
+    thetaP[config]->Draw("colz");
+    xLabelString = "P [GeV/c]";
+    yLabelString = "#theta [Deg]";
+  } 
+
   xLabel.DrawLatex(xLabelPosX, xLabelPosY, xLabelString.c_str());
   yLabel.DrawLatex(yLabelPosX, yLabelPosY, yLabelString.c_str());
   title .DrawLatex(titlePosX,   titlePosY, titleString.c_str());
@@ -281,11 +288,32 @@ void printAll(){
       draw(type);
     }
     
-    for(int type=0; type<4; type++){
+    for(int type=0; type<5; type++){
       draw2d(type);
     }
   }
 
   config = oldConfig; 
   print = false; 
+}
+
+void normalize(TH1D *h1, TH1D *h2){
+  h1->Scale(h1->Integral());
+  h2->Scale(h2->Integral());
+  double max = h1->GetMaximum(); 
+  if (h2->GetMaximum() > max){ max = h2->GetMaximum(); }
+  h1->SetMaximum(1.1*max);
+  h2->SetMaximum(1.1*max);
+}
+
+void normalize(TH1D *h1, TH1D *h2, TH1D *h3){
+  h1->Scale(h1->Integral());
+  h2->Scale(h2->Integral());
+  h3->Scale(h3->Integral());
+  double max = h1->GetMaximum(); 
+  if (h2->GetMaximum() > max){ max = h2->GetMaximum(); }
+  if (h3->GetMaximum() > max){ max = h3->GetMaximum(); }
+  h1->SetMaximum(1.1*max);
+  h2->SetMaximum(1.1*max);
+  h3->SetMaximum(1.1*max);
 }

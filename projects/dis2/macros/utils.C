@@ -269,7 +269,7 @@ void printPurityStudy(TH1D *purity[numberSector][numberSlices], TH1D* rec[number
   sectorCaption.SetTextFont(22);
 
   // For calculating which QQ bins we're in
-  double qqMin = 1.0; double qqMax = 5.0; 
+  double qqMin = 1.4; double qqMax = 4.8; 
   double qqWidth = (qqMax-qqMin)/numberSlices; 
 
   int currentPad = 1; 
@@ -348,14 +348,14 @@ int getNumberOfCanvasDivisions(const int numberOfHistograms){
 // If you change the binning you must change this routine, there are better ways to do it but 
 // this is how i'm doing it for now. 
 void plot2Histos(TH1D *histo1[numberSector][numberSlices], TH1D *histo2[numberSector][numberSlices], const int numberSector, const int numberSlices, int histoType){
-
+ 
   // histoType 
   // 1 - Data & Simulation 
   // 2 - Data & Model 
   // 3 - Elastic & Inelastic Simulated Events 
 
   // For calculating which QQ bins we're in
-  double qqMin = 1.0; double qqMax = 4.8; 
+  double qqMin = 1.4; double qqMax = 4.8; 
   double qqWidth = (qqMax-qqMin)/numberSlices; 
 
   TCanvas *singleCanvas = new TCanvas("singleCanvas","",800,800);
@@ -450,6 +450,119 @@ void plot2Histos(TH1D *histo1[numberSector][numberSlices], TH1D *histo2[numberSe
       else if (histoType == 3) { singleCanvas->Print(Form("elasticSubtraction/compareElasticAndInelasticSector%dSlice%d.png",s,sl)); }
     }
   }
-
 }
 
+void plot3Histos(TH1D *histo1[numberSector][numberSlices], TH1D *histo2[numberSector][numberSlices], TH1D *histo3[numberSector][numberSlices], 
+		 const int numberSector, const int numberSlices, int histoType){
+
+   // histoType 
+  // 1 - Data & Simulation 
+  // 2 - Data & Model 
+
+  // For calculating which QQ bins we're in
+  double qqMin = 1.4; double qqMax = 4.8; 
+  double qqWidth = (qqMax-qqMin)/numberSlices; 
+
+  TCanvas *singleCanvas = new TCanvas("singleCanvas","",800,800);
+  TLatex xCaption, sectorCaption, histo1Caption, histo2Caption; 
+
+  xCaption.SetNDC();
+  sectorCaption.SetNDC();
+  histo1Caption.SetNDC();
+  histo2Caption.SetNDC();
+
+  xCaption.SetTextSize(0.03);
+  sectorCaption.SetTextSize(0.03); 
+  histo1Caption.SetTextSize(0.03);
+  histo2Caption.SetTextSize(0.03);
+  histo2Caption.SetTextColor(kRed);
+
+  for (int s=0; s< numberSector; s++){
+    double nEvents1 = 0; double nEvents2 = 0;
+
+    for (int sl=0; sl< numberSlices; sl++){
+      nEvents1 += histo1[s][sl]->Integral();
+      nEvents2 += histo2[s][sl]->Integral();
+    }
+
+    for (int sl=0; sl< numberSlices; sl++){
+
+      double qqValue = qqMin + sl*qqWidth;
+
+      singleCanvas->cd();
+      sectorCaption.DrawLatex(0.61,0.89,Form("Sector %d Q^{2}=%.3f",s,qqValue));
+      xCaption.DrawLatex(0.62, 0.04, "W (GeV/c^{2})");
+      //      xCaption.DrawLatex(0.62, 0.04, "X_{Bjorken}");
+
+      TPad *upperPad = new TPad("upperPad","",0.0,0.3,1.0,1.0); 
+      upperPad->SetBottomMargin(0.0); 
+      upperPad->Draw(); 
+      upperPad->cd(); 
+
+      if (histoType == 1) {
+	histo1[s][sl]->Scale(1.0/nEvents1);
+	histo2[s][sl]->Scale(1.0/nEvents2);	
+	histo1[s][sl]->SetMaximum( histo2[s][sl]->GetMaximum()*1.2 );
+      }   
+
+      histo1[s][sl]->SetMarkerStyle(8);
+      histo1[s][sl]->Draw("pe");
+      histo1[s][sl]->GetYaxis()->SetLabelSize(0.02);
+      histo1[s][sl]->GetYaxis()->SetNdivisions(505);
+
+      //      TGaxis *axis = new TGaxis( -5, 20, -5, 220, 20,220,510,"");
+      //      axis->SetLabelFont(43); // Absolute font size in pixel (precision 3)
+      //      axis->SetLabelSize(15);
+      //      axis->Draw();
+   
+
+      if (histoType == 1){
+	histo2[s][sl]->SetFillColorAlpha(kRed, 1.0);
+	histo2[s][sl]->SetLineColor(kRed);
+	histo2[s][sl]->SetFillStyle(3004);
+	histo2[s][sl]->Draw("histsame");
+      }
+
+      else if (histoType == 2) { 
+	histo2[s][sl]->SetLineStyle(1);
+	histo2[s][sl]->SetLineWidth(1);
+	histo2[s][sl]->SetLineColor(99);
+	histo2[s][sl]->Draw("lsame"); 
+      }
+
+      if (histoType == 1){
+	histo1Caption.DrawLatex(0.18, 0.93, Form("Data Events = %.2E",histo1[s][sl]->GetEntries()));
+	histo2Caption.DrawLatex(0.18, 0.89, Form("Sim Events = %.2E",histo2[s][sl]->GetEntries()));
+      }
+
+      else if (histoType == 2){
+	histo2Caption.SetTextColor(99);
+	histo1Caption.DrawLatex(0.18, 0.95, "E1-F Data");
+	histo2Caption.DrawLatex(0.18, 0.90, "Keppel Model");
+      }
+
+      // Switch to lower pad for ratio plots 
+      singleCanvas->cd();
+
+      TPad *lowerPad = new TPad("lowerPad","",0.0,0.0,1.0,0.3); 
+      lowerPad->SetTopMargin(0.0);
+      lowerPad->SetBottomMargin(0.2);
+      lowerPad->Draw();
+      lowerPad->cd();
+
+      histo3[s][sl]->SetMarkerStyle(8);
+      histo3[s][sl]->GetYaxis()->SetLabelSize(0.08);
+      histo3[s][sl]->GetYaxis()->SetNdivisions(303);
+      histo3[s][sl]->GetXaxis()->SetLabelSize(0.08);
+      histo3[s][sl]->GetXaxis()->SetNdivisions(505);
+      histo3[s][sl]->SetMinimum(0.5); 
+      histo3[s][sl]->SetMaximum(1.5); 
+      histo3[s][sl]->Draw("pe");
+
+      if (histoType == 1)      { singleCanvas->Print(Form("compareDataAndSim/compareDataSimRatioSector%dSlice%d.png",s,sl)); }
+      else if (histoType == 2) { singleCanvas->Print(Form("compareDataAndModel/compareDataModelRatioSector%dSlice%d.png",s,sl)); }
+
+      singleCanvas->Clear();
+    }
+  }
+}

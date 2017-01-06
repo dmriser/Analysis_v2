@@ -7,6 +7,8 @@
 #include "DBins.h" 
 #include "h22Event.h" 
 #include "h22Reader.h" 
+#include "Parameters.h"
+#include "ParticleFilter.h"
 #include "PhysicsEvent.h"
 #include "PhysicsEventBuilder.h"
 
@@ -14,14 +16,18 @@
 
 class EventMonitor : public h22Reader {
  public:
-  EventMonitor(bool isGen);
+  EventMonitor(Parameters *params, bool isGen);
   ~EventMonitor();
 
   bool isGenerated;  
   THnSparseI *events;
 
+  Parameters     *pars;
+  ParticleFilter *filter;
+
   DBins xBins, yBins, pBins, 
-    qqBins, wBins, thetaBins, phiBins;
+    qqBins, wBins, thetaBins, 
+    phiBins, nuBins;
 
   PhysicsEventBuilder builder; 
   

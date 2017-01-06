@@ -21,9 +21,8 @@ env.Append(CPPPATH = ['.'], LIBPATH = ['.'],LIBS = ['FortranModel'])
 
 # Add c++ sources and create libCppModel 
 #libSources = glob.glob('inclusiveModels/*/*.cxx')
-#libSources += glob.glob('elasticModels/*/*.cxx')
 libSources = glob.glob('inclusiveModels/Keppel/*.cxx')
-
+#libSources += glob.glob('elasticModels/*/*.cxx')
 env.SharedLibrary('libCppModel',libSources)
 
 

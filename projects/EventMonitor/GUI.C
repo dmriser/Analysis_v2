@@ -1,10 +1,10 @@
 {
 
-  const int NCONF          = 1; 
+  const int NCONF          = 3; 
   //  string inputFile[NCONF]  = {"out/debug_jobs6_gen.root","out/debug_jobs6_rec.root","out/dataOnlyNathansElectrons.root","newCook.root"};
   //  string configName[NCONF] = {"debug_jobs6_gen","debug_jobs6_rec","data_eid","newCook"};
-  string inputFile[NCONF]  = {"newCookCheck.root"};
-  string configName[NCONF] = {"newCookCheck"};
+  string inputFile[NCONF]  = {"data.root","keppelRad.root","elastGen.root"};
+  string configName[NCONF] = {"data","keppelRad","elastGen"};
   
   // Getting file and events 
   TFile      *file[NCONF];
@@ -19,6 +19,7 @@
   TH1D *phi[NCONF];
 
   TH2D *thetaPhi[NCONF];
+  TH2D *thetaP[NCONF];
   TH2D *qqX[NCONF];
   TH2D *qqW[NCONF];
   TH2D *wY[NCONF];
@@ -38,6 +39,7 @@
     phi[c]   = (TH1D*) events[c]->Projection(6); phi[c]   ->SetName(Form("%s_phi",configName[c].c_str())); 
     
     thetaPhi[c] = (TH2D*) events[c]->Projection(5,6); thetaPhi[c] ->SetName(Form("%s_thetaPhi",configName[c].c_str()));
+    thetaP[c]   = (TH2D*) events[c]->Projection(5,2); thetaP[c]   ->SetName(Form("%s_thetaP",configName[c].c_str()));
     qqX[c]      = (TH2D*) events[c]->Projection(4,0); qqX[c]      ->SetName(Form("%s_qqX",configName[c].c_str()));
     qqW[c]      = (TH2D*) events[c]->Projection(4,3); qqW[c]      ->SetName(Form("%s_qqW",configName[c].c_str()));
     wY[c]       = (TH2D*) events[c]->Projection(1,3); wY[c]       ->SetName(Form("%s_wY",configName[c].c_str()));
@@ -56,7 +58,7 @@
   bool setLogZ = true; 
 
   string histogramTitles1d[7] = {"x","y","p","w","qq","theta","phi"};
-  string histogramTitles2d[4] = {"thetaPhi","qqX","qqW","wY"};
+  string histogramTitles2d[5] = {"thetaPhi","qqX","qqW","wY","thetaP"};
   int fillColor[5]            = {52, 99, 71, 84, 61};
 
   // Build and show GUI
@@ -77,6 +79,7 @@
   bar->AddButton("Show Q2 vs. x",      "draw2d(1)");
   bar->AddButton("Show Q2 vs. w",      "draw2d(2)");
   bar->AddButton("Show y vs. w",       "draw2d(3)");
+  bar->AddButton("Show theta vs. P",       "draw2d(4)");
   bar->AddButton("","");
   bar->AddButton("Print","printAll()");
   bar->AddButton("","");

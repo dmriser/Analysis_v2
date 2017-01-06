@@ -2,12 +2,15 @@
 #define EventMonitor_cxx
 
 #include <iostream>
+#include <vector>
 using namespace std;
 
 #include "EventMonitor.h"
 
 // Put your includes here 
 #include "CommonTools.h"
+#include "Parameters.h"
+#include "ParticleFilter.h"
 #include "PhysicsEvent.h"
 #include "PhysicsEventBuilder.h"
 #include "h22Event.h" 
@@ -17,29 +20,31 @@ using namespace std;
 #include "TLorentzVector.h"
 
  // Class Constructor/Destructor 
-EventMonitor::EventMonitor(bool isGen) : isGenerated(isGen){ 
+EventMonitor::EventMonitor(Parameters *params, bool isGen) : isGenerated(isGen), pars(params){ 
   
 
   builder = PhysicsEventBuilder();
+  filter  = new ParticleFilter(pars); 
 
   xBins     = DBins(100,    0.0, 1.0);
   yBins     = DBins(100,    0.0, 1.0);
   pBins     = DBins(100,    0.0, 6.0);
   wBins     = DBins(100,    0.5, 3.8);
   qqBins    = DBins(100,    0.0, 5.0);
-  thetaBins = DBins(100,   18.0, 60.0);
+  thetaBins = DBins(100,   12.0, 60.0);
   phiBins   = DBins(100, -180.0, 180.0);
+  nuBins    = DBins(100,      0, 5.5);
 
-  int bins[7] = {xBins.number(), yBins.number(), pBins.number(),
-		 wBins.number(), qqBins.number(), thetaBins.number(), phiBins.number()};
+  int bins[8] = {xBins.number(), yBins.number(), pBins.number(),
+		 wBins.number(), qqBins.number(), thetaBins.number(), phiBins.number(), nuBins.number()};
 
-  double min[7] = {xBins.min(), yBins.min(), pBins.min(),
-		   wBins.min(), qqBins.min(), thetaBins.min(), phiBins.min()};
+  double min[8] = {xBins.min(), yBins.min(), pBins.min(),
+		   wBins.min(), qqBins.min(), thetaBins.min(), phiBins.min(), nuBins.min()};
 
-  double max[7] = {xBins.max(), yBins.max(), pBins.max(),
-		   wBins.max(), qqBins.max(), thetaBins.max(), phiBins.max()};
+  double max[8] = {xBins.max(), yBins.max(), pBins.max(),
+		   wBins.max(), qqBins.max(), thetaBins.max(), phiBins.max(), nuBins.max()};
 
-  events = new THnSparseI("events","events",7,bins,min,max);
+  events = new THnSparseI("events","events",8,bins,min,max);
 }
 
 EventMonitor::~EventMonitor(){ 
@@ -65,7 +70,9 @@ void EventMonitor::ProcessEvent(){
   
   if (!isGenerated){ 
     for (int ipart=0; ipart<event.gpart; ipart++){
-      if (event.id[ipart] == 11){ e_index = ipart; break; }
+      //      if (event.id[ipart] == 11){ e_index = ipart; break; }
+      vector<int> electrons = filter->getVectorOfParticleIndices(event, 11); 
+      if ( !electrons.empty() ){ e_index = electrons[0]; }
     }
   }
   
@@ -86,8 +93,8 @@ void EventMonitor::ProcessEvent(){
     
     else { electron = event.gen_particle(11); }
     PhysicsEvent physicsEvent = builder.getPhysicsEvent(electron);
-    double dataPoint[7] = {physicsEvent.x, physicsEvent.y, electron.P(),
-			   physicsEvent.w, physicsEvent.qq,electron.Theta()*to_degrees,electron.Phi()*to_degrees};
+    double dataPoint[8] = {physicsEvent.x, physicsEvent.y, electron.P(),
+			   physicsEvent.w, physicsEvent.qq,electron.Theta()*to_degrees,electron.Phi()*to_degrees, physicsEvent.nu};
     events->Fill(dataPoint); 
   }
   

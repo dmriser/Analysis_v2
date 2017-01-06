@@ -57,11 +57,13 @@ void DataLoader::Initialize(){
   //  eID.dc_r1_strict  = 2;
   //  eID.dc_r3_strict  = 2;
 
+  /*
   filter->getSelector(11)->disable_by_name("DC Region 1 Fid Cut");
   filter->getSelector(11)->disable_by_name("DC Region 3 Fid Cut");
   filter->getSelector(11)->disable_by_name("EC-U Cut");
   filter->getSelector(11)->disable_by_name("EC-V Cut");
   filter->getSelector(11)->disable_by_name("EC-W Cut");
+  */
 
 }
 

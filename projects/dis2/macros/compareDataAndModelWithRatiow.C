@@ -3,17 +3,19 @@
   gROOT->LoadMacro("utils.C");
 
   //  TFile * inputFile = TFile::Open("../out/crossSectionWithResonancePass1.root");
-  TFile * inputFile = TFile::Open("../out/xs/xsLoose.root");
+  TFile * inputFile = TFile::Open("../out/xsTight.root");
 
-  const int numberSector = 7;
+  const int numberSector = 1;
   const int numberSlices = 20;
 
   TH1D *data[numberSector][numberSlices];
   TH1D *model[numberSector][numberSlices];
+  TH1D *ratio[numberSector][numberSlices];
 
   readHisto(data,inputFile,numberSector,numberSlices,"binCorrectedCrossSection_wByQQ");
   readHisto(model,inputFile,numberSector,numberSlices,"modelCrossSection_wByQQ");
+  readHisto(ratio,inputFile,numberSector,numberSlices,"radCorrCrossSectionRatio_wByQQ");
  
-  plot2Histos(data,model,numberSector,numberSlices,2);
+  plot3Histos(data,model,ratio,numberSector,numberSlices,2);
 
 }

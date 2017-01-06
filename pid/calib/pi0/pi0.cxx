@@ -72,20 +72,24 @@ void Pi0Calibration::ProcessEvent(){
   vector<int> photons = filter->getVectorOfParticleIndices(event, 22); 
   
   if (photons.size() >= 2){
-    TLorentzVector firstPhoton = event.getTLorentzVector(photons[0], 22); 
 
-    for(int iphot=1; iphot<photons.size(); iphot++){
-      TLorentzVector otherPhoton = event.getTLorentzVector(photons[iphot], 22);
-      TLorentzVector pion        = firstPhoton+otherPhoton; 
-
-      int sector = floor((pion.Phi()*to_degrees+180.0)/60.0); 
-
-      invMass[sector]     ->Fill(pion.Mag());
-      openingAngle[sector]->Fill(firstPhoton.Angle(otherPhoton.Vect())*to_degrees); 
-      energyDiff[sector]  ->Fill(firstPhoton.E()-otherPhoton.E());
-      openEnergy[sector]  ->Fill(firstPhoton.E()-otherPhoton.E(), firstPhoton.Angle(otherPhoton.Vect())*to_degrees); 
+    for (int iphot=0; iphot<photons.size(); iphot++){
+      TLorentzVector firstPhoton = event.getTLorentzVector(photons[0], 22); 
+      for(int jphot=iphot+1; iphot<photons.size(); iphot++){
+	
+	
+	TLorentzVector otherPhoton = event.getTLorentzVector(photons[iphot], 22);
+	TLorentzVector pion        = firstPhoton+otherPhoton; 
+	
+	int sector = floor((pion.Phi()*to_degrees+180.0)/60.0); 
+	
+	invMass[sector]     ->Fill(pion.Mag());
+	openingAngle[sector]->Fill(firstPhoton.Angle(otherPhoton.Vect())*to_degrees); 
+	energyDiff[sector]  ->Fill(firstPhoton.E()-otherPhoton.E());
+	openEnergy[sector]  ->Fill(firstPhoton.E()-otherPhoton.E(), firstPhoton.Angle(otherPhoton.Vect())*to_degrees); 
+      }
     }
-
+    
   }
 
 }

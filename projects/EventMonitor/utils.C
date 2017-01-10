@@ -16,6 +16,87 @@ void changeView(){
 void toggleLogZ(){
   setLogZ = !setLogZ;
 }
+void init(){
+  for(int c=0; c<NCONF; c++){
+    cout << " >>> Creating histograms for " << configName[c] << endl;
+
+    x[c]     = (TH1D*) events[c]->Projection(0); x[c]     ->SetName(Form("%s_x",configName[c].c_str()));
+    y[c]     = (TH1D*) events[c]->Projection(1); y[c]     ->SetName(Form("%s_y",configName[c].c_str()));
+    p[c]     = (TH1D*) events[c]->Projection(2); p[c]     ->SetName(Form("%s_p",configName[c].c_str()));
+    w[c]     = (TH1D*) events[c]->Projection(3); w[c]     ->SetName(Form("%s_w",configName[c].c_str()));
+    qq[c]    = (TH1D*) events[c]->Projection(4); qq[c]    ->SetName(Form("%s_qq",configName[c].c_str()));
+    theta[c] = (TH1D*) events[c]->Projection(5); theta[c] ->SetName(Form("%s_theta",configName[c].c_str()));
+    phi[c]   = (TH1D*) events[c]->Projection(6); phi[c]   ->SetName(Form("%s_phi",configName[c].c_str()));
+    
+    thetaPhi[c] = (TH2D*) events[c]->Projection(5,6); thetaPhi[c] ->SetName(Form("%s_thetaPhi",configName[c].c_str()));
+    thetaP[c]   = (TH2D*) events[c]->Projection(5,2); thetaP[c]   ->SetName(Form("%s_thetaP",configName[c].c_str()));
+    qqX[c]      = (TH2D*) events[c]->Projection(4,0); qqX[c]      ->SetName(Form("%s_qqX",configName[c].c_str()));
+    qqW[c]      = (TH2D*) events[c]->Projection(4,3); qqW[c]      ->SetName(Form("%s_qqW",configName[c].c_str()));
+    wY[c]       = (TH2D*) events[c]->Projection(1,3); wY[c]       ->SetName(Form("%s_wY",configName[c].c_str()));
+  }
+}
+
+void setRange(string varName, double min, double max){
+
+  int var = 0;
+  if (varName == "x")         { var = 0; }
+  else if (varName == "y")    { var = 1; }
+  else if (varName == "p")    { var = 2; }
+  else if (varName == "w")    { var = 3; }
+  else if (varName == "qq")   { var = 4; }
+  else if (varName == "theta"){ var = 5; }
+  else if (varName == "phi")  { var = 6; }
+
+  for(int c=0; c<NCONF; c++){
+    int startBin = events[c]->GetAxis(var)->FindBin(min);
+    int stopBin  = events[c]->GetAxis(var)->FindBin(max);
+    events[c]->GetAxis(var)->SetRange(startBin, stopBin);
+  }
+
+  cout << " >>> Range for " << varName << " restricted to " << min << "-" << max << endl; 
+  init();
+}
+
+void normalize(){
+  for(int c=0; c<NCONF; c++){
+    x[c]    ->Scale(1.0/x[c]->Integral());
+    y[c]    ->Scale(1.0/y[c]->Integral());
+    p[c]    ->Scale(1.0/p[c]->Integral());
+    w[c]    ->Scale(1.0/w[c]->Integral());
+    qq[c]   ->Scale(1.0/qq[c]->Integral());
+    theta[c]->Scale(1.0/theta[c]->Integral());
+    phi[c]  ->Scale(1.0/phi[c]->Integral());
+  }
+
+  double max[7] = {x[0]    ->GetMaximum(), 
+		   y[0]    ->GetMaximum(), 
+		   p[0]    ->GetMaximum(), 
+		   w[0]    ->GetMaximum(), 
+		   qq[0]   ->GetMaximum(), 
+		   theta[0]->GetMaximum(), 
+		   phi[0]  ->GetMaximum()};
+  
+  for(int c=0; c<NCONF; c++){
+    if (x[c]    ->GetMaximum() > max[0]){ max[0] = x[c]    ->GetMaximum(); }
+    if (y[c]    ->GetMaximum() > max[1]){ max[1] = y[c]    ->GetMaximum(); }
+    if (p[c]    ->GetMaximum() > max[2]){ max[2] = p[c]    ->GetMaximum(); }
+    if (w[c]    ->GetMaximum() > max[3]){ max[3] = w[c]    ->GetMaximum(); }
+    if (qq[c]   ->GetMaximum() > max[4]){ max[4] = qq[c]   ->GetMaximum(); }
+    if (theta[c]->GetMaximum() > max[5]){ max[5] = theta[c]->GetMaximum(); }
+    if (phi[c]  ->GetMaximum() > max[6]){ max[6] = phi[c]  ->GetMaximum(); }
+  }
+  
+  for(int c=0; c<NCONF; c++){
+    x[c]    ->SetMaximum(1.1*max[0]);
+    y[c]    ->SetMaximum(1.1*max[1]);
+    p[c]    ->SetMaximum(1.1*max[2]);
+    w[c]    ->SetMaximum(1.1*max[3]);
+    qq[c]   ->SetMaximum(1.1*max[4]);
+    theta[c]->SetMaximum(1.1*max[5]);
+    phi[c]  ->SetMaximum(1.1*max[6]);
+  }
+
+}
 
 void draw(int type){
   // type 
@@ -54,7 +135,9 @@ void draw(int type){
   titleString  = Form(" %s, N_{events} = %.1e ",configName[config].c_str(),
 		      x[config]->GetEntries());
 
-  TCanvas *c = new TCanvas("c","",800,800);
+  if (view == 1){ normalize(); }
+
+  TCanvas *canvas = new TCanvas("canvas","",800,800);
 
   if (type == 0) {
 
@@ -66,7 +149,7 @@ void draw(int type){
 
     else if (view == 1){
       for (int c=0; c<NCONF; c++){
-	x[c]->SetFillColorAlpha(fillColor[c], 0.5);
+	//	x[c]->SetFillColorAlpha(fillColor[c], 0.5);
 	x[c]->SetLineColor(fillColor[c]);
 	x[c]->Draw("same");
       }
@@ -85,7 +168,7 @@ void draw(int type){
  
     else if (view == 1){
       for (int c=0; c<NCONF; c++){
-	y[c]->SetFillColorAlpha(fillColor[c], 0.5);
+	//	y[c]->SetFillColorAlpha(fillColor[c], 0.5);
 	y[c]->SetLineColor(fillColor[c]);
 	y[c]->Draw("same");
       }
@@ -103,7 +186,7 @@ void draw(int type){
  
     else if (view == 1){
       for (int c=0; c<NCONF; c++){
-	p[c]->SetFillColorAlpha(fillColor[c], 0.5);
+	//	p[c]->SetFillColorAlpha(fillColor[c], 0.5);
 	p[c]->SetLineColor(fillColor[c]);
 	p[c]->Draw("same");
       }
@@ -121,7 +204,7 @@ void draw(int type){
  
     else if (view == 1){
       for (int c=0; c<NCONF; c++){
-	w[c]->SetFillColorAlpha(fillColor[c], 0.5);
+	//	w[c]->SetFillColorAlpha(fillColor[c], 0.5);
 	w[c]->SetLineColor(fillColor[c]);
 	w[c]->Draw("same");
       }
@@ -139,7 +222,7 @@ void draw(int type){
  
     else if (view == 1){
       for (int c=0; c<NCONF; c++){
-	qq[c]->SetFillColorAlpha(fillColor[c], 0.5);
+	//	qq[c]->SetFillColorAlpha(fillColor[c], 0.5);
 	qq[c]->SetLineColor(fillColor[c]);
 	qq[c]->Draw("same");
       }
@@ -157,7 +240,7 @@ void draw(int type){
  
     else if (view == 1){
       for (int c=0; c<NCONF; c++){
-	theta[c]->SetFillColorAlpha(fillColor[c], 0.5);
+	//	theta[c]->SetFillColorAlpha(fillColor[c], 0.5);
 	theta[c]->SetLineColor(fillColor[c]);
 	theta[c]->Draw("same");
       }
@@ -175,7 +258,7 @@ void draw(int type){
  
     else if (view == 1){
       for (int c=0; c<NCONF; c++){
-	phi[c]->SetFillColorAlpha(fillColor[c], 0.5);
+	//	phi[c]->SetFillColorAlpha(fillColor[c], 0.5);
 	phi[c]->SetLineColor(fillColor[c]);
 	phi[c]->Draw("same");
       }
@@ -193,8 +276,8 @@ void draw(int type){
     gPad->SetGridy();
 
     if(print){
-      c->Update();
-      c->SaveAs(Form("img/%s_%s.png",configName[config].c_str(),histogramTitles1d[type].c_str()));
+      canvas->Update();
+      canvas->SaveAs(Form("img/%s_%s.png",configName[config].c_str(),histogramTitles1d[type].c_str()));
     }
 
 }
@@ -297,6 +380,7 @@ void printAll(){
   print = false; 
 }
 
+/*
 void normalize(TH1D *h1, TH1D *h2){
   h1->Scale(h1->Integral());
   h2->Scale(h2->Integral());
@@ -317,3 +401,4 @@ void normalize(TH1D *h1, TH1D *h2, TH1D *h3){
   h2->SetMaximum(1.1*max);
   h3->SetMaximum(1.1*max);
 }
+*/

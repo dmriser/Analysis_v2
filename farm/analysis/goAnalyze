@@ -7,9 +7,9 @@ set binName = $2
 cp list.*.dat list.dat 
 chmod +x $binName
 
-./$binName -TYPE=rec -N=$NFILES -LIST=list.dat -PARS=/u/home/dmriser/mydoc/analysis/root_scripts/Analysis_v2/lists/data.pars -OUT=$OUTPUT 
-#./$binName -N=$NFILES -TYPE=data -LIST=list.dat -PARS=/u/home/dmriser/mydoc/analysis/root_scripts/Analysis_v2/lists/dataTight.pars -OUT=$OUTPUT 
-#./$binName -N=$NFILES -TYPE=mcrad -LIST=list.dat -PARS=/u/home/dmriser/mydoc/analysis/root_scripts/Analysis_v2/lists/keppelRadTight.pars -OUT=$OUTPUT 
+#./$binName -TYPE=rec -N=$NFILES -LIST=list.dat -PARS=/u/home/dmriser/mydoc/analysis/root_scripts/Analysis_v2/lists/data.pars -OUT=$OUTPUT 
+#./$binName -N=$NFILES -TYPE=data -YCUT=0.6 -LIST=list.dat -PARS=/u/home/dmriser/mydoc/analysis/root_scripts/Analysis_v2/lists/data.pars -OUT=$OUTPUT 
+./$binName -N=$NFILES -TYPE=mcrad -YCUT=0.6 -LIST=list.dat -PARS=/u/home/dmriser/mydoc/analysis/root_scripts/Analysis_v2/lists/keppelRad.pars -OUT=$OUTPUT 
 #./$binName -N=$NFILES -LIST=list.dat -PARS=/u/home/dmriser/mydoc/analysis/root_scripts/Analysis_v2/lists/keppelRad.pars -OUT=$OUTPUT 
 
 

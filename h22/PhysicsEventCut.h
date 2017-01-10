@@ -172,4 +172,24 @@ class PhysicsEventCut_pTransverse : public PhysicsEventCut {
 
 };
 
+////////////////////////////////////////////////////////////////////////////////////////////////
+/*
+  
+  x,y line cut
+  y = mx + b
+
+*/
+////////////////////////////////////////////////////////////////////////////////////////////////
+
+class PhysicsEventCut_xyLineCut : public PhysicsEventCut {
+ public:
+  PhysicsEventCut_xyLineCut();
+  ~PhysicsEventCut_xyLineCut();
+
+  double m, b;
+
+  bool passes(PhysicsEvent event); 
+
+};
+
 #endif

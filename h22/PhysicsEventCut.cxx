@@ -204,5 +204,34 @@ bool PhysicsEventCut_qq::passes(PhysicsEvent event){
   
   return false; 
 }
+  
+///////////////////////////////////////////////////////////////
+/*
+
+  PhysicsEventCut_xyLineCut
+  y = mx + b
+
+*/
+///////////////////////////////////////////////////////////////
+ 
+
+PhysicsEventCut_xyLineCut::PhysicsEventCut_xyLineCut(){
+  set_name("xy Line Cut");
+  set_min(0.0);
+}
+
+PhysicsEventCut_xyLineCut::~PhysicsEventCut_xyLineCut(){
+
+}
+
+bool PhysicsEventCut_xyLineCut::passes(PhysicsEvent event){
+
+  set_max(m*event.x + b);
+
+  if ( event.y > min() && event.y < max()) { n_pass++; return true; }
+  else { n_fail++; }
+  
+  return false; 
+}
  
 #endif

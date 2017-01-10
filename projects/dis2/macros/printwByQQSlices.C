@@ -14,7 +14,7 @@
   TH1D *radCorr[numberSector][numberSlices];
 
 
-  TFile *inputFile = TFile::Open("../out/xs/xsLooseES.root");
+  TFile *inputFile = TFile::Open("../out/xs/xs_xy_test.root");
   //  TFile *inputFile = TFile::Open("../out/crossSectionNoFidPass1.root");
 
   readHisto(data, inputFile, numberSector, numberSlices, "dataEvents_wByQQ");

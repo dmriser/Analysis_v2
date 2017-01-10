@@ -4,9 +4,11 @@
 
 
   // General Setup 
-  const int NCONF          = 4; 
-  string fileName[NCONF]   = {"../out/xs/xsNominalES.root","../out/xs/xsLooseES.root","../out/xs/xsSuperLooseES.root","../out/xs/xsTightES.root"};
-  string configName[NCONF] = {"nominal","loose","superLoose","tight"};
+  const int NCONF          = 3; 
+  string fileName[NCONF]   = {"../out/xs/xs_y0.81.root","../out/xs/xs_xy_test.root","../out/xs/xs_y0.7.root"};
+  string configName[NCONF] = {"y=0.81","xyCut","y=0.7"};
+  //  string fileName[NCONF]   = {"../out/xs/xsNominalES.root","../out/xs/xsLooseES.root","../out/xs/xsSuperLooseES.root","../out/xs/xsTightES.root"};
+  //  string configName[NCONF] = {"nominal","loose","superLoose","tight"};
 
   // Physics Specifics 
   const int numberSector = 7;
@@ -90,7 +92,7 @@
     titleLabel.DrawLatex(0.4, 0.9, Form("Sector %d",sector)); 
     compareCanvas->Print(Form("compareCrossSections/ratioSector%d.png",sector));
   }
-
+  /*
   for(int sector=0; sector<numberSector; sector++){
   TCanvas *compareCanvas = new TCanvas("compareCanvas","",800,500); 
 
@@ -110,5 +112,30 @@
     titleLabel.DrawLatex(0.4, 0.9, Form("Sector %d",sector)); 
     compareCanvas->Print(Form("compareCrossSections/chi2Sector%d.png",sector));
   }
+  */
+
+  for(int sector=0; sector<numberSector; sector++){
+    
+    for(int slice=0; slice<numberSlices; slice++){ 
+      TCanvas *compareCanvas = new TCanvas("compareCanvas","",800,500); 
+     
+      for(int file=0; file<NCONF; file++){
+	gPad->SetMargin(0.15, 0.25, 0.15, 0.15);
+	crossSection[file][sector][slice]->SetMarkerColor(55 + 15*file);
+	crossSection[file][sector][slice]->SetMarkerStyle(8);
+	crossSection[file][sector][slice]->Draw("PEsame");
+	fileLabel.SetTextColor(55 + 15*file); 
+	fileLabel.DrawLatex(0.82, 0.86-file*0.04,configName[file].c_str()); 
+      }
+      model[0][sector][slice]->Draw("lsame");      
+
+      
+      xLabel.DrawLatex(0.62, 0.06, "W [GeV/c^{2}]");
+      yLabel.DrawLatex(0.05, 0.68, "#frac{d#sigma}{dW dQ^{2}} [#mu Barn]");
+      titleLabel.DrawLatex(0.3, 0.9, Form("Sector %d Slice %d",sector,slice)); 
+      compareCanvas->Print(Form("compareCrossSections/xsSector%dSlice%d.png",sector,slice));
+    }
+  }
+
 
 }

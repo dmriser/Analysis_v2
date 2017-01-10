@@ -28,7 +28,7 @@ int main(int argc, char * argv[]){
 
   // ------------- Physics Options -------------
   int numberOfXBins = 80; // x and W 
-  int numberOfYBins = 40; // Q^{2}
+  int numberOfYBins = 20; // Q^{2}
 
   // Check for improper usage of this code. 
   if (argc < 3){ return PrintUsage(); }

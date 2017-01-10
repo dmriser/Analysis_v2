@@ -44,19 +44,32 @@ int main(int argc, char * argv[]){
 
   PhysicsEventSelector * eventSelector = new PhysicsEventSelector();
   PhysicsEventCut_w *w_cut             = new PhysicsEventCut_w();
+  PhysicsEventCut_x *x_cut             = new PhysicsEventCut_x();
   PhysicsEventCut_y *y_cut             = new PhysicsEventCut_y();
   PhysicsEventCut_qq *qq_cut           = new PhysicsEventCut_qq();
+  PhysicsEventCut_xyLineCut *xy_cut    = new PhysicsEventCut_xyLineCut();
 
   w_cut->set_min( 1.1 );
   w_cut->set_max( 99.9 ); 
+
+  x_cut->set_min(0.20);
+  x_cut->set_max(1.00);
+
   y_cut->set_min( 0.00 );
   y_cut->set_max( options->args["YCUT"].arg ); 
+
   qq_cut->set_min( 1.00 );
   qq_cut->set_max( 99.9 ); 
 
+  // Experimental Cut 
+  //  xy_cut->m = 1.2;
+  //  xy_cut->b = 0.6;
+
   eventSelector->add_cut(w_cut);
+  eventSelector->add_cut(x_cut);
   eventSelector->add_cut(y_cut);
   eventSelector->add_cut(qq_cut); 
+  //  eventSelector->add_cut(xy_cut);
   eventSelector->enable_all();
 
   // ----------------------------------------------------------------------------------
@@ -89,7 +102,7 @@ int main(int argc, char * argv[]){
     for (int ifile = 0; ifile < files.size(); ifile++) { loader.AddFile(files[ifile]); }
     loader.Execute();
 
-    DInformation * runInformation = new DInformation();
+    DInformation *runInformation = new DInformation();
     runInformation->load("/u/home/dmriser/mydoc/analysis/root_scripts/Analysis_v2/lists/runs.info"); 
 
     FaradayCupAppender chargeAppender(runInformation);

@@ -118,7 +118,7 @@ void printSlices(TH1D *histo[numberSector][numberSlices], const int numberSector
   //           8 = rad corr 
   //           9 = inelastic fraction 
 
-  double qqMin = 1.4; double qqMax = 4.8;
+  double qqMin = 1.5; double qqMax = 4.8;
   double qqWidth = (qqMax-qqMin)/numberSlices; // slices are always Q^2 bins 
 
   TCanvas *can = new TCanvas("can","",800,800);
@@ -355,7 +355,7 @@ void plot2Histos(TH1D *histo1[numberSector][numberSlices], TH1D *histo2[numberSe
   // 3 - Elastic & Inelastic Simulated Events 
 
   // For calculating which QQ bins we're in
-  double qqMin = 1.4; double qqMax = 4.8; 
+  double qqMin = 1.5; double qqMax = 4.8; 
   double qqWidth = (qqMax-qqMin)/numberSlices; 
 
   TCanvas *singleCanvas = new TCanvas("singleCanvas","",800,800);
@@ -460,7 +460,7 @@ void plot3Histos(TH1D *histo1[numberSector][numberSlices], TH1D *histo2[numberSe
   // 2 - Data & Model 
 
   // For calculating which QQ bins we're in
-  double qqMin = 1.4; double qqMax = 4.8; 
+  double qqMin = 1.5; double qqMax = 4.8; 
   double qqWidth = (qqMax-qqMin)/numberSlices; 
 
   TCanvas *singleCanvas = new TCanvas("singleCanvas","",800,800);

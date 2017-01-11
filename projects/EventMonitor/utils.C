@@ -16,6 +16,7 @@ void changeView(){
 void toggleLogZ(){
   setLogZ = !setLogZ;
 }
+
 void init(){
   for(int c=0; c<NCONF; c++){
     cout << " >>> Creating histograms for " << configName[c] << endl;
@@ -33,6 +34,7 @@ void init(){
     qqX[c]      = (TH2D*) events[c]->Projection(4,0); qqX[c]      ->SetName(Form("%s_qqX",configName[c].c_str()));
     qqW[c]      = (TH2D*) events[c]->Projection(4,3); qqW[c]      ->SetName(Form("%s_qqW",configName[c].c_str()));
     wY[c]       = (TH2D*) events[c]->Projection(1,3); wY[c]       ->SetName(Form("%s_wY",configName[c].c_str()));
+    wNu[c]      = (TH2D*) events[c]->Projection(7,3); wNu[c]      ->SetName(Form("%s_wNu",configName[c].c_str()));
   }
 }
 
@@ -46,6 +48,7 @@ void setRange(string varName, double min, double max){
   else if (varName == "qq")   { var = 4; }
   else if (varName == "theta"){ var = 5; }
   else if (varName == "phi")  { var = 6; }
+  else if (varName == "nu")  { var = 7; }
 
   for(int c=0; c<NCONF; c++){
     int startBin = events[c]->GetAxis(var)->FindBin(min);
@@ -95,7 +98,6 @@ void normalize(){
     theta[c]->SetMaximum(1.1*max[5]);
     phi[c]  ->SetMaximum(1.1*max[6]);
   }
-
 }
 
 void draw(int type){
@@ -151,7 +153,7 @@ void draw(int type){
       for (int c=0; c<NCONF; c++){
 	//	x[c]->SetFillColorAlpha(fillColor[c], 0.5);
 	x[c]->SetLineColor(fillColor[c]);
-	x[c]->Draw("same");
+	x[c]->Draw("histsame");
       }
     }
 
@@ -170,7 +172,7 @@ void draw(int type){
       for (int c=0; c<NCONF; c++){
 	//	y[c]->SetFillColorAlpha(fillColor[c], 0.5);
 	y[c]->SetLineColor(fillColor[c]);
-	y[c]->Draw("same");
+	y[c]->Draw("histsame");
       }
     }
     xLabelString = "y";
@@ -188,7 +190,7 @@ void draw(int type){
       for (int c=0; c<NCONF; c++){
 	//	p[c]->SetFillColorAlpha(fillColor[c], 0.5);
 	p[c]->SetLineColor(fillColor[c]);
-	p[c]->Draw("same");
+	p[c]->Draw("histsame");
       }
     }
     xLabelString = "p [GeV/c]";
@@ -206,7 +208,7 @@ void draw(int type){
       for (int c=0; c<NCONF; c++){
 	//	w[c]->SetFillColorAlpha(fillColor[c], 0.5);
 	w[c]->SetLineColor(fillColor[c]);
-	w[c]->Draw("same");
+	w[c]->Draw("histsame");
       }
     }
     xLabelString = "W [GeV/c^{2}]";
@@ -224,7 +226,7 @@ void draw(int type){
       for (int c=0; c<NCONF; c++){
 	//	qq[c]->SetFillColorAlpha(fillColor[c], 0.5);
 	qq[c]->SetLineColor(fillColor[c]);
-	qq[c]->Draw("same");
+	qq[c]->Draw("histsame");
       }
     }
     xLabelString = "Q^{2} [GeV^{2}/c^{2}]";
@@ -242,7 +244,7 @@ void draw(int type){
       for (int c=0; c<NCONF; c++){
 	//	theta[c]->SetFillColorAlpha(fillColor[c], 0.5);
 	theta[c]->SetLineColor(fillColor[c]);
-	theta[c]->Draw("same");
+	theta[c]->Draw("histsame");
       }
     }
     xLabelString = "#theta [Degrees]";
@@ -260,7 +262,7 @@ void draw(int type){
       for (int c=0; c<NCONF; c++){
 	//	phi[c]->SetFillColorAlpha(fillColor[c], 0.5);
 	phi[c]->SetLineColor(fillColor[c]);
-	phi[c]->Draw("same");
+	phi[c]->Draw("histsame");
       }
     }
     xLabelString = "#phi [Degrees]";
@@ -343,6 +345,12 @@ void draw2d(int type){
     thetaP[config]->Draw("colz");
     xLabelString = "P [GeV/c]";
     yLabelString = "#theta [Deg]";
+  } 
+
+  else if (type == 5){
+    wNu[config]->Draw("colz");
+    xLabelString = "W [GeV/c^{2}]";
+    yLabelString = "#nu [GeV/c]";
   } 
 
   xLabel.DrawLatex(xLabelPosX, xLabelPosY, xLabelString.c_str());

@@ -59,6 +59,7 @@ public:
     ECVCut             *ecv_cut;
     ECWCut             *ecw_cut;
     NPheCut            *nphe_cut; 
+    MomentumCut        *p_cut; 
     SampFracCut        *sf_s1_cut;
     SampFracCut        *sf_s2_cut;
     SampFracCut        *sf_s3_cut;

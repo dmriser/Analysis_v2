@@ -5,6 +5,8 @@
   string configName[NCONF] = {"data","keppelRad","elastGen"};
   int configColor[NCONF]   = {55, 75, 95};
 
+  string saveName = "pLineAt2";
+
 
   gROOT->LoadMacro("utils.C");
 
@@ -131,7 +133,7 @@
   title->SetTextSize(0.05);
   title->SetTextFont(21); 
 
-  TLine *line = new TLine(1.0,20,1.0,60); 
+  TLine *line = new TLine(2.0,20,2.0,60); 
   line->SetLineWidth(2);
   line->SetLineColor(99);
   line->SetLineStyle(4);
@@ -201,7 +203,7 @@
   gPad->SetGridy();
   line->Draw();
 
-  can1->Print("thetaP.png");
+  can1->Print(Form("thetaP_%s.png",saveName.c_str()));
 
 
 
@@ -306,5 +308,6 @@
   gPad->SetGridy();
   curve->Draw("same");
 
-  can2->Print("xy.png");
+  can2->Print(Form("xy_%s.png",saveName.c_str()));
+
 }

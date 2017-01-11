@@ -60,6 +60,7 @@ ParticleFilter::ParticleFilter(Parameters *params) : pars(params){
     ecv_cut            = new ECVCut();
     ecw_cut            = new ECWCut();
     nphe_cut           = new NPheCut();
+    p_cut              = new MomentumCut();
     sf_s1_cut          = new SampFracCut(1);
     sf_s2_cut          = new SampFracCut(2);
     sf_s3_cut          = new SampFracCut(3);
@@ -216,9 +217,13 @@ ParticleFilter::ParticleFilter(Parameters *params) : pars(params){
     nphe_cut->set_min(25);
     nphe_cut->set_max(1000);
 
+    p_cut->set_min(0.5);
+    p_cut->set_max(100.0);
+
     // Push back the cuts 
     electronSelector->add_cut( negativity_cut );
     electronSelector->add_cut( nphe_cut );
+    electronSelector->add_cut( p_cut );
     electronSelector->add_cut( cc_fid_cut );
     electronSelector->add_cut( cc_phi_match_cut );
     electronSelector->add_cut( cc_theta_s1_cut );

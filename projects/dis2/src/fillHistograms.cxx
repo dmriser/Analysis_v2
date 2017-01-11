@@ -44,10 +44,14 @@ int main(int argc, char * argv[]){
 
   PhysicsEventSelector * eventSelector = new PhysicsEventSelector();
   PhysicsEventCut_w *w_cut             = new PhysicsEventCut_w();
+  PhysicsEventCut_p *p_cut             = new PhysicsEventCut_p();
   PhysicsEventCut_x *x_cut             = new PhysicsEventCut_x();
   PhysicsEventCut_y *y_cut             = new PhysicsEventCut_y();
   PhysicsEventCut_qq *qq_cut           = new PhysicsEventCut_qq();
   PhysicsEventCut_xyLineCut *xy_cut    = new PhysicsEventCut_xyLineCut();
+
+  p_cut->set_min( options->args["PMIN"].arg );
+  p_cut->set_max( 5.498 ); 
 
   w_cut->set_min( 1.1 );
   w_cut->set_max( 99.9 ); 
@@ -65,6 +69,7 @@ int main(int argc, char * argv[]){
   //  xy_cut->m = 1.2;
   //  xy_cut->b = 0.6;
 
+  eventSelector->add_cut(p_cut);
   eventSelector->add_cut(w_cut);
   eventSelector->add_cut(x_cut);
   eventSelector->add_cut(y_cut);
@@ -165,14 +170,18 @@ void configureCommandLineOptions(h22Options * theseOpts){
   theseOpts->args["N"].type = 0;
   theseOpts->args["N"].name = "Number of files to process";
  
-  theseOpts->args["YCUT"].arg = 0.80;
+  theseOpts->args["YCUT"].arg = 1.00;
   theseOpts->args["YCUT"].type = 0;
   theseOpts->args["YCUT"].name = "Y-Cut";
+ 
+  theseOpts->args["PMIN"].arg = 0.50;
+  theseOpts->args["PMIN"].type = 0;
+  theseOpts->args["PMIN"].name = "Minimum track p ";
   
   theseOpts->args["TYPE"].args = "UNSET";
   theseOpts->args["TYPE"].type = 1;
   theseOpts->args["TYPE"].name = "Processing mode";
-   
+    
   theseOpts->args["LIST"].args = "UNSET";
   theseOpts->args["LIST"].type = 1;
   theseOpts->args["LIST"].name = "Process list of files";

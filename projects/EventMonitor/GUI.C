@@ -23,6 +23,7 @@
   TH2D *qqX[NCONF];
   TH2D *qqW[NCONF];
   TH2D *wY[NCONF];
+  TH2D *wNu[NCONF];
   
   for (int c=0; c<NCONF; ++c){
     file[c]   = TFile::Open(inputFile[c].c_str());
@@ -39,13 +40,13 @@
   init();
 
   // Variables that live in the CINT universe somewhere 
-  int config   = 0;
-  int view     = 0;      // 0 or 1, can be viewed alone(0) or together(1) 
-  bool print   = false; 
-  bool setLogZ = true; 
+  int config        = 0;
+  int view          = 0;      // 0 or 1, can be viewed alone(0) or together(1) 
+  bool print        = false; 
+  bool setLogZ      = true; 
 
   string histogramTitles1d[7] = {"x","y","p","w","qq","theta","phi"};
-  string histogramTitles2d[5] = {"thetaPhi","qqX","qqW","wY","thetaP"};
+  string histogramTitles2d[6] = {"thetaPhi","qqX","qqW","wY","thetaP","wNu"};
   int fillColor[5]            = {52, 99, 71, 84, 61};
 
   // Build and show GUI
@@ -66,7 +67,8 @@
   bar->AddButton("Show Q2 vs. x",      "draw2d(1)");
   bar->AddButton("Show Q2 vs. w",      "draw2d(2)");
   bar->AddButton("Show y vs. w",       "draw2d(3)");
-  bar->AddButton("Show theta vs. P",       "draw2d(4)");
+  bar->AddButton("Show theta vs. P",   "draw2d(4)");
+  bar->AddButton("Show Nu vs. W",   "draw2d(5)");
   bar->AddButton("","");
   bar->AddButton("Print","printAll()");
   bar->AddButton("","");

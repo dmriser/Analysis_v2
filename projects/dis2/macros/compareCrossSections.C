@@ -4,9 +4,9 @@
 
 
   // General Setup 
-  const int NCONF          = 3; 
-  string fileName[NCONF]   = {"../out/xs/xs_y0.81.root","../out/xs/xs_xy_test.root","../out/xs/xs_y0.7.root"};
-  string configName[NCONF] = {"y=0.81","xyCut","y=0.7"};
+  const int NCONF          = 4; 
+  string fileName[NCONF]   = {"../out/xs/xs_y0.81.root","../out/xs/xs_xy_test.root","../out/xs/xs_y0.7.root","../out/xs/xs_xy.root"};
+  string configName[NCONF] = {"y=0.81","xyCut","y=0.7","x=0.2_y=0.6"};
   //  string fileName[NCONF]   = {"../out/xs/xsNominalES.root","../out/xs/xsLooseES.root","../out/xs/xsSuperLooseES.root","../out/xs/xsTightES.root"};
   //  string configName[NCONF] = {"nominal","loose","superLoose","tight"};
 

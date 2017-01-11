@@ -49,7 +49,7 @@ int main(){
     double qq = qqMin + ibin*(qqMax-qqMin)/numberQQBins; 
     double eprime = beamEnergyDouble-(wFixed*wFixed + qq - proton_mass*proton_mass)/(2*proton_mass);
 
-    double bostedValue = bosted.GetXSByWQQ(1,1,beamEnergyDouble,wFixed,qq)*jacobian(wFixed,beamEnergyDouble,eprime);
+    double bostedValue = 1/(2*wFixed)*bosted.GetXSByWQQ(1,1,beamEnergyDouble,wFixed,qq)*jacobian(wFixed,beamEnergyDouble,eprime);
     double bostedValueWithFlux = bosted.GetXSByWQQ(1,1,beamEnergyDouble,wFixed,qq)*calculatePhotonFlux(beamEnergyDouble,wFixed,qq)*jacobian(wFixed,beamEnergyDouble,eprime);
     float keppelValue = keppel.GetXS(beamEnergyFloat,qq,wFixed);          
 

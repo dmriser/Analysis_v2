@@ -105,6 +105,32 @@ bool PhysicsEventCut_w::passes(PhysicsEvent event){
   return false; 
 }
  
+
+///////////////////////////////////////////////////////////////
+/*
+
+  PhysicsEventCut_p
+
+*/
+///////////////////////////////////////////////////////////////
+ 
+
+PhysicsEventCut_p::PhysicsEventCut_p(){
+  set_name("p Cut");
+}
+
+PhysicsEventCut_p::~PhysicsEventCut_p(){
+
+}
+
+bool PhysicsEventCut_p::passes(PhysicsEvent event){
+
+  if ( event.finalEnergy > min() && event.finalEnergy < max()) { n_pass++; return true; }
+  else { n_fail++; }
+  
+  return false; 
+}
+ 
 ///////////////////////////////////////////////////////////////
 /*
 

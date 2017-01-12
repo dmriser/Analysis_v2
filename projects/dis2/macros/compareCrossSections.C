@@ -2,11 +2,13 @@
 
   gROOT->LoadMacro("utils.C");
 
+  string basePath  = "/volatile/clas/clas12/dmriser/rootFiles/inclusive/xs";
+  string imagePath = "/volatile/clas/clas12/dmriser/plots/inclusive/compareCrossSection";
 
   // General Setup 
-  const int NCONF          = 4; 
-  string fileName[NCONF]   = {"../out/xs/xs_y0.81.root","../out/xs/xs_xy_test.root","../out/xs/xs_y0.7.root","../out/xs/xs_xy.root"};
-  string configName[NCONF] = {"y=0.81","xyCut","y=0.7","x=0.2_y=0.6"};
+  const int NCONF          = 5; 
+  string fileName[NCONF]   = {basePath+"/y66.root",basePath+"/y68.root",basePath+"/y70.root",basePath+"/y72.root",basePath+"/y74.root"};
+  string configName[NCONF] = {"y < 0.66","y < 0.68","y < 0.70","y < 0.72","y < 0.74"};
   //  string fileName[NCONF]   = {"../out/xs/xsNominalES.root","../out/xs/xsLooseES.root","../out/xs/xsSuperLooseES.root","../out/xs/xsTightES.root"};
   //  string configName[NCONF] = {"nominal","loose","superLoose","tight"};
 
@@ -90,9 +92,9 @@
     xLabel.DrawLatex(0.72, 0.08, "Q^{2} Bin Number");
     yLabel.DrawLatex(0.10, 0.68, "Fit Param 0");
     titleLabel.DrawLatex(0.4, 0.9, Form("Sector %d",sector)); 
-    compareCanvas->Print(Form("compareCrossSections/ratioSector%d.png",sector));
+    compareCanvas->Print(Form("%s/ratioSector%d.png",imagePath.c_str(),sector));
   }
-  /*
+  
   for(int sector=0; sector<numberSector; sector++){
   TCanvas *compareCanvas = new TCanvas("compareCanvas","",800,500); 
 
@@ -110,9 +112,9 @@
     xLabel.DrawLatex(0.72, 0.08, "Q^{2} Bin Number");
     yLabel.DrawLatex(0.10, 0.68, "#chi^{2}/ndf");
     titleLabel.DrawLatex(0.4, 0.9, Form("Sector %d",sector)); 
-    compareCanvas->Print(Form("compareCrossSections/chi2Sector%d.png",sector));
+    compareCanvas->Print(Form("%s/chi2Sector%d.png",imagePath.c_str(),sector));
   }
-  */
+
 
   for(int sector=0; sector<numberSector; sector++){
     
@@ -133,7 +135,7 @@
       xLabel.DrawLatex(0.62, 0.06, "W [GeV/c^{2}]");
       yLabel.DrawLatex(0.05, 0.68, "#frac{d#sigma}{dW dQ^{2}} [#mu Barn]");
       titleLabel.DrawLatex(0.3, 0.9, Form("Sector %d Slice %d",sector,slice)); 
-      compareCanvas->Print(Form("compareCrossSections/xsSector%dSlice%d.png",sector,slice));
+      compareCanvas->Print(Form("%s/xsSector%dSlice%d.png",imagePath.c_str(),sector,slice));
     }
   }
 

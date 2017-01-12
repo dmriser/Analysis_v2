@@ -48,7 +48,7 @@ int main(int argc, char * argv[]){
   PhysicsEventCut_x *x_cut             = new PhysicsEventCut_x();
   PhysicsEventCut_y *y_cut             = new PhysicsEventCut_y();
   PhysicsEventCut_qq *qq_cut           = new PhysicsEventCut_qq();
-  PhysicsEventCut_xyLineCut *xy_cut    = new PhysicsEventCut_xyLineCut();
+  //  PhysicsEventCut_xyLineCut *xy_cut    = new PhysicsEventCut_xyLineCut();
 
   p_cut->set_min( options->args["PMIN"].arg );
   p_cut->set_max( 5.498 ); 
@@ -56,8 +56,8 @@ int main(int argc, char * argv[]){
   w_cut->set_min( 1.1 );
   w_cut->set_max( 99.9 ); 
 
-  x_cut->set_min(0.20);
-  x_cut->set_max(1.00);
+  //  x_cut->set_min(0.20);
+  //  x_cut->set_max(1.00);
 
   y_cut->set_min( 0.00 );
   y_cut->set_max( options->args["YCUT"].arg ); 
@@ -65,16 +65,11 @@ int main(int argc, char * argv[]){
   qq_cut->set_min( 1.00 );
   qq_cut->set_max( 99.9 ); 
 
-  // Experimental Cut 
-  //  xy_cut->m = 1.2;
-  //  xy_cut->b = 0.6;
-
   eventSelector->add_cut(p_cut);
   eventSelector->add_cut(w_cut);
-  eventSelector->add_cut(x_cut);
+  //  eventSelector->add_cut(x_cut);
   eventSelector->add_cut(y_cut);
   eventSelector->add_cut(qq_cut); 
-  //  eventSelector->add_cut(xy_cut);
   eventSelector->enable_all();
 
   // ----------------------------------------------------------------------------------

@@ -25,7 +25,7 @@ using std::endl;
 #include "TPad.h"
 #include "TStyle.h"
 
-#define DIM 3
+#define DIM 5
 
 class MyAnalysis : public GenericAnalysis {
 public:
@@ -37,7 +37,7 @@ public:
 
   THnSparseI *events; 
 
-  DBins *angleBins, *massBins, *wBins; 
+  DBins *angleBins, *massBins, *wBins, *dAngleBins, *finalAngleBins; 
 
   void ProcessEvent();
   void Initialize();
@@ -52,13 +52,15 @@ void MyAnalysis::Initialize(){
   filter->set_info(runno(), GSIM);
   builder     = new PhysicsEventBuilder();
 
-  angleBins = new DBins(200, -0.05, 65);
-  massBins  = new DBins(200, -0.05, 5.0);  
-  wBins     = new DBins(200,   0.8, 3.3); 
+  angleBins      = new DBins(200, -12.0, 65);
+  dAngleBins     = new DBins(200,  0, 360); 
+  massBins       = new DBins(200, -1.0, 5.0);  
+  wBins          = new DBins(200,   1.1, 3.3); 
+  finalAngleBins = new DBins(200, -12.0, 80.0); 
 
-  int num[DIM]    = {angleBins->number(), massBins->number(), wBins->number()};
-  double min[DIM] = {angleBins->min(),       massBins->min(),    wBins->min()};
-  double max[DIM] = {angleBins->max(),       massBins->max(),    wBins->max()};
+  int num[DIM]    = {angleBins->number(), massBins->number(), wBins->number(), dAngleBins->number(), finalAngleBins->number()};
+  double min[DIM] = {angleBins->min(),       massBins->min(),    wBins->min(), dAngleBins->min(),    finalAngleBins->min()};
+  double max[DIM] = {angleBins->max(),       massBins->max(),    wBins->max(), dAngleBins->max(),    finalAngleBins->max()};
 
   events = new THnSparseI("events","events",DIM,num,min,max); 
 
@@ -74,7 +76,10 @@ void MyAnalysis::ProcessEvent(){
   if ( !electrons.empty() && !protons.empty() ){
     for(int aProton=0; aProton < protons.size(); aProton++){
       PhysicsEvent physicsEvent = builder->getPhysicsEvent(electrons[0], protons[aProton]);
-      double point[DIM] = {physicsEvent.finalState.Theta()*to_degrees, physicsEvent.mm2, physicsEvent.w};
+      double point[DIM] = {physicsEvent.finalState.Theta()*to_degrees, physicsEvent.mm2, 
+			   physicsEvent.w,to_degrees*(electrons[0].Phi()-protons[aProton].Phi()), to_degrees*physicsEvent.finalState.Angle(electrons[0].Vect())};
+      //      double point[DIM] = {physicsEvent.finalState.Theta()*to_degrees, physicsEvent.mm2, 
+      //      			   physicsEvent.w,to_degrees*(electrons[0].Phi()-protons[aProton].Phi()), to_degrees*(physicsEvent.finalState.Theta()-electrons[0].Theta())};
       events->Fill(point); 
     }
   }

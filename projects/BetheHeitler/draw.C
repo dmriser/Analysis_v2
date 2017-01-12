@@ -1,12 +1,14 @@
 {
-
   TFile *inputFile = TFile::Open("BetheHeitlerEvents.root");
  
   THnSparseI *events = (THnSparseI*) inputFile->Get("events"); 
 
-  TH1D *mass      = events->Projection(1); 
-  TH1D *w         = events->Projection(2); 
-  TH1D *angle     = events->Projection(0); 
+  TH1D *mass          = events->Projection(1); 
+  TH1D *w             = events->Projection(2); 
+  TH1D *angle         = events->Projection(0); 
+  TH1D *coplanarAngle = events->Projection(3);
+  TH1D *angleEPrimeX  = events->Projection(4);
+
   TH2D *massAngle = events->Projection(0,1); 
   TH2D *massW     = events->Projection(2,1); 
 
@@ -32,21 +34,20 @@
   gPad->SetLogz(); 
   massAngle->Draw("colz"); 
   
-  title->DrawLatex(0.4,0.9,"ep #rightarrow epX"); 
+  title ->DrawLatex(0.4,0.9,"ep #rightarrow epX"); 
   xtitle->DrawLatex(0.75,0.06,"M^{2}_{X}"); 
   ytitle->DrawLatex(0.08,0.72,"#theta_{X}"); 
-  c1->Print("MissingMassVsAngle.png"); 
+  c1    ->Print("MissingMassVsAngle.png"); 
 
   // Mass W 2D-Plot 
   TCanvas *c3 = new TCanvas("c3","",800,500); 
-  gPad->SetGridx(); 
-  gPad->SetGridy(); 
-  gPad->SetLogz(); 
+  gPad ->SetGridx(); 
+  gPad ->SetGridy(); 
+  gPad ->SetLogz(); 
   massW->Draw("colz"); 
   
-  title->DrawLatex(0.4,0.9,"ep #rightarrow epX"); 
+  title ->DrawLatex(0.4,0.9,"ep #rightarrow epX"); 
   xtitle->DrawLatex(0.75,0.06,"M^{2}_{X}"); 
   ytitle->DrawLatex(0.08,0.72,"W [GeV/c^{2}]"); 
-  c3->Print("MissingMassVsW.png"); 
-
+  c3    ->Print("MissingMassVsW.png"); 
 }

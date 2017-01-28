@@ -2,6 +2,9 @@
   gStyle->SetPalette(62);
 
   TFile *inputFile      = TFile::Open("KinematicImpactMC.root");
+  //  TFile *inputFile      = TFile::Open("KinematicImpact.root");
+  string imagePath      = "/volatile/clas12/dmriser/plots/inclusive/eidCuts/";
+  string configName     = "KeppelRad";
 
   TH1F *all = (TH1F*) inputFile->Get("all");
   vector<TH1F*> pass;
@@ -71,7 +74,7 @@
     effCanvas->cd();
     stats->DrawLatex(0.05, 0.02,Form("Left: Pass %.2f, Right: Fail %.2f",pass[i]->GetEntries()/(pass[i]->GetEntries() + fail[i]->GetEntries()),fail[i]->GetEntries()/(pass[i]->GetEntries() + fail[i]->GetEntries())));
   
-    effCanvas->Print(Form("img/kinematic/cut%d.png",i)); 
+    effCanvas->Print(Form("%s%sCut%d.png",imagePath.c_str(),configName.c_str(),i)); 
     effCanvas->Clear();
   }
 }

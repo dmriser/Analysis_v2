@@ -7,16 +7,13 @@ set binName = $2
 cp list.*.dat list.dat 
 chmod +x $binName
 
-./$binName -N=$NFILES -TYPE=data -YCUT=0.66 -PMIN=0.5 -LIST=list.dat -PARS=/u/home/dmriser/mydoc/analysis/root_scripts/Analysis_v2/lists/data.pars -OUT=66.$OUTPUT
-./$binName -N=$NFILES -TYPE=data -YCUT=0.68 -PMIN=0.5 -LIST=list.dat -PARS=/u/home/dmriser/mydoc/analysis/root_scripts/Analysis_v2/lists/data.pars -OUT=68.$OUTPUT
-./$binName -N=$NFILES -TYPE=data -YCUT=0.70 -PMIN=0.5 -LIST=list.dat -PARS=/u/home/dmriser/mydoc/analysis/root_scripts/Analysis_v2/lists/data.pars -OUT=70.$OUTPUT
-./$binName -N=$NFILES -TYPE=data -YCUT=0.72 -PMIN=0.5 -LIST=list.dat -PARS=/u/home/dmriser/mydoc/analysis/root_scripts/Analysis_v2/lists/data.pars -OUT=72.$OUTPUT
-./$binName -N=$NFILES -TYPE=data -YCUT=0.74 -PMIN=0.5 -LIST=list.dat -PARS=/u/home/dmriser/mydoc/analysis/root_scripts/Analysis_v2/lists/data.pars -OUT=74.$OUTPUT
-
-#./$binName -N=$NFILES -TYPE=mcrad -YCUT=0.66 -PMIN=0.5 -LIST=list.dat -PARS=/u/home/dmriser/mydoc/analysis/root_scripts/Analysis_v2/lists/keppelRad.pars -OUT=66.$OUTPUT
+#./$binName -N=$NFILES -LIST=list.dat -PARS=/u/home/dmriser/mydoc/analysis/root_scripts/Analysis_v2/lists/data.pars -OUT=$OUTPUT
+./$binName -N=$NFILES -TYPE=data -YCUT=0.70 -PMIN=0.5 -LIST=list.dat -PARS=/u/home/dmriser/mydoc/analysis/root_scripts/Analysis_v2/lists/dataTight.pars -OUT=$OUTPUT
+#./$binName -N=$NFILES -TYPE=mcrad -YCUT=0.70 -PMIN=0.5 -LIST=list.dat -PARS=/u/home/dmriser/mydoc/analysis/root_scripts/Analysis_v2/lists/keppelRadTight.pars -OUT=$OUTPUT
 #./$binName -TYPE=rec -N=$NFILES -LIST=list.dat -PARS=/u/home/dmriser/mydoc/analysis/root_scripts/Analysis_v2/lists/data.pars -OUT=$OUTPUT 
 #./$binName -N=$NFILES -TYPE=data -YCUT=1.0 -PMIN=2.0 -LIST=list.dat -PARS=/u/home/dmriser/mydoc/analysis/root_scripts/Analysis_v2/lists/data.pars -OUT=$OUTPUT 
-#./$binName -N=$NFILES -LIST=list.dat -PARS=/u/home/dmriser/mydoc/analysis/root_scripts/Analysis_v2/lists/keppelRad.pars -OUT=$OUTPUT 
+#./$binName -N=$NFILES -TYPE=mcrad -LIST=list.dat -PARS=/u/home/dmriser/mydoc/analysis/root_scripts/Analysis_v2/lists/keppelRad.pars -OUT=$OUTPUT 
+
 
 
 

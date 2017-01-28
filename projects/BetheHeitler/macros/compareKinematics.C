@@ -120,18 +120,18 @@
   TLatex *xTitle = new TLatex(); 
   xTitle->SetNDC(); 
   xTitle->SetTextSize(0.05);
-  xTitle->SetTextFont(21); 
+  xTitle->SetTextFont(42); 
 
   TLatex *yTitle = new TLatex(); 
   yTitle->SetNDC(); 
   yTitle->SetTextSize(0.05);
-  yTitle->SetTextFont(21); 
+  yTitle->SetTextFont(42); 
   yTitle->SetTextAngle(90.0);
 
   TLatex *title = new TLatex(); 
   title->SetNDC(); 
   title->SetTextSize(0.05);
-  title->SetTextFont(21); 
+  title->SetTextFont(42); 
 
   TLine *line = new TLine(2.0,20,2.0,60); 
   line->SetLineWidth(2);
@@ -221,18 +221,18 @@
   TLatex *xTitle2 = new TLatex(); 
   xTitle2->SetNDC(); 
   xTitle2->SetTextSize(0.05);
-  xTitle2->SetTextFont(21); 
+  xTitle2->SetTextFont(42); 
 
   TLatex *yTitle2 = new TLatex(); 
   yTitle2->SetNDC(); 
   yTitle2->SetTextSize(0.05);
-  yTitle2->SetTextFont(21); 
+  yTitle2->SetTextFont(42); 
   yTitle2->SetTextAngle(90.0);
 
   TLatex *title2 = new TLatex(); 
   title2->SetNDC(); 
   title2->SetTextSize(0.05);
-  title2->SetTextFont(21); 
+  title2->SetTextFont(42); 
 
   can2->Divide(3,3);
 
@@ -309,5 +309,51 @@
   curve->Draw("same");
 
   can2->Print(Form("xy_%s.png",saveName.c_str()));
+
+  ///////////  ///////////  ///////////  ///////////  ///////////  ///////////  ///////////  ///////////
+  TCanvas *can3 = new TCanvas("can3","",550,800); 
+  can3->Divide(1,3);
+
+  double pMin = (1-0.7)*5.498; 
+
+  TLine *lin = new TLine(pMin,12,pMin,60); 
+  lin->SetLineWidth(3);
+  lin->SetLineColor(99);
+  //  lin->SetLineStyle(4);
+
+  can3->cd(1); 
+  thetaP[0][0]->Draw("colz"); 
+  lin->Draw();
+  gPad->SetGridx(); 
+  gPad->SetGridy(); 
+  title->SetTextSize(0.07);
+  title ->DrawLatex(0.4, 0.9, "ep #rightarrow eX #theta_{e} vs. P'_{e}");
+  yTitle->DrawLatex(0.05, 0.4,"E1-F Data"); 
+  yTitle->DrawLatex(0.1, 0.7,"#theta [Deg]"); 
+  xTitle->DrawLatex(0.46, 0.01, "P [GeV/c]");
+  gPad->SetBottomMargin(0.05);
+
+  can3->cd(2); 
+  gPad->SetGridx(); 
+  gPad->SetGridy(); 
+  thetaP[1][0]->Draw("colz"); 
+  lin->Draw();
+  gPad->SetTopMargin(0.05);
+  gPad->SetBottomMargin(0.05);
+  yTitle->DrawLatex(0.05, 0.3,"Inelastic Simulation"); 
+  xTitle->DrawLatex(0.46, 0.01, "P [GeV/c]");
+  yTitle->DrawLatex(0.1, 0.7,"#theta [Deg]"); 
+
+  can3->cd(3); 
+  gPad->SetGridx(); 
+  gPad->SetGridy(); 
+  thetaP[2][0]->Draw("colz"); 
+  lin->Draw();
+  gPad->SetTopMargin(0.05);
+  xTitle->DrawLatex(0.46, 0.08, "P [GeV/c]");
+  yTitle->DrawLatex(0.05, 0.15,"Elastic/Bethe-Heitler Simulation"); 
+  yTitle->DrawLatex(0.1, 0.7,"#theta [Deg]"); 
+
+  can3->Print("/volatile/clas/clas12/dmriser/plots/inclusive/phaseSpace.png"); 
 
 }

@@ -98,14 +98,9 @@ void setRange(string title, double min, double max){
   }
 }
 
-void testMissingMassCut(double min, double max){
+void displayMissingMass(){
 
-  setRange("missingMass",min,max);
   TH1D *missingMassPass   = events->Projection(1);
-  TH1D *coplanarAnglePass = events->Projection(3);
-
-  TLine *mmMinLine = new TLine(min, 0, min, mass->GetMaximum()); 
-  TLine *mmMaxLine = new TLine(max, 0, max, mass->GetMaximum()); 
 
   TLatex *tit = new TLatex();
   TLatex *xtit = new TLatex();
@@ -124,40 +119,55 @@ void testMissingMassCut(double min, double max){
   ytit->SetTextAngle(90.0);
   ytit->SetTextFont(42); 
 
-  mmMinLine->SetLineColor(99);
-  mmMinLine->SetLineWidth(2);
-  mmMinLine->SetLineStyle(4);
-
-  mmMaxLine->SetLineColor(99);
-  mmMaxLine->SetLineWidth(2);
-  mmMaxLine->SetLineStyle(4);
-
   TCanvas *can1 = new TCanvas("can1","",800,500); 
-  mass           ->SetLineColor(55);
-  missingMassPass->SetLineColor(77);
+  mass           ->SetLineColor(99);
+  missingMassPass->SetLineColor(60);
 
   mass           ->Draw();
   missingMassPass->Draw("same");
-  mmMinLine->Draw();
-  mmMaxLine->Draw();
   gPad->SetGridx(); 
   gPad->SetGridy(); 
 
-  tit->DrawLatex(0.2, 0.9, " Missing Mass Sq. #color[55]{All} and #color[77]{Pass}"); 
-  xtit->DrawLatex(0.7, 0.08, "M^{2}_{X}"); 
-  ytit->DrawLatex(0.05, 0.72, "Counts");
+  tit->DrawLatex(0.2, 0.9, " Missing Mass Sq. #color[99]{All} and #color[60]{Pass}"); 
+  xtit->DrawLatex(0.48, 0.08, "M^{2}_{X}"); 
+  ytit->DrawLatex(0.05, 0.48, "Counts");
 
-  TCanvas *can2 = new TCanvas("can2","",800,500); 
-  coplanarAngle     ->SetLineColor(55); 
-  coplanarAnglePass ->SetLineColor(77); 
-  coplanarAngle     ->Draw(); 
-  coplanarAnglePass ->Draw("same"); 
-  gPad->SetGridx(); 
-  gPad->SetGridy(); 
+  can1->Print(Form("%sMissingMass.png",imagePath.c_str())); 
+}
 
-  tit->DrawLatex(0.15, 0.9, " eP Coplanar Angle #color[55]{All} and #color[77]{Pass}"); 
-  xtit->DrawLatex(0.7, 0.08, "#phi_{eP}"); 
-  ytit->DrawLatex(0.05, 0.72, "Counts");
+void displayCoplanarAngles(){
+
+  TLatex *tit = new TLatex();
+  TLatex *xtit = new TLatex();
+  TLatex *ytit = new TLatex();
+
+  tit->SetNDC();
+  tit->SetTextSize(0.05);
+  tit->SetTextFont(42); 
+
+  xtit->SetNDC();
+  xtit->SetTextSize(0.04);
+  xtit->SetTextFont(42); 
+
+  ytit->SetNDC();
+  ytit->SetTextSize(0.04);
+  ytit->SetTextAngle(90.0);
+  ytit->SetTextFont(42); 
+
+  TH1D *coplanarAnglePass = events->Projection(3);
+
+  TCanvas *c3 = new TCanvas("c3","",800,500);
+  gPad ->SetGridx();
+  gPad ->SetGridy();
+  coplanarAngle    ->SetLineColor(99); 
+  coplanarAnglePass->SetLineColor(55); 
+  coplanarAngle    ->Draw(); 
+  coplanarAnglePass->Draw("same"); 
+
+  tit ->DrawLatex(0.4,0.9,"ep #rightarrow epX");
+  xtit->DrawLatex(0.75,0.06,"#phi_{e}-#phi_{P}");
+  ytit->DrawLatex(0.08,0.72,"Counts");
+  c3    ->Print(Form("%sCoplanarAngles.png",imagePath.c_str()));
 
 }
 
@@ -188,26 +198,35 @@ void displayElectronAngles(){
 
   TCanvas *can1 = new TCanvas("can1","",800,500); 
   eX       ->SetLineColor(99);
-  ePrimeX  ->SetLineColor(83);
+  ePrimeX  ->SetLineColor(65);
   eX       ->SetMaximum(1.1*max);
   ePrimeX  ->SetMaximum(1.1*max);
   eX       ->Draw();
   ePrimeX  ->Draw("same");
 
-  tit->DrawLatex(0.4, 0.9, "ep #rightarrow epX #color[99]{#theta_{eX}} and #color[83]{#theta_{e'X}}"); 
-  xtit->DrawLatex(0.49, 0.08, "#theta");
-  ytit->DrawLatex(0.08, 0.75, "Counts");
+  tit->DrawLatex(0.4, 0.9, "ep #rightarrow epX #color[99]{#theta_{eX}} and #color[65]{#theta_{e'X}}"); 
+  xtit->DrawLatex(0.48, 0.08, "#theta");
+  ytit->DrawLatex(0.08, 0.48, "Counts");
 
   gPad->SetGridx();
   gPad->SetGridy();
-
+  gPad->SetLogy(); 
+  can1->Print(Form("%sElectronAngles.png",imagePath.c_str())); 
 
 }
 
 void displayW(){
 
   TH1D *wPass = events->Projection(2);
-  double max = w->GetMaximum();
+  double max = w    ->GetMaximum();
+  double min = wPass->GetMaximum(); 
+
+  // Set the photon to be along the beamline or along the lepton 
+  setRange("xAngle",-2,5); 
+  TH1D *wPassISR = events->Projection(2);
+  setRange("xAngle",5,60); 
+  TH1D *wPassFSR = events->Projection(2);
+  setRange("xAngle",-20,70); 
 
   TLatex *tit = new TLatex();
   TLatex *xtit = new TLatex();
@@ -226,9 +245,33 @@ void displayW(){
   ytit->SetTextAngle(90.0);
   ytit->SetTextFont(42); 
 
+  TCanvas *can2 = new TCanvas("can2","",800,500); 
+  wPass   ->SetLineColor(65);
+  wPassISR->SetLineColor(99);
+  wPassFSR->SetLineColor(77);
+  wPass   ->SetMaximum(min*1.1);
+  wPass->Draw();
+  wPassISR->Draw("same");
+  wPassFSR->Draw("same");
+  tit ->DrawLatex(0.25, 0.9, "ep #rightarrow epX #color[65]{Pass B.H.Cuts}"); 
+  xtit->DrawLatex(0.7, 0.08, "W [GeV/c^{2}]");
+  ytit->DrawLatex(0.08, 0.75, "Counts");
+  //  gPad->SetGridx();
+  //  gPad->SetGridy();
+
+  TLegend *legendaryLegendOfAllLegends = new TLegend(0.21, 0.62, 0.47, 0.83); 
+  legendaryLegendOfAllLegends->AddEntry(wPass, "Bethe Heitler", "l"); 
+  legendaryLegendOfAllLegends->AddEntry(wPassISR, "#theta_{eX} < 10", "l"); 
+  legendaryLegendOfAllLegends->AddEntry(wPassFSR, "#theta_{eX} > 10", "l"); 
+  legendaryLegendOfAllLegends->SetBorderSize(0);
+  legendaryLegendOfAllLegends->SetFillColor(0);
+  legendaryLegendOfAllLegends->Draw(); 
+
+  can2->Print(Form("%sWSpectrum.png",imagePath.c_str())); 
+
+  /*
   TCanvas *can1 = new TCanvas("can1","",800,500); 
   w       ->SetLineColor(99);
-  wPass   ->SetLineColor(65);
   w       ->SetMaximum(1.1*max);
   wPass   ->SetMaximum(1.1*max);
   w       ->Draw();
@@ -240,6 +283,95 @@ void displayW(){
 
   gPad->SetGridx();
   gPad->SetGridy();
+  */
+}
+
+void displayMassAngle(){
+  massAngle = events->Projection(0,1); 
+
+  // Mass Angle 2D-Plot
+  TCanvas *c1 = new TCanvas("c1","",800,500);
+  TLatex *title = new TLatex();
+  title->SetNDC();
+  title->SetTextSize(0.05);
+
+  TLatex *xtitle = new TLatex();
+  xtitle->SetNDC();
+  xtitle->SetTextSize(0.04);
+
+  TLatex *ytitle = new TLatex();
+  ytitle->SetNDC();
+  ytitle->SetTextSize(0.04);
+  ytitle->SetTextAngle(90.0);
+
+  gPad->SetGridx();
+  gPad->SetGridy();
+  gPad->SetLogz();
+  massAngle->Draw("colz");
+
+  title ->DrawLatex(0.4,0.9,"ep #rightarrow epX");
+  xtitle->DrawLatex(0.75,0.06,"M^{2}_{X}");
+  ytitle->DrawLatex(0.08,0.72,"#theta_{X}");
+  c1    ->Print(Form("%sMissingMassVsAngle.png",imagePath.c_str()));
+}
+
+void displayMassW(){
+  massW = events->Projection(2,1); 
+
+  TLatex *title = new TLatex();
+  title->SetNDC();
+  title->SetTextSize(0.05);
+
+  TLatex *xtitle = new TLatex();
+  xtitle->SetNDC();
+  xtitle->SetTextSize(0.04);
+
+  TLatex *ytitle = new TLatex();
+  ytitle->SetNDC();
+  ytitle->SetTextSize(0.04);
+  ytitle->SetTextAngle(90.0);
+
+  // Mass W 2D-Plot
+  TCanvas *c3 = new TCanvas("c3","",800,500);
+  gPad ->SetGridx();
+  gPad ->SetGridy();
+  gPad ->SetLogz();
+  massW->Draw("colz");
+
+  title ->DrawLatex(0.4,0.9,"ep #rightarrow epX");
+  xtitle->DrawLatex(0.75,0.06,"M^{2}_{X}");
+  ytitle->DrawLatex(0.08,0.72,"W [GeV/c^{2}]");
+  c3    ->Print(Form("%sMissingMassVsW.png",imagePath.c_str()));
+}
+
+void displayMissingMassCoplanarAngle(){
+  mmPhi = events->Projection(3,1); 
+
+  TLatex *title = new TLatex();
+  title->SetNDC();
+  title->SetTextSize(0.05);
+
+  TLatex *xtitle = new TLatex();
+  xtitle->SetNDC();
+  xtitle->SetTextSize(0.04);
+
+  TLatex *ytitle = new TLatex();
+  ytitle->SetNDC();
+  ytitle->SetTextSize(0.04);
+  ytitle->SetTextAngle(90.0);
+
+  // Mass W 2D-Plot
+  TCanvas *c3 = new TCanvas("c3","",800,500);
+  gPad ->SetGridx();
+  gPad ->SetGridy();
+  gPad ->SetLogz();
+  mmPhi->Draw("colz");
+
+  title ->DrawLatex(0.4,0.9,"ep #rightarrow epX");
+  xtitle->DrawLatex(0.75,0.06,"M^{2}_{X}");
+  ytitle->DrawLatex(0.08,0.72,"#phi_{e}-#phi_{P}");
+  c3    ->Print(Form("%sMissingMassPhi.png",imagePath.c_str()));
+
 
 }
 

@@ -31,8 +31,10 @@ class DIS1DHistograms{
   TFile * inputFile; 
   TH1D * allxByQQ[7];
   TH1D * allwByQQ[7];
+  TH1D * allQQByW[7];
   vector<vector<TH1D*> > xByQQ; 
   vector<vector<TH1D*> > wByQQ; 
+  vector<vector<TH1D*> > QQByW; 
 
   int numberOfXBins; 
   double xMin, xMax, xWidth;
@@ -86,9 +88,9 @@ void DIS1DHistograms::Add(DIS1DHistograms *histos){
     for (int sector=0; sector<7; sector++){
       allxByQQ[sector]->Add(histos->allxByQQ[sector]);
       allwByQQ[sector]->Add(histos->allwByQQ[sector]);
+      allQQByW[sector]->Add(histos->allQQByW[sector]);
     }
   
-
     for (int sector=0; sector<xByQQ.size(); sector++){
       for (int slice=0; slice<xByQQ[sector].size(); slice++){
 	xByQQ[sector][slice]->Add( histos->xByQQ[sector][slice] );
@@ -100,20 +102,29 @@ void DIS1DHistograms::Add(DIS1DHistograms *histos){
 	wByQQ[sector][slice]->Add( histos->wByQQ[sector][slice] );
       }
     }
-  
+
+    for (int sector=0; sector<QQByW.size(); sector++){
+      for (int slice=0; slice<QQByW[sector].size(); slice++){
+	QQByW[sector][slice]->Add( histos->QQByW[sector][slice] );
+      }
+    }
 
 }
 
-void DIS1DHistograms::Create(BaseDISHistograms * baseHistograms){
+// Under Construction: Adding the Q^{2} projection, but need
+// to figure out naming scheme properly.
+void DIS1DHistograms::Create(BaseDISHistograms *baseHistograms){
 
   nameOfHistograms = baseHistograms->baseName; 
 
   for (int sector=0; sector<7; sector++){
     vector<TH1D*> xContainer; 
     vector<TH1D*> wContainer; 
+    vector<TH1D*> qqContainer; 
 
-    string xByQQBaseName = baseHistograms->xByQQ[sector]->GetName(); 
-    string wByQQBaseName = baseHistograms->wByQQ[sector]->GetName(); 
+    // Discover Properties of the Things Given to Us
+    string xByQQBaseName  = baseHistograms->xByQQ[sector]->GetName(); 
+    string wByQQBaseName  = baseHistograms->wByQQ[sector]->GetName(); 
     string xByQQBaseTitle = baseHistograms->xByQQ[sector]->GetTitle(); 
     string wByQQBaseTitle = baseHistograms->wByQQ[sector]->GetTitle(); 
   
@@ -140,14 +151,17 @@ void DIS1DHistograms::Create(BaseDISHistograms * baseHistograms){
     for (int slice=0; slice<numberOfQQBins; slice++){
       string xTitle = Form("%s Slice %d",xByQQBaseTitle.c_str(),slice); 
       string wTitle = Form("%s Slice %d",wByQQBaseTitle.c_str(),slice); 
-      string xName = Form("%s_slice%d",xByQQBaseName.c_str(),slice); 
-      string wName = Form("%s_slice%d",wByQQBaseName.c_str(),slice); 
+      string xName  = Form("%s_slice%d",xByQQBaseName.c_str(),slice); 
+      string wName  = Form("%s_slice%d",wByQQBaseName.c_str(),slice); 
 
       TH1D * xSlice = new TH1D(xName.c_str(),xTitle.c_str(),numberOfXBins,xMin,xMax);
       TH1D * wSlice = new TH1D(wName.c_str(),wTitle.c_str(),numberOfWBins,wMin,wMax);
     
-      baseHistograms->xByQQ[sector]->ProjectionX(xName.c_str(),slice+1,slice+2);
-      baseHistograms->wByQQ[sector]->ProjectionX(wName.c_str(),slice+1,slice+2);
+      //      baseHistograms->xByQQ[sector]->ProjectionX(xName.c_str(),slice+1,slice+2);
+      //      baseHistograms->wByQQ[sector]->ProjectionX(wName.c_str(),slice+1,slice+2);
+    
+      baseHistograms->xByQQ[sector]->ProjectionX(xName.c_str(),slice+1,slice+1);
+      baseHistograms->wByQQ[sector]->ProjectionX(wName.c_str(),slice+1,slice+1);
 
       xContainer.push_back(xSlice);
       wContainer.push_back(wSlice);
@@ -223,6 +237,11 @@ void DIS1DHistograms::MultiplyByZero(DIS1DHistograms *histos){
     for (int slice=0; slice<wByQQ[sector].size(); slice++){
       wByQQ[sector][slice]->Multiply(histos->wByQQ[0][slice]);
     }
+
+    for (int slice=0; slice<QQByW[sector].size(); slice++){
+      QQByW[sector][slice]->Multiply( histos->QQByW[0][slice] );
+    }
+    
 
   }
 
@@ -517,8 +536,7 @@ void DIS1DHistograms::ScaleAllByNumberBins(){
 
 }
 
-void DIS1DHistograms::ScaleByPhotonFlux(double beamEnergy){
-  
+void DIS1DHistograms::ScaleByPhotonFlux(double beamEnergy){  
   for (int sector=0; sector<7; sector++){
     for (int qqBin=0; qqBin< numberOfQQBins; qqBin++){
       double qq = qqMin + qqBin*qqWidth;
@@ -532,12 +550,9 @@ void DIS1DHistograms::ScaleByPhotonFlux(double beamEnergy){
       }
     }
   }
-
 }
 
 void DIS1DHistograms::SetBinsOutsideRangeToValue(double min, double max, double value){
-
-
   for (int sector=0; sector<7; sector++){
 
     // For combined 
@@ -562,7 +577,6 @@ void DIS1DHistograms::SetBinsOutsideRangeToValue(double min, double max, double 
       }
     }
   }
-
 }
 
 #endif

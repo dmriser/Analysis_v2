@@ -1,7 +1,9 @@
 #include <iostream>
+#include <fstream>
 #include <vector>
 using std::cout; 
 using std::endl; 
+using std::string; 
 
 // Mine
 #include "CommonTools.h"
@@ -26,6 +28,8 @@ using std::endl;
 #include "TStyle.h"
 
 #define DIM 5
+vector<string> loadFilesFromList(string fileList, int numFiles);
+vector<string> loadFilesFromCommandLine(h22Options *theseOpts, int numFiles);
 
 class MyAnalysis : public GenericAnalysis {
 public:
@@ -42,7 +46,7 @@ public:
   void ProcessEvent();
   void Initialize();
   void Display();
-  void Save(); 
+  void Save(string fileName); 
 };
 
 // Example override of Init using 
@@ -86,12 +90,13 @@ void MyAnalysis::ProcessEvent(){
 
 }
 
-void MyAnalysis::Save(){
-  TFile *outputFile = new TFile("BetheHeitlerEvents.root","recreate"); 
+void MyAnalysis::Save(string fileName){
+  TFile *outputFile = new TFile(fileName.c_str(),"recreate"); 
   events->Write(); 
   outputFile->Write();
   outputFile->Close();
 }
+
 
 int main(int argc, char *argv[]){
 
@@ -100,6 +105,11 @@ int main(int argc, char *argv[]){
   options->args["PARS"].args = "/u/home/dmriser/mydoc/analysis/root_scripts/Analysis_v2/lists/data.pars";
   options->args["PARS"].type = 1;
   options->args["PARS"].name = "Parameter file";
+
+  options->args["LIST"].args = "/u/home/dmriser/mydoc/analysis/root_scripts/Analysis_v2/projects/dis2/allGoodEvents.dat";
+  options->args["LIST"].type = 1;
+  options->args["LIST"].name = "File list";
+
   options->set(argc, argv);
 
   Parameters *pars = new Parameters(); 
@@ -107,10 +117,19 @@ int main(int argc, char *argv[]){
 
   MyAnalysis analysis(pars);
 
-  if(options->ifiles.size() > 0){
-    for (int i=0; i<options->ifiles.size(); i++) { analysis.AddFile(options->ifiles[i]); } 
-    analysis.RunAnalysis(options->args["N"].arg);
-    analysis.Save();
+  // Getting files
+  vector<string> filesToProcess; 
+  if (options->ifiles.empty()){
+    filesToProcess = loadFilesFromList(options->args["LIST"].args, options->args["N"].arg);
+  }
+  else {
+    filesToProcess = loadFilesFromCommandLine(options, options->args["N"].arg);
+  }
+
+  if( !filesToProcess.empty() ){
+    for (int i=0; i<filesToProcess.size(); i++) { analysis.AddFile(filesToProcess[i]); } 
+    analysis.RunAnalysis(1e9);
+    analysis.Save(options->args["OUT"].args);
   }
 
   else {
@@ -119,4 +138,33 @@ int main(int argc, char *argv[]){
 
 
   return 0;
+}
+
+vector<string> loadFilesFromList(string fileList, int numFiles){
+  vector<string> theseFiles;
+
+  std::ifstream inputFile;
+  inputFile.open(fileList.c_str());
+
+  int ifile = 0; string line;
+  while (getline(inputFile, line) && ifile < numFiles){
+    theseFiles.push_back(line);
+    ifile++;
+  }
+
+  inputFile.close();
+  return theseFiles;
+}
+
+vector<string> loadFilesFromCommandLine(h22Options *theseOpts, int numFiles){
+  vector<string> theseFiles;
+
+  for(int ifile = 0; ifile < theseOpts->ifiles.size(); ifile++){
+    theseFiles.push_back(theseOpts->ifiles[ifile]);
+    ifile++;
+
+    if (ifile == numFiles){ break; }
+  }
+
+  return theseFiles;
 }

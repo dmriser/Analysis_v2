@@ -2,19 +2,19 @@
 
   gROOT->LoadMacro("utils.C");
 
-  string basePath  = "/volatile/clas/clas12/dmriser/rootFiles/inclusive/xs";
-  string imagePath = "/volatile/clas/clas12/dmriser/plots/inclusive/compareCrossSection";
+  string basePath  = "/volatile/clas12/dmriser/rootFiles/inclusive/xs";
+  string imagePath = "/volatile/clas12/dmriser/plots/inclusive/compareCrossSection";
 
   // General Setup 
-  const int NCONF          = 5; 
-  string fileName[NCONF]   = {basePath+"/y66.root",basePath+"/y68.root",basePath+"/y70.root",basePath+"/y72.root",basePath+"/y74.root"};
-  string configName[NCONF] = {"y < 0.66","y < 0.68","y < 0.70","y < 0.72","y < 0.74"};
-  //  string fileName[NCONF]   = {"../out/xs/xsNominalES.root","../out/xs/xsLooseES.root","../out/xs/xsSuperLooseES.root","../out/xs/xsTightES.root"};
-  //  string configName[NCONF] = {"nominal","loose","superLoose","tight"};
+  const int NCONF          = 3; 
+  //  string fileName[NCONF]   = {basePath+"/y74.root",basePath+"/y72.root",basePath+"/y70.root",basePath+"/y68.root",basePath+"/y66.root"};
+  //  string configName[NCONF] = {"y < 0.74","y < 0.72","y < 0.70","y < 0.68","y < 0.66"};
+  string fileName[NCONF]   = {basePath+"/y70LargeBins.root",basePath+"/y70Loose.root",basePath+"/y70Tight.root"};
+  string configName[NCONF] = {"nominal","loose","tight"};
 
   // Physics Specifics 
   const int numberSector = 7;
-  const int numberSlices = 20;
+  const int numberSlices = 10;
 
   TFile *inputFiles[NCONF];
   TH1D  *ratio[NCONF][numberSector][numberSlices];

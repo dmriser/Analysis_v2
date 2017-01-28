@@ -2,11 +2,10 @@
 
   gROOT->LoadMacro("utils.C");
 
-  //  TFile * inputFile = TFile::Open("../out/crossSectionWithResonancePass1.root");
-  TFile * inputFile = TFile::Open("../out/xs/xsLoose.root");
-
+  TFile * inputFile = TFile::Open("/volatile/clas12/dmriser/rootFiles/inclusive/xs/y70LargeBins.root");
+  string imagePath = "/volatile/clas12/dmriser/plots/inclusive/"; 
   const int numberSector = 7;
-  const int numberSlices = 20;
+  const int numberSlices = 10;
 
   TH1D *sim[numberSector][numberSlices];
   TH1D *data[numberSector][numberSlices];

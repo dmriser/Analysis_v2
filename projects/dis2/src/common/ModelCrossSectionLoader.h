@@ -115,8 +115,8 @@ void ModelCrossSectionLoader::loadCrossSection(double A, double Z, double beamEn
 	double qqUp = crossSection->qqMin + (1+slice)*crossSection->qqWidth;
 	double qqMid = crossSection->qqWidth/2 + qqLow;
 
-	double csLow = keppelModel->GetXSByX(beamEnergy, qqMid, xLow); //*calculatePhotonFlux(beamEnergy, convert_x_qq_to_w(xLow, qqMid), qqMid);
-	double csUp = keppelModel->GetXSByX(beamEnergy, qqMid, xUp); //*calculatePhotonFlux(beamEnergy, convert_x_qq_to_w(xUp, qqMid), qqMid);
+	double csLow = keppelModel->GetXSByX(beamEnergy, qqLow, xLow); //*calculatePhotonFlux(beamEnergy, convert_x_qq_to_w(xLow, qqMid), qqMid);
+	double csUp = keppelModel->GetXSByX(beamEnergy, qqUp, xUp); //*calculatePhotonFlux(beamEnergy, convert_x_qq_to_w(xUp, qqMid), qqMid);
 	double csMid = keppelModel->GetXSByX(beamEnergy, qqMid, xMid); //*calculatePhotonFlux(beamEnergy, convert_x_qq_to_w(xMid, qqMid), qqMid);
 	double csAverage = (csUp+csLow)/2; 
 	
@@ -141,8 +141,8 @@ void ModelCrossSectionLoader::loadCrossSection(double A, double Z, double beamEn
 	double qqUp = crossSection->qqMin + (1+slice)*crossSection->qqWidth;
 	double qqMid = crossSection->qqWidth/2 + qqLow; 
 	
-	double csLow = keppelModel->GetXS(beamEnergy, qqMid, wLow);// * calculatePhotonFlux(beamEnergy, wLow, qqMid);
-	double csUp = keppelModel->GetXS(beamEnergy, qqMid, wUp);// * calculatePhotonFlux(beamEnergy, wUp, qqMid);
+	double csLow = keppelModel->GetXS(beamEnergy, qqLow, wLow);// * calculatePhotonFlux(beamEnergy, wLow, qqMid);
+	double csUp = keppelModel->GetXS(beamEnergy, qqUp, wUp);// * calculatePhotonFlux(beamEnergy, wUp, qqMid);
 	double csMid = keppelModel->GetXS(beamEnergy, qqMid, wMid);// * calculatePhotonFlux(beamEnergy, wMid, qqMid);
 	double csAverage = (csUp+csLow)/2; 
   

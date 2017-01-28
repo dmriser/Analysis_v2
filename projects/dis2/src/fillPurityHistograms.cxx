@@ -34,10 +34,10 @@ int main(int argc, char * argv[]){
   PhysicsEventCut_y * y_cut = new PhysicsEventCut_y();
   PhysicsEventCut_qq * qq_cut = new PhysicsEventCut_qq();
 
-  w_cut->set_min( 2.05 );
+  w_cut->set_min( 1.10 );
   w_cut->set_max( 99.9 ); 
   y_cut->set_min( 0.00 );
-  y_cut->set_max( 0.85 ); 
+  y_cut->set_max( 0.7 ); 
   qq_cut->set_min( 1.00 );
   qq_cut->set_max( 99.9 ); 
 
@@ -78,63 +78,44 @@ int main(int argc, char * argv[]){
     files = loadFilesFromCommandLine(options, numberOfFilesToProcess);
   }
 
-  // Start running the correct type
-  MCLoader loader(eventSelector, pars, outputFilename, "UPDATE", "200Bins");
-  for (int ifile = 0; ifile < files.size(); ifile++) { loader.AddFile(files[ifile]); }
-  loader.Execute();
+  // -----------------------------------------------
+  //     User Parameters For Binning 
+  // -----------------------------------------------
 
-  MCLoader loader2(eventSelector, pars, outputFilename, "UPDATE", "100Bins");
-  for (int ifile = 0; ifile < files.size(); ifile++) { loader2.AddFile(files[ifile]); }
-  loader2.Initialize();
-  loader2.Rebin(2,2);
-  loader2.Loop();
-  loader2.Save();
+  const int NCONF           = 8; 
+  const int oldNumberOfBins = 200;
+  int numberWBins[NCONF]    = {80, 35, 35, 35, 30, 30, 30, 20};
+  int numberQQBins[NCONF]   = {20, 10,  6,  4, 10,  6,  4,  6};
+  string name[NCONF]        = {"80Bins20Bins","35Bins10Bins","35Bins6Bins","35Bins4Bins","30Bins10Bins","30Bins6Bins","30Bins4Bins","20Bins6Bins"};
 
-  MCLoader loader3(eventSelector, pars, outputFilename, "UPDATE", "50Bins");
-  for (int ifile = 0; ifile < files.size(); ifile++) { loader3.AddFile(files[ifile]); }
-  loader3.Initialize();
-  loader3.Rebin(4,4);
-  loader3.Loop();
-  loader3.Save();
+  // -----------------------------------------------
+  //                  Main Loop  
+  // -----------------------------------------------
 
-  MCLoader loader4(eventSelector, pars, outputFilename, "UPDATE", "40Bins");
-  for (int ifile = 0; ifile < files.size(); ifile++) { loader4.AddFile(files[ifile]); }
-  loader4.Initialize();
-  loader4.Rebin(5,5);
-  loader4.Loop();
-  loader4.Save();
+  for(int c=0; c<NCONF; c++){
+    int wRebinFactor  = (int) oldNumberOfBins/numberWBins[c];
+    int qqRebinFactor = (int) oldNumberOfBins/numberQQBins[c];
 
-  MCLoader loader5(eventSelector, pars, outputFilename, "UPDATE", "34Bins");
-  for (int ifile = 0; ifile < files.size(); ifile++) { loader5.AddFile(files[ifile]); }
-  loader5.Initialize();
-  loader5.Rebin(6,6);
-  loader5.Loop();
-  loader5.Save();
+    cout << "[Main] Starting loop for " << name[c] << endl;
+    cout << "[Main] wRebinFactor:  " << wRebinFactor << endl;     
+    cout << "[Main] qqRebinFactor: " << qqRebinFactor << endl;     
 
-  MCLoader loader6(eventSelector, pars, outputFilename, "UPDATE", "20Bins");
-  for (int ifile = 0; ifile < files.size(); ifile++) { loader6.AddFile(files[ifile]); }
-  loader6.Initialize();
-  loader6.Rebin(10,10);
-  loader6.Loop();
-  loader6.Save();
-
-  MCLoader loader7(eventSelector, pars, outputFilename, "UPDATE", "66Bins");
-  for (int ifile = 0; ifile < files.size(); ifile++) { loader7.AddFile(files[ifile]); }
-  loader7.Initialize();
-  loader7.Rebin(3,3);
-  loader7.Loop();
-  loader7.Save();
-
-  MCLoader loader8(eventSelector, pars, outputFilename, "UPDATE", "10Bins");
-  for (int ifile = 0; ifile < files.size(); ifile++) { loader8.AddFile(files[ifile]); }
-  loader8.Initialize();
-  loader8.Rebin(20,20);
-  loader8.Loop();
-  loader8.Save();
-
+    MCLoader *loader = new MCLoader(eventSelector, pars, outputFilename, "UPDATE",name[c]);
+    for (int ifile = 0; ifile < files.size(); ifile++) { loader->AddFile(files[ifile]); }
+    loader->Initialize();
+    loader->Rebin(wRebinFactor,qqRebinFactor);
+    loader->Loop();
+    loader->Save();  
+    delete loader; 
+    cout << "[Main] Finished loop for " << name[c] << endl;
+  }
 
   return 0;
 }
+
+// -----------------------------------------------
+//      Useful Functions 
+// -----------------------------------------------
 
 void configureCommandLineOptions(h22Options * theseOpts){
 

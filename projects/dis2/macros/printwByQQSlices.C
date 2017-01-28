@@ -3,7 +3,9 @@
   gROOT->LoadMacro("utils.C");
 
   const int numberSector = 7;
-  const int numberSlices = 20;
+  const int numberSlices = 10;
+
+  string imagePath = "/volatile/clas12/dmriser/plots/inclusive/";
 
   TH1D *data[numberSector][numberSlices];
   TH1D *rec[numberSector][numberSlices];
@@ -14,7 +16,7 @@
   TH1D *radCorr[numberSector][numberSlices];
 
 
-  TFile *inputFile = TFile::Open("../out/xs/xs_xy_test.root");
+  TFile *inputFile = TFile::Open("/volatile/clas12/dmriser/rootFiles/inclusive/xs/y70LargeBins.root");
   //  TFile *inputFile = TFile::Open("../out/crossSectionNoFidPass1.root");
 
   readHisto(data, inputFile, numberSector, numberSlices, "dataEvents_wByQQ");
@@ -24,7 +26,7 @@
   readHisto(crossSection, inputFile, numberSector, numberSlices, "radCorrCrossSection_wByQQ");
   readHisto(crossSectionRatio, inputFile, numberSector, numberSlices, "radCorrCrossSectionRatio_wByQQ");
   readHisto(radCorr, inputFile, numberSector, numberSlices, "radCorr_wByQQ");
-  
+
   printSlices(data, numberSector, numberSlices, 2, 1);
   printSlices(rec, numberSector, numberSlices, 2, 2);
   printSlices(gen, numberSector, numberSlices, 2, 3);

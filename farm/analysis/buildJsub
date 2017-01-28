@@ -26,15 +26,7 @@ echo "$outDir/$runScript"                                           >> $jsubName
 echo "$outDir/$fileList"                                            >> $jsubName
 echo "$binDir/$binName"                                             >> $jsubName
 echo " "                                                            >> $jsubName 
-echo "OUTPUT_DATA: 66.out.root"                                        >> $jsubName  
-echo "OUTPUT_TEMPLATE: $outDir/66.$outName"                            >> $jsubName 
-echo "OUTPUT_DATA: 68.out.root"                                        >> $jsubName  
-echo "OUTPUT_TEMPLATE: $outDir/68.$outName"                            >> $jsubName 
-echo "OUTPUT_DATA: 70.out.root"                                        >> $jsubName  
-echo "OUTPUT_TEMPLATE: $outDir/70.$outName"                            >> $jsubName 
-echo "OUTPUT_DATA: 72.out.root"                                        >> $jsubName  
-echo "OUTPUT_TEMPLATE: $outDir/72.$outName"                            >> $jsubName 
-echo "OUTPUT_DATA: 74.out.root"                                        >> $jsubName  
-echo "OUTPUT_TEMPLATE: $outDir/74.$outName"                            >> $jsubName 
+echo "OUTPUT_DATA: out.root"                                        >> $jsubName  
+echo "OUTPUT_TEMPLATE: $outDir/$outName"                            >> $jsubName 
 
  

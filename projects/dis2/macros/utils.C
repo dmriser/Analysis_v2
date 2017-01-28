@@ -118,7 +118,7 @@ void printSlices(TH1D *histo[numberSector][numberSlices], const int numberSector
   //           8 = rad corr 
   //           9 = inelastic fraction 
 
-  double qqMin = 1.5; double qqMax = 4.8;
+  double qqMin = 1.7; double qqMax = 4.2;
   double qqWidth = (qqMax-qqMin)/numberSlices; // slices are always Q^2 bins 
 
   TCanvas *can = new TCanvas("can","",800,800);
@@ -217,15 +217,15 @@ void printSlices(TH1D *histo[numberSector][numberSlices], const int numberSector
 
       sectorCaption.DrawLatex(0.31, 0.89, Form("Sector %d Q^{2}=%.3f",sect,qqValue));
 
-      if (histoType == 1){ can->Print(Form("data/dataSector%dSlice%d.png",sect,slice)); }
-      else if (histoType == 2){ can->Print(Form("rec/recSector%dSlice%d.png",sect,slice)); }
-      else if (histoType == 3){ can->Print(Form("gen/genSector%dSlice%d.png",sect,slice)); }
-      else if (histoType == 4){ can->Print(Form("acceptance/acceptanceSector%dSlice%d.png",sect,slice)); }
-      else if (histoType == 5){ can->Print(Form("crossSection/crossSectionSector%dSlice%d.png",sect,slice)); }
-      else if (histoType == 6){ can->Print(Form("crossSectionRatio/crossSectionRatioSector%dSlice%d.png",sect,slice)); }
-      else if (histoType == 7){ can->Print(Form("purity/purityBins%dSector%dSlice%d.png",numberOfXBins,sect,slice)); }
-      else if (histoType == 8){ can->Print(Form("radCorr/radCorrSector%dSlice%d.png",sect,slice)); }
-      else if (histoType == 9){ can->Print(Form("elasticSubtraction/inelasticFractionSector%dSlice%d.png",sect,slice)); }
+      if (histoType == 1){      can->Print(Form("%sdata/dataSector%dSlice%d.png",imagePath.c_str(),sect,slice)); }
+      else if (histoType == 2){ can->Print(Form("%srec/recSector%dSlice%d.png",imagePath.c_str(),sect,slice)); }
+      else if (histoType == 3){ can->Print(Form("%sgen/genSector%dSlice%d.png",imagePath.c_str(),sect,slice)); }
+      else if (histoType == 4){ can->Print(Form("%sacceptance/acceptanceSector%dSlice%d.png",imagePath.c_str(),sect,slice)); }
+      else if (histoType == 5){ can->Print(Form("%scrossSection/crossSectionSector%dSlice%d.png",imagePath.c_str(),sect,slice)); }
+      else if (histoType == 6){ can->Print(Form("%scrossSectionRatio/crossSectionRatioSector%dSlice%d.png",imagePath.c_str(),sect,slice)); }
+      else if (histoType == 7){ can->Print(Form("%spurity/purityBins%dSector%dSlice%d.png",imagePath.c_str(),numberOfXBins,sect,slice)); }
+      else if (histoType == 8){ can->Print(Form("%sradCorr/radCorrSector%dSlice%d.png",imagePath.c_str(),sect,slice)); }
+      else if (histoType == 9){ can->Print(Form("%selasticSubtraction/inelasticFractionSector%dSlice%d.png",imagePath.c_str(),sect,slice)); }
     }
   }
   
@@ -269,7 +269,7 @@ void printPurityStudy(TH1D *purity[numberSector][numberSlices], TH1D* rec[number
   sectorCaption.SetTextFont(22);
 
   // For calculating which QQ bins we're in
-  double qqMin = 1.4; double qqMax = 4.8; 
+  double qqMin = 1.7; double qqMax = 4.2; 
   double qqWidth = (qqMax-qqMin)/numberSlices; 
 
   int currentPad = 1; 
@@ -445,9 +445,9 @@ void plot2Histos(TH1D *histo1[numberSector][numberSlices], TH1D *histo2[numberSe
 	histo2Caption.DrawLatex(0.18, 0.72, "Inelastic");
       }
 
-      if (histoType == 1)      { singleCanvas->Print(Form("compareDataAndSim/compareDataSimSector%dSlice%d.png",s,sl)); }
-      else if (histoType == 2) { singleCanvas->Print(Form("compareDataAndModel/compareDataModelSector%dSlice%d.png",s,sl)); }
-      else if (histoType == 3) { singleCanvas->Print(Form("elasticSubtraction/compareElasticAndInelasticSector%dSlice%d.png",s,sl)); }
+      if (histoType == 1)      { singleCanvas->Print(Form("%scompareDataAndSim/compareDataSimSector%dSlice%d.png",imagePath.c_str(),s,sl)); }
+      else if (histoType == 2) { singleCanvas->Print(Form("%scompareDataAndModel/compareDataModelSector%dSlice%d.png",imagePath.c_str(),s,sl)); }
+      else if (histoType == 3) { singleCanvas->Print(Form("%selasticSubtraction/compareElasticAndInelasticSector%dSlice%d.png",imagePath.c_str(),s,sl)); }
     }
   }
 }
@@ -565,4 +565,11 @@ void plot3Histos(TH1D *histo1[numberSector][numberSlices], TH1D *histo2[numberSe
       singleCanvas->Clear();
     }
   }
+}
+
+TH1D *linearizeTH2(TH2D *histo){
+  const int nBins = histo->GetSize(); 
+  TH1D *newHisto = new TH1D(Form("%sLinearized",histo->GetName()),"",nBins,1,nBins); 
+  for(int b=0; b<nBins; b++){ newHisto->SetBinContent(b,histo->GetBinContent(b));}
+  return newHisto;
 }

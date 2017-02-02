@@ -169,7 +169,7 @@ void printSlices(TH1D *histo[numberSector][numberSlices], const int numberSector
 
       if (histoType == 6){ 
 	histo[sect][slice]->SetMarkerStyle(7); 
-	histo[sect][slice]->SetMinimum(0.5); 
+	histo[sect][slice]->SetMinimum(0.2); 
 	histo[sect][slice]->SetMaximum(1.5); 
 	histo[sect][slice]->Draw("pe");
 	ratioLower.Draw();

@@ -88,7 +88,7 @@ void DIS1DHistograms::Add(DIS1DHistograms *histos){
     for (int sector=0; sector<7; sector++){
       allxByQQ[sector]->Add(histos->allxByQQ[sector]);
       allwByQQ[sector]->Add(histos->allwByQQ[sector]);
-      allQQByW[sector]->Add(histos->allQQByW[sector]);
+      //      allQQByW[sector]->Add(histos->allQQByW[sector]);
     }
   
     for (int sector=0; sector<xByQQ.size(); sector++){
@@ -103,11 +103,11 @@ void DIS1DHistograms::Add(DIS1DHistograms *histos){
       }
     }
 
-    for (int sector=0; sector<QQByW.size(); sector++){
-      for (int slice=0; slice<QQByW[sector].size(); slice++){
-	QQByW[sector][slice]->Add( histos->QQByW[sector][slice] );
-      }
-    }
+    //    for (int sector=0; sector<QQByW.size(); sector++){
+    //      for (int slice=0; slice<QQByW[sector].size(); slice++){
+    //	QQByW[sector][slice]->Add( histos->QQByW[sector][slice] );
+    //      }
+    //    }
 
 }
 
@@ -238,9 +238,9 @@ void DIS1DHistograms::MultiplyByZero(DIS1DHistograms *histos){
       wByQQ[sector][slice]->Multiply(histos->wByQQ[0][slice]);
     }
 
-    for (int slice=0; slice<QQByW[sector].size(); slice++){
-      QQByW[sector][slice]->Multiply( histos->QQByW[0][slice] );
-    }
+    //    for (int slice=0; slice<QQByW[sector].size(); slice++){
+    //      QQByW[sector][slice]->Multiply( histos->QQByW[0][slice] );
+    //    }
     
 
   }

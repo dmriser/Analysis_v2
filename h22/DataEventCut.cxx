@@ -472,6 +472,27 @@ bool DCR3FiducialCut::passes(h22Event event, int index)
   if (event.tl3_x[index] > left && event.tl3_x[index] > right) { n_pass++; return true; }
   else { n_fail++; return false; }
 }
+
+///////////////////////////////////////////////////////////////
+/*
+  DataEventCut_DeltaBetaCut
+*/
+///////////////////////////////////////////////////////////////
+
+DataEventCut_DeltaBetaCut::DataEventCut_DeltaBetaCut(){
+  set_name("Delta Beta Cut");
+}
+
+DataEventCut_DeltaBetaCut::~DataEventCut_DeltaBetaCut(){
+}
+
+
+bool DataEventCut_DeltaBetaCut::passes(h22Event event, int index){
+  
+  double startTime = 0.0; 
+  return false;
+
+}
  
 
 #endif

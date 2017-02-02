@@ -29,8 +29,7 @@ using namespace std;
 #include "TLine.h"
 #include "TStopwatch.h"
 
-int main(int argc, char * argv[])
-{
+int main(int argc, char * argv[]){
     
     // Setup Options
     h22Options opts;

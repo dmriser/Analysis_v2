@@ -49,7 +49,7 @@ int main(int argc, char * argv[]){
   if (inputFilename != "UNSET"){
     FaradayCupQuickLoader fcup; 
     normalizationScale /= fcup.openFileGetCharge(inputFilename); 
-    cout << "Normalization Scale=" << normalizationScale << endl;
+    cout << "[doCrossSection] Normalization Scale =" << normalizationScale << endl;
 
     BaseDISHistograms * dataEvents2D = new BaseDISHistograms();
     dataEvents2D->Load(inputFilename.c_str(),"dataEvents");
@@ -136,6 +136,7 @@ int main(int argc, char * argv[]){
     DIS1DHistograms * crossSection = new DIS1DHistograms();
     crossSection->CreateByDivision(dataEvents,acceptance,"crossSection","Cross Section W/ Acceptance");
     crossSection->Scale(normalizationScale);
+    //    crossSection->Scale(2.0*normalizationScale);
     crossSection->ScaleByBinWidth();
     crossSection->ScaleByNumberSectors();
     crossSection->ScaleAllByNumberBins();

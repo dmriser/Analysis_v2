@@ -24,7 +24,7 @@ using namespace std;
 
 class DataLoader : public HistogramLoader{
  public:
-  DataLoader(PhysicsEventSelector *eventCriteria, MomCorr_e1f * momCorr, Parameters *pars, std::string outputFile, std::string saveOpts);
+  DataLoader(PhysicsEventSelector *eventCriteria, MomCorr_e1f *momCorr, Parameters *pars, std::string outputFile, std::string saveOpts);
   ~DataLoader();
 
  protected:
@@ -34,6 +34,8 @@ class DataLoader : public HistogramLoader{
   ParticleFilter *filter; 
 
  protected:
+  long int eventsProcessed; 
+
   void Initialize();
   void ProcessEvent();
   void Save();
@@ -46,18 +48,12 @@ DataLoader::DataLoader(PhysicsEventSelector *eventCriteria, MomCorr_e1f * momCor
 }
 
 DataLoader::~DataLoader(){
-  // Anything to do here? 
+  cout << "[DataLoader::~DataLoader] Destroying data loader with events processed: " << eventsProcessed << endl; 
 }
 
 void DataLoader::Initialize(){
   dataEvents.Init("dataEvents","Data Hits");
-
-  
-  //  cout << "[DataLoader] Warning: Running with electron ID strictness alterations. " << endl;
-  //  eID.cc_fid_strict = 2;
-  //  eID.dc_r1_strict  = 2;
-  //  eID.dc_r3_strict  = 2;
-
+  eventsProcessed = 0;
   /*
   filter->getSelector(11)->disable_by_name("DC Region 1 Fid Cut");
   filter->getSelector(11)->disable_by_name("DC Region 3 Fid Cut");
@@ -70,7 +66,7 @@ void DataLoader::Initialize(){
 
 // This is the core routine which conditionally fills histograms. 
 void DataLoader::ProcessEvent(){
-
+  eventsProcessed++;
   //  eID.set_info(runno(),GSIM);
   //  int e_index = eID.get_electron(event);
 

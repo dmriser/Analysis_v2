@@ -22,6 +22,7 @@ using namespace std;
 #include "GenericAnalysis.h"
 #include "ParticleFilter.h"
 #include "Parameters.h"
+#include "ParameterSet.h"
 #include "Pars.h"
 
 // root includes
@@ -69,6 +70,7 @@ public:
   TH1D * h1_slice_prot[6][NSLICES];
   TH1D * h1_slice_pip[6][NSLICES];
   TH1D * h1_slice_pim[6][NSLICES];
+
   TGraphErrors * g_mean_prot[6];
   TGraphErrors * g_sigma_prot[6];
   TGraphErrors * g_mean_pip[6];
@@ -99,22 +101,22 @@ void HIDCalibration::Initialize(){
   f_db_sigma  = new TF1("f_db_sigma","[0]",PMIN,PMAX);
   
   // For passing to TGraph constructor
-    for (int b=0; b<NSLICES; b++) {x[b] = (double) b*PSTEP + PMIN; dx[b] = 0.0;}
+    for (int b=0; b<NSLICES; b++) { x[b] = (double) b*PSTEP + PMIN; dx[b] = 0.0;}
     
     for (int s=0; s<6; s++){
-      h1_dvz[s]       = new TH1F(Form("h1_dvz_%d",s),      Form(" Difference between E Z-Vertex #& Candidate Sector %d",s+1),200,-10,10);
-      h2_p_b_pos[s]   = new TH2F(Form("h2_p_b_pos_%d",s),  Form(" Beta vs. Momentum (q>0) Sector %d ",s+1),NPBINS,PMIN,PMAX,100,0.2,1.2);
-      h2_p_b_neg[s]   = new TH2F(Form("h2_p_b_neg_%d",s),  Form(" Beta vs. Momentum (q<0) Sector %d ",s+1),NPBINS,PMIN,PMAX,100,0.2,1.2);
-      h2_p_b_neu[s]   = new TH2F(Form("h2_p_b_neu_%d",s),  Form(" Beta vs. Momentum (q=0) Sector %d ",s+1),NPBINS,PMIN,PMAX,100,0.2,1.2);
+      h1_dvz[s]         = new TH1F(Form("h1_dvz_%d",s),      Form(" Difference between E Z-Vertex #& Candidate Sector %d",s+1),200,-10,10);
+      h2_p_b_pos[s]     = new TH2F(Form("h2_p_b_pos_%d",s),  Form(" Beta vs. Momentum (q>0) Sector %d ",s+1),NPBINS,PMIN,PMAX,100,0.2,1.2);
+      h2_p_b_neg[s]     = new TH2F(Form("h2_p_b_neg_%d",s),  Form(" Beta vs. Momentum (q<0) Sector %d ",s+1),NPBINS,PMIN,PMAX,100,0.2,1.2);
+      h2_p_b_neu[s]     = new TH2F(Form("h2_p_b_neu_%d",s),  Form(" Beta vs. Momentum (q=0) Sector %d ",s+1),NPBINS,PMIN,PMAX,100,0.2,1.2);
       h2_tofmass_pos[s] = new TH2F(Form("h2_tofmass_pos_%d",s),  Form(" TOF Mass (q= 1) Sector %d ",s+1),NPBINS,PMIN,PMAX,100,-0.01,1.5);
       h2_tofmass_neg[s] = new TH2F(Form("h2_tofmass_neg_%d",s),  Form(" TOF Mass (q=-1) Sector %d ",s+1),NPBINS,PMIN,PMAX,100,-0.01,1.5);
       h2_tofmass_neu[s] = new TH2F(Form("h2_tofmass_neu_%d",s),  Form(" TOF Mass (q= 0) Sector %d ",s+1),NPBINS,PMIN,PMAX,100,-0.01,1.5);
       h1_tofmass_pos[s] = new TH1F(Form("h1_tofmass_pos_%d",s),  Form(" TOF Mass (q= 1) Sector %d ",s+1),100,-0.1,1.5);
       h1_tofmass_neg[s] = new TH1F(Form("h1_tofmass_neg_%d",s),  Form(" TOF Mass (q=-1) Sector %d ",s+1),100,-0.1,1.5);
       h1_tofmass_neu[s] = new TH1F(Form("h1_tofmass_neu_%d",s),  Form(" TOF Mass (q= 0) Sector %d ",s+1),100,-0.4,1.5);
-      h2_p_db_prot[s] = new TH2F(Form("h2_p_db_prot_%d",s),Form(" #Delta Beta vs. Momentum (Proton) Sector %d ",s+1),NPBINS,PMIN,PMAX,100,-0.6,0.2);
-      h2_p_db_pip[s]  = new TH2F(Form("h2_p_db_pip_%d",s), Form(" #Delta Beta vs. Momentum (#pi^+) Sector %d ",s+1),NPBINS,PMIN,PMAX,100,-0.2,0.6);
-      h2_p_db_pim[s]  = new TH2F(Form("h2_p_db_pim_%d",s), Form(" #Delta Beta vs. Momentum (#pi^-) Sector %d ",s+1),NPBINS,PMIN,PMAX,100,-0.2,0.2);
+      h2_p_db_prot[s]   = new TH2F(Form("h2_p_db_prot_%d",s),Form(" #Delta Beta vs. Momentum (Proton) Sector %d ",s+1),NPBINS,PMIN,PMAX,100,-0.6,0.2);
+      h2_p_db_pip[s]    = new TH2F(Form("h2_p_db_pip_%d",s), Form(" #Delta Beta vs. Momentum (#pi^+) Sector %d ",s+1),NPBINS,PMIN,PMAX,100,-0.2,0.6);
+      h2_p_db_pim[s]    = new TH2F(Form("h2_p_db_pim_%d",s), Form(" #Delta Beta vs. Momentum (#pi^-) Sector %d ",s+1),NPBINS,PMIN,PMAX,100,-0.2,0.2);
     }
 
     filter = new ParticleFilter(pars);
@@ -140,8 +142,8 @@ void HIDCalibration::ProcessEvent(){
 
 	int sector = event.sc_sect[ipart]-1; 
 	if (sector > -1){
-	  double cbeta = event.sc_r[ipart]/(corr.hadron_sct(event,ipart,runno(),GSIM)-start_time);
-	  double beta  = cbeta/speed_of_light;
+	  double cbeta   = event.sc_r[ipart]/(corr.hadron_sct(event,ipart,runno(),GSIM)-start_time);
+	  double beta    = cbeta/speed_of_light;
 	  double tofmass = sqrt(pow(event.p[ipart],2)*(1-pow(beta,2))/pow(beta,2)); 
 	  
 	  if (event.q[ipart] < 0) {
@@ -174,8 +176,51 @@ void HIDCalibration::ProcessEvent(){
 }
 
 void HIDCalibration::DoFits(){
-    
-  // Fits here
+
+  // ------------------------------------------------
+  //   Setup ParameterSets 
+  // ------------------------------------------------
+  ParameterSet pionMuNeg, pionSigmaNeg, pionMuPos, pionSigmaPos, pionNSigmaNeg, pionNSigmaPos;
+
+  pionMuNeg    .setName("PIM_TOFMASS_MU");
+  pionSigmaNeg .setName("PIM_TOFMASS_SIGMA");
+  pionMuPos    .setName("PIP_TOFMASS_MU");
+  pionSigmaPos .setName("PIP_TOFMASS_SIGMA");
+  pionNSigmaNeg.setName("PIM_TOFMASS_NSIGMA");
+  pionNSigmaPos.setName("PIP_TOFMASS_NSIGMA");
+ 
+  pionNSigmaNeg.addValueAndError(3.0, 0.0);
+  pionNSigmaPos.addValueAndError(3.0, 0.0);
+
+  // ------------------------------------------------
+  //   Calculate Parameters for Neg. Pion TOF Mass
+  // ------------------------------------------------
+  TF1 *fitGauss  = new TF1("fitGauss","gaus",0.0,0.6); 
+  fitGauss->SetParameter(1,pi_mass);
+
+  int massBins   = h2_tofmass_neg[0]->GetYaxis()->GetNbins();
+  double massMin = h2_tofmass_neg[0]->GetYaxis()->GetBinLowEdge(1);
+  double massMax = h2_tofmass_neg[0]->GetYaxis()->GetBinUpEdge(massBins);
+
+  for(int s=0; s<6; s++){
+    h1_tofmass_neg[s]->Fit(fitGauss,"RQ");
+    cout << "[HIDCalibration::DoFits] Fitting Pi-Minus for Sector " << s << " Mu = " << fitGauss->GetParameter(1) << " Sigma = " << fitGauss->GetParameter(2) << endl;  
+    pionMuNeg   .addValueAndError(fitGauss->GetParameter(1), fitGauss->GetParError(1));
+    pionSigmaNeg.addValueAndError(fitGauss->GetParameter(2), fitGauss->GetParError(2));
+
+    h1_tofmass_pos[s]->Fit(fitGauss,"RQ");
+    cout << "[HIDCalibration::DoFits] Fitting Pi-Plus for Sector " << s << " Mu = " << fitGauss->GetParameter(1) << " Sigma = " << fitGauss->GetParameter(2) << endl;  
+    pionMuPos   .addValueAndError(fitGauss->GetParameter(1), fitGauss->GetParError(1));
+    pionSigmaPos.addValueAndError(fitGauss->GetParameter(2), fitGauss->GetParError(2));
+  }
+  
+  // Add parameters to the output parFile
+  pars->addParameterSet(pionMuNeg);
+  pars->addParameterSet(pionSigmaNeg);
+  pars->addParameterSet(pionMuPos);
+  pars->addParameterSet(pionSigmaPos);
+  pars->addParameterSet(pionNSigmaNeg);
+  pars->addParameterSet(pionNSigmaPos);
 
 }
 
@@ -183,13 +228,13 @@ void HIDCalibration::Save(string outputFilename){
   TFile *outputFile = new TFile(outputFilename.c_str(), "recreate"); 
   
   for (int s=0; s<6; s++){
-    h1_dvz[s]      ->Write();
-    h2_p_b_pos[s]  ->Write();
-    h2_p_b_neg[s]  ->Write();
-    h2_p_b_neu[s]  ->Write();
-    h2_p_db_prot[s]->Write();
-    h2_p_db_pip[s] ->Write();
-    h2_p_db_pim[s] ->Write();
+    h1_dvz[s]        ->Write();
+    h2_p_b_pos[s]    ->Write();
+    h2_p_b_neg[s]    ->Write();
+    h2_p_b_neu[s]    ->Write();
+    h2_p_db_prot[s]  ->Write();
+    h2_p_db_pip[s]   ->Write();
+    h2_p_db_pim[s]   ->Write();
     h2_tofmass_pos[s]->Write();
     h2_tofmass_neg[s]->Write();
     h2_tofmass_neu[s]->Write();
@@ -197,7 +242,7 @@ void HIDCalibration::Save(string outputFilename){
     h1_tofmass_neg[s]->Write();
     h1_tofmass_neu[s]->Write();
   }
-  
+
   outputFile->Write();
   outputFile->Close();
 

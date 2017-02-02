@@ -5,11 +5,11 @@ set numberOfJobs = 40
 set binDir       = "/u/home/dmriser/mydoc/analysis/root_scripts/Analysis_v2/projects/dis2/src/"
 set binName      = "fillHistograms"
 set sourceDir    = "/u/home/dmriser/mydoc/analysis/root_scripts/Analysis_v2/farm/analysis"
-set outDir       = "/volatile/clas12/dmriser/analysis/e1f_analysis/inclusive/data/tightLargeBin"
-set outName      = "y70Tight"
+set outDir       = "/volatile/clas12/dmriser/analysis/e1f_analysis/inclusive/mc/noCC"
+set outName      = "y70"
 set runScript    = "goAnalyze"
-set fileList     = "/u/home/dmriser/mydoc/analysis/root_scripts/Analysis_v2/projects/dis2/allGoodEvents.dat"
-#set fileList     = "/u/home/dmriser/mydoc/analysis/root_scripts/Analysis_v2/projects/dis2/MonteCarlo.dat"
+#set fileList     = "/u/home/dmriser/mydoc/analysis/root_scripts/Analysis_v2/projects/dis2/allGoodEvents.dat"
+set fileList     = "/u/home/dmriser/mydoc/analysis/root_scripts/Analysis_v2/projects/dis2/MonteCarlo.dat"
 
 # Create the output
 # dir if it doesnt exist

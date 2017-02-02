@@ -254,11 +254,22 @@ ParticleFilter::ParticleFilter(Parameters *params) : pars(params){
     electronSelector->enable_all();
     electronSelector->disable_by_name("NPhe Cut");
 
+    // Neutral Pion 
     for(int s=0; s<6; s++){
       pi0_invmass_mu[s]    = params->getParameter("PI0_INVMASS_MU")   .getValue(s);
       pi0_invmass_sigma[s] = params->getParameter("PI0_INVMASS_SIGMA").getValue(s);
     }
       pi0_invmass_nsigma   = params->getParameter("PI0_INVMASS_NSIGMA").getValue(0);
+
+      // Charged Pion 
+      for(int s=0; s<6; s++){
+	pim_tofmass_mu[s]     = params->getParameter("PIM_TOFMASS_MU"); 
+	pim_tofmass_sigma[s]  = params->getParameter("PIM_TOFMASS_SIGMA"); 
+	pim_tofmass_nsigma[s] = params->getParameter("PIM_TOFMASS_NSIGMA"); 
+	pip_tofmass_mu[s]     = params->getParameter("PIP_TOFMASS_MU"); 
+	pip_tofmass_sigma[s]  = params->getParameter("PIP_TOFMASS_SIGMA"); 
+	pip_tofmass_nsigma[s] = params->getParameter("PIP_TOFMASS_NSIGMA"); 
+      }
 
 }
 
@@ -349,10 +360,26 @@ vector<TLorentzVector> ParticleFilter::getVectorOfTLorentzVectors(h22Event event
 	}
       }
     }
-
   }
 
+  // Need to move to above routine.
+  /*
+  else if (pid == 211){
+    particleIndices.clear();
+    
+    vector<int> electrons = getVectorOfParticleIndices(event, 11);
+    if( !electrons.empty() ){
+      double start_time = corr.electron_sct(event,electrons[0],runno,GSIM) - event.sc_r(electrons[0])/speed_of_light;
 
+
+      for(int ipart=0; ipart<event.gpart; ipart++){
+	if(ipart == electrons[0]){ ipart++; }
+	
+	
+      }
+    }
+  }
+  */
   return particles; 
 }
 

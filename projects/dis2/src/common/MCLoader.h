@@ -60,8 +60,6 @@ void MCLoader::Initialize(){
   recAndGenEvents.Init(Form("recAndGenEvents%s",mcType.c_str()),"Rec/Gen Same Bin Events");
   //  recAndGenEvents.Rebin2D(2,2);
 
-
-  filter->set_info(0,GSIM);
   //  cout << "[MCLoader] Warning: Running with electron ID strictness alterations. " << endl;
   //  eID.cc_fid_strict = 2;
   //  eID.dc_r1_strict  = 2;

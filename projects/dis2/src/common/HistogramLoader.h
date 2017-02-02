@@ -34,23 +34,14 @@ class HistogramLoader : public h22Reader{
   virtual void ProcessEvent(); /** We don't need to pass in the event because h22Reader has access to the events already. */
   virtual void Save();
 };
-/*
-#endif
-
-#ifndef histogram_loader_cxx
-#define histogram_loader_cxx
-*/
 
 HistogramLoader::HistogramLoader(PhysicsEventSelector *eventCriteria, string outputFile, string saveOpts){
-
   eventSelector = eventCriteria; 
   outputFilenameWithExtension = outputFile;
   saveOption = saveOpts; 
-
 }
 
 HistogramLoader::~HistogramLoader(){
-
 }
 
 void HistogramLoader::Execute(){
@@ -75,9 +66,9 @@ void HistogramLoader::Loop(){
   // Assumes that file lists are loaded in h22Reader. 
   if (GSIM == -1) { Init(); }
   
-  int numberOfEntries = fchain->GetEntries();
+  long int numberOfEntries = fchain->GetEntries();
 
-  for (int iEntry = 0; iEntry < numberOfEntries; iEntry++) {
+  for (long int iEntry = 0; iEntry < numberOfEntries; iEntry++) {
     if (iEntry%1000 == 0){ cout << "\r done " << iEntry << " events of " << numberOfEntries << flush; } 
 
     GetEntry(iEntry); // Tell the fchain where to point 

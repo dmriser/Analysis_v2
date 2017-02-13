@@ -61,8 +61,7 @@ class DBins
 };
 
 // Generic Bin Class 
-class DBin
-{
+class DBin{
  public:
   DBin();
   ~DBin();

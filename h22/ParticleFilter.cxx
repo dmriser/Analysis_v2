@@ -263,12 +263,12 @@ ParticleFilter::ParticleFilter(Parameters *params) : pars(params){
 
       // Charged Pion 
       for(int s=0; s<6; s++){
-	pim_tofmass_mu[s]     = params->getParameter("PIM_TOFMASS_MU"); 
-	pim_tofmass_sigma[s]  = params->getParameter("PIM_TOFMASS_SIGMA"); 
-	pim_tofmass_nsigma[s] = params->getParameter("PIM_TOFMASS_NSIGMA"); 
-	pip_tofmass_mu[s]     = params->getParameter("PIP_TOFMASS_MU"); 
-	pip_tofmass_sigma[s]  = params->getParameter("PIP_TOFMASS_SIGMA"); 
-	pip_tofmass_nsigma[s] = params->getParameter("PIP_TOFMASS_NSIGMA"); 
+	pim_tofmass_mu[s]     = params->getParameter("PIM_TOFMASS_MU").getValue(s); 
+	pim_tofmass_sigma[s]  = params->getParameter("PIM_TOFMASS_SIGMA").getValue(s); 
+	pim_tofmass_nsigma[s] = params->getParameter("PIM_TOFMASS_NSIGMA").getValue(0); 
+	pip_tofmass_mu[s]     = params->getParameter("PIP_TOFMASS_MU").getValue(s); 
+	pip_tofmass_sigma[s]  = params->getParameter("PIP_TOFMASS_SIGMA").getValue(s); 
+	pip_tofmass_nsigma[s] = params->getParameter("PIP_TOFMASS_NSIGMA").getValue(0); 
       }
 
 }

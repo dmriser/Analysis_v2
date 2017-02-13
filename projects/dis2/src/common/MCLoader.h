@@ -33,9 +33,9 @@ class MCLoader : public HistogramLoader{
   BaseDISHistograms recEvents;
   BaseDISHistograms genEvents;
   BaseDISHistograms recAndGenEvents;
-  NathanEIDWrapper eID; 
-  ParticleFilter *filter; 
-  std::string mcType; 
+  NathanEIDWrapper  eID; 
+  ParticleFilter    *filter; 
+  std::string       mcType; 
   
  public:
   void Initialize();
@@ -51,7 +51,6 @@ MCLoader::MCLoader(PhysicsEventSelector *eventCriteria, Parameters *pars, std::s
 }
 
 MCLoader::~MCLoader(){
-  // Anything to do here? 
 }
 
 void MCLoader::Initialize(){
@@ -59,13 +58,6 @@ void MCLoader::Initialize(){
   genEvents.Init(Form("genEvents%s",mcType.c_str()),"Generated MC Events");
   recAndGenEvents.Init(Form("recAndGenEvents%s",mcType.c_str()),"Rec/Gen Same Bin Events");
   //  recAndGenEvents.Rebin2D(2,2);
-
-  //  cout << "[MCLoader] Warning: Running with electron ID strictness alterations. " << endl;
-  //  eID.cc_fid_strict = 2;
-  //  eID.dc_r1_strict  = 2;
-  //  eID.dc_r3_strict  = 2;
-
-  //  eID.ec_sf_strict = 9; 
 }
 
 // This is the core routine which conditionally fills histograms. 
@@ -98,7 +90,7 @@ void MCLoader::ProcessEvent(){
 			       event.cz[e_index]*event.p[e_index],
 			       event.p[e_index]);
     
-    int sector = event.dc_sect[e_index]; 
+    int sector                   = event.dc_sect[e_index]; 
     PhysicsEvent recPhysicsEvent = builder.getPhysicsEvent(recElectron);
 
     // Again doing this to fill coincident events recAndGen needed to calculate purity and
@@ -118,8 +110,8 @@ void MCLoader::ProcessEvent(){
 void MCLoader::Save(){
   // You may want to recreate the file, but dont overwrite it by
   // doing "RECREATE" on the second 2 saves. 
-  recEvents.Save(outputFilenameWithExtension, saveOption);
-  genEvents.Save(outputFilenameWithExtension, "UPDATE");   
+  recEvents      .Save(outputFilenameWithExtension, saveOption);
+  genEvents      .Save(outputFilenameWithExtension, "UPDATE");   
   recAndGenEvents.Save(outputFilenameWithExtension, "UPDATE");
 }
 

@@ -14,9 +14,10 @@
   TH1D *crossSection[numberSector][numberSlices];
   TH1D *crossSectionRatio[numberSector][numberSlices];
   TH1D *radCorr[numberSector][numberSlices];
+  TH1D *binCorr[numberSector][numberSlices];
 
 
-  TFile *inputFile = TFile::Open("/volatile/clas12/dmriser/rootFiles/inclusive/xs/y7010Bins.root");
+  TFile *inputFile = TFile::Open("/volatile/clas12/dmriser/rootFiles/inclusive/xs/goodRuns.root");
   //  TFile *inputFile = TFile::Open("../out/crossSectionNoFidPass1.root");
 
   readHisto(data, inputFile, numberSector, numberSlices, "dataEvents_wByQQ");
@@ -26,6 +27,7 @@
   readHisto(crossSection, inputFile, numberSector, numberSlices, "radCorrCrossSection_wByQQ");
   readHisto(crossSectionRatio, inputFile, numberSector, numberSlices, "radCorrCrossSectionRatio_wByQQ");
   readHisto(radCorr, inputFile, numberSector, numberSlices, "radCorr_wByQQ");
+  readHisto(binCorr, inputFile, numberSector, numberSlices, "binCenterCorrection_wByQQ");
 
   printSlices(data, numberSector, numberSlices, 2, 1);
   printSlices(rec, numberSector, numberSlices, 2, 2);
@@ -34,5 +36,6 @@
   printSlices(crossSection, numberSector, numberSlices, 2, 5);
   printSlices(crossSectionRatio, numberSector, numberSlices, 2, 6);
   printSlices(radCorr, numberSector, numberSlices, 2, 8);
+  printSlices(binCorr, numberSector, numberSlices, 2, 10);
 
 }

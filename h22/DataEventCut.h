@@ -357,7 +357,7 @@ class DataEventCut_DeltaBetaCut : public DataEventCut
   DataEventCut_DeltaBetaCut();
   ~DataEventCut_DeltaBetaCut();
 
-  bool passes(h22Event event, int index, int pid);
+  bool passes(h22Event event, int electronIndex, int hadronIndex, int PID);
 };
 
 /////////////////////////////////////////////////////////////////////

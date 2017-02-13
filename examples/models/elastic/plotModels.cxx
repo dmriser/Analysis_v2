@@ -30,9 +30,9 @@ int main(){
   double wMax = 2.7; 
   double wWidth = (wMax-wMin)/numberWBins;
 
-  TH1D *elastic = new TH1D("elastic","",numberThetaBins, thetaMin, thetaMax);
+  TH1D *elastic    = new TH1D("elastic","",numberThetaBins, thetaMin, thetaMax);
   TH1D *elasticRad = new TH1D("elasticRad","",numberThetaBins, thetaMin, thetaMax);
-  TH1D *wRad = new TH1D("wRad","",numberWBins,wMin,wMax);
+  TH1D *wRad       = new TH1D("wRad","",numberWBins,wMin,wMax);
   
   for (int bin=0; bin< numberThetaBins; bin++){
     double theta = thetaMin + bin*thetaWidth; 

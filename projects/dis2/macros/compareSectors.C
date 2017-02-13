@@ -3,7 +3,7 @@
   gROOT->LoadMacro("utils.C");
 
   //  TFile * inputFile = TFile::Open("../out/crossSectionWithResonancePass1.root");
-  TFile * inputFile = TFile::Open("/volatile/clas12/dmriser/rootFiles/inclusive/xs/y7010Bins.root");
+  TFile * inputFile = TFile::Open("/volatile/clas12/dmriser/rootFiles/inclusive/xs/goodRunsElasticSub.root");
 
   string imagePath       = "/volatile/clas12/dmriser/plots/inclusive/"; 
   const int numberSector = 7;
@@ -58,10 +58,42 @@
       ratio[sect][slice]->Draw("histsame"); 
     }
   }
+
   compareCan2->Print(Form("%scompareSectorsRatio.png",imagePath.c_str()));
 
-  TCanvas *avgCan = new TCanvas("avgCan","",800,500); 
+  TCanvas *compareCan3 = new TCanvas("compareCan3","",800,500); 
 
+  TLatex title;
+  title.SetNDC();
+  title.SetTextSize(0.04); 
+  title.SetTextFont(42);
+ 
+  gPad->SetMargin(0.2, 0.2, 0.2, 0.2); 
+  for(int sect=1; sect<7; sect++){
+    ratio[sect][2]->SetLineColor(50+(sect-1)*8); 
+    ratio[sect][2]->SetMarkerColor(50+(sect-1)*8); 
+    ratio[sect][2]->SetMarkerStyle(25+sect); 
+    ratio[sect][2]->SetMarkerSize(1); 
+    ratio[sect][2]->SetMinimum(0.1); 
+    ratio[sect][2]->SetMaximum(1.5); 
+
+    ratio[sect][2]->Draw("pesame"); 
+  }
+
+  title.DrawLatex(0.38,0.9,"Inclusive Cross Sec. Ratio");
+  title.DrawLatex(0.46,0.1,"W (GeV/c^{2})");
+  title.SetTextAngle(90.0); 
+  title.DrawLatex(0.12,0.42,"Ratio Data/Model");
+  title.SetTextAngle(0.0); 
+  title.SetTextSize(0.03); 
+  title.DrawLatex(0.82, 0.75, "<Q^{2}> = 2.5 GeV^{2}/c^{2}"); 
+
+  //  gPad->SetGridx();
+  gPad->SetGridy();
+
+  compareCan3->Print(Form("%scompareSectorsRatioSlice3.png",imagePath.c_str()));
+
+  TCanvas *avgCan = new TCanvas("avgCan","",800,500); 
   for(int s=1; s<7; s++){
     ratioAvg[s-1]->SetLineColor(43 + 8*s); 
     ratioAvg[s-1]->Draw("histsame");

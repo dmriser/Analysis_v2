@@ -29,9 +29,9 @@ class DataLoader : public HistogramLoader{
 
  protected:
   BaseDISHistograms dataEvents;
-  NathanEIDWrapper eID; 
-  MomCorr_e1f *momCorrector; 
-  ParticleFilter *filter; 
+  NathanEIDWrapper  eID; 
+  MomCorr_e1f       *momCorrector; 
+  ParticleFilter    *filter; 
 
  protected:
   long int eventsProcessed; 
@@ -54,6 +54,7 @@ DataLoader::~DataLoader(){
 void DataLoader::Initialize(){
   dataEvents.Init("dataEvents","Data Hits");
   eventsProcessed = 0;
+
   /*
   filter->getSelector(11)->disable_by_name("DC Region 1 Fid Cut");
   filter->getSelector(11)->disable_by_name("DC Region 3 Fid Cut");
@@ -64,7 +65,6 @@ void DataLoader::Initialize(){
 
 }
 
-// This is the core routine which conditionally fills histograms. 
 void DataLoader::ProcessEvent(){
   eventsProcessed++;
   //  eID.set_info(runno(),GSIM);
@@ -78,13 +78,14 @@ void DataLoader::ProcessEvent(){
 			    event.cz[e_index]*event.p[e_index],
 			    event.p[e_index]);
 
-    electron = momCorrector->PcorN(electron, -1, 11); 
-
-    int sector = event.dc_sect[e_index]; 
+    electron                  = momCorrector->PcorN(electron, -1, 11); 
+    int sector                = event.dc_sect[e_index]; 
     PhysicsEvent physicsEvent = builder.getPhysicsEvent(electron);
 
+    // -----------------------------------------------------------------
     // Adding this test code to try and identify Bethe-Heitler events and 
     // throw them out of the sample. 
+    // -----------------------------------------------------------------
 
     /*
     bool isBetheHeitler = false; 

@@ -7,7 +7,7 @@ DISK_SPACE:  1024 MB
 MEMORY:      2048 MB
 MULTI_JOBS:  500
 
-COMMAND:    chmod +x goSimulate; ./goSimulate /volatile/clas/clas12/dmriser/analysis/mcdata inclusiveRadCorrPass3/ 
+COMMAND:    chmod +x goSimulate; ./goSimulate /volatile/clas12/dmriser/analysis/mcdata inclusiveRadCorrPass4/ 
 
 OTHER_FILES: 
 /u/home/dmriser/mydoc/analysis/root_scripts/Analysis_v2/farm/disRadCorr/getJobNumber

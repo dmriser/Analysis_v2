@@ -28,11 +28,11 @@ void GenericAnalysis::AddFile(TString file){
   fchain->AddFile(file);
 }
 
-void GenericAnalysis::RunAnalysis(int numberOfEvents){
+bool GenericAnalysis::RunAnalysis(int numberOfEvents){
 
   if (GetEntries() == 0){
     cout << "[GenericAnalysis::RunAnalysis] Abort: No events. " << endl; 
-    return;
+    return false;
   }
 
   else {
@@ -40,9 +40,10 @@ void GenericAnalysis::RunAnalysis(int numberOfEvents){
     Initialize();
     Loop(numberOfEvents);
     Save();
+    return true; 
   }
 
-
+  return true;
 }
 
 void GenericAnalysis::Initialize(){

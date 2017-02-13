@@ -55,30 +55,6 @@ void ModelCrossSectionLoader::loadCrossSection(double A, double Z, double beamEn
   double CS_MAX_VALUE = 1e10;
   
   for (int sector=0; sector<7; sector++){
-    for (int xBin=1; xBin<=crossSection->numberOfXBins; xBin++){
-      double xLow = crossSection->allxByQQ[sector]->GetBinLowEdge(xBin);
-      double xUp = xLow + crossSection->allxByQQ[sector]->GetBinWidth(xBin);
-      double xMid = crossSection->allxByQQ[sector]->GetBinCenter(xBin);
-      
-      double qqMid = -1*crossSection->qqMin/2 + crossSection->qqMax;
-  
-      double csLow = keppelModel->GetXSByX(beamEnergy, qqMid, xLow); //*calculatePhotonFlux(beamEnergy, convert_x_qq_to_w(xLow, qqMid), qqMid);
-      double csUp = keppelModel->GetXSByX(beamEnergy, qqMid, xUp); //*calculatePhotonFlux(beamEnergy, convert_x_qq_to_w(xUp, qqMid), qqMid);
-      double csMid = keppelModel->GetXSByX(beamEnergy, qqMid, xMid); //*calculatePhotonFlux(beamEnergy, convert_x_qq_to_w(xMid, qqMid), qqMid);
-      double csAverage = (csUp+csLow)/2; 
- 
-      if (csMid > CS_MIN_VALUE && csMid < CS_MAX_VALUE) {
-	crossSection->allxByQQ[sector]->SetBinContent(xBin,csMid);
-	crossSection->allxByQQ[sector]->SetBinError(xBin,0.0);
-	}
-      if (csAverage > CS_MIN_VALUE && csAverage < CS_MAX_VALUE) {
-	crossSectionAverage->allxByQQ[sector]->SetBinContent(xBin,csAverage);
-	crossSectionAverage->allxByQQ[sector]->SetBinError(xBin,0.0);
-      }      
-    }
-  }
-
-  for (int sector=0; sector<7; sector++){
     for (int wBin=1; wBin<=crossSection->numberOfWBins; wBin++){
       double wLow = crossSection->allwByQQ[sector]->GetBinLowEdge(wBin);
       double wUp = wLow + crossSection->allwByQQ[sector]->GetBinWidth(wBin);
@@ -102,35 +78,6 @@ void ModelCrossSectionLoader::loadCrossSection(double A, double Z, double beamEn
 
       }
  
-  }
-
-  for (int sector=0; sector<7; sector++){
-    for (int slice=0; slice<crossSection->xByQQ[sector].size(); slice++){
-      for (int xBin=1; xBin<=crossSection->numberOfXBins; xBin++){
-	double xLow = crossSection->xByQQ[sector][slice]->GetBinLowEdge(xBin);
-	double xUp = xLow + crossSection->xByQQ[sector][slice]->GetBinWidth(xBin);
-	double xMid = crossSection->xByQQ[sector][slice]->GetBinCenter(xBin);
-	
-	double qqLow = crossSection->qqMin + slice*crossSection->qqWidth; 
-	double qqUp = crossSection->qqMin + (1+slice)*crossSection->qqWidth;
-	double qqMid = crossSection->qqWidth/2 + qqLow;
-
-	double csLow = keppelModel->GetXSByX(beamEnergy, qqLow, xLow); //*calculatePhotonFlux(beamEnergy, convert_x_qq_to_w(xLow, qqMid), qqMid);
-	double csUp = keppelModel->GetXSByX(beamEnergy, qqUp, xUp); //*calculatePhotonFlux(beamEnergy, convert_x_qq_to_w(xUp, qqMid), qqMid);
-	double csMid = keppelModel->GetXSByX(beamEnergy, qqMid, xMid); //*calculatePhotonFlux(beamEnergy, convert_x_qq_to_w(xMid, qqMid), qqMid);
-	double csAverage = (csUp+csLow)/2; 
-	
-	if (csMid > CS_MIN_VALUE && csMid < CS_MAX_VALUE) {
-	  crossSection->xByQQ[sector][slice]->SetBinContent(xBin,csMid);
-	  crossSection->xByQQ[sector][slice]->SetBinError(xBin,0.0);
-	}
-	if (csAverage > CS_MIN_VALUE && csAverage < CS_MAX_VALUE) {
-	  crossSectionAverage->xByQQ[sector][slice]->SetBinContent(xBin,csAverage);
-	  crossSectionAverage->xByQQ[sector][slice]->SetBinError(xBin,0.0);
-	}      
-      }
-    }
-
     for (int slice=0; slice<crossSection->wByQQ[sector].size(); slice++){
       for (int wBin=1; wBin<=crossSection->numberOfWBins; wBin++){
 	double wLow = crossSection->wByQQ[sector][slice]->GetBinLowEdge(wBin);

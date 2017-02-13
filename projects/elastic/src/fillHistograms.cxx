@@ -14,6 +14,7 @@ using namespace std;
 #include "MomCorr.h"
 #include "PhysicsEventCut.h"
 #include "PhysicsEventSelector.h"
+#include "Parameters.h"
 
 #include "common/DataLoader.h"
 #include "common/MCLoader.h"
@@ -53,10 +54,13 @@ int main(int argc, char * argv[]){
   //  
 
   // Set local variables to command line flags. 
-  string runMode = options->args["TYPE"].args; 
-  string fileList = options->args["LIST"].args; 
-  string outputFilename = options->args["OUT"].args;
+  string runMode             = options->args["TYPE"].args; 
+  string fileList            = options->args["LIST"].args; 
+  string outputFilename      = options->args["OUT"].args;
   int numberOfFilesToProcess = options->args["N"].arg; 
+
+  Parameters *pars = new Parameters();
+  pars->loadParameters(options->args["PARS"].args); 
 
   // Check for no files, then setup the list of files to process correctly. 
   if (numberOfFilesToProcess == 0){ cout << " No files/list detected. " << endl; return 0; }
@@ -70,12 +74,12 @@ int main(int argc, char * argv[]){
 
   // Start running the correct type
   if (runMode == "data"){
-    MomCorr_e1f * momentumCorrection = new MomCorr_e1f("/u/home/dmriser/mydoc/analysis/root_scripts/Analysis_v2/momCorr/"); 
-    DataLoader loader(eventSelector, momentumCorrection, outputFilename, "RECREATE");
+    MomCorr_e1f *momentumCorrection = new MomCorr_e1f("/u/home/dmriser/mydoc/analysis/root_scripts/Analysis_v2/momCorr/"); 
+    DataLoader loader(eventSelector, momentumCorrection, pars, outputFilename, "RECREATE");
     for (int ifile = 0; ifile < files.size(); ifile++) { loader.AddFile(files[ifile]); }
     loader.Execute();
 
-    DInformation * runInformation = new DInformation();
+    DInformation *runInformation = new DInformation();
     runInformation->load("/u/home/dmriser/mydoc/analysis/root_scripts/Analysis_v2/lists/runs.info"); 
 
     FaradayCupAppender chargeAppender(runInformation);
@@ -84,7 +88,7 @@ int main(int argc, char * argv[]){
   }
 
   else if (runMode == "mc"){
-    MCLoader loader(eventSelector, outputFilename, "RECREATE");
+    MCLoader loader(eventSelector, pars, outputFilename, "RECREATE");
     for (int ifile = 0; ifile < files.size(); ifile++) { loader.AddFile(files[ifile]); }
     loader.Execute();
   }
@@ -119,6 +123,10 @@ void configureCommandLineOptions(h22Options * theseOpts){
   theseOpts->args["LIST"].args = "UNSET";
   theseOpts->args["LIST"].type = 1;
   theseOpts->args["LIST"].name = "Process list of files";
+  
+  theseOpts->args["PARS"].args = "/u/home/dmriser/mydoc/analysis/root_scripts/Analysis_v2/lists/pars.dat";
+  theseOpts->args["PARS"].type = 1;
+  theseOpts->args["PARS"].name = "Parameter File";
   
 }
 

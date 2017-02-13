@@ -13,6 +13,8 @@ using namespace std;
 #include "HistogramLoader.h"
 #include "NathanArchive.h"
 #include "MomCorr.h"
+#include "Parameters.h"
+#include "ParticleFilter.h"
 #include "PhysicsEvent.h"
 #include "PhysicsEventBuilder.h"
 #include "PhysicsEventSelector.h"
@@ -24,7 +26,7 @@ using namespace std;
 
 class MCLoader : public HistogramLoader{
  public:
-  MCLoader(PhysicsEventSelector *eventCriteria, std::string outputFile, std::string saveOpts);
+  MCLoader(PhysicsEventSelector *eventCriteria, Parameters *pars, std::string outputFile, std::string saveOpts);
   ~MCLoader();
 
  protected:
@@ -40,6 +42,7 @@ class MCLoader : public HistogramLoader{
 
   NathanEIDWrapper eID; 
   string outputFilename; 
+  ParticleFilter *filter;
 
  protected:
   void Initialize();
@@ -48,7 +51,7 @@ class MCLoader : public HistogramLoader{
 
 };
 
-MCLoader::MCLoader(PhysicsEventSelector *eventCriteria, std::string outputFile, std::string saveOpts) : HistogramLoader(eventCriteria, outputFile, saveOpts){
+MCLoader::MCLoader(PhysicsEventSelector *eventCriteria, Parameters *pars, std::string outputFile, std::string saveOpts) : HistogramLoader(eventCriteria, outputFile, saveOpts){
   outputFilename = outputFile;
   // 4-Dimensional Binning 
   // 0 - Sector 
@@ -65,6 +68,7 @@ MCLoader::MCLoader(PhysicsEventSelector *eventCriteria, std::string outputFile, 
   min[2] = 18.0;     max[2] = 50.0; 
   min[3] = -20.0;    max[3] = 20.0; 
 
+  filter = new ParticleFilter(pars); 
   recEvents = new THnSparseI("recEvents","recEvents",dimension,bins,min,max);
   genEvents = new THnSparseI("genEvents","genEvents",dimension,bins,min,max);
 }

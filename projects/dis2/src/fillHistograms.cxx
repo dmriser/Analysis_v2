@@ -103,7 +103,7 @@ int main(int argc, char * argv[]){
     loader.Execute();
 
     DInformation *runInformation = new DInformation();
-    runInformation->load("/u/home/dmriser/mydoc/analysis/root_scripts/Analysis_v2/lists/runs.info"); 
+    runInformation->load("/u/home/dmriser/mydoc/analysis/root_scripts/Analysis_v2/lists/runsNew.info"); 
 
     FaradayCupAppender chargeAppender(runInformation);
     chargeAppender.AddFiles(files);

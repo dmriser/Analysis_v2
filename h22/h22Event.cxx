@@ -52,8 +52,7 @@ double h22Event::rphi(int ipart)
     return rphi;
 }
 
-double h22Event::mcrphi(int ipart)
-{
+double h22Event::mcrphi(int ipart){
     double rphi = mcphi[ipart];
     if (rphi > 330.00) rphi -= 360.00;
     rphi = rphi - 60*floor((rphi+30)/60);

@@ -138,5 +138,11 @@ inline std::vector<std::string> split(const std::string &s, char delim) {
   return elems;
 }
 
+inline double getRelativePhi(double phi){
+  if (phi > 330.00) phi -= 360.00;
+  double rphi = phi - 60*floor((phi+30)/60);
+  return rphi;
+}
+
 #endif
 

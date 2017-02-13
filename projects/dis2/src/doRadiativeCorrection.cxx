@@ -27,8 +27,8 @@ vector<string> loadFilesFromList(string fileList);
 int main(int argc, char * argv[]){
 
   // ------------- Physics Options -------------
-  int numberOfXBins = 80; // x and W 
-  int numberOfYBins = 20; // Q^{2}
+  int numberOfXBins = 35; // x and W 
+  int numberOfYBins = 10; // Q^{2}
 
   // Check for improper usage of this code. 
   if (argc < 3){ return PrintUsage(); }

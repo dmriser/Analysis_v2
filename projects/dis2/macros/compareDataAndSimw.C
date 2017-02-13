@@ -2,8 +2,8 @@
 
   gROOT->LoadMacro("utils.C");
 
-  TFile * inputFile = TFile::Open("/volatile/clas12/dmriser/rootFiles/inclusive/xs/y70LargeBins.root");
-  string imagePath = "/volatile/clas12/dmriser/plots/inclusive/"; 
+  TFile * inputFile = TFile::Open("/volatile/clas12/dmriser/rootFiles/inclusive/xs/goodRuns.root");
+  string imagePath  = "/volatile/clas12/dmriser/plots/inclusive/"; 
   const int numberSector = 7;
   const int numberSlices = 10;
 

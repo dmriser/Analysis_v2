@@ -117,6 +117,7 @@ void printSlices(TH1D *histo[numberSector][numberSlices], const int numberSector
   //           7 = purity 
   //           8 = rad corr 
   //           9 = inelastic fraction 
+  //           10 = bin centering corrections 
 
   double qqMin = 1.7; double qqMax = 4.2;
   double qqWidth = (qqMax-qqMin)/numberSlices; // slices are always Q^2 bins 
@@ -158,7 +159,7 @@ void printSlices(TH1D *histo[numberSector][numberSlices], const int numberSector
       if (histoType == 4){ 
 	histo[sect][slice]->SetMinimum(0.0); 
 	histo[sect][slice]->SetMaximum(1.0); 
-	histo[sect][slice]->SetMarkerStyle(7); 
+	histo[sect][slice]->SetMarkerStyle(8); 
 	histo[sect][slice]->Draw("pe");
       }
 
@@ -203,6 +204,13 @@ void printSlices(TH1D *histo[numberSector][numberSlices], const int numberSector
 	histo[sect][slice]->SetMaximum(1.1); 
 	histo[sect][slice]->Draw("hist");
       }
+      
+      if (histoType == 10){ 
+	histo[sect][slice]->SetMinimum(0.9); 
+	histo[sect][slice]->SetMaximum(1.1); 
+	histo[sect][slice]->SetMarkerStyle(8); 
+	histo[sect][slice]->Draw("pe");
+      }
 
       if (distType == 1){ xCaption.DrawLatex(0.65,0.06,"X_{Bjorken}"); }
       if (distType == 2){ xCaption.DrawLatex(0.65,0.06,"W (GeV/c^{2})"); }
@@ -214,6 +222,7 @@ void printSlices(TH1D *histo[numberSector][numberSlices], const int numberSector
       if (histoType == 7){ yCaption.DrawLatex(0.05,0.72,"Purity"); }
       if (histoType == 8){ yCaption.DrawLatex(0.05,0.72,"Ratio rad/born"); }
       if (histoType == 9){ yCaption.DrawLatex(0.05,0.62,"Inelastic Fraction"); }
+      if (histoType == 10){ yCaption.DrawLatex(0.05,0.72,"Ratio"); }
 
       sectorCaption.DrawLatex(0.31, 0.89, Form("Sector %d Q^{2}=%.3f",sect,qqValue));
 
@@ -226,6 +235,7 @@ void printSlices(TH1D *histo[numberSector][numberSlices], const int numberSector
       else if (histoType == 7){ can->Print(Form("%spurity/purityBins%dSector%dSlice%d.png",imagePath.c_str(),numberOfXBins,sect,slice)); }
       else if (histoType == 8){ can->Print(Form("%sradCorr/radCorrSector%dSlice%d.png",imagePath.c_str(),sect,slice)); }
       else if (histoType == 9){ can->Print(Form("%selasticSubtraction/inelasticFractionSector%dSlice%d.png",imagePath.c_str(),sect,slice)); }
+      else if (histoType == 10){ can->Print(Form("%sbinCorr/binCorrSector%dSlice%d.png",imagePath.c_str(),sect,slice)); }
     }
   }
   
@@ -375,6 +385,8 @@ void plot2Histos(TH1D *histo1[numberSector][numberSlices], TH1D *histo2[numberSe
   for (int s=0; s< numberSector; s++){
     double nEvents1 = 0; double nEvents2 = 0;
 
+
+    /* 
     for (int sl=0; sl< numberSlices; sl++){
       // The model doesn't really work well above W=1.9 
       //      int stopIntegrating = histo1[s][sl]->GetBin(1.9);
@@ -384,14 +396,16 @@ void plot2Histos(TH1D *histo1[numberSector][numberSlices], TH1D *histo2[numberSe
       nEvents1 += histo1[s][sl]->Integral();
       nEvents2 += histo2[s][sl]->Integral();
     }
+    */
 
     for (int sl=0; sl< numberSlices; sl++){
       double qqValue = qqMin + sl*qqWidth;
 
       if (histoType == 1) {
-	histo1[s][sl]->Scale(1.0/nEvents1);
-	histo2[s][sl]->Scale(1.0/nEvents2);
-	
+	//	histo1[s][sl]->Scale(1.0/nEvents1);
+	//	histo2[s][sl]->Scale(1.0/nEvents2);
+	//	histo1[s][sl]->Scale(1.0/histo1[s][sl]->Integral());
+	histo2[s][sl]->Scale(histo1[s][sl]->Integral()/histo2[s][sl]->Integral());	
 	histo1[s][sl]->SetMaximum( histo2[s][sl]->GetMaximum()*1.2 );
       }   
    

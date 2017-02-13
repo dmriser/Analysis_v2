@@ -32,7 +32,7 @@ class GenericAnalysis : public h22Reader {
   void AddFiles(std::vector<TString> files);
   void AddFile(TString file);
 
-  virtual void RunAnalysis(int numberOfEvents);
+  virtual bool RunAnalysis(int numberOfEvents);
   virtual void Loop(int numberOfEvents);
   virtual void ProcessEvent();
   virtual void Save();

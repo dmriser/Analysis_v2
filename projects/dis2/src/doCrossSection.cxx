@@ -139,6 +139,7 @@ int main(int argc, char * argv[]){
     //    crossSection->Scale(2.0*normalizationScale);
     crossSection->ScaleByBinWidth();
     crossSection->ScaleByNumberSectors();
+    //    crossSection->Scale(2*3.14159); 
     crossSection->ScaleAllByNumberBins();
     crossSection->Save(outputFilename.c_str(),"update");
 

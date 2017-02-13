@@ -1,15 +1,17 @@
 import os, glob
 
-env = Environment(ENV = {'PATH':os.environ['PATH']}, h22libs=os.environ['h22libs'])
+exeEnv = Environment(ENV = {'PATH':os.environ['PATH']}, h22libs=os.environ['h22libs'])
+exeEnv.ParseConfig("root-config --glibs --cflags")
+exeEnv.Append(CFLAGS = ['-g'])
+exeEnv.Append(CPPPATH = ['$h22libs/include/'], LIBPATH = ['$h22libs/lib/'],LIBS = ['h22','FortranModel','CppModel'])
+#exeEnv.Append(LIBPATH = ['/apps/gcc/4.8.2/lib64/'],LIBS = ['quadmath','gfortran'])
+exeEnv.Append(LIBPATH = ['/apps/gcc/5.2.0/install/lib64/'],LIBS = ['quadmath','gfortran'])
+exeEnv.Append(CPPPATH = ['$ROOTSYS/include/'], LIBPATH = ['$ROOTSYS/lib/'],LIBS = ['TreePlayer','TMVA','Minuit','XMLIO','MLP'])
+#exeEnv.Append(CPPPATH = ['$h22libs/include/'], LIBPATH = ['$h22libs/lib/'],LIBS = ['FortranModel'])
+#exeEnv.Append(CPPPATH = ['$h22libs/include/'], LIBPATH = ['$h22libs/lib/'],LIBS = ['CppModel'])
 
-env.ParseConfig("root-config --glibs --cflags")
-env.Append(CCFLAGS = ['-g'])
-env.Append(CPPPATH = ['$h22libs/include/'], LIBPATH = ['$h22libs/lib/'],LIBS = ['h22'])
-env.Append(CPPPATH = ['$h22libs/include/'], LIBPATH = ['$h22libs/lib/'],LIBS = ['CppModel'])
-env.Append(CPPPATH = ['$h22libs/include/'], LIBPATH = ['$h22libs/lib/'],LIBS = ['FortranModel'])
+sources = glob.glob('*.cxx')
 
-#sources = glob.glob('*.cxx')
-sources = glob.glob('plotModels.cxx')
+for target in sources:
+    exeEnv.Program(target)
 
-for prog in sources:
-    env.Program(prog)

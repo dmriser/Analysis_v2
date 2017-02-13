@@ -3,7 +3,7 @@
   // ---------------------------------------------------------
   //    User Parameters
   // ---------------------------------------------------------
-  TFile *inputFile = TFile::Open("/volatile/clas12/dmriser/rootFiles/inclusive/both/y70.root");
+  TFile *inputFile = TFile::Open("/volatile/clas12/dmriser/rootFiles/inclusive/both/goodRuns.root");
 
 
   // ---------------------------------------------------------

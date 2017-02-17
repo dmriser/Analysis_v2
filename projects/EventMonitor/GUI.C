@@ -1,10 +1,12 @@
 {
 
-  const int NCONF          = 3; 
+  const int NCONF          = 1; 
   //  string inputFile[NCONF]  = {"out/debug_jobs6_gen.root","out/debug_jobs6_rec.root","out/dataOnlyNathansElectrons.root","newCook.root"};
   //  string configName[NCONF] = {"debug_jobs6_gen","debug_jobs6_rec","data_eid","newCook"};
-  string inputFile[NCONF]  = {"data.root","keppelRad.root","elastGen.root"};
-  string configName[NCONF] = {"data","keppelRad","elastGen"};
+  //  string inputFile[NCONF]  = {"data.root","keppelRad.root","elastGen.root"};
+  //  string configName[NCONF] = {"data","keppelRad","elastGen"};
+  string inputFile[NCONF]  = {"rebuildJobs1Gen.root"};
+  string configName[NCONF] = {"Gen"};
   
   // Getting file and events 
   TFile      *file[NCONF];

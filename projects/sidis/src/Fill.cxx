@@ -23,11 +23,11 @@ using std::endl;
 #include "TPad.h"
 #include "TStyle.h"
 
-#define DIM 5
+#define DIM 6
 
 class Fill : public GenericAnalysis {
 public:
-  Fill(Parameters *pars, std::string outputFile) : outputFilename(outputFile) { filter = new ParticleFilter(pars); } 
+  Fill(Parameters *pars, h22Options *opts, std::string outputFile) : outputFilename(outputFile), GenericAnalysis(opts) { filter = new ParticleFilter(pars); } 
   ~Fill(){}
   
   ParticleFilter      *filter;
@@ -52,10 +52,11 @@ void Fill::Initialize(){
   // [2] - Q^{2} 
   // [3] - Phi_{Hadron}
   // [4] - P_{T}^{2}
+  // [5] - Rapidity 
 
-  int numberOfBins[DIM] = {100, 100, 100, 100, 100};
-  double min[DIM]       = {0.0, 0.0, 0.8, -180.0, 0.0};
-  double max[DIM]       = {1.0, 1.0, 5.0,  180.0, 1.2};
+  int numberOfBins[DIM] = {100, 100, 100, 100, 100, 100};
+  double min[DIM]       = {0.0, 0.0, 0.8, -180.0, 0.0, -4.0};
+  double max[DIM]       = {1.0, 1.0, 5.0,  180.0, 1.2,  4.0};
 
   pipEvents = new THnSparseI("pipEvents","pipEvents",DIM,numberOfBins,min,max); 
   pimEvents = new THnSparseI("pimEvents","pimEvents",DIM,numberOfBins,min,max); 
@@ -74,19 +75,19 @@ void Fill::ProcessEvent(){
   if ( !electrons.empty() ){
     if( !pims.empty() ) {
       PhysicsEvent pionEvent = builder->getPhysicsEvent(electrons[0], pims[0]);    
-      double dataPoint[DIM]  = {pionEvent.x, pionEvent.z, pionEvent.qq, pionEvent.phiHadron, TMath::Power(pionEvent.pT,2)};
+      double dataPoint[DIM]  = {pionEvent.x, pionEvent.z, pionEvent.qq, pionEvent.phiHadron, TMath::Power(pionEvent.pT,2), pims[0].Rapidity()};
       pimEvents->Fill(dataPoint);
     } 
     
     if( !pips.empty() ) {
       PhysicsEvent pionEvent = builder->getPhysicsEvent(electrons[0], pips[0]);    
-      double dataPoint[DIM]  = {pionEvent.x, pionEvent.z, pionEvent.qq, pionEvent.phiHadron, TMath::Power(pionEvent.pT,2)};
+      double dataPoint[DIM]  = {pionEvent.x, pionEvent.z, pionEvent.qq, pionEvent.phiHadron, TMath::Power(pionEvent.pT,2), pips[0].Rapidity()};
       pipEvents->Fill(dataPoint);
     } 
     
     if( !pi0s.empty() ) {
       PhysicsEvent pionEvent = builder->getPhysicsEvent(electrons[0], pi0s[0]);    
-      double dataPoint[DIM]  = {pionEvent.x, pionEvent.z, pionEvent.qq, pionEvent.phiHadron, TMath::Power(pionEvent.pT,2)};
+      double dataPoint[DIM]  = {pionEvent.x, pionEvent.z, pionEvent.qq, pionEvent.phiHadron, TMath::Power(pionEvent.pT,2), pi0s[0].Rapidity()};
       pizEvents->Fill(dataPoint);
     } 
   }
@@ -123,11 +124,11 @@ int main(int argc, char *argv[]){
   Parameters *pars = new Parameters(); 
   pars->loadParameters(options->args["PARS"].args); 
 
-  Fill analysis(pars, options->args["OUT"].args);
+  Fill analysis(pars, options, options->args["OUT"].args);
 
   if(options->ifiles.size() > 0){
     for (int i=0; i<options->ifiles.size(); i++) { analysis.AddFile(options->ifiles[i]); } 
-    analysis.RunAnalysis(options->args["N"].arg);
+    analysis.RunAnalysis();
   }
 
   else {

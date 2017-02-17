@@ -16,23 +16,26 @@
 
 // MINE
 #include "h22Reader.h"
+#include "h22Option.h"
 
 // ROOT 
 #include "TString.h"
+#include "TObject.h"
 
 class GenericAnalysis : public h22Reader {
  public:
-  GenericAnalysis(){ options["OUT"] = "out.root"; }
+ GenericAnalysis(h22Options *opts) : options(opts) {  }
   ~GenericAnalysis(){ }
 
  public:
-  std::map<std::string, std::string> options; 
+  h22Options            *options; 
+  std::vector<TObject*>  rootObjects; 
 
  public:
   void AddFiles(std::vector<TString> files);
   void AddFile(TString file);
-
-  virtual bool RunAnalysis(int numberOfEvents);
+ 
+  virtual bool RunAnalysis();
   virtual void Loop(int numberOfEvents);
   virtual void ProcessEvent();
   virtual void Save();

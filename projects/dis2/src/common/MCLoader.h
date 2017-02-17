@@ -42,7 +42,7 @@ class MCLoader : public HistogramLoader{
   void ProcessEvent();
   void Save();
   void Rebin(int xFactor, int yFactor);
-
+  bool EventHasGeneratedElectron();
 };
 
 MCLoader::MCLoader(PhysicsEventSelector *eventCriteria, Parameters *pars, std::string outputFile, std::string saveOpts, std::string monteCarloType) : HistogramLoader(eventCriteria, outputFile, saveOpts){
@@ -63,48 +63,49 @@ void MCLoader::Initialize(){
 // This is the core routine which conditionally fills histograms. 
 void MCLoader::ProcessEvent(){
 
-  // Deal with the generated first.
-  TLorentzVector genElectron   = event.gen_particle(11);   
-  PhysicsEvent genPhysicsEvent = builder.getPhysicsEvent(genElectron); 
-
-  // Maybe here we should check that the track was reconstructed 
-  // if (event.gpart > 0), but that would probably skew acceptance 
-  // by stopping all particles which went through holes ect. so it 
-  // doesn't seem like what we want to do. 
-  int mcSector = event.mcSectorByPID(11);
-  if (mcSector > -1 && mcSector < 7) { genEvents.Fill(genPhysicsEvent, mcSector); }
-
-  // Dealing directly with histograms in base histograms here
-  // is not ideal, think of a better way. 
-  int genxByQQBin = recAndGenEvents.xByQQ[0]->FindBin(genPhysicsEvent.x, genPhysicsEvent.qq);
-  int genwByQQBin = recAndGenEvents.wByQQ[0]->FindBin(genPhysicsEvent.w, genPhysicsEvent.qq);
+  if (EventHasGeneratedElectron()){
+    // Deal with the generated first.
+    TLorentzVector genElectron   = event.gen_particle(11);   
+    PhysicsEvent genPhysicsEvent = builder.getPhysicsEvent(genElectron); 
+    
+    // Maybe here we should check that the track was reconstructed 
+    // if (event.gpart > 0), but that would probably skew acceptance 
+    // by stopping all particles which went through holes ect. so it 
+    // doesn't seem like what we want to do. 
+    int mcSector = event.mcSectorByPID(11);
+    if (mcSector > -1 && mcSector < 7) { genEvents.Fill(genPhysicsEvent, mcSector); }
+    
+    // Dealing directly with histograms in base histograms here
+    // is not ideal, think of a better way. 
+    int genxByQQBin = recAndGenEvents.xByQQ[0]->FindBin(genPhysicsEvent.x, genPhysicsEvent.qq);
+    int genwByQQBin = recAndGenEvents.wByQQ[0]->FindBin(genPhysicsEvent.w, genPhysicsEvent.qq);
+    
+    //  eID.set_info(runno(),GSIM);
+    //  int e_index = eID.get_electron(event);
+  }
   
-  //  eID.set_info(runno(),GSIM);
-  //  int e_index = eID.get_electron(event);
-
-
   int e_index = filter->getByPID(event, 11);
   if (e_index > -123){
-    TLorentzVector recElectron(event.cx[e_index]*event.p[e_index],
-			       event.cy[e_index]*event.p[e_index],
-			       event.cz[e_index]*event.p[e_index],
-			       event.p[e_index]);
-    
+    TLorentzVector recElectron   = event.getTLorentzVector(e_index, 11);
     int sector                   = event.dc_sect[e_index]; 
     PhysicsEvent recPhysicsEvent = builder.getPhysicsEvent(recElectron);
 
     // Again doing this to fill coincident events recAndGen needed to calculate purity and
     // stability. 
-    int recxByQQBin = recAndGenEvents.xByQQ[0]->FindBin(recPhysicsEvent.x, recPhysicsEvent.qq);
     int recwByQQBin = recAndGenEvents.wByQQ[0]->FindBin(recPhysicsEvent.w, recPhysicsEvent.qq);
-
-    if (recxByQQBin == genxByQQBin){ recAndGenEvents.FillxByQQ(genPhysicsEvent.x, genPhysicsEvent.qq, sector); }
-    if (recwByQQBin == genwByQQBin){ recAndGenEvents.FillwByQQ(genPhysicsEvent.w, genPhysicsEvent.qq, sector); } 
-    
     if (eventSelector->passes(recPhysicsEvent) && sector > 0) {
       recEvents.Fill(recPhysicsEvent, sector);
     }
   } 
+}
+
+bool MCLoader::EventHasGeneratedElectron(){
+  for(int ipart=0; ipart<event.gpart; ipart++){
+    if (event.q[ipart] == -1 && event.mcid[ipart] == 11){
+      return true;
+    }
+  }
+  return false;
 }
 
 void MCLoader::Save(){

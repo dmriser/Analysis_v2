@@ -113,7 +113,6 @@ inline double convert_w_qq_to_x(double w, double qq)
 }
 
 inline double calculatePhotonFlux(double beamEnergy, double w, double qq){
-
   double nu = (pow(w,2) - pow(proton_mass, 2) + qq)/(2*proton_mass);
   double finalEnergy = beamEnergy - nu; 
   double theta = 2*asin( sqrt(qq/(4 * beamEnergy * finalEnergy)) ); 

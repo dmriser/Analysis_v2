@@ -28,24 +28,18 @@ using namespace std;
 #include "h22Event.h"
 #include "CommonTools.h"
 
-h22Event::h22Event() 
-{
-    // Should probably find something to do here.
+h22Event::h22Event() {
 }
 
 
-h22Event::~h22Event()
-{
-    // Nothing to destroy.
+h22Event::~h22Event(){
 }
 
-double h22Event::theta(int ipart)
-{
+double h22Event::theta(int ipart){
     return acos(cz[ipart])*to_degrees;
 }
 
-double h22Event::rphi(int ipart)
-{
+double h22Event::rphi(int ipart){
     double rphi = to_degrees*atan(cy[ipart]/cx[ipart]);
     if (rphi > 330.00) rphi -= 360.00;
     rphi = rphi - 60*floor((rphi+30)/60);
@@ -59,10 +53,8 @@ double h22Event::mcrphi(int ipart){
     return rphi;
 }
 
-TLorentzVector h22Event::gen_particle(int pid)
-{
-  for (int ipart=0; ipart<gpart; ipart++)
-    {
+TLorentzVector h22Event::gen_particle(int pid){
+  for (int ipart=0; ipart<gpart; ipart++){
       if (mcid[ipart] == pid) {
 	return TLorentzVector(mcpx(ipart), mcpy(ipart), mcpz(ipart), mcp[ipart]);
       }
@@ -72,10 +64,8 @@ TLorentzVector h22Event::gen_particle(int pid)
   return TLorentzVector(0,0,1000,1000); 
 }
 
-void h22Event::printEvent()
-{
-    for (int ipart=0; ipart<gpart; ipart++)
-    {
+void h22Event::printEvent(){
+    for (int ipart=0; ipart<gpart; ipart++){
         cout.width(6); cout << ipart;
         cout.width(6); cout << q[ipart];
         cout.width(6); cout << "1";
@@ -94,8 +84,7 @@ void h22Event::printEvent()
     }
 }
 
-TVector3 h22Event::uvw(int ipart)
-{
+TVector3 h22Event::uvw(int ipart){
     //! Routine hijacked from Nathan
     double u, v, w, xi, yi, zi;
     double EC_the = 0.4363323;
@@ -202,7 +191,7 @@ int h22Event::mcSectorByPID(int pid){
     }
   }
 
-  int mcsect = 1+floor(mcphi[index]/60);
+  int mcsect = 1+floor(mcphi[index]/60.0);
   
   return mcsect;
 }

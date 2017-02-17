@@ -11,12 +11,16 @@
 #define generic_analysis_cxx
 
 #include <iostream>
+#include <vector>
 using std::cout; 
 using std::endl; 
 using std::flush; 
+using std::vector; 
 
 #include "GenericAnalysis.h"
 #include "TStopwatch.h"
+#include "TObject.h"
+#include "TFile.h"
 
 void GenericAnalysis::AddFiles(std::vector<TString> files){
   for (int ifile=0; ifile<files.size(); ifile++){
@@ -28,7 +32,7 @@ void GenericAnalysis::AddFile(TString file){
   fchain->AddFile(file);
 }
 
-bool GenericAnalysis::RunAnalysis(int numberOfEvents){
+bool GenericAnalysis::RunAnalysis(){
 
   if (GetEntries() == 0){
     cout << "[GenericAnalysis::RunAnalysis] Abort: No events. " << endl; 
@@ -38,7 +42,7 @@ bool GenericAnalysis::RunAnalysis(int numberOfEvents){
   else {
     Init();
     Initialize();
-    Loop(numberOfEvents);
+    Loop(options->args["N"].arg);
     Save();
     return true; 
   }
@@ -81,7 +85,10 @@ void GenericAnalysis::ProcessEvent(){
 }
 
 void GenericAnalysis::Save(){
-  
+  TFile *outputFile = new TFile(options->args["OUT"].args.c_str(),"recreate");
+  std::vector<TObject*>::iterator it;
+  for(it = rootObjects.begin(); it!= rootObjects.end(); ++it){ (*it)->Write(); }
+  outputFile->Close();
 }
 
 #endif

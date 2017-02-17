@@ -32,16 +32,16 @@ c     Q squared, neglecting electron mass:
       q1=sqrt(q2)
 
 c     Gep and Gmn dipole:
-c      gep=1./(1.+q2/0.71)**2
-c      gmp=2.793*gep
+      gep=1./(1.+q2/0.71)**2
+      gmp=2.793*gep
 
 c     Bosted parameterization of form factors
 c     Phys. Rev. C 51, 409
 
-      corr1= 1+0.62*q1+0.68*q2+2.8*q1**3+0.83*q1**4
-      corr2= 1+0.35*q1+2.44*q2+0.5*q1**3+1.04*q1**4+0.34*q1**5
-      gep= 1./corr1
-      gmp= 2.7928/corr2
+c      corr1= 1+0.62*q1+0.68*q2+2.8*q1**3+0.83*q1**4
+c      corr2= 1+0.35*q1+2.44*q2+0.5*q1**3+1.04*q1**4+0.34*q1**5
+c      gep= 1./corr1
+c      gmp= 2.7928/corr2
 
 c     Mott
       rmott=389*(1./137.)**2/(4.*eb**2*s2**4)! microbarns/sr
@@ -288,16 +288,16 @@ c     Q squared, neglecting electron mass:
       q1=sqrt(q2)
 
 c     Gep and Gmn dipole:
-c      gep=1./(1.+q2/0.71)**2
-c      gmp=2.793*gep
+       gep=1./(1.+q2/0.71)**2
+       gmp=2.793*gep
 
 c     Bosted parameterization of form factors
 c     Phys. Rev. C 51, 409
 
-      corr1= 1+0.62*q1+0.68*q2+2.8*q1**3+0.83*q1**4
-      corr2= 1+0.35*q1+2.44*q2+0.5*q1**3+1.04*q1**4+0.34*q1**5
-      gep= 1./corr1
-      gmp= 2.7928/corr2
+c     corr1= 1+0.62*q1+0.68*q2+2.8*q1**3+0.83*q1**4
+c     corr2= 1+0.35*q1+2.44*q2+0.5*q1**3+1.04*q1**4+0.34*q1**5
+c     gep= 1./corr1
+c     gmp= 2.7928/corr2
 
 c     Mott
       rmott=389*(1./137.)**2/(4.*eb**2*s2**4)! microbarns/sr

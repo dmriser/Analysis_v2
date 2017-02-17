@@ -324,11 +324,11 @@ void DIS1DHistograms::ScaleByNumberSectors(){
   for (int sector=0; sector<7; sector++){
     
     if (sector != 0){
-      allwByQQ[sector]->Scale(2 * 3.14159);
+      allwByQQ[sector]->Scale(6.0);
     }
 
     for (int slice=0; slice<wByQQ[sector].size(); slice++){
-      if (sector != 0) { wByQQ[sector][slice]->Scale(2 * 3.14159); } 
+      if (sector != 0) { wByQQ[sector][slice]->Scale(6.0); } 
     }
   }
 }

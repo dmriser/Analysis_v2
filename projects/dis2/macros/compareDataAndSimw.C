@@ -2,7 +2,7 @@
 
   gROOT->LoadMacro("utils.C");
 
-  TFile * inputFile = TFile::Open("/volatile/clas12/dmriser/rootFiles/inclusive/xs/goodRuns.root");
+  TFile * inputFile = TFile::Open("/volatile/clas12/dmriser/rootFiles/inclusive/xs/xs70_es_radCorr_photonFlux.root");
   string imagePath  = "/volatile/clas12/dmriser/plots/inclusive/"; 
   const int numberSector = 7;
   const int numberSlices = 10;

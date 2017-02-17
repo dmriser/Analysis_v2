@@ -15,6 +15,7 @@ using namespace std;
 #include "common/BaseDISHistograms.h"
 #include "common/DIS1DHistograms.h"
 #include "common/ModelCrossSectionLoader.h"
+#include "common/PhotonFluxLoader.h"
 #include "common/FaradayCupLoader.h"
 
 int PrintUsage();
@@ -23,7 +24,7 @@ void configureCommandLineOptions(h22Options * theseOpts);
 int main(int argc, char * argv[]){
 
   // ------------- Physics Options -------------
-  int numberOfXBins = 35;     //   x, W
+  int numberOfXBins = 35;     //     W
   int numberOfYBins = 10;     //    Q^2
 
   double normalizationScale = cm_to_outhouse*(hydrogen_molar_weight*electron_c*1e6)/(5.00*avogadro*hydrogen_density);
@@ -75,6 +76,12 @@ int main(int argc, char * argv[]){
     dataEvents->SetErrors();
     dataEvents->Save(outputFilename.c_str(),"recreate");
 
+    PhotonFluxLoader photonFluxLoader;
+    photonFluxLoader.provideBinningTemplate(dataEvents); 
+    photonFluxLoader.loadPhotonFlux(5.498); 
+    DIS1DHistograms *photonFlux = photonFluxLoader.getPhotonFlux();
+    photonFlux->Save(outputFilename.c_str(),"update"); 
+
     if (elastSubFile != "UNSET"){
       BaseDISHistograms *recElasticEvents = new BaseDISHistograms();
       recElasticEvents->Load(elastSubFile.c_str(),"recEventsElastic");
@@ -106,7 +113,6 @@ int main(int argc, char * argv[]){
 
       // Apply the correction to data events 
       dataEvents->MultiplyByZero( inelasticFraction );
-
     }
 
     DIS1DHistograms * recEventsRad = new DIS1DHistograms();
@@ -136,10 +142,8 @@ int main(int argc, char * argv[]){
     DIS1DHistograms * crossSection = new DIS1DHistograms();
     crossSection->CreateByDivision(dataEvents,acceptance,"crossSection","Cross Section W/ Acceptance");
     crossSection->Scale(normalizationScale);
-    //    crossSection->Scale(2.0*normalizationScale);
     crossSection->ScaleByBinWidth();
     crossSection->ScaleByNumberSectors();
-    //    crossSection->Scale(2*3.14159); 
     crossSection->ScaleAllByNumberBins();
     crossSection->Save(outputFilename.c_str(),"update");
 

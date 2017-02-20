@@ -2,7 +2,7 @@
   // ----------------------------------------
   //  User Parameters 
   // ----------------------------------------
-  TFile *inputFile = TFile::Open("../out/sectorFix.root");
+  TFile *inputFile = TFile::Open("../out/fullPhi.root");
   string imagePath = "/volatile/clas12/dmriser/plots/elastic/";
 
   const int thetaBins = 40;  

@@ -30,7 +30,7 @@ public:
 
 protected:
   const static int numberSectors   = 6;
-  const static int numberThetaBins = 100; 
+  const static int numberThetaBins = 50; 
   const static int numberPhiBins   = 1; 
 
   vector<double> thetaBins; 
@@ -88,7 +88,6 @@ void Analysis::setupBinning(){
 
   cout << "[Analysis::setupBinning] Finished theta bins with " << thetaBins.size() << " limits. " << endl;  
   cout << "[Analysis::setupBinning] Finished phi bins with   " << phiBins.size()   << " limits. " << endl;
-  
 }
 
 void Analysis::loadEventFile(string filename){
@@ -99,13 +98,12 @@ void Analysis::loadEventFile(string filename){
   TH1D *totalChargeHisto = (TH1D*) inputFile->Get("totalCharge"); 
   totalCharge            = totalChargeHisto->GetBinContent(1);
   inputFile->Close();
-  
 }
 
 void Analysis::makeProjections(){
   for(int sect=0; sect<numberSectors; sect++){
-    int sectStart = events->GetAxis(0)->FindBin((double) sect+1.0);
-    int sectEnd   = events->GetAxis(0)->FindBin((double) sect+2.0);
+    int sectStart = events->GetAxis(0)->FindBin( (double) sect+1.0 );
+    int sectEnd   = events->GetAxis(0)->FindBin( (double) sect+2.0 );
     events->GetAxis(0)->SetRange(sectStart, sectEnd);
 
     for(int bin=0; bin<numberPhiBins; bin++){
@@ -118,8 +116,10 @@ void Analysis::makeProjections(){
       dataEvents_theta[sect][bin]->SetTitle(Form("dataEvents_thetaByPhi_sect%d_bin%d",sect,bin)); 
       crossSection_theta[sect][bin] = (TH1D*) dataEvents_theta[sect][bin]->Clone();
       crossSection_theta[sect][bin]->SetName(Form("crossSection_thetaByPhi_sect%d_bin%d",sect,bin)); 
+
       histoContainer.push_back(dataEvents_theta[sect][bin]);
       histoContainer.push_back(crossSection_theta[sect][bin]);
+
       cout << "[Analysis::makeProjection] Created histo " << dataEvents_theta[sect][bin] << " Sect=" << sect << " Bin=" << bin << " w/ Entries=" << dataEvents_theta[sect][bin]->GetEntries() << endl;
     }
   }
@@ -207,7 +207,8 @@ void Analysis::makeRatio(){
     for(int bin=0; bin<numberPhiBins; bin++){
       ratio_theta[sect][bin] = (TH1D*) crossSection_theta[sect][bin]->Clone();
       ratio_theta[sect][bin]->SetName(Form("ratio_thetaByPhi_sect%d_bin%d",sect,bin)); 
-      ratio_theta[sect][bin]->Divide(modelRad_theta);
+      //      ratio_theta[sect][bin]->Divide(modelRad_theta);
+      ratio_theta[sect][bin]->Divide(model_theta);
       histoContainer.push_back(ratio_theta[sect][bin]);
       cout << "[Analysis::makeProjection] Created histo " << ratio_theta[sect][bin] << " Sect=" << sect << " Bin=" << bin << " w/ Entries=" << ratio_theta[sect][bin]->GetEntries() << endl;
     }
@@ -218,6 +219,7 @@ void Analysis::scaleByLuminosity(){
   cout << "[Analysis::scaleByLuminostiy] Total charge from file = " << totalCharge << " uC" << endl; 
 
   double normalizationScale = cm_to_outhouse*(hydrogen_molar_weight*electron_c*1e6)/(5.00*avogadro*hydrogen_density);
+  normalizationScale /= totalCharge;
   
   for(int sect=0; sect<numberSectors; sect++){
     for(int bin=0; bin<numberPhiBins; bin++){
@@ -227,21 +229,28 @@ void Analysis::scaleByLuminosity(){
 }
 
 void Analysis::scaleCrossSection(){
+  double beam = 5.498; 
+
   for(int sect=0; sect<numberSectors; sect++){
     for(int bin=0; bin<numberPhiBins; bin++){
 
       // ----------------------------------------------------------------
       //   The model is uB/sr but using the conversion factor 
       //   below gives outrageously huge values. 
-      //      crossSection_theta[sect][bin]->Scale(1.0/(thetaStep*phiStep*to_radians*to_radians));
+      crossSection_theta[sect][bin]->Scale(1.0/(thetaStep*phiStep*to_radians*to_radians));
       // ----------------------------------------------------------------
-      crossSection_theta[sect][bin]->Scale(1.0/(thetaStep*phiStep));
+      //      crossSection_theta[sect][bin]->Scale(1.0/(thetaStep*phiStep));
+      //      crossSection_theta[sect][bin]->Scale(1.0/(thetaStep*to_radians));
       for(int tBin=1; tBin<=crossSection_theta[sect][bin]->GetXaxis()->GetNbins(); tBin++){
       	double t       = crossSection_theta[sect][bin]->GetBinCenter(tBin);
       	double content = crossSection_theta[sect][bin]->GetBinContent(tBin);
-      	double factor  = sin(to_radians*t);
+	double factor  = sin(t*to_radians);
+	//	double ePrime           = beam/(1+beam*(1-cos(t*to_radians))); 
+	//	double solidAngleFactor = sin(to_radians*t)*pow(ePrime,2)/3.14159;
+	//	double q2Factor         = 4*beam*ePrime*pow(sin(t*to_radians/2),2);
+	//	double factor           = solidAngleFactor*q2Factor; 
 	crossSection_theta[sect][bin]->SetBinContent(tBin,content/factor);
-	//      	cout << "[Analysis::scaleCrossSection] Scaling theta = " << t << " which had " << content << " by " << factor << " to get " << content/factor << endl;
+	cout << "[Analysis::scaleCrossSection] Scaling theta = " << t << " which had " << content << " by " << factor << " to get " << content/factor << endl;
       }
     }
   }

@@ -35,14 +35,14 @@ int main(int argc, char * argv[]){
   }
 
   // Collect command line options, configure ours and compare.
-  h22Options * options = new h22Options(); 
+  h22Options *options = new h22Options(); 
   configureCommandLineOptions(options); 
   options->set(argc, argv);
 
   // ---------------------------- Setup Physics Options -------------------------------
 
-  PhysicsEventSelector * eventSelector = new PhysicsEventSelector();
-  PhysicsEventCut_w *w_cut = new PhysicsEventCut_w();
+  PhysicsEventSelector *eventSelector = new PhysicsEventSelector();
+  PhysicsEventCut_w    *w_cut = new PhysicsEventCut_w();
 
   w_cut->set_min( options->args["WMIN"].arg );
   w_cut->set_max( options->args["WMAX"].arg ); 

@@ -28,9 +28,13 @@ class BaseDISHistograms{
   const static int numberOfWBins  = 200;
 
   // c++ 11 Standrd 
-  static constexpr double xMin  = 0.1;  static constexpr double xMax  = 0.6; 
-  static constexpr double qqMin = 1.7;  static constexpr double qqMax = 4.2;
-  static constexpr double wMin  = 1.1;  static constexpr double wMax  = 2.1; 
+  //  static constexpr double xMin  = 0.1;  static constexpr double xMax  = 0.6; 
+  //  static constexpr double qqMin = 1.7;  static constexpr double qqMax = 4.2;
+  //  static constexpr double wMin  = 1.1;  static constexpr double wMax  = 2.1; 
+
+  const static double xMin  = 0.1;  const static double xMax  = 0.6; 
+  const static double qqMin = 1.7;  const static double qqMax = 4.2;
+  const static double wMin  = 1.1;  const static double wMax  = 2.1; 
   
   string baseName; 
   

@@ -65,14 +65,17 @@ DataLoader::DataLoader(PhysicsEventSelector *eventCriteria, MomCorr_e1f *momCorr
 
   min[0] = 1.00;     max[0] = 7.0; 
   min[1] = 2.05;     max[1] = 5.0; 
-  min[2] = 22.5;     max[2] = 50.0; 
+  min[2] = 22.5;     max[2] = 48.0; 
   min[3] = -12.0;    max[3] = 12.0; 
 
   filter = new ParticleFilter(pars);
+  //  filter->getSelector(11)->enable_by_regex("NPhe");
+
   dataEvents = new THnSparseI("dataEvents","dataEvents",dimension,bins,min,max);
 }
 
 DataLoader::~DataLoader(){
+  filter->getSelector(11)->summarize(); 
 }
 
 void DataLoader::Initialize(){

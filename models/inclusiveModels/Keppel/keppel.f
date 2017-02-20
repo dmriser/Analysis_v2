@@ -13,7 +13,7 @@
       w2 = w*w
       nu = (w2-mp**2+q2)/2./mp
       ep = e-nu      
-      sin2  = q2/4/e/ep
+      sin2 = q2/4/e/ep
       
       if (ep.lt.0.05.or.sin2.gt.1.0) then
         tkeppel = 0.

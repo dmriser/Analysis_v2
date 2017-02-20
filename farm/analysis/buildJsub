@@ -18,6 +18,7 @@ echo "PROJECT: E1F"                                                 >> $jsubName
 echo "TRACK: simulation"                                            >> $jsubName 
 echo "TIME: 240"                                                    >> $jsubName  
 echo "MEMORY: 4096 MB"                                              >> $jsubName
+echo "OS: CENTOS7"                                                  >> $jsubName
 echo " "                                                            >> $jsubName 
 echo "COMMAND: chmod +x $runScript; ./$runScript out.root $binName" >> $jsubName 
 echo " "                                                            >> $jsubName 

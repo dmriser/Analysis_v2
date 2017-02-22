@@ -6,7 +6,7 @@
 #include <iostream>
 #include <vector>
 
- // Put your includes here 
+// Put your includes here 
 #include "DCut.h" 
 #include "DSelection.h" 
 #include "h22Event.h" 
@@ -21,7 +21,7 @@
 #include "TH1.h"
 #include "TH2.h"
 
- // Class Constructor/Destructor 
+// Class Constructor/Destructor 
 findElectronIDParameters::findElectronIDParameters(){   
   for (int sect=0; sect<6; sect++){
     ecSamplingFraction[sect] = new TH2I(Form("ecSamplingFraction_%d",sect),"",100,0.5,4.5,100,0.01,0.5);

@@ -39,6 +39,7 @@ protected:
 
   THnSparseI *events; 
   TH1D       *dataEvents_theta[numberSectors][numberPhiBins+1]; 
+  TH1D       *w_theta[numberSectors][numberPhiBins+1]; 
   TH1D       *crossSection_theta[numberSectors][numberPhiBins+1];
   TH1D       *ratio_theta[numberSectors][numberPhiBins+1];
   TH1D       *model_theta;
@@ -114,10 +115,16 @@ void Analysis::makeProjections(){
       dataEvents_theta[sect][bin]->Rebin(dataEvents_theta[sect][bin]->GetXaxis()->GetNbins()/numberThetaBins);
       dataEvents_theta[sect][bin]->SetName(Form("dataEvents_thetaByPhi_sect%d_bin%d",sect,bin)); 
       dataEvents_theta[sect][bin]->SetTitle(Form("dataEvents_thetaByPhi_sect%d_bin%d",sect,bin)); 
+
+      w_theta[sect][bin] = events->Projection(4);
+      w_theta[sect][bin]->SetName(Form("w_thetaByPhi_sect%d_bin%d",sect,bin)); 
+      w_theta[sect][bin]->SetTitle(Form("w_thetaByPhi_sect%d_bin%d",sect,bin)); 
+
       crossSection_theta[sect][bin] = (TH1D*) dataEvents_theta[sect][bin]->Clone();
       crossSection_theta[sect][bin]->SetName(Form("crossSection_thetaByPhi_sect%d_bin%d",sect,bin)); 
 
       histoContainer.push_back(dataEvents_theta[sect][bin]);
+      histoContainer.push_back(w_theta[sect][bin]);
       histoContainer.push_back(crossSection_theta[sect][bin]);
 
       cout << "[Analysis::makeProjection] Created histo " << dataEvents_theta[sect][bin] << " Sect=" << sect << " Bin=" << bin << " w/ Entries=" << dataEvents_theta[sect][bin]->GetEntries() << endl;
@@ -163,7 +170,7 @@ void Analysis::makeBinCenteringCorrections(){
   binCorr_theta = new TH1D("binCorr_theta","",numberBins,thetaMin,thetaMax); 
   for(int tBin=1; tBin<=numberBins; tBin++){
     double low = model.getRadiatedValue(5.498,(tBin-1)*thetaStep+thetaMin, 5.0/865.0, 1.1);
-    double mid = model.getRadiatedValue(5.498,tBin*thetaStep/2+thetaMin, 5.0/865.0, 1.1);
+    double mid = model.getRadiatedValue(5.498,(tBin-0.5)*thetaStep+thetaMin, 5.0/865.0, 1.1);
     double up  = model.getRadiatedValue(5.498,tBin*thetaStep+thetaMin, 5.0/865.0, 1.1);
     double avg = (up+low)/2;
 
@@ -172,12 +179,13 @@ void Analysis::makeBinCenteringCorrections(){
   }
 
   histoContainer.push_back(binCorr_theta);
-  
+
   for(int sect=0; sect<numberSectors; sect++){
     for(int bin=0; bin<numberPhiBins; bin++){
       crossSection_theta[sect][bin]->Divide(binCorr_theta);
     }
   }
+
 
 }
 
@@ -234,23 +242,18 @@ void Analysis::scaleCrossSection(){
   for(int sect=0; sect<numberSectors; sect++){
     for(int bin=0; bin<numberPhiBins; bin++){
 
-      // ----------------------------------------------------------------
-      //   The model is uB/sr but using the conversion factor 
-      //   below gives outrageously huge values. 
       crossSection_theta[sect][bin]->Scale(1.0/(thetaStep*phiStep*to_radians*to_radians));
-      // ----------------------------------------------------------------
-      //      crossSection_theta[sect][bin]->Scale(1.0/(thetaStep*phiStep));
-      //      crossSection_theta[sect][bin]->Scale(1.0/(thetaStep*to_radians));
       for(int tBin=1; tBin<=crossSection_theta[sect][bin]->GetXaxis()->GetNbins(); tBin++){
       	double t       = crossSection_theta[sect][bin]->GetBinCenter(tBin);
       	double content = crossSection_theta[sect][bin]->GetBinContent(tBin);
 	double factor  = sin(t*to_radians);
+	double events  = dataEvents_theta[sect][bin]->GetBinContent(tBin); 
 	//	double ePrime           = beam/(1+beam*(1-cos(t*to_radians))); 
 	//	double solidAngleFactor = sin(to_radians*t)*pow(ePrime,2)/3.14159;
 	//	double q2Factor         = 4*beam*ePrime*pow(sin(t*to_radians/2),2);
 	//	double factor           = solidAngleFactor*q2Factor; 
 	crossSection_theta[sect][bin]->SetBinContent(tBin,content/factor);
-	cout << "[Analysis::scaleCrossSection] Scaling theta = " << t << " which had " << content << " by " << factor << " to get " << content/factor << endl;
+	//	cout << "[Analysis::scaleCrossSection] Scaling theta = " << t << " which had " << content << " by " << factor << " to get " << content/factor << endl;
       }
     }
   }
@@ -296,11 +299,11 @@ int main(int argc, char *argv[]){
   analysis.loadEventFile(options->args["INPUT"].args);
   analysis.setupBinning();
   analysis.makeProjections(); 
-  analysis.scaleByLuminosity(); 
-  analysis.scaleCrossSection(); 
   analysis.loadModel();
   analysis.makeRadiativeCorrections();
-  //  analysis.fillPhotonFlux( 5.498 );
+  analysis.makeBinCenteringCorrections();
+  analysis.scaleByLuminosity(); 
+  analysis.scaleCrossSection(); 
   analysis.makeRatio(); 
   analysis.save(options->args["OUT"].args);
 

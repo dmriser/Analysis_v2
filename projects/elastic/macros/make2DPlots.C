@@ -2,18 +2,20 @@
   // ----------------------------------------
   //  User Parameters 
   // ----------------------------------------
-  TFile *inputFile = TFile::Open("../out/fullPhi.root");
+  TFile *inputFile = TFile::Open("../out/withW.root");
   string imagePath = "/volatile/clas12/dmriser/plots/elastic/";
 
-  const int thetaBins = 40;  
-  const int phiBins   = 3; 
+  const int thetaBins = 10;  
+  const int phiBins   = 1; 
 
   // ----------------------------------------
   //  Other Things
   // ----------------------------------------
   THnSparseI *events = (THnSparseI*) inputFile->Get("dataEvents");
   TH2D     *thetaPhi = events->Projection(2,3); 
+  TH2D     *thetaW[7];
 
+  thetaW[0] = events->Projection(2,4); 
 
   TCanvas *c1 = new TCanvas("c1","",800,500);
   thetaPhi->Draw("colz");
@@ -42,6 +44,28 @@
   ytit.DrawLatex(0.07, 0.48, "#theta_{e'}");
 
   c1->Print(Form("%sthetaPhiSector0.png",imagePath.c_str()));
+  c1->Clear(); 
+
+  // ----------------------------------------------------
+  // ----------------------------------------------------
+  // ----------------------------------------------------  
+  thetaW[0]->Draw("colz");
+  gPad->SetGridx();
+  gPad->SetGridy();
+  gPad->SetLogz();
+  tit.DrawLatex(0.37, 0.9, "E1-F Elastic Sample");
+  xtit.DrawLatex(0.48, 0.07, "W (GeV/c^{2})");
+  ytit.DrawLatex(0.07, 0.48, "#theta_{e}");
+
+  TLine *protLine = new TLine(0.938, 17.0, 0.938, 45.0); 
+  protLine->SetLineStyle(8); 
+  protLine->SetLineWidth(2); 
+  protLine->Draw(); 
+  c1->Print(Form("%sthetaWSector0.png",imagePath.c_str()));
+
+  // ----------------------------------------------------
+  // ----------------------------------------------------
+  // ----------------------------------------------------  
 
   TCanvas *c2 = new TCanvas("c2","",800,500);
   thetaPhi->Draw("colz");
@@ -81,6 +105,60 @@
   ytit.DrawLatex(0.07, 0.48, "#theta_{e'}");
 
   c2->Print(Form("%sthetaPhiSector0Binned.png",imagePath.c_str()));
+
+  // ----------------------------------------------------
+  // ----------------------------------------------------
+  // ----------------------------------------------------  
+  c1->Clear(); 
+  TH1D *wSlices[6][thetaBins]; 
+
+  int origThetaBins = thetaW[0]->GetYaxis()->GetNbins();
+  double thetaMin   = thetaW[0]->GetYaxis()->GetBinLowEdge(1); 
+  double thetaMax   = thetaW[0]->GetYaxis()->GetBinUpEdge(origThetaBins); 
+  double thetaStep  = (thetaMax-thetaMin)/thetaBins;
+
+  TF1 *fit = new TF1("fit","gaus",0.87,1.0); 
+  fit->SetLineColor(kBlack); 
+
+  TF1 *fitFull = new TF1("fitFull","gaus",thetaMin,thetaMax); 
+  fitFull->SetLineColor(kBlack); 
+
+
+  gPad->SetGridx(0); 
+  gPad->SetGridy(0); 
+
+  for(int sector=0; sector<6; sector++){
+    int startBinS = events->GetAxis(0)->FindBin((double)sector+1.0); 
+    int stopBinS  = events->GetAxis(0)->FindBin((double)sector+2.0); 
+    events->GetAxis(0)->SetRange(startBinS, stopBinS);     
+    thetaW[sector+1] = events->Projection(2,4); 
+    thetaW[sector+1]->SetName(Form("thetaW_sect%d",sector)); 
+
+    for(int theta=0; theta<thetaBins; theta++){
+      double thetaPoint = (0.5+theta)*thetaStep + thetaMin;
+      int startBinT     = events->GetAxis(2)->FindBin(thetaPoint); 
+      int stopBinT      = events->GetAxis(2)->FindBin(thetaPoint+thetaStep); 
+      events->GetAxis(2)->SetRange(startBinT,stopBinT);     
+      wSlices[sector][theta] = events->Projection(4); 
+      wSlices[sector][theta]->SetName(Form("wSlice_sect%d_bin%d",sector,theta)); 
+      wSlices[sector][theta]->SetTitle(Form("#theta_{e} = %.3f",thetaPoint)); 
+      wSlices[sector][theta]->SetFillColorAlpha(62,0.2);
+      wSlices[sector][theta]->SetLineColor(62);
+      wSlices[sector][theta]->Fit("fit","RQ");
+      wSlices[sector][theta]->Draw("h");
+
+      fitFull->SetParameter(0,fit->GetParameter(0));
+      fitFull->SetParameter(1,fit->GetParameter(1));
+      fitFull->SetParameter(2,fit->GetParameter(2));
+      fitFull->Draw("same");      
+
+      tit.DrawLatex(0.24, 0.9, Form("E1-F Elastic Sample %s",wSlices[sector][theta]->GetTitle()));
+      xtit.DrawLatex(0.48, 0.07, "W (GeV/c^{2})");
+      ytit.DrawLatex(0.07, 0.48, "Counts");
+      xtit.DrawLatex(0.64, 0.77, Form("#splitline{#mu = %.3f}{#sigma = %.3f}",fitFull->GetParameter(1),fitFull->GetParameter(2)));
+      c1->Print(Form("%swByTheta_sect%d_bin%d.png",imagePath.c_str(),sector,theta));
+    }
+  }
 
 
 }

@@ -143,5 +143,50 @@ inline double getRelativePhi(double phi){
   return rphi;
 }
 
+inline bool inRange(double x, double min, double max){
+  return (x <= max && x >= min);
+}
+
+inline int phiToSector(double phi){
+  // 1 = ( -30,  30)                 -1->1
+  // 2 = (  30,  90)                  1->3
+  // 3 = (  90, 150)                  3->5 
+  // 4 = ( 150, 180) U (-180,-150)    5->6 U -6->-5
+  // 5 = (-150, -90)
+  // 6 = ( -90, -30)
+
+  int sector = 0; 
+  if      (inRange(phi, -30.0,    30.0)) { sector = 1; } 
+  else if (inRange(phi,  30.0,    90.0)) { sector = 2; }
+  else if (inRange(phi,  90.0,   150.0)) { sector = 3; }
+  else if (inRange(phi, 150.0,   180.0)) { sector = 4; }
+  else if (inRange(phi, -180.0, -150.0)) { sector = 4; }
+  else if (inRange(phi, -150.0,  -90.0)) { sector = 5; }
+  else if (inRange(phi, -90.0, -  30.0)) { sector = 6; }
+
+  return sector; 
+}
+
+namespace Color {
+  enum Code {
+    FG_RED      = 31,
+    FG_GREEN    = 32,
+    FG_BLUE     = 34,
+    FG_DEFAULT  = 39,
+    BG_RED      = 41,
+    BG_GREEN    = 42,
+    BG_BLUE     = 44,
+        BG_DEFAULT  = 49
+  };
+  class Modifier {
+    Code code;
+  public:
+  Modifier(Code pCode) : code(pCode) {}
+    friend std::ostream&
+      operator<<(std::ostream& os, const Modifier& mod) {
+      return os << "\033[" << mod.code << "m";
+    }
+  };
+}
 #endif
 

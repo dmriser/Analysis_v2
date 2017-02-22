@@ -37,6 +37,7 @@ PhysicsEvent PhysicsEventBuilder::getPhysicsEvent(TLorentzVector electron){
 }
 
 PhysicsEvent PhysicsEventBuilder::getPhysicsEvent(TLorentzVector electron, TLorentzVector particle){
+  physicsEvent.particle1 = particle; 
   physicsEvent.ClearKinematics(); 
   setVectors(electron);
   physicsEvent.finalState -= particle;
@@ -69,6 +70,8 @@ PhysicsEvent PhysicsEventBuilder::getPhysicsEvent(TLorentzVector electron, TLore
 }
 
 PhysicsEvent PhysicsEventBuilder::getPhysicsEvent(TLorentzVector electron, TLorentzVector particle1, TLorentzVector particle2){
+  physicsEvent.particle1 = particle1; 
+  physicsEvent.particle2 = particle2; 
   physicsEvent.ClearKinematics(); 
   setVectors(electron);
   physicsEvent.finalState -= (particle1+particle2);

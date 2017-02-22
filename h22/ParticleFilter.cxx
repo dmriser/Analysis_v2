@@ -269,6 +269,11 @@ ParticleFilter::ParticleFilter(Parameters *params) : pars(params){
 	pip_tofmass_mu[s]     = params->getParameter("PIP_TOFMASS_MU").getValue(s); 
 	pip_tofmass_sigma[s]  = params->getParameter("PIP_TOFMASS_SIGMA").getValue(s); 
 	pip_tofmass_nsigma[s] = params->getParameter("PIP_TOFMASS_NSIGMA").getValue(0); 
+
+	pim_tofmass_min[s]    = pim_tofmass_mu[s] - pim_tofmass_nsigma[s]*pim_tofmass_sigma[s]; 
+	pim_tofmass_max[s]    = pim_tofmass_mu[s] + pim_tofmass_nsigma[s]*pim_tofmass_sigma[s]; 
+	pip_tofmass_min[s]    = pip_tofmass_mu[s] - pip_tofmass_nsigma[s]*pip_tofmass_sigma[s]; 
+	pip_tofmass_max[s]    = pip_tofmass_mu[s] + pip_tofmass_nsigma[s]*pip_tofmass_sigma[s]; 
       }
 
 }
@@ -293,7 +298,7 @@ bool ParticleFilter::has_electron(h22Event event){
   return false;
 }
 
-DataEventSelector * ParticleFilter::getSelector(int pid){
+DataEventSelector *ParticleFilter::getSelector(int pid){
 
   if (pid == 11){
     return electronSelector; 
@@ -313,20 +318,65 @@ vector<int> ParticleFilter::getVectorOfParticleIndices(h22Event event, int pid){
       if (electronSelector->passesFast(event, ipart)){ particles.push_back(ipart); }
     }
   } 
+  
+  else if (pid == 211){
+    particles.clear();
+    
+    vector<int> electrons = getVectorOfParticleIndices(event, 11);
+    if( !electrons.empty() ){
+      double start_time = corr.electron_sct(event,electrons[0],runno,MC) - event.sc_r[electrons[0]]/speed_of_light;
 
-  // Use the built-in PID
+      for(int ipart=0; ipart<event.gpart; ipart++){
+	if(ipart == electrons[0]){ ipart++; }
+	if(event.q[ipart] == 1){
+	  int sector = event.sc_sect[ipart]-1;
+	  if (sector > -1){
+	    double cbeta   = event.sc_r[ipart]/(corr.hadron_sct(event,ipart,runno,MC)-start_time);
+	    double beta    = cbeta/speed_of_light;
+	    double tofmass = sqrt(pow(event.p[ipart],2)*(1-pow(beta,2))/pow(beta,2));
+
+	    if(tofmass < pip_tofmass_max[sector] && tofmass > pip_tofmass_min[sector]){ particles.push_back(ipart); }
+	  }	
+	}
+      }
+    }
+  } // End of Pi+ 
+  
+  else if (pid == -211){
+    particles.clear();
+    
+    vector<int> electrons = getVectorOfParticleIndices(event, 11);
+    if( !electrons.empty() ){
+      double start_time = corr.electron_sct(event,electrons[0],runno,MC) - event.sc_r[electrons[0]]/speed_of_light;
+      
+      for(int ipart=0; ipart<event.gpart; ipart++){
+	if(ipart == electrons[0]){ ipart++; }
+	if(event.q[ipart] == -1){
+	  int sector = event.sc_sect[ipart]-1;
+	  if (sector > -1){
+	    double cbeta   = event.sc_r[ipart]/(corr.hadron_sct(event,ipart,runno,MC)-start_time);
+	    double beta    = cbeta/speed_of_light;
+	    double tofmass = sqrt(pow(event.p[ipart],2)*(1-pow(beta,2))/pow(beta,2));
+	    if(tofmass < pim_tofmass_max[sector] && tofmass > pim_tofmass_min[sector]){ particles.push_back(ipart); }
+	  }	
+	}
+      }
+    } // End of Pi-
+  }
+  
+    // Use the built-in PID
   else{
     for(int ipart=0; ipart<event.gpart; ++ipart){
       if (event.id[ipart] == pid){ particles.push_back(ipart); }
     }
   }
-
+  
   // Sort the particles by momentum
   if (!particles.empty()){
     particles = event.sortByMomentum(particles);
   }
   
-
+  
   return particles;
 }
 
@@ -362,24 +412,6 @@ vector<TLorentzVector> ParticleFilter::getVectorOfTLorentzVectors(h22Event event
     }
   }
 
-  // Need to move to above routine.
-  /*
-  else if (pid == 211){
-    particleIndices.clear();
-    
-    vector<int> electrons = getVectorOfParticleIndices(event, 11);
-    if( !electrons.empty() ){
-      double start_time = corr.electron_sct(event,electrons[0],runno,GSIM) - event.sc_r(electrons[0])/speed_of_light;
-
-
-      for(int ipart=0; ipart<event.gpart; ipart++){
-	if(ipart == electrons[0]){ ipart++; }
-	
-	
-      }
-    }
-  }
-  */
   return particles; 
 }
 

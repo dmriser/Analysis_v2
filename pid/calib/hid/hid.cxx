@@ -44,10 +44,10 @@ public:
   ParticleFilter *filter;
   Corrections corr;
   
-  const static int NPBINS      = 50;
-  const static int NSLICES     = NPBINS;
-  constexpr static double PMIN = 0.5;
-  constexpr static double PMAX = 2.0;
+  const static int NPBINS  = 50;
+  const static int NSLICES = NPBINS;
+  const static double PMIN = 0.5;
+  const static double PMAX = 2.0;
   
   // Histograms
   TH1F * h1_dvz[6];

@@ -31,7 +31,7 @@ class MCLoader : public HistogramLoader{
 
  protected:
   //  BaseHistograms mcEvents;
-  const static int dimension = 4;
+  const static int dimension = 5;
   
   THnSparseI *recEvents; 
   THnSparseI *genEvents; 
@@ -58,15 +58,18 @@ MCLoader::MCLoader(PhysicsEventSelector *eventCriteria, Parameters *pars, std::s
   // 1 - Momentum 
   // 2 - Theta 
   // 3 - Relative Phi
+  // 3 - W 
   bins[0] = 6;
   bins[1] = 100;
   bins[2] = 100;
   bins[3] = 100;
+  bins[4] = 100;
 
   min[0] = 1.0;      max[0] = 7.0; 
   min[1] = 2.05;     max[1] = 5.0; 
-  min[2] = 18.0;     max[2] = 50.0; 
-  min[3] = -20.0;    max[3] = 20.0; 
+  min[2] = 22.0;     max[2] = 48.0; 
+  min[3] = -12.0;    max[3] = 12.0; 
+  min[3] =   0.7;    max[3] = 1.2; 
 
   filter = new ParticleFilter(pars); 
   recEvents = new THnSparseI("recEvents","recEvents",dimension,bins,min,max);
@@ -89,7 +92,7 @@ void MCLoader::ProcessEvent(){
 
   int mcSector = event.mcSectorByPID(11);
   if (mcSector > -1 && mcSector < 7) { 
-    double genPoint[dimension] = {(double)mcSector,genElectron.E(),genElectron.Theta()*to_degrees,genElectron.Phi()*to_degrees};
+    double genPoint[dimension] = {(double)mcSector,genElectron.E(),genElectron.Theta()*to_degrees,genElectron.Phi()*to_degrees,genPhysicsEvent.w};
     genEvents->Fill(genPoint);
   }
 
@@ -105,7 +108,7 @@ void MCLoader::ProcessEvent(){
     PhysicsEvent physicsEvent = builder.getPhysicsEvent(electron);
     
     if (eventSelector->passes(physicsEvent) && sector > 0) {
-      double mcPoint[dimension] = {(double)sector,electron.E(),electron.Theta()*to_degrees,electron.Phi()*to_degrees};
+      double mcPoint[dimension] = {(double)sector,electron.E(),electron.Theta()*to_degrees,electron.Phi()*to_degrees,physicsEvent.w};
       recEvents->Fill(mcPoint);
     }
   } 

@@ -19,7 +19,7 @@ class PhysicsEvent{
   /* Add anything general about the event here, no sector, no paddle number just physics, 
    ex: angle between particle 1 and 2. */
   
-  TLorentzVector beamElectron, detectedElectron, targetParticle, virtualPhoton, finalState;   
+  TLorentzVector beamElectron, detectedElectron, targetParticle, virtualPhoton, finalState, particle1, particle2;   
   void ClearKinematics(); 
   
 };

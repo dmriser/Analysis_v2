@@ -75,8 +75,8 @@ public:
     
     // Parameters for Charged Pion ID 
     // There should be a better way to do it.
-    double pim_tofmass_mu[6], pim_tofmass_sigma[6], pim_tofmass_nsigma[6];
-    double pip_tofmass_mu[6], pip_tofmass_sigma[6], pip_tofmass_nsigma[6];
+    double pim_tofmass_mu[6], pim_tofmass_sigma[6], pim_tofmass_nsigma[6], pim_tofmass_min[6], pim_tofmass_max[6];
+    double pip_tofmass_mu[6], pip_tofmass_sigma[6], pip_tofmass_nsigma[6], pip_tofmass_min[6], pip_tofmass_max[6];
 
     // Member Functions
     bool has_electron(h22Event);

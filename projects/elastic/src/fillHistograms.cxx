@@ -41,8 +41,8 @@ int main(int argc, char * argv[]){
 
   // ---------------------------- Setup Physics Options -------------------------------
 
-  PhysicsEventSelector *eventSelector = new PhysicsEventSelector();
-  PhysicsEventCut_w    *w_cut = new PhysicsEventCut_w();
+  PhysicsEventSelector        *eventSelector = new PhysicsEventSelector();
+  PhysicsEventCut_w           *w_cut = new PhysicsEventCut_w();
 
   w_cut->set_min( options->args["WMIN"].arg );
   w_cut->set_max( options->args["WMAX"].arg ); 

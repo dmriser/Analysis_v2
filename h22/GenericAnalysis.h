@@ -17,6 +17,7 @@
 // MINE
 #include "h22Reader.h"
 #include "h22Option.h"
+#include "StatusBar.h"
 
 // ROOT 
 #include "TString.h"
@@ -30,7 +31,7 @@ class GenericAnalysis : public h22Reader {
  public:
   h22Options            *options; 
   std::vector<TObject*>  rootObjects; 
-
+  StatusBar status; 
  public:
   void AddFiles(std::vector<TString> files);
   void AddFile(TString file);

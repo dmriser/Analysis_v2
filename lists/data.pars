@@ -50,7 +50,7 @@
         EL_EC_NSIGMA     1     e                   0
          EL_NPHE_MAX     1     v                 999
          EL_NPHE_MAX     1     e                   0
-         EL_NPHE_MIN     1     v                  25
+         EL_NPHE_MIN     1     v                  18
          EL_NPHE_MIN     1     e                   0
           EL_SF_MU_A     6     v        -8.68739e-05         0.000459313         9.94077e-05        -0.000244192        -7.65218e-05        -0.000392285
           EL_SF_MU_A     6     e         4.79678e-05         5.98467e-05         4.62623e-05         6.35192e-05         7.58853e-05         6.30412e-05

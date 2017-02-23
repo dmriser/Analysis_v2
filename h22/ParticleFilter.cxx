@@ -318,7 +318,7 @@ vector<int> ParticleFilter::getVectorOfParticleIndices(h22Event event, int pid){
       if (electronSelector->passesFast(event, ipart)){ particles.push_back(ipart); }
     }
   } 
-  
+  /*  
   else if (pid == 211){
     particles.clear();
     
@@ -363,7 +363,7 @@ vector<int> ParticleFilter::getVectorOfParticleIndices(h22Event event, int pid){
       }
     } // End of Pi-
   }
-  
+  */
     // Use the built-in PID
   else{
     for(int ipart=0; ipart<event.gpart; ++ipart){

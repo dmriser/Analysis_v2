@@ -37,18 +37,19 @@ MyAnalysis::MyAnalysis(h22Options *opts, Parameters *pars) : GenericAnalysis(opt
 
 void MyAnalysis::ProcessEvent(){
   vector<int> electronIndices      = filter->getVectorOfParticleIndices(event, 11); 
+  vector<int> pimIndices           = filter->getVectorOfParticleIndices(event, -211); 
   vector<TLorentzVector> electrons = filter->getVectorOfTLorentzVectors(event, 11);
-  vector<TLorentzVector> protons   = filter->getVectorOfTLorentzVectors(event, 2212);
+  vector<TLorentzVector> pims      = filter->getVectorOfTLorentzVectors(event, -211);
 
-  if(!electrons.empty() && !protons.empty()){
-    PhysicsEvent ev = builder->getPhysicsEvent(electrons[0], protons.back()); 
-    histos->Fill(event, electronIndices[0], ev);
+  if(!electrons.empty() && !pims.empty()){
+    PhysicsEvent ev = builder->getPhysicsEvent(electrons[0], pims.back()); 
+    histos->Fill(event, electronIndices[0], pimIndices.back(), ev);
   }
 
 }
 
 void MyAnalysis::Initialize(){
-  histos = new StandardHistograms("testHistos",0); 
+  histos  = new StandardHistograms("testHistos",0); 
   builder = new PhysicsEventBuilder(); 
   filter  = new ParticleFilter(params); 
 }

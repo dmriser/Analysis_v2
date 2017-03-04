@@ -19,6 +19,7 @@ using namespace std;
 #include "common/DataLoader.h"
 #include "common/MCLoader.h"
 #include "common/FaradayCupLoader.h"
+#include "common/Histograms.h"
 
 int PrintUsage();
 void configureCommandLineOptions(h22Options * theseOpts); 

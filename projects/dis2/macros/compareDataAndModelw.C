@@ -3,7 +3,7 @@
   gROOT->LoadMacro("utils.C");
 
   //  TFile * inputFile = TFile::Open("../out/crossSectionWithResonancePass1.root");
-  TFile * inputFile = TFile::Open("/volatile/clas12/dmriser/rootFiles/inclusive/xs/xs70_es_radCorr_photonFlux.root");
+  TFile * inputFile = TFile::Open("/volatile/clas12/dmriser/rootFiles/inclusive/xs/Phi4to12ES.root");
 
   string imagePath       = "/volatile/clas12/dmriser/plots/inclusive/"; 
   const int numberSector = 7;

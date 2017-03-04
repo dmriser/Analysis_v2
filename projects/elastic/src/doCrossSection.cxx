@@ -14,7 +14,6 @@ using namespace std;
 #include "TFile.h"
 #include "TH1.h"
 #include "TH2.h"
-#include "THnSparse.h"
 
 // --------------------------------------------
 //   My Libs 
@@ -22,11 +21,12 @@ using namespace std;
 #include "BostedElasticWrapper.h"
 #include "CommonTools.h"
 #include "h22Option.h"
+#include "common/Histograms.h"
 
 class Analysis{
 public:
-  Analysis(){ } 
-  ~Analysis(){ } 
+  Analysis();
+  ~Analysis();
 
 protected:
   const static int numberSectors   = 6;
@@ -37,7 +37,7 @@ protected:
   vector<double> phiBins; 
   vector<TH1D*>  histoContainer; 
 
-  THnSparseI *events; 
+  ElasticHistograms *dataHistos; 
   TH1D       *dataEvents_theta[numberSectors][numberPhiBins+1]; 
   TH1D       *w_theta[numberSectors][numberPhiBins+1]; 
   TH1D       *crossSection_theta[numberSectors][numberPhiBins+1];
@@ -47,6 +47,7 @@ protected:
   TH1D       *binCorr_theta;
   TH1D       *radCorr_theta;
   TH1D       *photonFlux_theta;
+  TFile      *inputFile; 
 
   double               totalCharge;
   double               thetaMin;
@@ -71,11 +72,21 @@ public:
   void save(string outputFilename); 
 };
 
+Analysis::Analysis(){
+
+}
+
+Analysis::~Analysis(){
+  if(inputFile->IsOpen()){
+    inputFile->Close(); 
+  }
+}
+
 void Analysis::setupBinning(){
-  thetaMin  = events->GetAxis(2)->GetBinLowEdge(1);
-  thetaMax  = events->GetAxis(2)->GetBinUpEdge( events->GetAxis(2)->GetNbins() );
-  phiMin    = events->GetAxis(3)->GetBinLowEdge(1);
-  phiMax    = events->GetAxis(3)->GetBinUpEdge( events->GetAxis(3)->GetNbins() );  
+  thetaMin  = dataHistos->thetaMin; 
+  thetaMax  = dataHistos->thetaMax; 
+  phiMin    = dataHistos->phiMin; 
+  phiMax    = dataHistos->phiMax; 
   thetaStep = (thetaMax-thetaMin)/numberThetaBins; 
   phiStep   = (phiMax-phiMin)/numberPhiBins;   
   
@@ -92,39 +103,33 @@ void Analysis::setupBinning(){
 }
 
 void Analysis::loadEventFile(string filename){
-  TFile *inputFile = TFile::Open(filename.c_str());
-  events = (THnSparseI*) inputFile->Get("dataEvents"); 
-  cout << "[Analysis::loadEventFile] Loaded " << events->GetEntries() << " from dataEvents in file " << filename << endl; 
+  inputFile        = TFile::Open(filename.c_str());
+  dataHistos       = new ElasticHistograms("data",1); 
+  dataHistos->Load(inputFile); 
   
   TH1D *totalChargeHisto = (TH1D*) inputFile->Get("totalCharge"); 
   totalCharge            = totalChargeHisto->GetBinContent(1);
-  inputFile->Close();
 }
 
 void Analysis::makeProjections(){
   for(int sect=0; sect<numberSectors; sect++){
-    int sectStart = events->GetAxis(0)->FindBin( (double) sect+1.0 );
-    int sectEnd   = events->GetAxis(0)->FindBin( (double) sect+2.0 );
-    events->GetAxis(0)->SetRange(sectStart, sectEnd);
-
+    TH2D *thisHisto = dataHistos->getThetaByPhi(sect); 
+      
     for(int bin=0; bin<numberPhiBins; bin++){
-      int lowBin = events->GetAxis(3)->FindBin(phiBins[bin]);
-      int upBin  = events->GetAxis(3)->FindBin(phiBins[bin+1]);
-      events->GetAxis(3)->SetRange(lowBin,upBin);
-      dataEvents_theta[sect][bin] = events->Projection(2);
-      dataEvents_theta[sect][bin]->Rebin(dataEvents_theta[sect][bin]->GetXaxis()->GetNbins()/numberThetaBins);
-      dataEvents_theta[sect][bin]->SetName(Form("dataEvents_thetaByPhi_sect%d_bin%d",sect,bin)); 
-      dataEvents_theta[sect][bin]->SetTitle(Form("dataEvents_thetaByPhi_sect%d_bin%d",sect,bin)); 
+      int lowBin = 1+floor(dataHistos->numberOfPhiBins/numberPhiBins)*bin; 
+      int upBin  = floor(dataHistos->numberOfPhiBins/numberPhiBins)*(1+bin); 
 
-      w_theta[sect][bin] = events->Projection(4);
-      w_theta[sect][bin]->SetName(Form("w_thetaByPhi_sect%d_bin%d",sect,bin)); 
-      w_theta[sect][bin]->SetTitle(Form("w_thetaByPhi_sect%d_bin%d",sect,bin)); 
+      cout << "[Analysis::makeProjections] Getting lowBin = " << lowBin << " to upBin = " << upBin << " for Sector = " << sect << endl; 
+      
+      dataEvents_theta[sect][bin] = new TH1D(Form("dataEvents_thetaByPhi_sect%d_bin%d",sect,bin),Form("dataEvents_thetaByPhi_sect%d_bin%d",sect,bin),dataHistos->numberOfThetaBins, dataHistos->thetaMin, dataHistos->thetaMax); 
+      //      dataEvents_theta[sect][bin] = (TH1D*) dataHistos->thetaPhi[sect]->ProjectionY(Form("dataEvents_thetaByPhi_sect%d_bin%d",sect,bin),lowBin,upBin);
+      thisHisto->ProjectionY(Form("dataEvents_thetaByPhi_sect%d_bin%d",sect,bin),lowBin,upBin);
+      dataEvents_theta[sect][bin]->Rebin(dataEvents_theta[sect][bin]->GetXaxis()->GetNbins()/numberThetaBins);
 
       crossSection_theta[sect][bin] = (TH1D*) dataEvents_theta[sect][bin]->Clone();
       crossSection_theta[sect][bin]->SetName(Form("crossSection_thetaByPhi_sect%d_bin%d",sect,bin)); 
 
       histoContainer.push_back(dataEvents_theta[sect][bin]);
-      histoContainer.push_back(w_theta[sect][bin]);
       histoContainer.push_back(crossSection_theta[sect][bin]);
 
       cout << "[Analysis::makeProjection] Created histo " << dataEvents_theta[sect][bin] << " Sect=" << sect << " Bin=" << bin << " w/ Entries=" << dataEvents_theta[sect][bin]->GetEntries() << endl;

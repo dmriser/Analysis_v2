@@ -11,8 +11,8 @@
   //  string configName[NCONF] = {"y < 0.74","y < 0.72","y < 0.70","y < 0.68","y < 0.66"};
   //  string fileName[NCONF]   = {basePath+"/y70LargeBins.root",basePath+"/y70Loose.root",basePath+"/y70Tight.root"};
   //  string configName[NCONF] = {"nominal","loose","tight"};
-  string fileName[NCONF]   = {basePath+"/y70FactorOfTwo70Bins.root",basePath+"/y70LooseFactorOfTwo70Bins.root"};
-  string configName[NCONF] = {"FactorOfTwo","FactorOfTwoLoose"};
+  string fileName[NCONF]   = {basePath+"/Phi4to12.root",basePath+"/Phi4to12ES.root"};
+  string configName[NCONF] = {"Normal","ElastSub"};
 
   // Physics Specifics 
   const int numberSector = 7;

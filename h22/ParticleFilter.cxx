@@ -449,6 +449,17 @@ int ParticleFilter::getByPID(h22Event event, int pid){
     return index;   //! Default Case & Nathan Harrison Convention (-123 -> for nothing found)
 }
 
+std::map<int, TLorentzVector> ParticleFilter::getMapOfIndexAndTLorentzVector(h22Event event, int pid){
+  std::vector<int>              particles = getVectorOfParticleIndices(event, pid); 
+  std::map<int, TLorentzVector> results; 
+
+  for(int ipart=0; ipart<particles.size(); ipart++){
+    results[particles[ipart]] = event.getTLorentzVector(particles[ipart], pid); 
+  }
+
+  return results; 
+}
+
 std::map<std::string, bool> ParticleFilter::eid_map(h22Event event, int index){
 
   int sector = event.dc_sect[index];

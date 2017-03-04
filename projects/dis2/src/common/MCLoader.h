@@ -19,6 +19,7 @@ using namespace std;
 #include "PhysicsEventSelector.h"
 #include "CommonTools.h"
 #include "PhysicsEvent.h"
+#include "StandardHistograms.h"
 
 // root 
 #include "TLorentzVector.h"
@@ -37,6 +38,10 @@ class MCLoader : public HistogramLoader{
   ParticleFilter    *filter; 
   std::string       mcType; 
   
+  StandardHistograms *allRecHistos; 
+  StandardHistograms *passedRecHistos; 
+  StandardHistograms *genHistos; 
+
  public:
   void Initialize();
   void ProcessEvent();
@@ -58,6 +63,10 @@ void MCLoader::Initialize(){
   genEvents.Init(Form("genEvents%s",mcType.c_str()),"Generated MC Events");
   recAndGenEvents.Init(Form("recAndGenEvents%s",mcType.c_str()),"Rec/Gen Same Bin Events");
   //  recAndGenEvents.Rebin2D(2,2);
+
+  allRecHistos    = new StandardHistograms("allRec",   0); 
+  passedRecHistos = new StandardHistograms("passedRec",0); 
+  genHistos       = new StandardHistograms("gen",      0); 
 }
 
 // This is the core routine which conditionally fills histograms. 
@@ -67,13 +76,15 @@ void MCLoader::ProcessEvent(){
     // Deal with the generated first.
     TLorentzVector genElectron   = event.gen_particle(11);   
     PhysicsEvent genPhysicsEvent = builder.getPhysicsEvent(genElectron); 
-    
+    genHistos->Fill(genPhysicsEvent);
     // Maybe here we should check that the track was reconstructed 
     // if (event.gpart > 0), but that would probably skew acceptance 
     // by stopping all particles which went through holes ect. so it 
     // doesn't seem like what we want to do. 
     int mcSector = event.mcSectorByPID(11);
-    if (mcSector > -1 && mcSector < 7) { genEvents.Fill(genPhysicsEvent, mcSector); }
+    if (mcSector > -1 && mcSector < 7 && eventSelector->get_cut("Relative Phi Cut")->passes(genPhysicsEvent)) { 
+      genEvents.Fill(genPhysicsEvent, mcSector); 
+    }
     
     // Dealing directly with histograms in base histograms here
     // is not ideal, think of a better way. 
@@ -82,21 +93,26 @@ void MCLoader::ProcessEvent(){
     
     //  eID.set_info(runno(),GSIM);
     //  int e_index = eID.get_electron(event);
-  }
-  
-  int e_index = filter->getByPID(event, 11);
-  if (e_index > -123){
-    TLorentzVector recElectron   = event.getTLorentzVector(e_index, 11);
-    int sector                   = event.dc_sect[e_index]; 
-    PhysicsEvent recPhysicsEvent = builder.getPhysicsEvent(recElectron);
+    
 
-    // Again doing this to fill coincident events recAndGen needed to calculate purity and
-    // stability. 
-    int recwByQQBin = recAndGenEvents.wByQQ[0]->FindBin(recPhysicsEvent.w, recPhysicsEvent.qq);
-    if (eventSelector->passes(recPhysicsEvent) && sector > 0) {
-      recEvents.Fill(recPhysicsEvent, sector);
+    
+    int e_index = filter->getByPID(event, 11);
+    if (e_index > -123){
+      TLorentzVector recElectron   = event.getTLorentzVector(e_index, 11);
+      int sector                   = event.dc_sect[e_index]; 
+      PhysicsEvent recPhysicsEvent = builder.getPhysicsEvent(recElectron);
+      
+      allRecHistos->Fill(event, e_index, recPhysicsEvent);
+
+      // Again doing this to fill coincident events recAndGen needed to calculate purity and
+      // stability. 
+      int recwByQQBin = recAndGenEvents.wByQQ[0]->FindBin(recPhysicsEvent.w, recPhysicsEvent.qq);
+      if (eventSelector->passes(recPhysicsEvent) && sector > 0) {
+	recEvents.Fill(recPhysicsEvent, sector);
+	passedRecHistos->Fill(event, e_index, recPhysicsEvent);
+      }
     }
-  } 
+  } // End of EventHasGeneratedElectron() 
 }
 
 bool MCLoader::EventHasGeneratedElectron(){
@@ -114,6 +130,11 @@ void MCLoader::Save(){
   recEvents      .Save(outputFilenameWithExtension, saveOption);
   genEvents      .Save(outputFilenameWithExtension, "UPDATE");   
   recAndGenEvents.Save(outputFilenameWithExtension, "UPDATE");
+
+  TFile *out = new TFile(outputFilenameWithExtension.c_str(),"UPDATE"); 
+  allRecHistos   ->Save(out); 
+  passedRecHistos->Save(out); 
+  genHistos      ->Save(out); 
 }
 
 void MCLoader::Rebin(int xFactor, int yFactor){

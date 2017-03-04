@@ -18,8 +18,9 @@ using namespace std;
 #include "PhysicsEvent.h"
 #include "PhysicsEventBuilder.h"
 #include "PhysicsEventSelector.h"
+#include "StandardHistograms.h"
 
-// root 
+// cern root 
 #include "TLorentzVector.h"
 
 class DataLoader : public HistogramLoader{
@@ -29,9 +30,11 @@ class DataLoader : public HistogramLoader{
 
  protected:
   BaseDISHistograms dataEvents;
-  NathanEIDWrapper  eID; 
-  MomCorr_e1f       *momCorrector; 
-  ParticleFilter    *filter; 
+  NathanEIDWrapper    eID; 
+  MomCorr_e1f        *momCorrector; 
+  ParticleFilter     *filter; 
+  StandardHistograms *passedHistos; 
+  StandardHistograms *allHistos; 
 
  protected:
   long int eventsProcessed; 
@@ -54,6 +57,9 @@ DataLoader::~DataLoader(){
 void DataLoader::Initialize(){
   dataEvents.Init("dataEvents","Data Hits");
   eventsProcessed = 0;
+
+  passedHistos = new StandardHistograms("dataPassed",0); 
+  allHistos    = new StandardHistograms("dataAll",   0); 
 
   /*
   filter->getSelector(11)->disable_by_name("DC Region 1 Fid Cut");
@@ -82,11 +88,12 @@ void DataLoader::ProcessEvent(){
     int sector                = event.dc_sect[e_index]; 
     PhysicsEvent physicsEvent = builder.getPhysicsEvent(electron);
 
+    allHistos->Fill(event, e_index, physicsEvent); 
+
     // -----------------------------------------------------------------
     // Adding this test code to try and identify Bethe-Heitler events and 
     // throw them out of the sample. 
     // -----------------------------------------------------------------
-
     /*
     bool isBetheHeitler = false; 
     vector<TLorentzVector> protons = filter->getVectorOfTLorentzVectors(event, 2212);
@@ -102,12 +109,21 @@ void DataLoader::ProcessEvent(){
 
     if (eventSelector->passes(physicsEvent) && sector > 0) {
       dataEvents.Fill(physicsEvent, sector); 
+      passedHistos->Fill(event, e_index, physicsEvent); 
     }
+
   } 
 }
 
 void DataLoader::Save(){
   dataEvents.Save(outputFilenameWithExtension, saveOption);
+
+  // Reopen and update with standard histos, 
+  // probably a better way to do it. 
+  TFile *out = new TFile(outputFilenameWithExtension.c_str(), "update"); 
+  allHistos   ->Save(out); 
+  passedHistos->Save(out); 
+  out->Close(); 
 }
 
 #endif

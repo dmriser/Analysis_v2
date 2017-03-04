@@ -365,7 +365,7 @@ void plot2Histos(TH1D *histo1[numberSector][numberSlices], TH1D *histo2[numberSe
   // 3 - Elastic & Inelastic Simulated Events 
 
   // For calculating which QQ bins we're in
-  double qqMin = 1.5; double qqMax = 4.8; 
+  double qqMin = 1.7; double qqMax = 4.2; 
   double qqWidth = (qqMax-qqMin)/numberSlices; 
 
   TCanvas *singleCanvas = new TCanvas("singleCanvas","",800,800);
@@ -420,9 +420,9 @@ void plot2Histos(TH1D *histo1[numberSector][numberSlices], TH1D *histo2[numberSe
       }
 
       else if (histoType == 2) { 
-	histo2[s][sl]->SetLineStyle(8);
-	histo2[s][sl]->SetLineColor(kMagenta);
-	histo2[s][sl]->Draw("lsame"); 
+	//	histo2[s][sl]->SetLineStyle(8);
+	histo2[s][sl]->SetLineColor(99);
+	histo2[s][sl]->Draw("csame"); 
       }
 
       else if (histoType == 3) {
@@ -449,7 +449,7 @@ void plot2Histos(TH1D *histo1[numberSector][numberSlices], TH1D *histo2[numberSe
       }
 
       else if (histoType == 2){
-	histo2Caption.SetTextColor(kMagenta);
+	histo2Caption.SetTextColor(99);
 	histo1Caption.DrawLatex(0.18, 0.76, "E1-F Data");
 	histo2Caption.DrawLatex(0.18, 0.72, "Keppel Model");
       }

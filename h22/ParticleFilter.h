@@ -88,6 +88,7 @@ public:
     std::map<std::string,bool> eid_map(h22Event, int);
     std::map<std::string,bool> hid_map(h22Event, int);
     std::vector<TLorentzVector> getVectorOfTLorentzVectors(h22Event, int pid);
+    std::map<int, TLorentzVector> getMapOfIndexAndTLorentzVector(h22Event, int pid); 
 
 };
 #endif

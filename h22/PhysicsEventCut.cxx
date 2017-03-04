@@ -24,22 +24,19 @@ using std::string;
 #include "PhysicsEventCut.h"
 #include "PhysicsEvent.h"
 
-PhysicsEventCut::PhysicsEventCut()
-{
+PhysicsEventCut::PhysicsEventCut(){
   // Setup procedure.
   is_enabled = true;
   n_pass = 0; n_fail = 0;
   cut_name = " PhysicsEventCut Unassigned ";
 }
 
-PhysicsEventCut::~PhysicsEventCut()
-{
+PhysicsEventCut::~PhysicsEventCut(){
 
 }
 
 
-bool PhysicsEventCut::passes(PhysicsEvent event)
-{
+bool PhysicsEventCut::passes(PhysicsEvent event){
   if ( !is_enabled ){ return false; } 
 
   cout << " Inside PhysicsEventCut::passes " << endl; 
@@ -60,8 +57,7 @@ bool PhysicsEventCut::applies(PhysicsEvent event)
 ///////////////////////////////////////////////////////////////
  
 
-PhysicsEventCut_MissingMass::PhysicsEventCut_MissingMass()
-{
+PhysicsEventCut_MissingMass::PhysicsEventCut_MissingMass(){
   set_name("Missing Mass Cut");
 }
 
@@ -255,6 +251,33 @@ bool PhysicsEventCut_xyLineCut::passes(PhysicsEvent event){
   set_max(m*event.x + b);
 
   if ( event.y > min() && event.y < max()) { n_pass++; return true; }
+  else { n_fail++; }
+  
+  return false; 
+}
+  
+///////////////////////////////////////////////////////////////
+/*
+
+  PhysicsEventCut_relPhi
+
+*/
+///////////////////////////////////////////////////////////////
+ 
+
+PhysicsEventCut_relPhiCut::PhysicsEventCut_relPhiCut(){
+  set_name("Relative Phi Cut");
+  set_min(0.0);
+  set_max(30.0);
+}
+
+PhysicsEventCut_relPhiCut::~PhysicsEventCut_relPhiCut(){
+}
+
+bool PhysicsEventCut_relPhiCut::passes(PhysicsEvent event){
+  double relPhi = fabs(getRelativePhi(event.detectedElectron.Phi()*to_degrees));
+  
+  if ( relPhi > min() && relPhi < max()) { n_pass++; return true; }
   else { n_fail++; }
   
   return false; 

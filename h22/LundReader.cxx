@@ -79,6 +79,7 @@ void LundReader::LoadEvents(std::string inputFilename){
     
     else {
       cout << "[LundReader] Error reading input file " << inputFilename << " improper formatting line length=" << parseLine(currentLine).size() << endl; 
+      //      cout << "[LundReader] Dumping line tokens[0] = " << parseLine(currentLine)[0] << " tokens.back() = " << parseLine(currentLine).back() << endl; 
     }
 
   }
@@ -104,12 +105,13 @@ vector<string> LundReader::parseLine(string line){
   vector<string> tokenizedLine;
   string buffer; 
   
+  //! Break the string on spaces, store results in tokens 
   istringstream tokens(line);
   while(!tokens.eof())
     {
       string buffer;
       tokens >> buffer;
-      tokenizedLine.push_back(buffer);
+      if(buffer != "") { tokenizedLine.push_back(buffer); }
     }
 
   return tokenizedLine; 

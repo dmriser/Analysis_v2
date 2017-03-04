@@ -11,6 +11,7 @@ using namespace std;
 #include "HistogramLoader.h"
 #include "PhysicsEventBuilder.h"
 #include "PhysicsEventSelector.h"
+#include "StatusBar.h"
 
 class HistogramLoader : public h22Reader{
  public:
@@ -22,8 +23,9 @@ class HistogramLoader : public h22Reader{
   std::string outputFilenameWithExtension; 
   std::string saveOption; 
   PhysicsEventSelector *eventSelector; 
-  PhysicsEventBuilder builder; 
-  
+  PhysicsEventBuilder   builder; 
+  StatusBar             bar;   
+
  public:
   void Execute();
 
@@ -33,12 +35,7 @@ class HistogramLoader : public h22Reader{
   virtual void ProcessEvent(); /** We don't need to pass in the event because h22Reader has access to the events already. */
   virtual void Save();
 };
-/*
-#endif
 
-#ifndef histogram_loader_cxx
-#define histogram_loader_cxx
-*/
 
 HistogramLoader::HistogramLoader(PhysicsEventSelector *eventCriteria, string outputFile, string saveOpts){
 
@@ -77,7 +74,7 @@ void HistogramLoader::Loop(){
   int numberOfEntries = fchain->GetEntries();
 
   for (int iEntry = 0; iEntry < numberOfEntries; iEntry++) {
-    if (iEntry%1000 == 0){ cout << "\r done " << iEntry << " events of " << numberOfEntries << flush; } 
+    if (iEntry%100000 == 0){ bar.PrintStatus((double)iEntry/numberOfEntries); } 
 
     GetEntry(iEntry); // Tell the fchain where to point 
     ProcessEvent();    

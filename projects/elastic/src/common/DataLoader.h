@@ -18,6 +18,8 @@ using namespace std;
 #include "PhysicsEvent.h"
 #include "PhysicsEventBuilder.h"
 #include "PhysicsEventSelector.h"
+#include "StandardHistograms.h"
+#include "Histograms.h"
 
 // root 
 #include "TFile.h"
@@ -30,13 +32,9 @@ class DataLoader : public HistogramLoader{
   ~DataLoader();
 
  protected:
-  const static int dimension     = 5;
-  const static int numberSectors = 6;
-  
-  THnSparseI *dataEvents; 
-  int bins[dimension];
-  double min[dimension];
-  double max[dimension];
+
+  StandardHistograms *standardHistos; 
+  ElasticHistograms  *histos; 
 
   NathanEIDWrapper eID; 
   ParticleFilter  *filter;
@@ -51,30 +49,13 @@ class DataLoader : public HistogramLoader{
 };
 
 DataLoader::DataLoader(PhysicsEventSelector *eventCriteria, MomCorr_e1f *momCorr, Parameters *pars, std::string outputFile, std::string saveOpts) : HistogramLoader(eventCriteria, outputFile, saveOpts){
-  momCorrector = momCorr; 
+  momCorrector   = momCorr; 
   outputFilename = outputFile;
-  // 5-Dimensional Binning 
-  // 0 - Sector
-  // 1 - Momentum 
-  // 2 - Theta 
-  // 3 - Relative Phi
-  // 4 - W 
-  bins[0] = numberSectors;
-  bins[1] = 100;
-  bins[2] = 100;
-  bins[3] = 100;
-  bins[4] = 100;
+  filter         = new ParticleFilter(pars);
 
-  min[0] = 1.00;     max[0] = 7.0; 
-  min[1] = 2.05;     max[1] = 5.0; 
-  min[2] = 22.0;     max[2] = 48.0; 
-  min[3] = -12.0;    max[3] = 12.0; 
-  min[4] =  0.70;    max[4] = 1.20; 
-
-  filter = new ParticleFilter(pars);
-  //  filter->getSelector(11)->enable_by_regex("NPhe");
-
-  dataEvents = new THnSparseI("dataEvents","dataEvents",dimension,bins,min,max);
+  standardHistos = new StandardHistograms("data",0); 
+  histos         = new ElasticHistograms("data",0); 
+  histos->Initialize(); 
 }
 
 DataLoader::~DataLoader(){
@@ -95,16 +76,16 @@ void DataLoader::ProcessEvent(){
     PhysicsEvent physicsEvent = builder.getPhysicsEvent(electron);
     
     if (eventSelector->passes(physicsEvent) && sector > 0) {
-      double dataPoint[dimension] = {(double) sector, electron.E(),electron.Theta()*to_degrees,event.rphi(electrons[0]),physicsEvent.w};
-      dataEvents->Fill(dataPoint);
+      standardHistos->Fill(event, electrons[0], physicsEvent); 
+      histos        ->Fill(physicsEvent); 
     }
   } 
 }
 
 void DataLoader::Save(){
   TFile *outputFile = new TFile(outputFilename.c_str(), "RECREATE");
-  dataEvents->Write(); 
-  outputFile->Write();
+  standardHistos->Save(outputFile); 
+  histos        ->Save(outputFile); 
   outputFile->Close();
 }
 

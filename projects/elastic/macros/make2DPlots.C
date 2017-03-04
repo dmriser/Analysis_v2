@@ -160,5 +160,27 @@
     }
   }
 
+  TCanvas *c2 = new TCanvas("c2","",1100,800); 
+
+  for(int sector=0; sector<6; sector++){
+    c2->Clear(); 
+    c2->Divide(3,4); 
+
+    for(int theta=0; theta<thetaBins; theta++){
+      c2->cd(theta+1); 
+     wSlices[sector][theta]->Draw("same");
+    }
+    
+    for(int pad=0; pad<3*4; pad++){
+      c2->cd(pad+1); 
+      gPad->SetMargin(0.05, 0.05, 0.05, 0.05); 
+      if( padIsLeft(theta+1, 3, 4) )       { gPad->SetLeftMargin(0.2); }
+      else if( padIsRight(theta+1, 3, 4) ) { gPad->SetRightMargin(0.2);}
+      if( padIsTop(theta+1, 3, 4) )        { gPad->SetTopMargin(0.2); }
+      else if( padIsBottom(theta+1, 3, 4) ){ gPad->SetBottomMargin(0.2);}
+     }
+
+    c2->Print(Form("%swByTheta_sect%d.png",imagePath.c_str(),sector));
+  }
 
 }

@@ -1,0 +1,12 @@
+# Compile libraries for analysis classes. 
+
+import os, glob 
+
+# Config h22 environment 
+env = Environment(ENV = {'PATH':os.environ['PATH']})
+env.ParseConfig("root-config --glibs --cflags")
+env.Append(CCFLAGS = ['-g'])
+
+# Build the SimplePlot
+sources  = glob.glob('source/*.cxx')
+env.SharedLibrary('lib/SimplePlot',sources)

@@ -17,7 +17,7 @@
   TH1D *binCorr[numberSector][numberSlices];
 
 
-  TFile *inputFile = TFile::Open("/volatile/clas12/dmriser/rootFiles/inclusive/xs/xs70_es_radCorr_photonFlux.root");
+  TFile *inputFile = TFile::Open("/volatile/clas12/dmriser/rootFiles/inclusive/xs/Phi4to12v2.root");
   //  TFile *inputFile = TFile::Open("../out/crossSectionNoFidPass1.root");
 
   readHisto(data, inputFile, numberSector, numberSlices, "dataEvents_wByQQ");

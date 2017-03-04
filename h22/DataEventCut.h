@@ -27,8 +27,8 @@
 // my includes
 #include "h22Event.h"
 
-class DataEventCut
-{
+class DataEventCut{
+
  public:
   DataEventCut();
   ~DataEventCut();

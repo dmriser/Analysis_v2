@@ -42,12 +42,13 @@ int main(int argc, char * argv[]){
 
   // ---------------------------- Setup Physics Options -------------------------------
 
-  PhysicsEventSelector * eventSelector = new PhysicsEventSelector();
-  PhysicsEventCut_w *w_cut             = new PhysicsEventCut_w();
-  PhysicsEventCut_p *p_cut             = new PhysicsEventCut_p();
-  PhysicsEventCut_x *x_cut             = new PhysicsEventCut_x();
-  PhysicsEventCut_y *y_cut             = new PhysicsEventCut_y();
-  PhysicsEventCut_qq *qq_cut           = new PhysicsEventCut_qq();
+  PhysicsEventSelector * eventSelector       = new PhysicsEventSelector();
+  PhysicsEventCut_w *w_cut                   = new PhysicsEventCut_w();
+  PhysicsEventCut_p *p_cut                   = new PhysicsEventCut_p();
+  PhysicsEventCut_x *x_cut                   = new PhysicsEventCut_x();
+  PhysicsEventCut_y *y_cut                   = new PhysicsEventCut_y();
+  PhysicsEventCut_qq *qq_cut                 = new PhysicsEventCut_qq();
+  PhysicsEventCut_relPhiCut *rphi_cut        = new PhysicsEventCut_relPhiCut();
   //  PhysicsEventCut_xyLineCut *xy_cut    = new PhysicsEventCut_xyLineCut();
 
   p_cut->set_min( options->args["PMIN"].arg );
@@ -56,20 +57,20 @@ int main(int argc, char * argv[]){
   w_cut->set_min( 1.1 );
   w_cut->set_max( 99.9 ); 
 
-  //  x_cut->set_min(0.20);
-  //  x_cut->set_max(1.00);
-
   y_cut->set_min( 0.00 );
   y_cut->set_max( options->args["YCUT"].arg ); 
 
   qq_cut->set_min( 1.00 );
   qq_cut->set_max( 99.9 ); 
 
+  rphi_cut->set_min( 4.0); 
+  rphi_cut->set_max(12.0); 
+
   eventSelector->add_cut(p_cut);
   eventSelector->add_cut(w_cut);
-  //  eventSelector->add_cut(x_cut);
   eventSelector->add_cut(y_cut);
   eventSelector->add_cut(qq_cut); 
+  eventSelector->add_cut(rphi_cut); 
   eventSelector->enable_all();
 
   // ----------------------------------------------------------------------------------

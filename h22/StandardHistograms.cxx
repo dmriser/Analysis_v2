@@ -25,7 +25,7 @@ StandardHistograms::StandardHistograms(std::string inputName, int runMode) : nam
   if(mode == 0){
     Initialize(); 
   } else if (mode == 1){
-    Load(); 
+    inputFile = new TFile();
   } else {
     Color::Modifier red(Color::FG_RED); 
     Color::Modifier def(Color::FG_DEFAULT); 
@@ -35,21 +35,24 @@ StandardHistograms::StandardHistograms(std::string inputName, int runMode) : nam
 }
 
 StandardHistograms::~StandardHistograms(){
+  if(inputFile->IsOpen()){
+    inputFile->Close(); 
+  }
 }
 
 
 void StandardHistograms::Initialize(){
-
+ 
  for(int s=0; s<numberSector; s++){
    // Kinematic in 1-Dimension
    h1_ele_p[s]          = new TH1D(Form("h1_ele_p_sect%d_%s",s,name.c_str()),          Form("h1_ele_p_sect%d",s),         100,0.5,5.5); 
    h1_ele_phi[s]        = new TH1D(Form("h1_ele_phi_sect%d_%s",s,name.c_str()),        Form("h1_ele_phi_sect%d",s),       100,-180.0,180.0); 
    h1_ele_relPhi[s]     = new TH1D(Form("h1_ele_relPhi_sect%d_%s",s,name.c_str()),     Form("h1_ele_relPhi_sect%d",s),    100,-30.0, 30.0); 
    h1_ele_theta[s]      = new TH1D(Form("h1_ele_theta_sect%d_%s",s,name.c_str()),      Form("h1_ele_theta_sect%d",s),     100, 10.0, 60.0); 
-   h1_part2_p[s]        = new TH1D(Form("h1_part2_p_sect%d_%s",s,name.c_str()),        Form("h1_part2_p_sect%d",s),       100,0.5,5.5); 
-   h1_part2_phi[s]      = new TH1D(Form("h1_part2_phi_sect%d_%s",s,name.c_str()),      Form("h1_part2_phi_sect%d",s),     100,-180.0,180.0); 
-   h1_part2_relPhi[s]   = new TH1D(Form("h1_part2_relPhi_sect%d_%s",s,name.c_str()),   Form("h1_part2_relPhi_sect%d",s),  100,-30.0, 30.0); 
-   h1_part2_theta[s]    = new TH1D(Form("h1_part2_theta_sect%d_%s",s,name.c_str()),    Form("h1_part2_theta_sect%d",s),   100, 0.0, 180.0); 
+   h1_part1_p[s]        = new TH1D(Form("h1_part1_p_sect%d_%s",s,name.c_str()),        Form("h1_part1_p_sect%d",s),       100,0.5,5.5); 
+   h1_part1_phi[s]      = new TH1D(Form("h1_part1_phi_sect%d_%s",s,name.c_str()),      Form("h1_part1_phi_sect%d",s),     100,-180.0,180.0); 
+   h1_part1_relPhi[s]   = new TH1D(Form("h1_part1_relPhi_sect%d_%s",s,name.c_str()),   Form("h1_part1_relPhi_sect%d",s),  100,-30.0, 30.0); 
+   h1_part1_theta[s]    = new TH1D(Form("h1_part1_theta_sect%d_%s",s,name.c_str()),    Form("h1_part1_theta_sect%d",s),   100, 0.0, 180.0); 
    h1_xbj[s]            = new TH1D(Form("h1_xbj_sect%d_%s",s,name.c_str()),            Form("h1_xbj_sect%d",s),           100,0.0,1.0); 
    h1_y[s]              = new TH1D(Form("h1_y_sect%d_%s",s,name.c_str()),              Form("h1_y_sect%d",s),             100,0.0,1.0); 
    h1_z[s]              = new TH1D(Form("h1_z_sect%d_%s",s,name.c_str()),              Form("h1_z_sect%d",s),             100,0.0,1.0); 
@@ -76,9 +79,9 @@ void StandardHistograms::Initialize(){
    h2_ele_p_theta[s]        = new TH2D(Form("h2_ele_p_theta_sect%d_%s",s,name.c_str()),       Form("h2_ele_p_theta_sect%d",s),       100,0.5,5.5,100,10.0,60.0); 
    h2_ele_phi_theta[s]      = new TH2D(Form("h2_ele_phi_theta_sect%d_%s",s,name.c_str()),     Form("h2_ele_phi_theta_sect%d",s),     100,-180.0,180.0,100,10.0,60.0); 
    h2_ele_relPhi_theta[s]   = new TH2D(Form("h2_ele_relPhi_theta_sect%d_%s",s,name.c_str()),  Form("h2_ele_relPhi_theta_sect%d",s),  100,-30.0,30.0,100,10.0,60.0); 
-   h2_part2_p_theta[s]      = new TH2D(Form("h2_part2_p_theta_sect%d_%s",s,name.c_str()),     Form("h2_part2_p_theta_sect%d",s),     100,0.5,5.5,100,10.0,60.0); 
-   h2_part2_phi_theta[s]    = new TH2D(Form("h2_part2_phi_theta_sect%d_%s",s,name.c_str()),   Form("h2_part2_phi_theta_sect%d",s),   100,-180.0,180.0,100,0.0,180.0); 
-   h2_part2_relPhi_theta[s] = new TH2D(Form("h2_part2_relPhi_theta_sect%d_%s",s,name.c_str()),Form("h2_part2_relPhi_theta_sect%d",s),100,-30.0,30.0,100,0.0,180.0); 
+   h2_part1_p_theta[s]      = new TH2D(Form("h2_part1_p_theta_sect%d_%s",s,name.c_str()),     Form("h2_part1_p_theta_sect%d",s),     100,0.5,5.5,100,10.0,60.0); 
+   h2_part1_phi_theta[s]    = new TH2D(Form("h2_part1_phi_theta_sect%d_%s",s,name.c_str()),   Form("h2_part1_phi_theta_sect%d",s),   100,-180.0,180.0,100,0.0,180.0); 
+   h2_part1_relPhi_theta[s] = new TH2D(Form("h2_part1_relPhi_theta_sect%d_%s",s,name.c_str()),Form("h2_part1_relPhi_theta_sect%d",s),100,-30.0,30.0,100,0.0,180.0); 
    h2_xbj_q2[s]             = new TH2D(Form("h2_xbj_q2_sect%d_%s",s,name.c_str()),            Form("h2_xbj_q2_sect%d",s),            100,0.0,1.0,100,0.5,5.0); 
    h2_w_q2[s]               = new TH2D(Form("h2_w_q2_sect%d_%s",s,name.c_str()),              Form("h2_w_q2_sect%d",s),              100,0.5,3.5,100,0.5,5.0); 
    h2_y_w[s]                = new TH2D(Form("h2_y_w_sect%d_%s",s,name.c_str()),               Form("h2_y_w_sect%d",s),               100,0.0,1.0,100,0.5,3.5); 
@@ -95,8 +98,62 @@ void StandardHistograms::Initialize(){
 
 } 
 
-void StandardHistograms::Load(){
+void StandardHistograms::Load(std::string inputFilename){
+  inputFile = TFile::Open(inputFilename.c_str()); 
 
+  for(int s=0; s<numberSector; s++){
+    // Kinematic in 1-Dimension
+    h1_ele_p[s]          = (TH1D*) inputFile->Get(Form("h1_ele_p_sect%d_%s",s,name.c_str()));
+    h1_ele_phi[s]        = (TH1D*) inputFile->Get(Form("h1_ele_phi_sect%d_%s",s,name.c_str()));
+    h1_ele_relPhi[s]     = (TH1D*) inputFile->Get(Form("h1_ele_relPhi_sect%d_%s",s,name.c_str()));
+    h1_ele_theta[s]      = (TH1D*) inputFile->Get(Form("h1_ele_theta_sect%d_%s",s,name.c_str()));
+    h1_part1_p[s]        = (TH1D*) inputFile->Get(Form("h1_part1_p_sect%d_%s",s,name.c_str()));
+    h1_part1_phi[s]      = (TH1D*) inputFile->Get(Form("h1_part1_phi_sect%d_%s",s,name.c_str()));
+    h1_part1_relPhi[s]   = (TH1D*) inputFile->Get(Form("h1_part1_relPhi_sect%d_%s",s,name.c_str()));
+    h1_part1_theta[s]    = (TH1D*) inputFile->Get(Form("h1_part1_theta_sect%d_%s",s,name.c_str()));
+    h1_xbj[s]            = (TH1D*) inputFile->Get(Form("h1_xbj_sect%d_%s",s,name.c_str()));
+    h1_y[s]              = (TH1D*) inputFile->Get(Form("h1_y_sect%d_%s",s,name.c_str()));
+    h1_z[s]              = (TH1D*) inputFile->Get(Form("h1_z_sect%d_%s",s,name.c_str()));
+    h1_pt2[s]            = (TH1D*) inputFile->Get(Form("h1_pt2_sect%d_%s",s,name.c_str()));
+    h1_w[s]              = (TH1D*) inputFile->Get(Form("h1_w_sect%d_%s",s,name.c_str()));
+    h1_phiH[s]           = (TH1D*) inputFile->Get(Form("h1_phiH_sect%d_%s",s,name.c_str()));
+    h1_wProtonMass[s]    = (TH1D*) inputFile->Get(Form("h1_wProtonMass_sect%d_%s",s,name.c_str()));
+    h1_q2[s]             = (TH1D*) inputFile->Get(Form("h1_q2_sect%d_%s",s,name.c_str()));
+    h1_nu[s]             = (TH1D*) inputFile->Get(Form("h1_nu_sect%d_%s",s,name.c_str()));
+    h1_ele_rapidity[s]   = (TH1D*) inputFile->Get(Form("h1_ele_rapidity_sect%d_%s",s,name.c_str()));
+    h1_part1_rapidity[s] = (TH1D*) inputFile->Get(Form("h1_part1_rapidity_sect%d_%s",s,name.c_str()));
+    
+    // Detector Vars in 1-Dimension 
+    h1_ele_nphe[s]               = (TH1D*) inputFile->Get(Form("h1_ele_nphe_sect%d_%s",s,name.c_str()));
+    h1_ele_ecInner[s]            = (TH1D*) inputFile->Get(Form("h1_ele_ecInner_sect%d_%s",s,name.c_str()));
+    h1_ele_ecOuter[s]            = (TH1D*) inputFile->Get(Form("h1_ele_ecOuter_sect%d_%s",s,name.c_str()));
+    h1_ele_samplingFraction[s]   = (TH1D*) inputFile->Get(Form("h1_ele_samplingFraction_sect%d_%s",s,name.c_str()));
+    h1_part1_nphe[s]             = (TH1D*) inputFile->Get(Form("h1_part1_nphe_sect%d_%s",s,name.c_str()));
+    h1_part1_ecInner[s]          = (TH1D*) inputFile->Get(Form("h1_part1_ecInner_sect%d_%s",s,name.c_str()));
+    h1_part1_ecOuter[s]          = (TH1D*) inputFile->Get(Form("h1_part1_ecOuter_sect%d_%s",s,name.c_str()));
+    h1_part1_samplingFraction[s] = (TH1D*) inputFile->Get(Form("h1_part1_samplingFraction_sect%d_%s",s,name.c_str()));
+    
+    // Kinematic in 2-Dimensions
+    h2_ele_p_theta[s]        = (TH2D*) inputFile->Get(Form("h2_ele_p_theta_sect%d_%s",s,name.c_str()));
+    h2_ele_phi_theta[s]      = (TH2D*) inputFile->Get(Form("h2_ele_phi_theta_sect%d_%s",s,name.c_str()));
+    h2_ele_relPhi_theta[s]   = (TH2D*) inputFile->Get(Form("h2_ele_relPhi_theta_sect%d_%s",s,name.c_str()));
+    h2_part1_p_theta[s]      = (TH2D*) inputFile->Get(Form("h2_part1_p_theta_sect%d_%s",s,name.c_str()));
+    h2_part1_phi_theta[s]    = (TH2D*) inputFile->Get(Form("h2_part1_phi_theta_sect%d_%s",s,name.c_str()));
+    h2_part1_relPhi_theta[s] = (TH2D*) inputFile->Get(Form("h2_part1_relPhi_theta_sect%d_%s",s,name.c_str()));
+    h2_xbj_q2[s]             = (TH2D*) inputFile->Get(Form("h2_xbj_q2_sect%d_%s",s,name.c_str()));
+    h2_w_q2[s]               = (TH2D*) inputFile->Get(Form("h2_w_q2_sect%d_%s",s,name.c_str()));
+    h2_y_w[s]                = (TH2D*) inputFile->Get(Form("h2_y_w_sect%d_%s",s,name.c_str()));
+    h2_z_pt2[s]              = (TH2D*) inputFile->Get(Form("h2_z_pt2_sect%d_%s",s,name.c_str()));
+    
+    // Detector Vars in 2-Dimensions 
+    h2_ele_p_samplingFraction[s]      = (TH2D*) inputFile->Get(Form("h2_ele_p_samplingFraction_sect%d_%s",s,name.c_str()));
+    h2_ele_ecInner_ecOuter[s]         = (TH2D*) inputFile->Get(Form("h2_ele_ecInner_ecOuter_sect%d_%s",s,name.c_str()));
+    h2_ele_samplingFraction_nphe[s]   = (TH2D*) inputFile->Get(Form("h2_ele_samplingFraction_nphe_sect%d_%s",s,name.c_str()));
+    h2_part1_p_samplingFraction[s]    = (TH2D*) inputFile->Get(Form("h2_part1_p_samplingFraction_sect%d_%s",s,name.c_str()));
+    h2_part1_ecInner_ecOuter[s]       = (TH2D*) inputFile->Get(Form("h2_part1_ecInner_ecOuter_sect%d_%s",s,name.c_str()));
+    h2_part1_samplingFraction_nphe[s] = (TH2D*) inputFile->Get(Form("h2_part1_samplingFraction_nphe_sect%d_%s",s,name.c_str()));
+  }
+  
 }
 
 void StandardHistograms::Fill(h22Event event, int index){
@@ -171,10 +228,10 @@ void StandardHistograms::Fill(PhysicsEvent physicsEvent){
   h1_ele_phi[0]       ->Fill(physicsEvent.detectedElectron.Phi()*to_degrees);
   h1_ele_relPhi[0]    ->Fill(getRelativePhi(physicsEvent.detectedElectron.Phi()*to_degrees)); 
   h1_ele_theta[0]     ->Fill(physicsEvent.detectedElectron.Theta()*to_degrees); 
-  h1_part2_p[0]       ->Fill(physicsEvent.particle1.P()); 
-  h1_part2_phi[0]     ->Fill(physicsEvent.particle1.Phi()*to_degrees);
-  h1_part2_relPhi[0]  ->Fill(getRelativePhi(physicsEvent.particle1.Phi()*to_degrees)); 
-  h1_part2_theta[0]   ->Fill(physicsEvent.particle1.Theta()*to_degrees);
+  h1_part1_p[0]       ->Fill(physicsEvent.particle1.P()); 
+  h1_part1_phi[0]     ->Fill(physicsEvent.particle1.Phi()*to_degrees);
+  h1_part1_relPhi[0]  ->Fill(getRelativePhi(physicsEvent.particle1.Phi()*to_degrees)); 
+  h1_part1_theta[0]   ->Fill(physicsEvent.particle1.Theta()*to_degrees);
   h1_xbj[0]           ->Fill(physicsEvent.x);
   h1_y[0]             ->Fill(physicsEvent.y);
   h1_z[0]             ->Fill(physicsEvent.z);
@@ -190,9 +247,9 @@ void StandardHistograms::Fill(PhysicsEvent physicsEvent){
   h2_ele_p_theta[0]       ->Fill(physicsEvent.detectedElectron.P(),physicsEvent.detectedElectron.Theta()*to_degrees); 
   h2_ele_phi_theta[0]     ->Fill(physicsEvent.detectedElectron.Phi()*to_degrees,physicsEvent.detectedElectron.Theta()*to_degrees); 
   h2_ele_relPhi_theta[0]  ->Fill(getRelativePhi(physicsEvent.detectedElectron.Phi()*to_degrees),physicsEvent.detectedElectron.Theta()*to_degrees); 
-  h2_part2_p_theta[0]     ->Fill(physicsEvent.particle1.P(),physicsEvent.particle1.Theta()*to_degrees); 
-  h2_part2_phi_theta[0]   ->Fill(physicsEvent.particle1.Phi()*to_degrees,physicsEvent.particle1.Theta()*to_degrees); 
-  h2_part2_relPhi_theta[0]->Fill(getRelativePhi(physicsEvent.particle1.Phi()*to_degrees),physicsEvent.particle1.Theta()*to_degrees); 
+  h2_part1_p_theta[0]     ->Fill(physicsEvent.particle1.P(),physicsEvent.particle1.Theta()*to_degrees); 
+  h2_part1_phi_theta[0]   ->Fill(physicsEvent.particle1.Phi()*to_degrees,physicsEvent.particle1.Theta()*to_degrees); 
+  h2_part1_relPhi_theta[0]->Fill(getRelativePhi(physicsEvent.particle1.Phi()*to_degrees),physicsEvent.particle1.Theta()*to_degrees); 
   h2_xbj_q2[0]            ->Fill(physicsEvent.x, physicsEvent.qq); 
   h2_w_q2[0]              ->Fill(physicsEvent.w, physicsEvent.qq); 
   h2_y_w[0]               ->Fill(physicsEvent.y, physicsEvent.w);
@@ -205,10 +262,10 @@ void StandardHistograms::Fill(PhysicsEvent physicsEvent){
   h1_ele_phi[s]        ->Fill(physicsEvent.detectedElectron.Phi()*to_degrees);
   h1_ele_relPhi[s]     ->Fill(getRelativePhi(physicsEvent.detectedElectron.Phi()*to_degrees)); 
   h1_ele_theta[s]      ->Fill(physicsEvent.detectedElectron.Theta()*to_degrees); 
-  h1_part2_p[s1]       ->Fill(physicsEvent.particle1.P()); 
-  h1_part2_phi[s1]     ->Fill(physicsEvent.particle1.Phi()*to_degrees);
-  h1_part2_relPhi[s1]  ->Fill(getRelativePhi(physicsEvent.particle1.Phi()*to_degrees)); 
-  h1_part2_theta[s1]   ->Fill(physicsEvent.particle1.Theta()*to_degrees);
+  h1_part1_p[s1]       ->Fill(physicsEvent.particle1.P()); 
+  h1_part1_phi[s1]     ->Fill(physicsEvent.particle1.Phi()*to_degrees);
+  h1_part1_relPhi[s1]  ->Fill(getRelativePhi(physicsEvent.particle1.Phi()*to_degrees)); 
+  h1_part1_theta[s1]   ->Fill(physicsEvent.particle1.Theta()*to_degrees);
   h1_xbj[s]            ->Fill(physicsEvent.x);
   h1_y[s]              ->Fill(physicsEvent.y);
   h1_w[s]              ->Fill(physicsEvent.w);
@@ -224,9 +281,9 @@ void StandardHistograms::Fill(PhysicsEvent physicsEvent){
   h2_ele_p_theta[s]       ->Fill(physicsEvent.detectedElectron.P(),physicsEvent.detectedElectron.Theta()*to_degrees); 
   h2_ele_phi_theta[s]     ->Fill(physicsEvent.detectedElectron.Phi()*to_degrees,physicsEvent.detectedElectron.Theta()*to_degrees); 
   h2_ele_relPhi_theta[s]  ->Fill(getRelativePhi(physicsEvent.detectedElectron.Phi()*to_degrees),physicsEvent.detectedElectron.Theta()*to_degrees); 
-  h2_part2_p_theta[s1]     ->Fill(physicsEvent.particle1.P(),physicsEvent.particle1.Theta()*to_degrees); 
-  h2_part2_phi_theta[s1]   ->Fill(physicsEvent.particle1.Phi()*to_degrees,physicsEvent.particle1.Theta()*to_degrees); 
-  h2_part2_relPhi_theta[s1]->Fill(getRelativePhi(physicsEvent.particle1.Phi()*to_degrees),physicsEvent.particle1.Theta()*to_degrees); 
+  h2_part1_p_theta[s1]     ->Fill(physicsEvent.particle1.P(),physicsEvent.particle1.Theta()*to_degrees); 
+  h2_part1_phi_theta[s1]   ->Fill(physicsEvent.particle1.Phi()*to_degrees,physicsEvent.particle1.Theta()*to_degrees); 
+  h2_part1_relPhi_theta[s1]->Fill(getRelativePhi(physicsEvent.particle1.Phi()*to_degrees),physicsEvent.particle1.Theta()*to_degrees); 
   h2_xbj_q2[s]             ->Fill(physicsEvent.x, physicsEvent.qq); 
   h2_w_q2[s]               ->Fill(physicsEvent.w, physicsEvent.qq); 
   h2_y_w[s]                ->Fill(physicsEvent.y, physicsEvent.w); 
@@ -236,16 +293,16 @@ void StandardHistograms::Fill(PhysicsEvent physicsEvent){
 void StandardHistograms::Save(TFile *outputFile){
   if(outputFile->IsOpen()){
     outputFile->cd(); 
-
+ 
     for(int s=0; s<numberSector; s++){
       h1_ele_p[s]       ->Write(); 
       h1_ele_phi[s]     ->Write(); 
       h1_ele_relPhi[s]  ->Write(); 
       h1_ele_theta[s]   ->Write(); 
-      h1_part2_p[s]     ->Write(); 
-      h1_part2_phi[s]   ->Write(); 
-      h1_part2_relPhi[s]->Write(); 
-      h1_part2_theta[s] ->Write(); 
+      h1_part1_p[s]     ->Write(); 
+      h1_part1_phi[s]   ->Write(); 
+      h1_part1_relPhi[s]->Write(); 
+      h1_part1_theta[s] ->Write(); 
       h1_xbj[s]              ->Write(); 
       h1_y[s]                ->Write(); 
       h1_w[s]                ->Write(); 
@@ -269,9 +326,9 @@ void StandardHistograms::Save(TFile *outputFile){
       h2_ele_p_theta[s]       ->Write(); 
       h2_ele_phi_theta[s]     ->Write(); 
       h2_ele_relPhi_theta[s]  ->Write(); 
-      h2_part2_p_theta[s]     ->Write(); 
-      h2_part2_phi_theta[s]   ->Write(); 
-      h2_part2_relPhi_theta[s]->Write(); 
+      h2_part1_p_theta[s]     ->Write(); 
+      h2_part1_phi_theta[s]   ->Write(); 
+      h2_part1_relPhi_theta[s]->Write(); 
       h2_xbj_q2[s]            ->Write(); 
       h2_w_q2[s]              ->Write(); 
       h2_y_w[s]               ->Write(); 

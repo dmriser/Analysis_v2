@@ -27,6 +27,9 @@ int main(int argc, char * argv[]){
   int numberOfXBins = 35;     //     W
   int numberOfYBins = 10;     //    Q^2
 
+  bool phiIsRestricted = true; 
+  double relPhiRange   = 2*(12.0 - 4.0); 
+
   double normalizationScale = cm_to_outhouse*(hydrogen_molar_weight*electron_c*1e6)/(5.00*avogadro*hydrogen_density);
   // -------------------------------------------
 
@@ -145,6 +148,9 @@ int main(int argc, char * argv[]){
     crossSection->ScaleByBinWidth();
     crossSection->ScaleByNumberSectors();
     crossSection->ScaleAllByNumberBins();
+    
+    if(phiIsRestricted){ crossSection->Scale(60.0/relPhiRange); }
+
     crossSection->Save(outputFilename.c_str(),"update");
 
     ModelCrossSectionLoader *modelLoader = new ModelCrossSectionLoader();

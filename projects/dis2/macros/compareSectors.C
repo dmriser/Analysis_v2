@@ -3,7 +3,7 @@
   gROOT->LoadMacro("utils.C");
 
   //  TFile * inputFile = TFile::Open("../out/crossSectionWithResonancePass1.root");
-  TFile * inputFile = TFile::Open("/volatile/clas12/dmriser/rootFiles/inclusive/xs/xs70_es_radCorr_photonFlux.root");
+  TFile * inputFile = TFile::Open("/volatile/clas12/dmriser/rootFiles/inclusive/xs/Phi4to12.root");
 
   string imagePath       = "/volatile/clas12/dmriser/plots/inclusive/"; 
   const int numberSector = 7;
@@ -53,8 +53,8 @@
       ratio[sect][slice]->SetMarkerColor(50+sect*7); 
       ratio[sect][slice]->SetMarkerStyle(8); 
       ratio[sect][slice]->SetMarkerSize(1); 
-      ratio[sect][slice]->SetMinimum(0.1); 
-      ratio[sect][slice]->SetMaximum(1.5); 
+      ratio[sect][slice]->SetMinimum(0.7); 
+      ratio[sect][slice]->SetMaximum(1.4); 
       ratio[sect][slice]->Draw("histsame"); 
     }
   }
@@ -74,8 +74,8 @@
     ratio[sect][2]->SetMarkerColor(50+(sect-1)*8); 
     ratio[sect][2]->SetMarkerStyle(25+sect); 
     ratio[sect][2]->SetMarkerSize(1); 
-    ratio[sect][2]->SetMinimum(0.1); 
-    ratio[sect][2]->SetMaximum(1.5); 
+    ratio[sect][2]->SetMinimum(0.7); 
+    ratio[sect][2]->SetMaximum(1.4); 
 
     ratio[sect][2]->Draw("pesame"); 
   }

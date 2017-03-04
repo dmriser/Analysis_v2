@@ -1,5 +1,11 @@
 #include <vector>
 
+#include "TObject.h"
+#include "TFile.h"
+#include "TRegexp.h"
+#include "TString.h"
+#include "TList.h"
+
 vector<TH1D*> loadHistos(TFile *inputFile, string targetTitle){
   
   TList * tableOfContents = inputFile->GetListOfKeys();
@@ -7,9 +13,10 @@ vector<TH1D*> loadHistos(TFile *inputFile, string targetTitle){
   vector<TH1D*> foundHistos;
 
   TRegexp reg(targetTitle);
+  TObject *objFromFile;
 
-  while(TObject *objectFromFile = next()){
-    TString currentObjectName = objectFromFile->GetName();
+  while(objFromFile = next()){
+    TString currentObjectName = objFromFile->GetName();
 
     if (currentObjectName.Contains(reg)){
       foundHistos.push_back( (TH1D*) inputFile->Get(currentObjectName) );

@@ -38,7 +38,9 @@ class PhysicsEventSelector
   void disable_by_regex(std::string);
   void enable_by_regex(std::string);
   void summarize();
-  
+
+  PhysicsEventCut *get_cut(std::string target){ for(int i=0; i<cuts.size(); i++) { if(cuts[i]->name() == target) { return cuts[i]; }} return new PhysicsEventCut();}
+
   virtual bool passes(PhysicsEvent); /** I am making this virtual in the event that we need to change something before asking if the events pass (vertex correction ect.) */ 
   std::map<std::string, double> cut_pass_fraction(); 
   

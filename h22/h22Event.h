@@ -107,6 +107,16 @@ class h22Event
    Float_t         mcvz[40];   //[mcnentr]
    Float_t         mctof[40];   //[mcnentr]
 
+   // A bit of extra information useful in 
+   // identification of hadrons and photons. 
+   int processingStage; 
+   int electronIndex; 
+   int hadronIndex; 
+   int hadronPID; 
+
+   // Corrected Variables 
+   double   correctedStartTime; 
+
    // Const. & Dest. 
    h22Event();
    ~h22Event();

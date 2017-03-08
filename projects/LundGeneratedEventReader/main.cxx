@@ -13,6 +13,7 @@ int main(int argc, char *argv[]){
 
   LundGeneratedEventReader *lundConverter = new LundGeneratedEventReader();
   lundConverter->LoadEvents(opts.ifiles[0]);
+  lundConverter->SetBeamEnergy(opts.args["BEAM_E"].arg);
   lundConverter->Execute( lundConverter->GetNumberOfEvents() );
   lundConverter->Save(opts.args["OUT"].args);
 

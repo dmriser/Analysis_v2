@@ -487,16 +487,48 @@ DataEventCut_DeltaBetaCut::~DataEventCut_DeltaBetaCut(){
 }
 
 
-bool DataEventCut_DeltaBetaCut::passes(h22Event event, int electronIndex, int hadronIndex, int PID){
+bool DataEventCut_DeltaBetaCut::passes(h22Event event, int hadronIndex, int PID){
   
   // It is very important to note that this 
   // routine expects CORRECTED variables.
-  double startTime  = event.sc_t[electronIndex]-event.sc_r[electronIndex]/speed_of_light;
-  double beta       = event.sc_r[hadronIndex]/(event.sc_t[hadronIndex]-startTime)/speed_of_light;  
+  //  double startTime  = event.sc_t[electronIndex]-event.sc_r[electronIndex]/speed_of_light;
+  double beta       = event.sc_r[hadronIndex]/(event.sc_t[hadronIndex]-event.correctedStartTime)/speed_of_light;  
   double betaCalc   = event.p[hadronIndex]/sqrt(pow(event.p[hadronIndex],2)+pow(pid_to_mass(PID),2));
   double deltaBeta  = betaCalc - beta; 
 
   if (deltaBeta > min() && deltaBeta < max()){
+    n_pass++;
+    return true; 
+  } else {
+    n_fail++; 
+    return false;
+  }
+
+  return false;
+}
+
+///////////////////////////////////////////////////////////////
+/*
+  DataEventCut_DeltaZVertexCut
+*/
+///////////////////////////////////////////////////////////////
+
+DataEventCut_DeltaZVertexCut::DataEventCut_DeltaZVertexCut(){
+  set_name("Delta Z-Vertex Cut");
+}
+
+DataEventCut_DeltaZVertexCut::~DataEventCut_DeltaZVertexCut(){
+}
+
+
+bool DataEventCut_DeltaZVertexCut::passes(h22Event event, int hadronIndex){
+  
+  // It is very important to note that this 
+  // routine expects CORRECTED variables.
+
+  double dvz = event.vz[event.electronIndex]-event.vz[hadronIndex];
+
+  if (dvz > min() && dvz < max()){
     n_pass++;
     return true; 
   } else {

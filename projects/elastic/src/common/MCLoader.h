@@ -80,7 +80,7 @@ void MCLoader::ProcessEvent(){
     PhysicsEvent   genEvent    = builder.getPhysicsEvent(genElectron); 
     int            genSector   = phiToSector(genElectron.Phi()*to_degrees);
 
-    if(genSector > -1){
+    if(eventSelector->passes(genEvent) && genSector > -1){
       standardHistosGen->Fill(genEvent);
       gen              ->Fill(genEvent);
     }

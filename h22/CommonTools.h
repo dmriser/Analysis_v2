@@ -167,6 +167,12 @@ inline int phiToSector(double phi){
   return sector; 
 }
 
+inline std::string secondsToTimeString(double sec){
+  int minutes = floor(sec/60);
+  int seconds = int(sec)%60;
+  return  (stringify(minutes)+":"+stringify(seconds));
+}
+
 namespace Color {
   enum Code {
     FG_RED      = 31,

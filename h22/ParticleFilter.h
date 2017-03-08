@@ -82,6 +82,7 @@ public:
     bool has_electron(h22Event);
     int getByPID(h22Event, int);
     void set_info(bool, int);
+    void correctEventStartTime(h22Event);
     
     DataEventSelector *getSelector(int pid);
     std::vector<int> getVectorOfParticleIndices(h22Event event, int pid);

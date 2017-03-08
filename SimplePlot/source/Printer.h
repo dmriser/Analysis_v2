@@ -31,6 +31,10 @@ namespace SimplePlot{
     
   protected:
     TCanvas            *canvas;
+    TLatex              tit;
+    TLatex              xtit;
+    TLatex              ytit;
+
     std::string         path; 
     std::string         outputTitle; 
     std::string         currentStyle; 
@@ -41,10 +45,17 @@ namespace SimplePlot{
     void setupCommonOptions();
 
   public:
+    void applyStylingOptions(TH1 *histo, int index); //! Index refers to primary or secondary 
     void print(TH1 *histo, std::string title, std::string xTitle, std::string yTitle);
     void printCompare(TH1 *histo1, TH1 *histo2, std::string title, std::string xTitle, std::string yTitle);
     void printSectors(TH1D *histo[], std::string title, std::string xTitle, std::string yTitle);
     void printSectorsCompare(TH1D *histo1[], TH1D *histo2[], std::string title, std::string xTitle, std::string yTitle);
+    void printSectorsCompareWithRatio(TH1D *histo1[], TH1D *histo2[], std::string title, std::string xTitle, std::string yTitle);
+    void printSectorsCompare(TH1D *histo1[], TH1D *histo2, std::string title, std::string xTitle, std::string yTitle);
+    void printBins(std::vector<TH1D*> histos, std::string title, std::string xTitle, std::string yTitle);
+    void printBinsCompare(std::vector<TH1D*> histos1, std::vector<TH1D*> histos2, std::string title, std::string xTitle, std::string yTitle);
+    void printBinsCompare(std::vector<TH1D*> histos1, TH1D *histo2, std::string title, std::string xTitle, std::string yTitle);
+
 
     void setStyle(std::string styleChoice);
     void setPath(std::string p)       { path=p; }

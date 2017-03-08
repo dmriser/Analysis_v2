@@ -29,10 +29,10 @@ void StatusBar::PrintStatus(int done, int total){
 }
 
 void StatusBar::PrintStatus(double doneFraction){
-  cout << "\033[31m" << "[StatusBar::PrintStatus] Finished "; 
+  cout << "[StatusBar::PrintStatus] Finished "; 
   cout.width(10); cout << doneFraction*100 << " %, Time Elapsed = "; 
-  cout.width(10); cout << GetTime() << " Time left = "; 
-  cout.width(10); cout << (1-doneFraction)/doneFraction *GetTime() << "\033[49m" << endl; 
+  cout.width(10); cout << secondsToTimeString(GetTime()) << " Time left = "; 
+  cout.width(10); cout << secondsToTimeString((1-doneFraction)/doneFraction *GetTime()) <<  endl; 
 }
 
 

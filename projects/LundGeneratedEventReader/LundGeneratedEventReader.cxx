@@ -23,11 +23,19 @@ using namespace std;
 LundGeneratedEventReader::LundGeneratedEventReader(){
   outputFilenameWithExtension = "out.dat"; 
 
-  histos = new StandardHistograms("generatedEvents",0); 
+  histos  = new StandardHistograms("generatedEvents",0); 
+  builder = new PhysicsEventBuilder(); 
 }
 
 LundGeneratedEventReader::~LundGeneratedEventReader(){
 
+}
+
+void LundGeneratedEventReader::SetBeamEnergy(double beam){
+  TLorentzVector electron(0, 0, beam, beam);
+  TLorentzVector proton(0, 0, 0, proton_mass);
+
+  builder = new PhysicsEventBuilder(electron, proton);
 }
 
 void LundGeneratedEventReader::Execute(int numberOfEvents){
@@ -49,7 +57,7 @@ void LundGeneratedEventReader::Loop(int numberOfEvents){
 
     TLorentzVector electron   = GetEvent().GetParticle(0).GetTLorentzVector(); 
     TLorentzVector part1      = GetEvent().GetParticle(1).GetTLorentzVector(); 
-    PhysicsEvent physicsEvent = builder.getPhysicsEvent(electron, part1);
+    PhysicsEvent physicsEvent = builder->getPhysicsEvent(electron, part1);
     int sector                = phiToSector(electron.Phi() *to_degrees); 
 
     histos->Fill(physicsEvent);

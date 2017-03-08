@@ -38,7 +38,13 @@ protected:
   vector<TH1D*>  histoContainer; 
 
   ElasticHistograms *dataHistos; 
+  ElasticHistograms *recHistos; 
+  ElasticHistograms *genHistos; 
+
   TH1D       *dataEvents_theta[numberSectors][numberPhiBins+1]; 
+  TH1D       *recEvents_theta[numberSectors][numberPhiBins+1]; 
+  TH1D       *genEvents_theta[numberSectors][numberPhiBins+1]; 
+  TH1D       *acc_theta[numberSectors][numberPhiBins+1]; 
   TH1D       *w_theta[numberSectors][numberPhiBins+1]; 
   TH1D       *crossSection_theta[numberSectors][numberPhiBins+1];
   TH1D       *ratio_theta[numberSectors][numberPhiBins+1];
@@ -107,13 +113,21 @@ void Analysis::loadEventFile(string filename){
   dataHistos       = new ElasticHistograms("data",1); 
   dataHistos->Load(inputFile); 
   
+  recHistos       = new ElasticHistograms("rec",1); 
+  recHistos->Load(inputFile); 
+  
+  genHistos       = new ElasticHistograms("gen",1); 
+  genHistos->Load(inputFile); 
+  
   TH1D *totalChargeHisto = (TH1D*) inputFile->Get("totalCharge"); 
   totalCharge            = totalChargeHisto->GetBinContent(1);
 }
 
 void Analysis::makeProjections(){
   for(int sect=0; sect<numberSectors; sect++){
-    TH2D *thisHisto = dataHistos->getThetaByPhi(sect); 
+    TH2D *thisDataHisto = dataHistos->getThetaByPhi(sect); 
+    TH2D *thisRecHisto  = recHistos->getThetaByPhi(sect); 
+    TH2D *thisGenHisto  = genHistos->getThetaByPhi(sect); 
       
     for(int bin=0; bin<numberPhiBins; bin++){
       int lowBin = 1+floor(dataHistos->numberOfPhiBins/numberPhiBins)*bin; 
@@ -122,14 +136,31 @@ void Analysis::makeProjections(){
       cout << "[Analysis::makeProjections] Getting lowBin = " << lowBin << " to upBin = " << upBin << " for Sector = " << sect << endl; 
       
       dataEvents_theta[sect][bin] = new TH1D(Form("dataEvents_thetaByPhi_sect%d_bin%d",sect,bin),Form("dataEvents_thetaByPhi_sect%d_bin%d",sect,bin),dataHistos->numberOfThetaBins, dataHistos->thetaMin, dataHistos->thetaMax); 
-      //      dataEvents_theta[sect][bin] = (TH1D*) dataHistos->thetaPhi[sect]->ProjectionY(Form("dataEvents_thetaByPhi_sect%d_bin%d",sect,bin),lowBin,upBin);
-      thisHisto->ProjectionY(Form("dataEvents_thetaByPhi_sect%d_bin%d",sect,bin),lowBin,upBin);
+      thisDataHisto->ProjectionY(Form("dataEvents_thetaByPhi_sect%d_bin%d",sect,bin),lowBin,upBin);
       dataEvents_theta[sect][bin]->Rebin(dataEvents_theta[sect][bin]->GetXaxis()->GetNbins()/numberThetaBins);
+
+      
+      recEvents_theta[sect][bin] = new TH1D(Form("recEvents_thetaByPhi_sect%d_bin%d",sect,bin),Form("recEvents_thetaByPhi_sect%d_bin%d",sect,bin),recHistos->numberOfThetaBins, recHistos->thetaMin, recHistos->thetaMax); 
+      thisRecHisto->ProjectionY(Form("recEvents_thetaByPhi_sect%d_bin%d",sect,bin),lowBin,upBin);
+      recEvents_theta[sect][bin]->Rebin(recEvents_theta[sect][bin]->GetXaxis()->GetNbins()/numberThetaBins);
+
+      
+      genEvents_theta[sect][bin] = new TH1D(Form("genEvents_thetaByPhi_sect%d_bin%d",sect,bin),Form("genEvents_thetaByPhi_sect%d_bin%d",sect,bin),genHistos->numberOfThetaBins, genHistos->thetaMin, genHistos->thetaMax); 
+      thisGenHisto->ProjectionY(Form("genEvents_thetaByPhi_sect%d_bin%d",sect,bin),lowBin,upBin);
+      genEvents_theta[sect][bin]->Rebin(genEvents_theta[sect][bin]->GetXaxis()->GetNbins()/numberThetaBins);
+
+      acc_theta[sect][bin] = (TH1D*) recEvents_theta[sect][bin]->Clone();
+      acc_theta[sect][bin]->Divide(genEvents_theta[sect][bin]);
+      acc_theta[sect][bin]->SetName(Form("acc_thetaByPhi_sect%d_bin%d",sect,bin)); 
 
       crossSection_theta[sect][bin] = (TH1D*) dataEvents_theta[sect][bin]->Clone();
       crossSection_theta[sect][bin]->SetName(Form("crossSection_thetaByPhi_sect%d_bin%d",sect,bin)); 
+      crossSection_theta[sect][bin]->Divide(acc_theta[sect][bin]); 
 
       histoContainer.push_back(dataEvents_theta[sect][bin]);
+      histoContainer.push_back(recEvents_theta[sect][bin]);
+      histoContainer.push_back(genEvents_theta[sect][bin]);
+      histoContainer.push_back(acc_theta[sect][bin]);
       histoContainer.push_back(crossSection_theta[sect][bin]);
 
       cout << "[Analysis::makeProjection] Created histo " << dataEvents_theta[sect][bin] << " Sect=" << sect << " Bin=" << bin << " w/ Entries=" << dataEvents_theta[sect][bin]->GetEntries() << endl;

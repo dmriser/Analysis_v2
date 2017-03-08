@@ -17,14 +17,15 @@ class LundGeneratedEventReader : public LundReader {
   ~LundGeneratedEventReader();
 
  protected:
-  PhysicsEventBuilder  builder; 
-  StandardHistograms  *histos; 
-  StatusBar            bar; 
+  PhysicsEventBuilder  *builder; 
+  StandardHistograms   *histos; 
+  StatusBar             bar; 
   std::string outputFilenameWithExtension; 
 
  public:
   void Initialize();
   void Loop(int numberOfEvents);
+  void SetBeamEnergy(double beam);
   void Save(std::string outputFile);
   void Execute(int numberOfEvents);
 };

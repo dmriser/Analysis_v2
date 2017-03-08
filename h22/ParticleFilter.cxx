@@ -292,8 +292,13 @@ bool ParticleFilter::has_electron(h22Event event){
   // Simply check 0 for now, later add support for 
   // loop over gpart.
 
-    if (electronSelector->passesFast(event, 0)) 
-      return true;
+  if (electronSelector->passesFast(event, 0)){
+    event.processingStage = 1; 
+    event.electronIndex   = 0; 
+    correctEventStartTime(event);
+    return true;
+  } 
+
   
   return false;
 }
@@ -309,6 +314,11 @@ DataEventSelector *ParticleFilter::getSelector(int pid){
 
 }
 
+void ParticleFilter::correctEventStartTime(h22Event event){
+  // Actually this function call should be 1 arguement shorter because h22Event now contians within in the electronIndex 
+  event.correctedStartTime = corr.electron_sct(event,event.electronIndex,runno,MC)-event.sc_r[event.electronIndex]/speed_of_light; 
+}
+
 vector<int> ParticleFilter::getVectorOfParticleIndices(h22Event event, int pid){
   
   vector<int> particles;
@@ -317,7 +327,15 @@ vector<int> ParticleFilter::getVectorOfParticleIndices(h22Event event, int pid){
     for(int ipart=0; ipart<event.gpart; ++ipart){
       if (electronSelector->passesFast(event, ipart)){ particles.push_back(ipart); }
     }
+
+    if (!particles.empty()){
+      event.processingStage = 1; 
+      event.electronIndex   = particles[0];
+
+      correctEventStartTime(event);
+    }
   } 
+
   /*  
   else if (pid == 211){
     particles.clear();
@@ -365,6 +383,7 @@ vector<int> ParticleFilter::getVectorOfParticleIndices(h22Event event, int pid){
   }
   */
     // Use the built-in PID
+
   else{
     for(int ipart=0; ipart<event.gpart; ++ipart){
       if (event.id[ipart] == pid){ particles.push_back(ipart); }
@@ -375,8 +394,7 @@ vector<int> ParticleFilter::getVectorOfParticleIndices(h22Event event, int pid){
   if (!particles.empty()){
     particles = event.sortByMomentum(particles);
   }
-  
-  
+    
   return particles;
 }
 
@@ -409,6 +427,11 @@ vector<TLorentzVector> ParticleFilter::getVectorOfTLorentzVectors(h22Event event
 	  }
 	}
       }
+    }
+
+    if(!particles.empty()){
+      event.processingStage = 1; 
+      event.hadronPID       = 111; 
     }
   }
 

@@ -13,6 +13,7 @@
 #include "TCanvas.h"
 #include "TH1.h"
 #include "TH2.h"
+#include "TFile.h"
 
 namespace SimplePlot{
   class Tools{
@@ -32,7 +33,10 @@ namespace SimplePlot{
     void split(const std::string &s, char delim, std::vector<std::string> &elems);
     std::vector<std::string> splitStringOnDelimeter(const std::string &s, char delim);
 
-    double getTitleCenterPosition(std::string title); 
+    void setupCanvasSpacing(TCanvas *canvas, int width, int height, double innerPadding, double outerPadding);
+    double getTitleCenterPosition(std::string title, double shiftPerChar); 
+
+    std::vector<TH1D*> loadVectorOfTH1D(TFile *inputFile, std::string titleRegexp);
 
   };
 }

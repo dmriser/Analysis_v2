@@ -41,6 +41,8 @@ public:
     // from outside the class to disable
     // cuts or whatever.
     DataEventSelector *electronSelector;
+    DataEventSelector *positivePionSelector;
+    DataEventSelector *negativePionSelector;
 
     // List of the cuts used for electrons.
     ChargeCut          *negativity_cut;
@@ -69,17 +71,28 @@ public:
     TrackQualityCut    *qc_cut;
     ZVertexCut         *vz_cut;
 
+    // List of cuts used for pions
+    DataEventCut_TOFMassCut      *pip_tofmass_cut_s1;
+    DataEventCut_TOFMassCut      *pip_tofmass_cut_s2;
+    DataEventCut_TOFMassCut      *pip_tofmass_cut_s3;
+    DataEventCut_TOFMassCut      *pip_tofmass_cut_s4;
+    DataEventCut_TOFMassCut      *pip_tofmass_cut_s5;
+    DataEventCut_TOFMassCut      *pip_tofmass_cut_s6;
+    DataEventCut_TOFMassCut      *pim_tofmass_cut_s1;
+    DataEventCut_TOFMassCut      *pim_tofmass_cut_s2;
+    DataEventCut_TOFMassCut      *pim_tofmass_cut_s3;
+    DataEventCut_TOFMassCut      *pim_tofmass_cut_s4;
+    DataEventCut_TOFMassCut      *pim_tofmass_cut_s5;
+    DataEventCut_TOFMassCut      *pim_tofmass_cut_s6;
+    DataEventCut_DeltaZVertexCut *dvz_cut;
+
     // Parameters for Pi-0 Invariant Mass
     // There should be a better way to do it. 
     double pi0_invmass_mu[6], pi0_invmass_sigma[6], pi0_invmass_nsigma;
     
-    // Parameters for Charged Pion ID 
-    // There should be a better way to do it.
-    double pim_tofmass_mu[6], pim_tofmass_sigma[6], pim_tofmass_nsigma[6], pim_tofmass_min[6], pim_tofmass_max[6];
-    double pip_tofmass_mu[6], pip_tofmass_sigma[6], pip_tofmass_nsigma[6], pip_tofmass_min[6], pip_tofmass_max[6];
-
     // Member Functions
     bool has_electron(h22Event);
+    bool isNotAnElectronCandidate(std::vector<int> electrons, int index);
     int getByPID(h22Event, int);
     void set_info(bool, int);
     void correctEventStartTime(h22Event);

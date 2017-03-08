@@ -28,7 +28,11 @@ using std::endl;
 class Fill : public GenericAnalysis {
 public:
   Fill(Parameters *pars, h22Options *opts, std::string outputFile) : outputFilename(outputFile), GenericAnalysis(opts) { filter = new ParticleFilter(pars); } 
-  ~Fill(){}
+  ~Fill(){
+    filter->getSelector(11)->summarize();
+    filter->getSelector(211)->summarize();
+    filter->getSelector(-211)->summarize(); 
+  }
   
   ParticleFilter      *filter;
   PhysicsEventBuilder *builder;

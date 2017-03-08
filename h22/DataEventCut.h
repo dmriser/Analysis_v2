@@ -375,4 +375,22 @@ class DataEventCut_DeltaZVertexCut : public DataEventCut{
   bool passes(h22Event event, int index); 
 };
 
+/////////////////////////////////////////////////////////////////////
+/*
+
+    TOF Mass Cut
+
+ */
+/////////////////////////////////////////////////////////////////////
+
+class DataEventCut_TOFMassCut : public DataEventCut{
+ public:
+  DataEventCut_TOFMassCut(int s);
+  ~DataEventCut_TOFMassCut();
+
+  int sector;
+
+  bool applies(h22Event event, int index);
+  bool passes(h22Event event, int index);
+};
 #endif

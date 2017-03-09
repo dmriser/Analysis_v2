@@ -366,6 +366,9 @@ ParticleFilter::ParticleFilter(Parameters *params) : pars(params){
                                 params->getParameter("PIM_TOFMASS_SIGMA").getValue(5));
 
 
+    std::cout << "[ParticleFilter] Setup tofmass cut for pi+ with min() = " << pip_tofmass_cut_s1->min() 
+	      << " and max() = " << pip_tofmass_cut_s1->max() << std::endl;
+
     dvz_cut->set_min(-4.00);
     dvz_cut->set_max(4.00);
 
@@ -377,6 +380,8 @@ ParticleFilter::ParticleFilter(Parameters *params) : pars(params){
     positivePionSelector->add_cut(pip_tofmass_cut_s4);
     positivePionSelector->add_cut(pip_tofmass_cut_s5);
     positivePionSelector->add_cut(pip_tofmass_cut_s6);
+    positivePionSelector->enable_all();
+
 
     negativePionSelector->add_cut(dvz_cut);
     negativePionSelector->add_cut(pim_tofmass_cut_s1);
@@ -385,6 +390,7 @@ ParticleFilter::ParticleFilter(Parameters *params) : pars(params){
     negativePionSelector->add_cut(pim_tofmass_cut_s4);
     negativePionSelector->add_cut(pim_tofmass_cut_s5);
     negativePionSelector->add_cut(pim_tofmass_cut_s6);
+    negativePionSelector->enable_all();
 }
 
 ParticleFilter::~ParticleFilter(){
@@ -430,6 +436,7 @@ DataEventSelector *ParticleFilter::getSelector(int pid){
 void ParticleFilter::correctEventStartTime(h22Event event){
     // Actually this function call should be 1 arguement shorter because h22Event now contians within in the electronIndex
     event.correctedStartTime = corr.electron_sct(event,event.electronIndex,runno,MC)-event.sc_r[event.electronIndex]/speed_of_light;
+    std::cout << "[ParticleFilter] Found electron with start time " << event.correctedStartTime << std::endl; 
 }
 
 bool ParticleFilter::isNotAnElectronCandidate(std::vector<int> electrons, int index){
@@ -459,11 +466,15 @@ vector<int> ParticleFilter::getVectorOfParticleIndices(h22Event event, int pid){
 
         vector<int> electrons = getVectorOfParticleIndices(event, 11);
         if( !electrons.empty() ){
+	  event.processingStage = 1;
+	  event.electronIndex   = electrons[0];
+	  correctEventStartTime(event); 
+
             for(int ipart=0; ipart<event.gpart; ipart++){
                 event.vz[ipart] = corr.vz(event, ipart, runno, MC);
 
                 if(isNotAnElectronCandidate(electrons, ipart)){
-                    event.b[ipart] = event.sc_r[ipart]/(corr.hadron_sct(event,ipart,runno,MC)-event.correctedStartTime)/speed_of_light;
+		  event.b[ipart] = event.sc_r[ipart]/(corr.hadron_sct(event,ipart,runno,MC)-event.correctedStartTime)/speed_of_light;
 
                     if(pid == 211){
                         if(positivePionSelector->passesFast(event, ipart)){ particles.push_back(ipart); }

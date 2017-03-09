@@ -300,7 +300,7 @@ int main(int argc, char * argv[]){
     pars.loadParameters(opts.args["PARS"].args);
 
     HIDCalibration Analysis(&opts, &pars);
-    for (auto it=opts.ifiles.begin(); it<opts.ifiles.end(); it++) { Analysis.AddFile(*it); }
+    for (std::vector<std::string>::iterator it=opts.ifiles.begin(); it<opts.ifiles.end(); it++) { Analysis.AddFile(*it); }
     Analysis.RunAnalysis();
     Analysis.DoFits();
     Analysis.Save(opts.args["OUT"].args);

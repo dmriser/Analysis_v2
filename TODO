@@ -1,0 +1,5 @@
+# TODO 
+  - Make sure vertex and tof only get corrected once in particle filter by making processingStatus codes 
+  - check pion yields 
+  - The problem with particle filter is that each event is corrected in the routines but its not acutally 
+    the event its just a copy, so everytime the event bounces back it has 0 again for start time. 

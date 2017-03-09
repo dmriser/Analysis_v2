@@ -365,12 +365,8 @@ ParticleFilter::ParticleFilter(Parameters *params) : pars(params){
                                 params->getParameter("PIM_TOFMASS_NSIGMA").getValue(0)*
                                 params->getParameter("PIM_TOFMASS_SIGMA").getValue(5));
 
-
-    std::cout << "[ParticleFilter] Setup tofmass cut for pi+ with min() = " << pip_tofmass_cut_s1->min() 
-	      << " and max() = " << pip_tofmass_cut_s1->max() << std::endl;
-
-    dvz_cut->set_min(-4.00);
-    dvz_cut->set_max(4.00);
+    dvz_cut->set_min(-2.50);
+    dvz_cut->set_max( 2.50);
 
     // Setup pion selectors
     positivePionSelector->add_cut(dvz_cut);
@@ -408,10 +404,10 @@ bool ParticleFilter::has_electron(h22Event event){
     // loop over gpart.
 
     if (electronSelector->passesFast(event, 0)){
-        event.processingStage = 1;
-        event.electronIndex   = 0;
-        correctEventStartTime(event);
-        event.vz[0] = corr.vz(event,0,runno,MC);
+        //        event.processingStage = 1;
+        //        event.electronIndex   = 0;
+        //        correctEventStartTime(event);
+        //        event.vz[0] = corr.vz(event,0,runno,MC);
         return true;
     }
 
@@ -433,12 +429,6 @@ DataEventSelector *ParticleFilter::getSelector(int pid){
 
 }
 
-void ParticleFilter::correctEventStartTime(h22Event event){
-    // Actually this function call should be 1 arguement shorter because h22Event now contians within in the electronIndex
-    event.correctedStartTime = corr.electron_sct(event,event.electronIndex,runno,MC)-event.sc_r[event.electronIndex]/speed_of_light;
-    std::cout << "[ParticleFilter] Found electron with start time " << event.correctedStartTime << std::endl; 
-}
-
 bool ParticleFilter::isNotAnElectronCandidate(std::vector<int> electrons, int index){
     return (std::find(electrons.begin(),electrons.end(),index) != electrons.end());
 }
@@ -452,42 +442,30 @@ vector<int> ParticleFilter::getVectorOfParticleIndices(h22Event event, int pid){
             event.vz[ipart] = corr.vz(event, ipart, runno, MC);
             if (electronSelector->passesFast(event, ipart)){ particles.push_back(ipart); }
         }
-
-        if (!particles.empty()){
-            event.processingStage = 1;
-            event.electronIndex   = particles[0];
-
-            correctEventStartTime(event);
-        }
     }
 
-    else if (pid == 211 || pid == -211){
-        particles.clear();
+//    else if (pid == 211 || pid == -211){
+//        particles.clear();
 
-        vector<int> electrons = getVectorOfParticleIndices(event, 11);
-        if( !electrons.empty() ){
-	  event.processingStage = 1;
-	  event.electronIndex   = electrons[0];
-	  correctEventStartTime(event); 
+//        vector<int> electrons = getVectorOfParticleIndices(event, 11);
+//        if( !electrons.empty() ){
+//            for(int ipart=0; ipart<event.gpart; ipart++){
 
-            for(int ipart=0; ipart<event.gpart; ipart++){
-                event.vz[ipart] = corr.vz(event, ipart, runno, MC);
-
-                if(isNotAnElectronCandidate(electrons, ipart)){
-		  event.b[ipart] = event.sc_r[ipart]/(corr.hadron_sct(event,ipart,runno,MC)-event.correctedStartTime)/speed_of_light;
-
-                    if(pid == 211){
-                        if(positivePionSelector->passesFast(event, ipart)){ particles.push_back(ipart); }
-                    } else if (pid == -211){
-                        if(negativePionSelector->passesFast(event, ipart)){ particles.push_back(ipart); }
-                    }
-                }
-            }
-        }
-    } // End of pions
+//                if(isNotAnElectronCandidate(electrons, ipart)){
+//                    // Ugly shite, should do something like add charge cut
+//                    // to the selector and then -> ->
+//                    // if(getSelector(pid)->passesFast(event,ipart)){ particles.push_back(ipart); }
+//                    if(pid == 211 && event.q[ipart] == 1){
+//                        if(positivePionSelector->passesFast(event, ipart)){ particles.push_back(ipart); }
+//                    } else if (pid == -211 && event.q[ipart] == -1){
+//                        if(negativePionSelector->passesFast(event, ipart)){ particles.push_back(ipart); }
+//                    }
+//                }
+//            }
+//        }
+//    } // End of pions
 
     // Use the built-in PID
-
     else{
         for(int ipart=0; ipart<event.gpart; ++ipart){
             if (event.id[ipart] == pid){ particles.push_back(ipart); }
@@ -533,10 +511,6 @@ vector<TLorentzVector> ParticleFilter::getVectorOfTLorentzVectors(h22Event event
             }
         }
 
-        if(!particles.empty()){
-            event.processingStage = 1;
-            event.hadronPID       = 111;
-        }
     }
 
     return particles;
@@ -551,27 +525,6 @@ int ParticleFilter::getByPID(h22Event event, int pid){
         // Much more control using the entire vector.
         index = candidates[0];
     }
-
-    /*
-    // check for electrons
-    if(pid == 11){
-      vector<int> candidates;
-      for (int ipart=0; ipart<event.gpart; ++ipart){
-    if (electronSelector->passes(event, ipart)) candidates.push_back(ipart);
-      }
-
-      // Spit back the fastest track
-      if (candidates.size() == 1){ index = candidates[0]; }
-
-      else if (candidates.size() > 1){
-    int fast = candidates[0];
-    for (int i=1; i<candidates.size(); ++i){ if (event.p[candidates[i]] > event.p[fast]){ fast = candidates[i]; } }
-
-    index = fast;
-      }
-
-    } // End of electron
-    */
 
     return index;   //! Default Case & Nathan Harrison Convention (-123 -> for nothing found)
 }

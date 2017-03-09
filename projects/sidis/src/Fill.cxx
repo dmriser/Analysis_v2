@@ -5,6 +5,7 @@ using std::endl;
 
 // Mine
 #include "CommonTools.h"
+#include "Corrections.h"
 #include "h22Option.h"
 #include "GenericAnalysis.h"
 #include "Parameters.h"
@@ -27,84 +28,88 @@ using std::endl;
 
 class Fill : public GenericAnalysis {
 public:
-  Fill(Parameters *pars, h22Options *opts, std::string outputFile) : outputFilename(outputFile), GenericAnalysis(opts) { filter = new ParticleFilter(pars); } 
-  ~Fill(){
-    filter->getSelector(11)->summarize();
-    filter->getSelector(211)->summarize();
-    filter->getSelector(-211)->summarize(); 
-  }
-  
-  ParticleFilter      *filter;
-  PhysicsEventBuilder *builder;
+    Fill(Parameters *pars, h22Options *opts, std::string outputFile) : outputFilename(outputFile), GenericAnalysis(opts) { filter = new ParticleFilter(pars); }
+    ~Fill(){
+        filter->getSelector(11)->summarize();
+        filter->getSelector(211)->summarize();
+        filter->getSelector(-211)->summarize();
+    }
 
-  THnSparseI *pipEvents, *pimEvents, *pizEvents; 
+    Corrections         *corr;
+    ParticleFilter      *filter;
+    PhysicsEventBuilder *builder;
 
-  std::string outputFilename;
+    THnSparseI *pipEvents, *pimEvents, *pizEvents;
 
-  void ProcessEvent();
-  void Initialize();
-  void Save();
+    std::string outputFilename;
+
+    void ProcessEvent();
+    void Initialize();
+    void Save();
 };
 
 void Fill::Initialize(){
-  filter->set_info(runno(), GSIM);
-  builder     = new PhysicsEventBuilder();
+    filter->set_info(runno(), GSIM);
+    builder = new PhysicsEventBuilder();
+    corr    = new Corrections();
 
-  // Dimensions 
-  // [0] - x 
-  // [1] - z 
-  // [2] - Q^{2} 
-  // [3] - Phi_{Hadron}
-  // [4] - P_{T}^{2}
-  // [5] - Rapidity 
+    // Dimensions
+    // [0] - x
+    // [1] - z
+    // [2] - Q^{2}
+    // [3] - Phi_{Hadron}
+    // [4] - P_{T}^{2}
+    // [5] - Rapidity
 
-  int numberOfBins[DIM] = {100, 100, 100, 100, 100, 100};
-  double min[DIM]       = {0.0, 0.0, 0.8, -180.0, 0.0, -4.0};
-  double max[DIM]       = {1.0, 1.0, 5.0,  180.0, 1.2,  4.0};
+    int numberOfBins[DIM] = {100, 100, 100, 100, 100, 100};
+    double min[DIM]       = {0.0, 0.0, 0.8, -180.0, 0.0, -4.0};
+    double max[DIM]       = {1.0, 1.0, 5.0,  180.0, 1.2,  4.0};
 
-  pipEvents = new THnSparseI("pipEvents","pipEvents",DIM,numberOfBins,min,max); 
-  pimEvents = new THnSparseI("pimEvents","pimEvents",DIM,numberOfBins,min,max); 
-  pizEvents = new THnSparseI("pizEvents","pizEvents",DIM,numberOfBins,min,max); 
+    pipEvents = new THnSparseI("pipEvents","pipEvents",DIM,numberOfBins,min,max);
+    pimEvents = new THnSparseI("pimEvents","pimEvents",DIM,numberOfBins,min,max);
+    pizEvents = new THnSparseI("pizEvents","pizEvents",DIM,numberOfBins,min,max);
 
-  cout << "[Fill::Init] Initialization done" << endl;
+    cout << "[Fill::Init] Initialization done" << endl;
 }
 
 void Fill::ProcessEvent(){  
-  std::vector<TLorentzVector> pims, pips, pi0s, electrons; 
-  electrons = filter->getVectorOfTLorentzVectors(event,   11);
-  pims      = filter->getVectorOfTLorentzVectors(event, -211);
-  pips      = filter->getVectorOfTLorentzVectors(event,  211);
-  pi0s      = filter->getVectorOfTLorentzVectors(event,  111);
+    std::vector<TLorentzVector> pims, pips, pi0s, electrons;
+    electrons = filter->getVectorOfTLorentzVectors(event,   11);
+    pims      = filter->getVectorOfTLorentzVectors(event, -211);
+    pips      = filter->getVectorOfTLorentzVectors(event,  211);
+    pi0s      = filter->getVectorOfTLorentzVectors(event,  111);
 
-  if ( !electrons.empty() ){
-    if( !pims.empty() ) {
-      PhysicsEvent pionEvent = builder->getPhysicsEvent(electrons[0], pims[0]);    
-      double dataPoint[DIM]  = {pionEvent.x, pionEvent.z, pionEvent.qq, pionEvent.phiHadron, TMath::Power(pionEvent.pT,2), pims[0].Rapidity()};
-      pimEvents->Fill(dataPoint);
-    } 
-    
-    if( !pips.empty() ) {
-      PhysicsEvent pionEvent = builder->getPhysicsEvent(electrons[0], pips[0]);    
-      double dataPoint[DIM]  = {pionEvent.x, pionEvent.z, pionEvent.qq, pionEvent.phiHadron, TMath::Power(pionEvent.pT,2), pips[0].Rapidity()};
-      pipEvents->Fill(dataPoint);
-    } 
-    
-    if( !pi0s.empty() ) {
-      PhysicsEvent pionEvent = builder->getPhysicsEvent(electrons[0], pi0s[0]);    
-      double dataPoint[DIM]  = {pionEvent.x, pionEvent.z, pionEvent.qq, pionEvent.phiHadron, TMath::Power(pionEvent.pT,2), pi0s[0].Rapidity()};
-      pizEvents->Fill(dataPoint);
-    } 
-  }
-  
+    if ( !electrons.empty() ){
+//        corr->correctEvent(&event, runno(), GSIM);
+
+        if( !pims.empty() ) {
+            PhysicsEvent pionEvent = builder->getPhysicsEvent(electrons[0], pims[0]);
+            double dataPoint[DIM]  = {pionEvent.x, pionEvent.z, pionEvent.qq, pionEvent.phiHadron, TMath::Power(pionEvent.pT,2), pims[0].Rapidity()};
+            pimEvents->Fill(dataPoint);
+        }
+
+        if( !pips.empty() ) {
+            PhysicsEvent pionEvent = builder->getPhysicsEvent(electrons[0], pips[0]);
+            double dataPoint[DIM]  = {pionEvent.x, pionEvent.z, pionEvent.qq, pionEvent.phiHadron, TMath::Power(pionEvent.pT,2), pips[0].Rapidity()};
+            pipEvents->Fill(dataPoint);
+        }
+
+        if( !pi0s.empty() ) {
+            PhysicsEvent pionEvent = builder->getPhysicsEvent(electrons[0], pi0s[0]);
+            double dataPoint[DIM]  = {pionEvent.x, pionEvent.z, pionEvent.qq, pionEvent.phiHadron, TMath::Power(pionEvent.pT,2), pi0s[0].Rapidity()};
+            pizEvents->Fill(dataPoint);
+        }
+    }
+
 }
 
 void Fill::Save(){
-  TFile *outputFile = new TFile(outputFilename.c_str(),"RECREATE"); 
-  pipEvents ->Write();
-  pimEvents ->Write();
-  pizEvents ->Write();
-  outputFile->Write();
-  outputFile->Close();
+    TFile *outputFile = new TFile(outputFilename.c_str(),"RECREATE");
+    pipEvents ->Write();
+    pimEvents ->Write();
+    pizEvents ->Write();
+    outputFile->Write();
+    outputFile->Close();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -118,27 +123,27 @@ void Fill::Save(){
 
 int main(int argc, char *argv[]){
 
-  h22Options *options = new h22Options();
+    h22Options *options = new h22Options();
 
-  options->args["PARS"].args = "/u/home/dmriser/mydoc/analysis/root_scripts/Analysis_v2/lists/data.pars";
-  options->args["PARS"].type = 1;
-  options->args["PARS"].name = "Parameter file";
-  options->set(argc, argv);
+    options->args["PARS"].args = "/u/home/dmriser/mydoc/analysis/root_scripts/Analysis_v2/lists/data.pars";
+    options->args["PARS"].type = 1;
+    options->args["PARS"].name = "Parameter file";
+    options->set(argc, argv);
 
-  Parameters *pars = new Parameters(); 
-  pars->loadParameters(options->args["PARS"].args); 
+    Parameters *pars = new Parameters();
+    pars->loadParameters(options->args["PARS"].args);
 
-  Fill analysis(pars, options, options->args["OUT"].args);
+    Fill analysis(pars, options, options->args["OUT"].args);
 
-  if(options->ifiles.size() > 0){
-    for (int i=0; i<options->ifiles.size(); i++) { analysis.AddFile(options->ifiles[i]); } 
-    analysis.RunAnalysis();
-  }
+    if(options->ifiles.size() > 0){
+        for (int i=0; i<options->ifiles.size(); i++) { analysis.AddFile(options->ifiles[i]); }
+        analysis.RunAnalysis();
+    }
 
-  else {
-    cout << "[Fill::Main] No files added to options->ifiles " << endl; 
-  }
+    else {
+        cout << "[Fill::Main] No files added to options->ifiles " << endl;
+    }
 
 
-  return 0;
+    return 0;
 }

@@ -491,8 +491,8 @@ bool DataEventCut_DeltaBetaCut::passes(h22Event event, int hadronIndex, int PID)
 
     // It is very important to note that this
     // routine expects CORRECTED variables.
-    //  double startTime  = event.sc_t[electronIndex]-event.sc_r[electronIndex]/speed_of_light;
-    double beta       = event.sc_r[hadronIndex]/(event.sc_t[hadronIndex]-event.correctedStartTime)/speed_of_light;
+    double startTime  = event.sc_t[0]-event.sc_r[0]/speed_of_light;
+    double beta       = event.sc_r[hadronIndex]/(event.sc_t[hadronIndex]-startTime)/speed_of_light;
     double betaCalc   = event.p[hadronIndex]/sqrt(pow(event.p[hadronIndex],2)+pow(pid_to_mass(PID),2));
     double deltaBeta  = betaCalc - beta;
 
@@ -526,7 +526,7 @@ bool DataEventCut_DeltaZVertexCut::passes(h22Event event, int hadronIndex){
     // It is very important to note that this
     // routine expects CORRECTED variables.
 
-    double dvz = event.vz[event.electronIndex]-event.vz[hadronIndex];
+    double dvz = event.vz[0]-event.vz[hadronIndex];
 
     if (dvz > min() && dvz < max()){
         n_pass++;
@@ -550,7 +550,6 @@ DataEventCut_TOFMassCut::DataEventCut_TOFMassCut(int s) : sector(s){
 }
 
 DataEventCut_TOFMassCut::~DataEventCut_TOFMassCut(){
-
 }
 
 bool DataEventCut_TOFMassCut::applies(h22Event event, int index){
@@ -558,9 +557,10 @@ bool DataEventCut_TOFMassCut::applies(h22Event event, int index){
 }
 
 bool DataEventCut_TOFMassCut::passes(h22Event event, int hadronIndex){
-
     // This has to be the corrected beta before we run it.
-    double tofmass = sqrt(pow(event.p[hadronIndex],2)*(1-pow(event.b[hadronIndex],2))/pow(event.b[hadronIndex],2));
+    double startTime  = event.sc_t[0]-event.sc_r[0]/speed_of_light;
+    double beta       = event.sc_r[hadronIndex]/(event.sc_t[hadronIndex]-startTime)/speed_of_light;
+    double tofmass    = sqrt(pow(event.p[hadronIndex],2)*(1-pow(beta,2))/pow(beta,2));
 
     if (tofmass > min() && tofmass < max()){
         n_pass++;

@@ -28,11 +28,13 @@ public:
     
     // Datatypes
     
+
     // Member Functions
+    void correctEvent(h22Event *event, int runno, int GSIM);
     double vz(h22Event,int,int,int);           //! event, ipart, runno, GSIM 
     double electron_sct(h22Event,int,int,int);
     double hadron_sct(h22Event,int,int,int);
-    bool good_sc_paddle(h22Event,int); //! event, ipart 
+    bool good_sc_paddle(h22Event,int);         //! event, ipart
 };
 
 #endif

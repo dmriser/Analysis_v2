@@ -52,8 +52,7 @@ void h22Reader::AddList(string _file, int nfiles){
   string line = "";
   int ifile   = 0;
 
-  while ( !file.eof() && (ifile < nfiles) )
-    {
+  while ( !file.eof() && (ifile < nfiles) ){
       file >> line;
       fchain->AddFile( line.c_str() );
       cout << "[h22Reader::AddList] Added " << line.c_str() << " to the TChain as type " << type[GSIM] << endl;
@@ -96,13 +95,6 @@ void h22Reader::AddFile(TString _fname){
   return;
 }
 
-/*
-void h22Reader::AddFile(string _fname)
-{
-  fchain->AddFile(_fname.c_str());
-  return;
-}
-*/
 
 /**< Init() must be run once to link the branches of the TChain to the h22Event class members*/
 void h22Reader::Init(){
@@ -163,8 +155,7 @@ void h22Reader::Init(){
    fchain->SetBranchAddress("vx", event.vx, &b_vx);
    fchain->SetBranchAddress("vy", event.vy, &b_vy);
     
-   if (GSIM)
-     {
+   if (GSIM){
        fchain->SetBranchAddress("mcnentr", &event.mcnentr, &b_mcnentr);
        fchain->SetBranchAddress("mcnpart", &event.mcnpart, &b_mcnpart);
        fchain->SetBranchAddress("mcst", event.mcst, &b_mcst);

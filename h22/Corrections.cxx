@@ -32,6 +32,24 @@ Corrections::~Corrections()
     // Nothing to destroy.
 }
 
+void Corrections::correctEvent(h22Event *event, int runno, int GSIM){
+    if( !GSIM ){
+        // Correcting electron spot first to avoid an if statement in the
+        // for loop.
+        event->vz[0]   = vz((*event), 0, runno, GSIM);
+        event->sc_t[0] = electron_sct((*event),0,runno,GSIM);
+
+        for(int ipart=1; ipart<event->gpart; ipart++){
+            event->vz[ipart] = vz((*event), ipart, runno, GSIM);
+
+            if(event->q[ipart] != 0){
+                event->sc_t[ipart] = hadron_sct((*event), ipart, runno, GSIM);
+            }
+        }
+    }
+
+}
+
 double Corrections::vz(h22Event event, int ipart, int runno, int GSIM)
 {
     // set sector need to build better protection here for case
@@ -73,8 +91,7 @@ double Corrections::vz(h22Event event, int ipart, int runno, int GSIM)
     y0 = -0.25;
     z0 = 0.0;
     
-    if(GSIM)
-    {
+    if(GSIM){
         x0 = 0.0;
         y0 = 0.0;
         z0 = 0.0;

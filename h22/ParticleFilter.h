@@ -95,7 +95,6 @@ public:
     bool isNotAnElectronCandidate(std::vector<int> electrons, int index);
     int getByPID(h22Event, int);
     void set_info(bool, int);
-    void correctEventStartTime(h22Event);
     
     DataEventSelector *getSelector(int pid);
     std::vector<int> getVectorOfParticleIndices(h22Event event, int pid);

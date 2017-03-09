@@ -29,11 +29,7 @@ using namespace std;
 #include "CommonTools.h"
 
 h22Event::h22Event() {
-  processingStage    = 0;
-  electronIndex      = 0;
-  hadronIndex        = 0; 
-  hadronPID          = 0; 
-  correctedStartTime = 0.0; 
+
 }
 
 

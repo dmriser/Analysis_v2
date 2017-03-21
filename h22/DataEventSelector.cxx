@@ -20,6 +20,7 @@
 using namespace std; 
 
 // my includes
+#include "CommonTools.h"
 #include "DataEventCut.h"
 #include "h22Event.h"
 #include "DataEventSelector.h"
@@ -104,24 +105,22 @@ void DataEventSelector::disable_by_regex(string regex)
 void DataEventSelector::summarize()
 {
 
-  cout << "<--------------------- DSelector Summary ------------------------>" << endl; 
+  cout << "<---------------------  Selector Summary ------------------------>" << endl; 
   cout.width(20); cout << "Cut Name";
-  cout.width(12);  cout << "Pass";
-  cout.width(12);  cout << "Frac"; 
-  cout.width(12);  cout << "Total" << endl;
+  cout.width(12); cout << "Pass";
+  cout.width(12); cout << "Frac"; 
+  cout.width(12); cout << "Total" << endl;
   
-
-  for (int icut=0; icut<cuts.size(); icut++)
-    {
+  for (int icut=0; icut<cuts.size(); icut++){
       if ( cuts[icut]->is_on() ) {
 	cout.width(20); cout << cuts[icut]->name();
-	cout.width(12);  cout << cuts[icut]->number_pass();
-	cout.width(12);  cout << (float) cuts[icut]->number_pass()/cuts[icut]->number_total();
-	cout.width(12);  cout << cuts[icut]->number_total() << endl;
+	cout.width(12); cout << cuts[icut]->number_pass();
+	cout.width(12); cout << stringify( (float) cuts[icut]->passFraction());
+	cout.width(12); cout << cuts[icut]->number_total() << endl;
       }
 
-      else
-	{
+      // the cut was not used 
+      else{
 	  cout.width(20); cout << cuts[icut]->name();
 	  cout.width(12); cout << " Disabled " << endl;
 	}

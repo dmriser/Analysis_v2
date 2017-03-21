@@ -29,10 +29,25 @@ public:
 
   void ProcessEvent();
   void Initialize();  
+  void OptimizeLoop(int numberOfEvents);
 };
 
 MyAnalysis::MyAnalysis(h22Options *opts, Parameters *pars) : GenericAnalysis(opts), params(pars){
 
+}
+
+void MyAnalysis::OptimizeLoop(int numberOfEvents){
+  cout << "[MyAnalysis::OptimizeLoop] Optimizing electron selector with events = " << numberOfEvents << endl; 
+
+  for(int ievent=0; ievent<numberOfEvents; ievent++){
+    GetEntry(ievent);
+    
+    // just calling the cuts to get statistics 
+    vector<int> electrons = filter->getVectorOfParticleIndices(event, 11); 
+  }
+
+  // optimize selector 
+  filter->getSelector(11)->optimize();
 }
 
 void MyAnalysis::ProcessEvent(){
@@ -78,6 +93,9 @@ int main(int argc, char *argv[]){
   TFile *out = new TFile(opts->args["OUT"].args.c_str(),"recreate"); 
   analysis.histos->Save(out); 
   out->Close(); 
+
+  // statistics 
+  analysis.filter->getSelector(11)->summarize();
 
   return 0;
 }

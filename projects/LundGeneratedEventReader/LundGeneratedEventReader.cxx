@@ -60,7 +60,7 @@ void LundGeneratedEventReader::Loop(int numberOfEvents){
     PhysicsEvent physicsEvent = builder->getPhysicsEvent(electron, part1);
     int sector                = phiToSector(electron.Phi() *to_degrees); 
 
-    histos->Fill(physicsEvent);
+    histos->Fill(physicsEvent); 
 
     if (currentEvent%1000 == 0) { bar.PrintStatus(currentEvent, numberOfEvents); }
 

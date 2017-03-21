@@ -11,7 +11,7 @@ using std::endl;
 #include "CommonTools.h"
 
 StatusBar::StatusBar(){
-  stopwatch.Start(); 
+  //  stopwatch.Start(); 
 }
 
 StatusBar::~StatusBar(){

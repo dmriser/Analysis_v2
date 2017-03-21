@@ -80,7 +80,6 @@ void Fill::ProcessEvent(){
     pi0s      = filter->getVectorOfTLorentzVectors(event,  111);
 
     if ( !electrons.empty() ){
-//        corr->correctEvent(&event, runno(), GSIM);
 
         if( !pims.empty() ) {
             PhysicsEvent pionEvent = builder->getPhysicsEvent(electrons[0], pims[0]);

@@ -58,7 +58,7 @@ class DataEventCut{
   
   double min(){ return min_value; }
   double max(){ return max_value; }
-  double passFraction(){ return n_pass/(n_pass+n_fail); }
+  double passFraction(){ return (double)n_pass/(n_pass+n_fail); }
   
   std::string name(){ return cut_name; }
   

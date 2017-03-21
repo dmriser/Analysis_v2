@@ -32,19 +32,20 @@ using namespace std;
 class Pi0Calibration : public GenericAnalysis {
 
 public:
-  Pi0Calibration(Parameters *params){ pars = params; }
+  Pi0Calibration(h22Options *opts, Parameters *params) : GenericAnalysis(opts) { pars = params; }
   ~Pi0Calibration(){ }
 
 public:
-  Parameters *pars; 
+  Parameters     *pars; 
   ParticleFilter *filter;
-  Corrections corr;
+  Corrections     corr;
   
   // Histograms
   TH1F *openingAngle[6];
   TH1F *invMass[6];  
   TH1F *energyDiff[6];  
   TH2F *openEnergy[6];
+  TH1F *numberPhotons;
 
   void DoFits();
   void Initialize();
@@ -57,28 +58,32 @@ void Pi0Calibration::Initialize(){
 
     filter = new ParticleFilter(pars);
     filter->set_info(GSIM, runno());
-    
-    for(int s=0; s<6; ++s){
-      openingAngle[s] = new TH1F(Form("openingAngle%d",s),"",100, 0, 180); 
-      invMass[s]      = new TH1F(Form("invMass%d",s),"",     100,-0.2,0.8); 
-      energyDiff[s]   = new TH1F(Form("energyDiff%d",s),"",  100,-1.5,3.5); 
-      openEnergy[s]   = new TH2F(Form("openEnergy%d",s),"",100,-1.5,3.5,100,0,180); 
-    }
 
+    numberPhotons = new TH1F("numberPhotons","",6,0,5); 
+	  
+    for(int s=0; s<6; ++s){
+      openingAngle[s]  = new TH1F(Form("openingAngle%d",s),"",100, 0, 180); 
+      invMass[s]       = new TH1F(Form("invMass%d",s),"",     100,-0.2,0.8); 
+      energyDiff[s]    = new TH1F(Form("energyDiff%d",s),"",  100,-1.5,3.5); 
+      openEnergy[s]    = new TH2F(Form("openEnergy%d",s),"",100,-1.5,3.5,100,0,180); 
+    }
 }
 
 void Pi0Calibration::ProcessEvent(){
 
   vector<int> photons = filter->getVectorOfParticleIndices(event, 22); 
   
+  
+  numberPhotons->Fill((double)photons.size()); 
+
   if (photons.size() >= 2){
 
     for (int iphot=0; iphot<photons.size(); iphot++){
-      TLorentzVector firstPhoton = event.getTLorentzVector(photons[0], 22); 
+      TLorentzVector firstPhoton = event.getTLorentzVector(photons[iphot], 22); 
       for(int jphot=iphot+1; iphot<photons.size(); iphot++){
 	
 	
-	TLorentzVector otherPhoton = event.getTLorentzVector(photons[iphot], 22);
+	TLorentzVector otherPhoton = event.getTLorentzVector(photons[jphot], 22);
 	TLorentzVector pion        = firstPhoton+otherPhoton; 
 	
 	int sector = floor((pion.Phi()*to_degrees+180.0)/60.0); 
@@ -129,8 +134,9 @@ void Pi0Calibration::Save(string outputFilename){
     openingAngle[s]->Write(); 
     energyDiff[s]  ->Write();
     openEnergy[s]  ->Write();
+
   }
-  
+    numberPhotons->Write();   
   outputFile->Write();
   outputFile->Close();
 
@@ -151,9 +157,9 @@ int main(int argc, char * argv[]){
   Parameters pars;
   pars.loadParameters(opts.args["PARS"].args);
 
-  Pi0Calibration Analysis(&pars); 
-  for (auto it=opts.ifiles.begin(); it<opts.ifiles.end(); it++) { Analysis.AddFile(*it); }
-  Analysis.RunAnalysis(nev); 
+  Pi0Calibration Analysis(&opts, &pars); 
+  for (std::vector<std::string>::iterator it=opts.ifiles.begin(); it<opts.ifiles.end(); it++) { Analysis.AddFile(*it); }
+  Analysis.RunAnalysis(); 
   Analysis.DoFits(); 
   Analysis.Save(opts.args["OUT"].args); 
 

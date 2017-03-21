@@ -42,6 +42,12 @@ bool GenericAnalysis::RunAnalysis(){
   else {
     Init();
     Initialize();
+    
+    // if we have large sample, optimize events
+    if(options->args["N"].arg > 1000000){
+      OptimizeLoop(10000);
+    }
+
     Loop(options->args["N"].arg);
     Save();
     return true; 
@@ -52,6 +58,10 @@ bool GenericAnalysis::RunAnalysis(){
 
 void GenericAnalysis::Initialize(){
   cout << "[GenericAnalysis::Initialize] Override this function to init your stuff. " << endl;
+}
+
+void GenericAnalysis::OptimizeLoop(int numberOfEvents){
+
 }
 
 void GenericAnalysis::Loop(int numberOfEvents){

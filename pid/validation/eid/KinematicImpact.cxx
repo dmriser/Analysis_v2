@@ -78,6 +78,7 @@ void Efficiency::ProcessEvent(){
 	  fail[icut]->Fill(physicsEvent.w, physicsEvent.qq);
 	}
       }
+
       if (selector->passes(event, ipart)){ combined->Fill(physicsEvent.w, physicsEvent.qq); }
     }
   }

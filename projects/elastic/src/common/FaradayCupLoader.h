@@ -45,7 +45,7 @@ FaradayCupAppender::~FaradayCupAppender(){
 void FaradayCupAppender::AddFiles(std::vector<std::string> dataFiles){
 
   if ( !runInfoDatabase->has_information() ){
-    std::cout << " Error opening database for load! " << std::endl;
+    std::cout << "[FaradayCupAppender::AddFiles] Error opening database for load! " << std::endl;
     return;
   }
 

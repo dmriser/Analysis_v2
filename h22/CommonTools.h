@@ -23,13 +23,13 @@
 #include <vector>
 #include <cmath>
 
-#define pi 3.14159265359
-#define to_degrees 57.2957795131
-#define to_radians 0.01745329251
-#define cm_to_barn 1e24
+#define pi             3.14159265359
+#define to_degrees     57.2957795131
+#define to_radians     0.01745329251
+#define cm_to_barn     1e24
 #define cm_to_outhouse 1e30
-#define mev_to_gev 1e-3
-#define gev_to_mev 1e3
+#define mev_to_gev     1e-3
+#define gev_to_mev     1e3
 
 //! Masses in GeV
 #define  proton_mass     0.93827203
@@ -130,7 +130,6 @@ inline void split(const std::string &s, char delim, std::vector<std::string> &el
   }
 }
 
-
 inline std::vector<std::string> split(const std::string &s, char delim) {
   std::vector<std::string> elems;
   split(s, delim, elems);
@@ -184,6 +183,7 @@ namespace Color {
     BG_BLUE     = 44,
         BG_DEFAULT  = 49
   };
+
   class Modifier {
     Code code;
   public:

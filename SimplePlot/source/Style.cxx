@@ -41,7 +41,7 @@ namespace SimplePlot{
   }
 
   void Style::saveStyle(string filename){
-    ofstream outputFile;
+    std::ofstream outputFile;
     outputFile.open(filename.c_str());
 
     outputFile.width(10); outputFile << name; 
@@ -64,7 +64,7 @@ namespace SimplePlot{
   }
 
   bool Style::loadStyle(string filename){
-    ifstream input;
+    std::ifstream input;
     input.open(filename.c_str());
 
     if(input.is_open()){

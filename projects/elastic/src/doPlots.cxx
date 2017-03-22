@@ -53,14 +53,14 @@ int main(int argc, char *argv[]){
       dataEvents[h] = (TH1D*) inputFile->Get(Form("dataEvents_thetaByPhi_sect%d_bin0",h));
       ratio[h]      = (TH1D*) inputFile->Get(Form("ratio_thetaByPhi_sect%d_bin0",h));
       xs[h]         = (TH1D*) inputFile->Get(Form("crossSection_thetaByPhi_sect%d_bin0",h));
-      acc[h]        = (TH1D*) inputFile->Get(Form("acc_thetaByPhi_sect%d_bin0",h));
+//      acc[h]        = (TH1D*) inputFile->Get(Form("acc_thetaByPhi_sect%d_bin0",h));
     }
 
     plotter.setOutputTitle("data");
     plotter.printSectors(dataEvents, "E1-F Elastic Sample", "#theta", "Events");
 
-    plotter.setOutputTitle("acc");
-    plotter.printSectors(acc, "E1-F Elastic Sample", "#theta", "Rec/Gen");
+//    plotter.setOutputTitle("acc");
+//    plotter.printSectors(acc, "E1-F Elastic Sample", "#theta", "Rec/Gen");
 
     plotter.setStyle("lineMarker");
     plotter.setOutputTitle("ratio");

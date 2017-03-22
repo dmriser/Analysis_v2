@@ -464,7 +464,8 @@ namespace SimplePlot{
   
   void Printer::setStyle(string styleName){
     // This is bad to hardcode.
-    string totalPath = Form("/u/home/dmriser/mydoc/analysis/root_scripts/Analysis_v2/SimplePlot/styles/%s.style",styleName.c_str());
+    //    string totalPath = Form("/u/home/dmriser/mydoc/analysis/root_scripts/Analysis_v2/SimplePlot/styles/%s.style",styleName.c_str());
+    string totalPath = Form("/Users/dmriser/Work/Analysis_v2/SimplePlot/styles/%s.style",styleName.c_str());
     style->loadStyle(totalPath);
   }
 

@@ -12,7 +12,7 @@
   TH1D *data[numberSector][numberSlices];
   TH1D *model[numberSector][numberSlices];
 
-  readHisto(data,inputFile,numberSector,numberSlices,"binCorrectedCrossSection_wByQQ");
+  readHisto(data,inputFile,numberSector,numberSlices, "radCorrCrossSection_wByQQ");
   readHisto(model,inputFile,numberSector,numberSlices,"modelCrossSection_wByQQ");
  
   plot2Histos(data,model,numberSector,numberSlices,2);

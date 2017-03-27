@@ -12,6 +12,7 @@ using std::endl;
 #include "TFile.h"
 #include "TCanvas.h"
 #include "TH2.h"
+#include "TStyle.h"
 
 int main(int argc, char *argv[]){
 
@@ -63,12 +64,17 @@ int main(int argc, char *argv[]){
     lower[i]->SetParameter(2,bm-NSIGMA*bs);
     lower[i]->SetParameter(3,am-NSIGMA*as);
 
+    upper[i]->SetLineStyle(5); 
+    lower[i]->SetLineStyle(5); 
+    upper[i]->SetLineWidth(2); 
+    lower[i]->SetLineWidth(2); 
+
     cout << "[Pol3 Params] UPPER, Sector=" << i << " A=" << upper[i]->GetParameter(3) << " B=" << upper[i]->GetParameter(2) << " C=" << upper[i]->GetParameter(1) << " D=" << upper[i]->GetParameter(0) << endl; 
 
   }
 
   // Launch 
-  TApplication *app = new TApplication("MyApp", &argc, argv); 
+  //  TApplication *app = new TApplication("MyApp", &argc, argv); 
   TCanvas *can      = new TCanvas("can","",1200,800); 
 
   can->Divide(3,2);
@@ -77,9 +83,16 @@ int main(int argc, char *argv[]){
     h[i]->Draw("colz");
     upper[i]->Draw("same");
     lower[i]->Draw("same");
+
+    gPad->SetGridx(); 
+    gPad->SetGridy(); 
+
+    gStyle->SetOptStat(0); 
   }
   
-  app->Run();
+  can->Print("img/SamplingFraction.png");
+  
+  //  app->Run();
 
   return 0; 
 }

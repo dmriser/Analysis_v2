@@ -122,24 +122,34 @@ void printSlices(TH1D *histo[numberSector][numberSlices], const int numberSector
   double qqMin = 1.7; double qqMax = 4.2;
   double qqWidth = (qqMax-qqMin)/numberSlices; // slices are always Q^2 bins 
 
-  TCanvas *can = new TCanvas("can","",800,800);
+  TCanvas *can = new TCanvas("can","",800,500);
   
-  TLatex sectorCaption, xCaption, yCaption, toleranceCaption;
+  TLatex sectorCaption, xCaption, yCaption, toleranceCaption, prelimCaption;
   sectorCaption.SetNDC();
+  sectorCaption.SetTextFont(102); 
+  sectorCaption.SetTextSize(0.045); 
 
   xCaption.SetNDC(); 
-  xCaption.SetTextSize(0.035);
+  xCaption.SetTextSize(0.045);
+  xCaption.SetTextFont(102);
+
+  prelimCaption.SetNDC(); 
+  prelimCaption.SetTextSize(0.1);
+  prelimCaption.SetTextFont(102);
+  prelimCaption.SetTextColor(99); 
 
   yCaption.SetNDC();
-  yCaption.SetTextSize(0.035);
+  yCaption.SetTextSize(0.045);
   yCaption.SetTextAngle(90.0);
+  yCaption.SetTextFont(102);
 
   toleranceCaption.SetNDC();
-  toleranceCaption.SetTextSize(0.025);
+  toleranceCaption.SetTextSize(0.045);
   toleranceCaption.SetTextAngle(90.0);
+  toleranceCaption.SetTextFont(102);
 
-  TLine ratioLower(histo[0][0]->GetXaxis()->GetXmin(), 0.85, histo[0][0]->GetXaxis()->GetXmax(), 0.85);
-  TLine ratioUpper(histo[0][0]->GetXaxis()->GetXmin(), 1.15, histo[0][0]->GetXaxis()->GetXmax(), 1.15);
+  TLine ratioLower(histo[0][0]->GetXaxis()->GetXmin(), 0.95, histo[0][0]->GetXaxis()->GetXmax(), 0.95);
+  TLine ratioUpper(histo[0][0]->GetXaxis()->GetXmin(), 1.05, histo[0][0]->GetXaxis()->GetXmax(), 1.05);
   ratioLower.SetLineStyle(8);
   ratioUpper.SetLineStyle(8);
 
@@ -169,12 +179,14 @@ void printSlices(TH1D *histo[numberSector][numberSlices], const int numberSector
       }
 
       if (histoType == 6){ 
-	histo[sect][slice]->SetMarkerStyle(7); 
+	histo[sect][slice]->SetMarkerStyle(8); 
 	histo[sect][slice]->SetMinimum(0.2); 
-	histo[sect][slice]->SetMaximum(1.5); 
+	histo[sect][slice]->SetMaximum(1.8); 
 	histo[sect][slice]->Draw("pe");
 	ratioLower.Draw();
 	ratioUpper.Draw();
+	
+	prelimCaption.DrawLatex(0.25, 0.25, "Preliminary"); 
       }
 
       if (histoType == 7){
@@ -184,11 +196,6 @@ void printSlices(TH1D *histo[numberSector][numberSlices], const int numberSector
  	histo[sect][slice]->SetMinimum(0.0); 
  	histo[sect][slice]->SetMaximum(1.0); 
 	histo[sect][slice]->Draw("hist");
-
-	//	double averagePurity = histo[sect][slice]->Integral()/numberOfXBins;
-	//	TLine averagePurityLine(1.1,averagePurity,2.7,averagePurity);
-	//	averagePurityLine.SetLineStyle(8);
-	//	averagePurityLine.Draw();
       }
 
       if (histoType == 8) {
@@ -213,18 +220,18 @@ void printSlices(TH1D *histo[numberSector][numberSlices], const int numberSector
       }
 
       if (distType == 1){ xCaption.DrawLatex(0.65,0.06,"X_{Bjorken}"); }
-      if (distType == 2){ xCaption.DrawLatex(0.65,0.06,"W (GeV/c^{2})"); }
+      if (distType == 2){ xCaption.DrawLatex(0.47,0.06,"W (GeV/c^{2})"); }
 
-      if (histoType < 4){ yCaption.DrawLatex(0.05,0.72,"Counts"); }
-      if (histoType == 4){ yCaption.DrawLatex(0.05,0.72,"Ratio"); }
-      if (histoType == 5){ yCaption.DrawLatex(0.05,0.72,"#muBarn"); }
-      if (histoType == 6){ yCaption.DrawLatex(0.05,0.72,"Ratio"); toleranceCaption.DrawLatex(0.91,0.44,"#pm 15%"); }
-      if (histoType == 7){ yCaption.DrawLatex(0.05,0.72,"Purity"); }
-      if (histoType == 8){ yCaption.DrawLatex(0.05,0.72,"Ratio rad/born"); }
+      if (histoType < 4){ yCaption.DrawLatex(0.05,0.48,"Counts"); }
+      if (histoType == 4){ yCaption.DrawLatex(0.05,0.48,"Ratio"); }
+      if (histoType == 5){ yCaption.DrawLatex(0.05,0.48,"#muBarn"); }
+      if (histoType == 6){ yCaption.DrawLatex(0.05,0.48,"Ratio"); toleranceCaption.DrawLatex(0.91,0.44,"#pm 5%"); }
+      if (histoType == 7){ yCaption.DrawLatex(0.05,0.48,"Purity"); }
+      if (histoType == 8){ yCaption.DrawLatex(0.05,0.48,"Ratio rad/born"); }
       if (histoType == 9){ yCaption.DrawLatex(0.05,0.62,"Inelastic Fraction"); }
-      if (histoType == 10){ yCaption.DrawLatex(0.05,0.72,"Ratio"); }
+      if (histoType == 10){ yCaption.DrawLatex(0.05,0.48,"Ratio"); }
 
-      sectorCaption.DrawLatex(0.31, 0.89, Form("Sector %d Q^{2}=%.3f",sect,qqValue));
+      sectorCaption.DrawLatex(0.68, 0.89, Form("Sector %d Q^{2}=%.3f",sect,qqValue));
 
       if (histoType == 1){      can->Print(Form("%sdata/dataSector%dSlice%d.png",imagePath.c_str(),sect,slice)); }
       else if (histoType == 2){ can->Print(Form("%srec/recSector%dSlice%d.png",imagePath.c_str(),sect,slice)); }
@@ -368,19 +375,29 @@ void plot2Histos(TH1D *histo1[numberSector][numberSlices], TH1D *histo2[numberSe
   double qqMin = 1.7; double qqMax = 4.2; 
   double qqWidth = (qqMax-qqMin)/numberSlices; 
 
-  TCanvas *singleCanvas = new TCanvas("singleCanvas","",800,800);
-  TLatex xCaption, sectorCaption, histo1Caption, histo2Caption; 
+  TCanvas *singleCanvas = new TCanvas("singleCanvas","",800,500);
+  TLatex xCaption, yCaption, sectorCaption, histo1Caption, histo2Caption; 
 
   xCaption.SetNDC();
+  yCaption.SetNDC();
   sectorCaption.SetNDC();
   histo1Caption.SetNDC();
   histo2Caption.SetNDC();
 
-  xCaption.SetTextSize(0.03);
-  sectorCaption.SetTextSize(0.03); 
-  histo1Caption.SetTextSize(0.03);
-  histo2Caption.SetTextSize(0.03);
+  xCaption.SetTextSize(0.04);
+  yCaption.SetTextSize(0.04);
+  sectorCaption.SetTextSize(0.04); 
+  histo1Caption.SetTextSize(0.04);
+  histo2Caption.SetTextSize(0.04);
   histo2Caption.SetTextColor(kRed);
+
+  xCaption.SetTextFont(102); 
+  yCaption.SetTextFont(102); 
+  sectorCaption.SetTextFont(102); 
+  histo1Caption.SetTextFont(102); 
+  histo2Caption.SetTextFont(102); 
+
+  yCaption.SetTextAngle(90.0); 
 
   for (int s=0; s< numberSector; s++){
     double nEvents1 = 0; double nEvents2 = 0;
@@ -409,19 +426,31 @@ void plot2Histos(TH1D *histo1[numberSector][numberSlices], TH1D *histo2[numberSe
 	histo1[s][sl]->SetMaximum( histo2[s][sl]->GetMaximum()*1.2 );
       }   
    
-      histo1[s][sl]->SetMarkerStyle(8);
-      histo1[s][sl]->Draw("pe");
 
       if (histoType == 1){
-	histo2[s][sl]->SetFillColorAlpha(kRed, 1.0);
-	histo2[s][sl]->SetLineColor(kRed);
-	histo2[s][sl]->SetFillStyle(3004);
+	histo1[s][sl]->SetLineColor(99); 	
+	histo2[s][sl]->SetLineColor(55);
+	histo1[s][sl]->SetLineWidth(2); 	
+	histo2[s][sl]->SetLineWidth(2);
+
+	//	histo1[s][sl]->SetFillColorAlpha(99, 0.2); 
+	//	histo2[s][sl]->SetFillColorAlpha(55, 0.2); 
+
+	histo1Caption.SetTextColor(99); 
+	histo2Caption.SetTextColor(55); 
+
+	//	histo2[s][sl]->SetFillStyle(3004);
+	histo1[s][sl]->Draw("hist");
 	histo2[s][sl]->Draw("histsame");
       }
 
       else if (histoType == 2) { 
+      histo1[s][sl]->SetMarkerStyle(8);
+      histo1[s][sl]->Draw("pe");
+
 	//	histo2[s][sl]->SetLineStyle(8);
-	histo2[s][sl]->SetLineColor(99);
+	histo2[s][sl]->SetLineColor(55);
+	histo2[s][sl]->SetLineWidth(2);
 	histo2[s][sl]->Draw("csame"); 
       }
 
@@ -440,18 +469,20 @@ void plot2Histos(TH1D *histo1[numberSector][numberSlices], TH1D *histo2[numberSe
       }
 
       sectorCaption.DrawLatex(0.61,0.89,Form("Sector %d Q^{2}=%.3f",s,qqValue));
-      xCaption.DrawLatex(0.62, 0.04, "W (GeV/c^{2})");
-      //      xCaption.DrawLatex(0.62, 0.04, "X_{Bjorken}");
+      xCaption.DrawLatex(0.46, 0.04, "W (GeV/c^{2})");
+
 
       if (histoType == 1){
-	histo1Caption.DrawLatex(0.18, 0.93, Form("Data Events = %.2E",histo1[s][sl]->GetEntries()));
-	histo2Caption.DrawLatex(0.18, 0.89, Form("Sim Events = %.2E",histo2[s][sl]->GetEntries()));
+	yCaption.DrawLatex(0.05, 0.45, "Counts"); 
+	histo1Caption.DrawLatex(0.05, 0.96, Form("Data Events = %.2E",histo1[s][sl]->GetEntries()));
+	histo2Caption.DrawLatex(0.05, 0.92, Form("Sim Events = %.2E",histo2[s][sl]->GetEntries()));
       }
 
       else if (histoType == 2){
-	histo2Caption.SetTextColor(99);
-	histo1Caption.DrawLatex(0.18, 0.76, "E1-F Data");
-	histo2Caption.DrawLatex(0.18, 0.72, "Keppel Model");
+	yCaption.DrawLatex(0.05, 0.45, "#muB"); 
+	histo2Caption.SetTextColor(55);
+	histo1Caption.DrawLatex(0.05, 0.96, "E1-F Data");
+	histo2Caption.DrawLatex(0.05, 0.92, "Keppel Model");
       }
 
       else if (histoType == 3){

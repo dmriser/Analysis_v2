@@ -56,6 +56,11 @@ DataLoader::DataLoader(PhysicsEventSelector *eventCriteria, MomCorr_e1f *momCorr
   standardHistos = new StandardHistograms("data",0); 
   histos         = new ElasticHistograms("data",0); 
   histos->Initialize(); 
+
+  // Modify EID 
+  filter->getSelector(11)->disable_by_regex("EC-"); 
+  filter->getSelector(11)->disable_by_regex("CC"); 
+  filter->getSelector(11)->disable_by_regex("Fid"); 
 }
 
 DataLoader::~DataLoader(){

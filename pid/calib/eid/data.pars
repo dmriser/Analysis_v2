@@ -44,7 +44,7 @@
           EL_ECW_MIN     1     e                   0
       EL_EC_EDEP_MIN     1     v                0.05
       EL_EC_EDEP_MIN     1     e                   0
-        EL_EC_NSIGMA     1     v                   3
+        EL_EC_NSIGMA     1     v                   2.25
         EL_EC_NSIGMA     1     e                   0
          EL_NPHE_MAX     1     v                 999
          EL_NPHE_MAX     1     e                   0

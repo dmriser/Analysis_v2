@@ -24,7 +24,7 @@
   readHisto(rec, inputFile, numberSector, numberSlices, "recEventsRad_wByQQ");
   readHisto(gen, inputFile, numberSector, numberSlices, "genEventsRad_wByQQ");
   readHisto(acceptance, inputFile, numberSector, numberSlices, "acceptance_wByQQ");
-  readHisto(crossSection, inputFile, numberSector, numberSlices, "radCorrCrossSection_wByQQ");
+  readHisto(crossSection, inputFile, numberSector, numberSlices,      "radCorrCrossSection_wByQQ");
   readHisto(crossSectionRatio, inputFile, numberSector, numberSlices, "radCorrCrossSectionRatio_wByQQ");
   readHisto(radCorr, inputFile, numberSector, numberSlices, "radCorr_wByQQ");
   readHisto(binCorr, inputFile, numberSector, numberSlices, "binCenterCorrection_wByQQ");

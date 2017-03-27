@@ -118,7 +118,7 @@ int main(int argc, char * argv[]){
       dataEvents->MultiplyByZero( inelasticFraction );
     }
 
-    DIS1DHistograms * recEventsRad = new DIS1DHistograms();
+    DIS1DHistograms *recEventsRad = new DIS1DHistograms();
     recEventsRad->Create(recEventsRad2D);
     recEventsRad->SetErrors();
     recEventsRad->Save(outputFilename.c_str(),"update");

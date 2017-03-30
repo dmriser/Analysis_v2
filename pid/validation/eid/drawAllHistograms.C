@@ -3,6 +3,14 @@
   TFile * file = TFile::Open("dataFullSVM.root");
   TCanvas * c1 = new TCanvas("c1", "", 800, 800);
 
+  TF1 *ccCutLine = new TF1("ccCut","[0] - [1]*sqrt(1-x^2/[2])",-30,30); 
+  ccCutLine->SetParameter(0, 46.0); 
+  ccCutLine->SetParameter(1, 35.0); 
+  ccCutLine->SetParameter(2, 360.0); 
+  ccCutLine->SetLineWidth(2);
+  ccCutLine->SetLineColor(99);  
+  ccCutLine->SetLineStyle(9);  
+
 
   // Electron Identification Histograms [2][7]                                                                                                                                                                      // [0] - without cuts,  [1] - with cuts                                                                                                                                                                           // [0] - all sectors,   [1-6] - sectors 1-6                                                                                                                                                                  
   string type[12] = {"allNegatives", "cuts", "Z_VERTEX","CC_FID","CC_PHI","CC_THETA","DC_R1_FID","DC_R3_FID","EC_FID","EC_IN_OUT","EC_SAMPLING","SVM"};
@@ -155,6 +163,7 @@
 
 	h2_ang_fid[itype][isect]  = (TH2F*) file->Get(Form("h_ang_fid_%s_%s",type[itype].c_str(),sect[isect].c_str()));
 	h2_ang_fid[itype][isect]->Draw("colz");
+	ccCutLine->Draw("lsame");
 	printer = Form("Pass: %.3f ", (double) h2_ang_fid[itype][isect]->GetEntries()/h1_nphe[0][isect]->GetEntries() );
 	xAxisTitle = "#phi_{Rel} (Deg)"; 
 	yAxisTitle = "#theta (Deg)"; 

@@ -58,9 +58,9 @@ DataLoader::DataLoader(PhysicsEventSelector *eventCriteria, MomCorr_e1f *momCorr
   histos->Initialize(); 
 
   // Modify EID 
-  filter->getSelector(11)->disable_by_regex("EC-"); 
-  filter->getSelector(11)->disable_by_regex("CC"); 
-  filter->getSelector(11)->disable_by_regex("Fid"); 
+  //  filter->getSelector(11)->disable_by_regex("EC-"); 
+  //  filter->getSelector(11)->disable_by_regex("CC"); 
+  //  filter->getSelector(11)->disable_by_regex("Fid"); 
 }
 
 DataLoader::~DataLoader(){

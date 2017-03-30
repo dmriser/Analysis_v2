@@ -199,7 +199,7 @@ void printSlices(TH1D *histo[numberSector][numberSlices], const int numberSector
       }
 
       if (histoType == 8) {
-	histo[sect][slice]->SetMarkerStyle(7); 
+	histo[sect][slice]->SetMarkerStyle(8); 
 	histo[sect][slice]->SetMinimum(0.5); 
 	histo[sect][slice]->SetMaximum(2.0); 
 	histo[sect][slice]->Draw("pe");
@@ -455,6 +455,7 @@ void plot2Histos(TH1D *histo1[numberSector][numberSlices], TH1D *histo2[numberSe
       }
 
       else if (histoType == 3) {
+	gPad->SetLogy(); 
 	histo1[s][sl]->SetFillColorAlpha(99,0.4);
 	histo1[s][sl]->SetLineColor(99);
 	histo1[s][sl]->SetMaximum( histo2[s][sl]->GetMaximum()*1.2 );

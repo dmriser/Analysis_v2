@@ -3,7 +3,7 @@
   gROOT->LoadMacro("utils.C");
 
   //  TFile * inputFile = TFile::Open("../out/crossSectionWithResonancePass1.root");
-  TFile * inputFile = TFile::Open("/volatile/clas12/dmriser/rootFiles/inclusive/xs/Phi4to12.root");
+  TFile * inputFile = TFile::Open("/volatile/clas12/dmriser/rootFiles/inclusive/xs/xsBugFix.root");
 
   string imagePath       = "/volatile/clas12/dmriser/plots/inclusive/"; 
   const int numberSector = 7;
@@ -27,7 +27,7 @@
   }
 
   TCanvas *compareCan = new TCanvas("compareCan","",800,1000); 
-  compareCan->Divide(2,5); 
+  compareCan->Divide(3,4); 
 
   for (int slice=0; slice<numberSlices; slice++){
     for (int sect=1; sect<7; sect++){
@@ -37,13 +37,13 @@
       data[sect][slice]->SetMarkerColor(50+sect*7); 
       data[sect][slice]->SetMarkerStyle(8); 
       data[sect][slice]->SetMarkerSize(1); 
-      data[sect][slice]->Draw("histsame"); 
+      data[sect][slice]->Draw("pesame"); 
     }
     model[0][slice]->Draw("lsame");
   }
 
   TCanvas *compareCan2 = new TCanvas("compareCan2","",800,1000); 
-  compareCan2->Divide(2,5); 
+  compareCan2->Divide(3,4); 
 
   for (int slice=0; slice<numberSlices; slice++){
     for (int sect=1; sect<7; sect++){
@@ -53,9 +53,9 @@
       ratio[sect][slice]->SetMarkerColor(50+sect*7); 
       ratio[sect][slice]->SetMarkerStyle(8); 
       ratio[sect][slice]->SetMarkerSize(1); 
-      ratio[sect][slice]->SetMinimum(0.7); 
-      ratio[sect][slice]->SetMaximum(1.4); 
-      ratio[sect][slice]->Draw("histsame"); 
+      ratio[sect][slice]->SetMinimum(0.2); 
+      ratio[sect][slice]->SetMaximum(1.8); 
+      ratio[sect][slice]->Draw("pesame"); 
     }
   }
 
@@ -74,8 +74,8 @@
     ratio[sect][2]->SetMarkerColor(50+(sect-1)*8); 
     ratio[sect][2]->SetMarkerStyle(25+sect); 
     ratio[sect][2]->SetMarkerSize(1); 
-    ratio[sect][2]->SetMinimum(0.7); 
-    ratio[sect][2]->SetMaximum(1.4); 
+    ratio[sect][2]->SetMinimum(0.2); 
+    ratio[sect][2]->SetMaximum(1.8); 
 
     ratio[sect][2]->Draw("pesame"); 
   }
@@ -96,7 +96,7 @@
   TCanvas *avgCan = new TCanvas("avgCan","",800,500); 
   for(int s=1; s<7; s++){
     ratioAvg[s-1]->SetLineColor(43 + 8*s); 
-    ratioAvg[s-1]->Draw("histsame");
+    ratioAvg[s-1]->Draw("pesame");
   }
 
 }

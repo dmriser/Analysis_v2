@@ -17,15 +17,17 @@
   TH1D *binCorr[numberSector][numberSlices];
 
 
-  TFile *inputFile = TFile::Open("/volatile/clas12/dmriser/rootFiles/inclusive/xs/Phi4to12v2.root");
+  TFile *inputFile = TFile::Open("/volatile/clas12/dmriser/rootFiles/inclusive/xs/xsBugFix.root");
   //  TFile *inputFile = TFile::Open("../out/crossSectionNoFidPass1.root");
 
   readHisto(data, inputFile, numberSector, numberSlices, "dataEvents_wByQQ");
   readHisto(rec, inputFile, numberSector, numberSlices, "recEventsRad_wByQQ");
   readHisto(gen, inputFile, numberSector, numberSlices, "genEventsRad_wByQQ");
   readHisto(acceptance, inputFile, numberSector, numberSlices, "acceptance_wByQQ");
-  readHisto(crossSection, inputFile, numberSector, numberSlices,      "radCorrCrossSection_wByQQ");
-  readHisto(crossSectionRatio, inputFile, numberSector, numberSlices, "radCorrCrossSectionRatio_wByQQ");
+  //  readHisto(crossSection, inputFile, numberSector, numberSlices,      "radCorrCrossSection_wByQQ");
+  //  readHisto(crossSectionRatio, inputFile, numberSector, numberSlices, "radCorrCrossSectionRatio_wByQQ");
+  readHisto(crossSection, inputFile, numberSector, numberSlices,      "binCorrectedCrossSection_wByQQ");
+  readHisto(crossSectionRatio, inputFile, numberSector, numberSlices, "binCorrectedCrossSectionRatio_wByQQ");
   readHisto(radCorr, inputFile, numberSector, numberSlices, "radCorr_wByQQ");
   readHisto(binCorr, inputFile, numberSector, numberSlices, "binCenterCorrection_wByQQ");
 

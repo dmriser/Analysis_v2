@@ -60,6 +60,12 @@ MCLoader::MCLoader(PhysicsEventSelector *eventCriteria, Parameters *pars, std::s
   gen               = new ElasticHistograms("gen",0); 
   rec->Initialize(); 
   gen->Initialize(); 
+
+  filter->getSelector(11)->disable_by_regex("Samp"); 
+  filter->getSelector(11)->disable_by_regex("Charge"); 
+  filter->getSelector(11)->disable_by_regex("CC"); 
+  filter->getSelector(11)->disable_by_regex("Fid"); 
+
 }
 
 MCLoader::~MCLoader(){
@@ -80,10 +86,13 @@ void MCLoader::ProcessEvent(){
     PhysicsEvent   genEvent    = builder.getPhysicsEvent(genElectron); 
     int            genSector   = phiToSector(genElectron.Phi()*to_degrees);
 
-    if(eventSelector->passes(genEvent) && genSector > -1){
-      standardHistosGen->Fill(genEvent);
-      gen              ->Fill(genEvent);
-    }
+    //    if(eventSelector->passes(genEvent) && genSector > -1){
+    //    standardHistosGen->Fill(genEvent);
+    //    gen              ->Fill(genEvent);
+    //    }
+
+    standardHistosGen->Fill(genEvent);
+    gen              ->Fill(genEvent);
 
     // -----------------------------------------------------
     //          Fill Reconstructed 
@@ -104,8 +113,8 @@ void MCLoader::ProcessEvent(){
 }
 
 bool MCLoader::EventHasGeneratedElectron(){
-  for(int ipart=0; ipart<event.gpart; ipart++){
-    if (event.q[ipart] == -1 && event.mcid[ipart] == 11){
+  for(int ipart=0; ipart<event.mcnentr; ipart++){
+    if (event.mcid[ipart] == 11){
       return true;
     }
   }

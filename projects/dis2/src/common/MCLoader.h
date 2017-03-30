@@ -77,12 +77,14 @@ void MCLoader::ProcessEvent(){
     TLorentzVector genElectron   = event.gen_particle(11);   
     PhysicsEvent genPhysicsEvent = builder.getPhysicsEvent(genElectron); 
     genHistos->Fill(genPhysicsEvent);
+
     // Maybe here we should check that the track was reconstructed 
     // if (event.gpart > 0), but that would probably skew acceptance 
     // by stopping all particles which went through holes ect. so it 
     // doesn't seem like what we want to do. 
     int mcSector = event.mcSectorByPID(11);
-    if (mcSector > -1 && mcSector < 7 && eventSelector->get_cut("Relative Phi Cut")->passes(genPhysicsEvent)) { 
+    //    if (mcSector > -1 && mcSector < 7 && eventSelector->get_cut("Relative Phi Cut")->passes(genPhysicsEvent)) { 
+    if (mcSector > -1 && mcSector < 7) { 
       genEvents.Fill(genPhysicsEvent, mcSector); 
     }
     
@@ -116,8 +118,8 @@ void MCLoader::ProcessEvent(){
 }
 
 bool MCLoader::EventHasGeneratedElectron(){
-  for(int ipart=0; ipart<event.gpart; ipart++){
-    if (event.q[ipart] == -1 && event.mcid[ipart] == 11){
+  for(int ipart=0; ipart<event.mcnentr; ipart++){
+    if (event.mcid[ipart] == 11){
       return true;
     }
   }

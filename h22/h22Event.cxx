@@ -55,7 +55,7 @@ double h22Event::mcrphi(int ipart){
 }
 
 TLorentzVector h22Event::gen_particle(int pid){
-  for (int ipart=0; ipart<gpart; ipart++){
+  for (int ipart=0; ipart<mcnentr; ipart++){
       if (mcid[ipart] == pid) {
 	return TLorentzVector(mcpx(ipart), mcpy(ipart), mcpz(ipart), mcp[ipart]);
       }

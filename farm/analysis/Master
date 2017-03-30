@@ -1,12 +1,12 @@
 #!/bin/tcsh 
 
 # User Parameters 
-set numberOfJobs = 10 
-set binDir       = "/u/home/dmriser/mydoc/analysis/root_scripts/Analysis_v2/projects/elastic/src/"
+set numberOfJobs = 30 
+set binDir       = "/u/home/dmriser/mydoc/analysis/root_scripts/Analysis_v2/projects/dis2/src/"
 set binName      = "fillHistograms"
 set sourceDir    = "/u/home/dmriser/mydoc/analysis/root_scripts/Analysis_v2/farm/analysis"
-set outDir       = "/volatile/clas12/dmriser/analysis/e1f_analysis/elastic/limitedCuts/"
-set outName      = "no_fid_or_cc_cuts"
+set outDir       = "/volatile/clas12/dmriser/analysis/e1f_analysis/inclusive/bugFixed/mc/"
+set outName      = "bugFixed"
 set runScript    = "goAnalyze"
 set fileList     = "/u/home/dmriser/mydoc/analysis/root_scripts/Analysis_v2/projects/dis2/goodRuns.dat"
 #set fileList     = "/u/home/dmriser/mydoc/analysis/root_scripts/Analysis_v2/projects/dis2/MonteCarlo.dat"

@@ -70,7 +70,7 @@ int main(int argc, char * argv[]){
   eventSelector->add_cut(w_cut);
   eventSelector->add_cut(y_cut);
   eventSelector->add_cut(qq_cut); 
-  eventSelector->add_cut(rphi_cut); 
+  //  eventSelector->add_cut(rphi_cut); 
   eventSelector->enable_all();
 
   // ----------------------------------------------------------------------------------

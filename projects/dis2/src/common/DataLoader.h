@@ -90,23 +90,6 @@ void DataLoader::ProcessEvent(){
 
     allHistos->Fill(event, e_index, physicsEvent); 
 
-    // -----------------------------------------------------------------
-    // Adding this test code to try and identify Bethe-Heitler events and 
-    // throw them out of the sample. 
-    // -----------------------------------------------------------------
-    /*
-    bool isBetheHeitler = false; 
-    vector<TLorentzVector> protons = filter->getVectorOfTLorentzVectors(event, 2212);
-    if ( !protons.empty() ){
-      for (int iprot=0; iprot<protons.size(); iprot++){
-	PhysicsEvent betheHeitlerCandidate = builder.getPhysicsEvent(electron, protons[iprot]);
-	if (betheHeitlerCandidate.finalState.Theta()*to_degrees < 3.5 && betheHeitlerCandidate.mm2 < 0.07){
-	  isBetheHeitler = true; 
-	} 
-      }
-    }
-    */
-
     if (eventSelector->passes(physicsEvent) && sector > 0) {
       dataEvents.Fill(physicsEvent, sector); 
       passedHistos->Fill(event, e_index, physicsEvent); 

@@ -2,10 +2,11 @@
 
   gROOT->LoadMacro("utils.C");
 
-  TFile * inputFile = TFile::Open("../out/xs/xsNominalES.root");
+  TFile * inputFile = TFile::Open("/volatile/clas12/dmriser/rootFiles/inclusive/xs/xsBugFix.root");
+  string imagePath = "/volatile/clas12/dmriser/plots/inclusive/"; 
 
   const int numberSector = 1;
-  const int numberSlices = 20;
+  const int numberSlices = 10;
 
   TH1D *elastic[numberSector][numberSlices];
   TH1D *inelastic[numberSector][numberSlices];

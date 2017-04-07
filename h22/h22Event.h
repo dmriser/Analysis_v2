@@ -15,7 +15,6 @@
 #ifndef h22Event_h
 #define h22Event_h
 
-
 #include <vector>
 #include <TROOT.h>
 #include "TLorentzVector.h"
@@ -27,8 +26,7 @@
  * It defines the general structure of an event in the h22 ntuple.
  */
 
-class h22Event
-{
+class h22Event {
  public :
  
   // Declaration of leaf types

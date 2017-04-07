@@ -1,11 +1,9 @@
-
-#include "TLorentzVector.h"
-
 #ifndef physics_event_h
 #define physics_event_h
 
-class PhysicsEvent{
+#include "TLorentzVector.h"
 
+class PhysicsEvent {
  public:
   PhysicsEvent(); 
   ~PhysicsEvent(); 

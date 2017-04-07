@@ -44,6 +44,8 @@ class h22Options
 
   // member functions 
   void set(int,char**);
+  void parseConfigFile(std::string file); 
+  void processOption(std::string arg);
 
 };
 

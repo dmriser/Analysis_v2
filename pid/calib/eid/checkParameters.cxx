@@ -64,8 +64,8 @@ int main(int argc, char *argv[]){
     lower[i]->SetParameter(2,bm-NSIGMA*bs);
     lower[i]->SetParameter(3,am-NSIGMA*as);
 
-    upper[i]->SetLineStyle(5); 
-    lower[i]->SetLineStyle(5); 
+    upper[i]->SetLineStyle(8); 
+    lower[i]->SetLineStyle(8); 
     upper[i]->SetLineWidth(2); 
     lower[i]->SetLineWidth(2); 
 

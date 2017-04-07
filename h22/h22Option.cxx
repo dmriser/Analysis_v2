@@ -21,8 +21,8 @@ using namespace std;
 // my includes
 #include "h22Option.h"
 
-h22Options::h22Options()
-{
+h22Options::h22Options(){
+
     // Setup Options
     args["N"].arg  = 0;
     args["N"].type = 0;
@@ -68,7 +68,10 @@ h22Options::h22Options()
     args["OUT"].type = 1;
     args["OUT"].name = "Output Root File";
     args["OUT"].help = "Output Root File";
-    
+
+    args["CONFIG"].args = "UNSET";
+    args["CONFIG"].type = 1;
+    args["CONFIG"].name = "Configuration File";
 }
 
 h22Options::~h22Options()
@@ -78,40 +81,16 @@ h22Options::~h22Options()
 
 void h22Options::set(int argc, char*argv[])
 {
-    string arg;
-    string com, com2;
-    string opt;
     cout << endl;
-    string comp;
-    
-    map<string, opts>::iterator itm;
-    
-    
+
     // If Maps option are specified, overriding default
-    for(int i=1; i<argc; i++)
-    {
-        arg = argv[i];
-        map<string, opts>::iterator itm;
-        for(itm = args.begin(); itm != args.end(); itm++)
-        {
-            com = "-" + itm->first + "=";
-            comp.assign(arg, 0, arg.find("=") + 1);
-            if(comp == com)
-            {
-                opt.assign(arg, com.size(), arg.size()-com.size());
-                itm->second.args = opt;
-                itm->second.arg  = atof(opt.c_str());
-                cout <<  " >>> Options: " << itm->second.name << " set to: " ;
-                if(itm->second.type) cout << itm->second.args;
-                else cout << itm->second.arg  ;
-                cout << endl;
-            }
-        }
+    for(int i=1; i<argc; i++){
+      string arg = argv[i];
+      processOption(arg);
     }
     
     // If argument is a file, adding it to the list of files
-    for(int i=1; i<argc; i++)
-    {
+    for(int i=1; i<argc; i++){
         ifstream isFile(argv[i], ios::in | ios::binary);
         if(isFile) ifiles.push_back(argv[i]);
     }
@@ -122,6 +101,46 @@ void h22Options::set(int argc, char*argv[])
         cout << " Input file found: " << ifiles[i] << endl;
     
     cout << endl;
+}
+
+void h22Options::processOption(std::string arg){
+  string com, com2;
+  string opt, comp;
+  
+  map<string, opts>::iterator itm;
+  for(itm = args.begin(); itm != args.end(); itm++)
+    {
+      com = "-" + itm->first + "=";
+      comp.assign(arg, 0, arg.find("=") + 1);
+      if(comp == com)
+	{
+	  opt.assign(arg, com.size(), arg.size()-com.size());
+	  itm->second.args = opt;
+	  itm->second.arg  = atof(opt.c_str());
+	  cout <<  " >>> Options: " << itm->second.name << " set to: " ;
+	  if(itm->second.type) cout << itm->second.args;
+	  else cout << itm->second.arg  ;
+	  cout << endl;
+	}
+    }
+}
+
+void h22Options::parseConfigFile(std::string configFile){
+  ifstream file; 
+  file.open(configFile.c_str());
+
+  if(file.is_open()){
+    string line; 
+    while( getline(file, line) ){
+      processOption(line);
+    }
+  }
+  else {
+    cout << "[h22Options::parseConfigFile] Trouble opening configuration file " << configFile << endl; 
+    return; 
+  }
+
+  file.close();
 }
 
 #endif

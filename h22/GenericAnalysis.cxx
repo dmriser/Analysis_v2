@@ -79,7 +79,7 @@ void GenericAnalysis::Loop(int numberOfEvents){
     ProcessEvent();
 
     //    if (ievent%10000 == 0) { cout << "\r[GenericAnalysis::Loop] Done " << ievent << flush; }
-    if (ievent%200000 == 0) { status.PrintStatus(ievent,numberOfEvents); }
+    if (ievent%10000 == 0) { status.PrintStatus(ievent,numberOfEvents); }
   }
 
   cout << endl;

@@ -19,17 +19,16 @@
 
 // my includes
 #include "h22Event.h"
+#include "h22ElectronEvent.h"
 
-class Corrections
-{
+class Corrections {
+
 public:
     Corrections();
     ~Corrections();
     
-    // Datatypes
-    
-
     // Member Functions
+    void CorrectElectronEvent(h22ElectronEvent *event, int runno, int GSIM); 
     void correctEvent(h22Event *event, int runno, int GSIM);
     double vz(h22Event,int,int,int);           //! event, ipart, runno, GSIM 
     double electron_sct(h22Event,int,int,int);

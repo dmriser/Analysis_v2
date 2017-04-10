@@ -107,10 +107,11 @@ class h22Event {
 
    // Const. & Dest. 
    h22Event();
+   h22Event(const h22Event &event);
    ~h22Event();
   
    // Member Functions 
-   void printEvent();
+   void printEvent() const;
    double rphi(int);     //! Azym. angle relative to sector center. 
    double mcrphi(int);   //! MC version of above   
    double theta(int);    //! Polar angle of track

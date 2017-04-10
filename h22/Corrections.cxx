@@ -19,6 +19,7 @@
 #include <iostream>
 
 // my includes
+#include "CommonTools.h"
 #include "Corrections.h"
 #include "h22Event.h"
 
@@ -46,6 +47,36 @@ void Corrections::correctEvent(h22Event *event, int runno, int GSIM){
                 event->sc_t[ipart] = hadron_sct((*event), ipart, runno, GSIM);
             }
         }
+    }
+
+}
+
+void Corrections::CorrectElectronEvent(h22ElectronEvent *event, int runno, int GSIM){
+
+    if( !GSIM ){
+      int electronIndex = event->GetElectronIndex();
+      event->corr_vz[electronIndex]   = vz((*event), electronIndex, runno, GSIM);
+      event->corr_sc_t[electronIndex] = electron_sct((*event),electronIndex,runno,GSIM);
+
+      double startTime = event->corr_sc_t[electronIndex] - event->sc_r[electronIndex]/speed_of_light; 
+      event->SetStartTime(startTime); 
+
+      for(int ipart=0; ipart<event->gpart; ipart++){
+	if (ipart != electronIndex){
+	  event->corr_vz[ipart] = vz((*event), ipart, runno, GSIM);
+
+	  double beta = event->sc_r[ipart]/(event->sc_t[ipart]-startTime)/speed_of_light;
+	  
+	  if(event->q[ipart] != 0){
+	    event->corr_sc_t[ipart] = hadron_sct((*event), ipart, runno, GSIM);
+	    beta = event->sc_r[ipart]/event->corr_sc_t[ipart]/speed_of_light;
+	  }
+
+	  event->corr_b[ipart] = beta;
+	}
+      }
+      
+      event->SetCorrectedStatus(1); 
     }
 
 }

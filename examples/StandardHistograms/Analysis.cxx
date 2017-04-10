@@ -2,16 +2,21 @@
 #include <vector>
 using namespace std; 
 
-#include "CommonTools.h"
-#include "h22Option.h"
-#include "GenericAnalysis.h"
 #include "StandardHistograms.h"
+
 #include "TFile.h"
 #include "TH1.h"
 #include "TLorentzVector.h"
 #include "TString.h"
+
+#include "CommonTools.h"
+#include "Corrections.h"
+#include "h22ElectronEvent.h"
+#include "h22Option.h"
+#include "GenericAnalysis.h"
 #include "PhysicsEvent.h"
 #include "PhysicsEventBuilder.h"
+#include "PhotonHistograms.h"
 #include "ParticleFilter.h"
 #include "Parameters.h"
 
@@ -21,9 +26,11 @@ public:
   ~MyAnalysis(){}
 
   StandardHistograms  *histos; 
+  PhotonHistograms    *photonHistos; 
   PhysicsEventBuilder *builder; 
   ParticleFilter      *filter; 
   Parameters          *params; 
+  Corrections          corr; 
 
 public:
 
@@ -33,7 +40,7 @@ public:
 };
 
 MyAnalysis::MyAnalysis(h22Options *opts, Parameters *pars) : GenericAnalysis(opts), params(pars){
-
+  //  filter->getSelector(11)->disable_by_regex("CCT");
 }
 
 void MyAnalysis::OptimizeLoop(int numberOfEvents){
@@ -53,20 +60,36 @@ void MyAnalysis::OptimizeLoop(int numberOfEvents){
 void MyAnalysis::ProcessEvent(){
   vector<int> electronIndices      = filter->getVectorOfParticleIndices(event, 11); 
   vector<int> pimIndices           = filter->getVectorOfParticleIndices(event, -211); 
+  vector<int> photIndices          = filter->getVectorOfParticleIndices(event, 22);
+
   vector<TLorentzVector> electrons = filter->getVectorOfTLorentzVectors(event, 11);
   vector<TLorentzVector> pims      = filter->getVectorOfTLorentzVectors(event, -211);
+  vector<TLorentzVector> phots     = filter->getVectorOfTLorentzVectors(event, 22);
 
-  if(!electrons.empty() && !pims.empty()){
-    PhysicsEvent ev = builder->getPhysicsEvent(electrons[0], pims.back()); 
-    histos->Fill(event, electronIndices[0], pimIndices.back(), ev);
+
+  if(!electrons.empty() && !electronIndices.empty()){
+    h22ElectronEvent electronEvent(event);   
+    electronEvent.SetElectronIndex(electronIndices.front());
+    electronEvent.SetElectron(electrons.front()); 
+    corr.CorrectElectronEvent(&electronEvent, runno(), GSIM); 
+
+      if(!pims.empty()){
+	PhysicsEvent ev = builder->getPhysicsEvent(electrons[0], pims.back()); 
+	histos->Fill(event, electronIndices[0], pimIndices.back(), ev);
+      }
+
+      if(!phots.empty()){
+	photonHistos->Fill(electronEvent, photIndices[0]);
+      }
   }
 
 }
 
 void MyAnalysis::Initialize(){
   histos  = new StandardHistograms("testHistos",0); 
+  photonHistos = new PhotonHistograms("testPhotonHistos"); 
   builder = new PhysicsEventBuilder(); 
-  filter  = new ParticleFilter(params); 
+  filter = new ParticleFilter(params); 
 }
 
 int main(int argc, char *argv[]){
@@ -87,11 +110,15 @@ int main(int argc, char *argv[]){
 
   MyAnalysis analysis(opts, pars);
 
-  for (int i=0; i<opts->ifiles.size(); i++) { analysis.AddFile(opts->ifiles[i]); } 
+  for (int i=0; i<opts->ifiles.size(); i++) { 
+    analysis.AddFile( opts->ifiles[i].c_str() ); 
+  } 
+
   analysis.RunAnalysis();
 
   TFile *out = new TFile(opts->args["OUT"].args.c_str(),"recreate"); 
   analysis.histos->Save(out); 
+  analysis.photonHistos->Save(out); 
   out->Close(); 
 
   // statistics 

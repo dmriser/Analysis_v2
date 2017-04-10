@@ -22,6 +22,7 @@
 #include <TROOT.h>
 #include <TChain.h>
 #include <TFile.h>
+#include "TString.h"
 
 /**
  * h22Reader is a class which relies on the h22Event class, it constructs a chain of events from file.
@@ -34,6 +35,7 @@ public :
    Int_t           fCurrent; // current number in chain
    Int_t           GSIM; // -1 (uninitialized) 0 (data) 1 (gsim)
 
+   //   const h22Event &event;
    h22Event event;
 
    // List of branches
@@ -118,6 +120,7 @@ public :
    h22Reader(int);
    void Init();
    void AddFile(TString);
+   void AddFile(std::string);
    int GetEntries(){return fchain->GetEntries(); }
    h22Event GetEvent(){return event;}
    std::string GetFilename(){return fchain->GetCurrentFile()->GetName();}

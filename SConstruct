@@ -10,7 +10,7 @@ import os, glob
 # Config h22 environment 
 env = Environment(ENV = {'PATH':os.environ['PATH']})
 env.ParseConfig("root-config --glibs --cflags")
-env.Append(CCFLAGS = ['-g'])
+env.Append(CCFLAGS = ['-g','-std=c++11'])
 #env.Append(CPPPATH = ['models/pbmodel/'], LIBPATH = ['models/pbmodel/'],LIBS = ['CPP_F1F209']) # Get FORTRAN model 
 #env.Append(CPPPATH = ['models/Brasse/'], LIBPATH = ['models/Brasse/'],LIBS = ['CPP_BRASSE']) # Get FORTRAN model 
 

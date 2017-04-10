@@ -1,6 +1,6 @@
 {
 
-  TFile *inputFile = TFile::Open("eid.root");
+  TFile *inputFile = TFile::Open("out.root");
 
   TH2I         *cc[6];
   TGraphErrors *mu[6];

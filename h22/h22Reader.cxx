@@ -95,6 +95,11 @@ void h22Reader::AddFile(TString _fname){
   return;
 }
 
+void h22Reader::AddFile(std::string _fname){
+  fchain->AddFile(_fname.c_str());
+  return;
+}
+
 
 /**< Init() must be run once to link the branches of the TChain to the h22Event class members*/
 void h22Reader::Init(){

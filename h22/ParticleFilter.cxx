@@ -439,7 +439,7 @@ vector<int> ParticleFilter::getVectorOfParticleIndices(h22Event event, int pid){
 
     if(pid == 11){
         for(int ipart=0; ipart<event.gpart; ++ipart){
-            event.vz[ipart] = corr.vz(event, ipart, runno, MC);
+	  //            event.vz[ipart] = corr.vz(event, ipart, runno, MC);
             if (electronSelector->passesFast(event, ipart)){ particles.push_back(ipart); }
         }
     }

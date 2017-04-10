@@ -69,7 +69,7 @@ void Corrections::CorrectElectronEvent(h22ElectronEvent *event, int runno, int G
 	  
 	  if(event->q[ipart] != 0){
 	    event->corr_sc_t[ipart] = hadron_sct((*event), ipart, runno, GSIM);
-	    beta = event->sc_r[ipart]/event->corr_sc_t[ipart]/speed_of_light;
+	    beta = event->sc_r[ipart]/(event->corr_sc_t[ipart]-startTime)/speed_of_light;
 	  }
 
 	  event->corr_b[ipart] = beta;

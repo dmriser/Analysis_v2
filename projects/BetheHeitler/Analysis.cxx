@@ -53,7 +53,7 @@ public:
 // the methods of h22Reader runno()
 // and GSIM const.
 void MyAnalysis::Initialize(){
-  filter->set_info(runno(), GSIM);
+  filter->set_info(GetRunNumber(), GSIM);
   builder     = new PhysicsEventBuilder();
 
   angleBins      = new DBins(200, -12.0, 65);

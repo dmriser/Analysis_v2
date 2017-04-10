@@ -106,7 +106,7 @@ void EIDCutGenerator::Loop(int numberOfEvents){
 }
 
 void EIDCutGenerator::ProcessEvent(){
-  TVector3 uvw = event.uvw(0);
+  TVector3 uvw = event.GetUVWVector(0);
   int sector = event.ec_sect[0]-1;
   if (sector > -1 && event.q[0] < 0){
       h1_vz[sector]          ->Fill(event.vz[0]);

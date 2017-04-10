@@ -57,7 +57,7 @@ public:
 void Pi0Calibration::Initialize(){
 
     filter = new ParticleFilter(pars);
-    filter->set_info(GSIM, runno());
+    filter->set_info(GSIM, GetRunNumber());
 
     numberPhotons = new TH1F("numberPhotons","",6,0,5); 
 	  
@@ -79,11 +79,11 @@ void Pi0Calibration::ProcessEvent(){
   if (photons.size() >= 2){
 
     for (int iphot=0; iphot<photons.size(); iphot++){
-      TLorentzVector firstPhoton = event.getTLorentzVector(photons[iphot], 22); 
+      TLorentzVector firstPhoton = event.GetTLorentzVector(photons[iphot], 22); 
       for(int jphot=iphot+1; iphot<photons.size(); iphot++){
 	
 	
-	TLorentzVector otherPhoton = event.getTLorentzVector(photons[jphot], 22);
+	TLorentzVector otherPhoton = event.GetTLorentzVector(photons[jphot], 22);
 	TLorentzVector pion        = firstPhoton+otherPhoton; 
 	
 	int sector = floor((pion.Phi()*to_degrees+180.0)/60.0); 

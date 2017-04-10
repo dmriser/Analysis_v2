@@ -56,7 +56,7 @@ public:
 // the methods of h22Reader runno()
 // and GSIM const.
 void MyAnalysis::Initialize(){
-  filter->set_info(runno(), GSIM);
+  filter->set_info(GetRunNumber(), GSIM);
   builder       = new PhysicsEventBuilder();
   eventSelector = new PhysicsEventSelector();
 
@@ -73,7 +73,7 @@ void MyAnalysis::Initialize(){
   eventSelector->add_cut(qqCut);
 
   numberOfEvents = 0;
-  runNumber      = runno();
+  runNumber      = GetRunNumber();
   charge         = 0.0; 
 
   cout << "[MyAnalysis::Init] Initialization done" << endl;

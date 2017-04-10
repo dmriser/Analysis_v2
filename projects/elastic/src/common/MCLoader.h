@@ -61,15 +61,15 @@ MCLoader::MCLoader(PhysicsEventSelector *eventCriteria, Parameters *pars, std::s
   rec->Initialize(); 
   gen->Initialize(); 
 
-  filter->getSelector(11)->disable_by_regex("Samp"); 
-  filter->getSelector(11)->disable_by_regex("Charge"); 
-  filter->getSelector(11)->disable_by_regex("CC"); 
-  filter->getSelector(11)->disable_by_regex("Fid"); 
+  filter->GetSelector(11)->DisableByRegex("Samp"); 
+  filter->GetSelector(11)->DisableByRegex("Charge"); 
+  filter->GetSelector(11)->DisableByRegex("CC"); 
+  filter->GetSelector(11)->DisableByRegex("Fid"); 
 
 }
 
 MCLoader::~MCLoader(){
-  filter->getSelector(11)->summarize(); 
+  filter->GetSelector(11)->PrintSummary(); 
 }
 
 void MCLoader::Initialize(){
@@ -82,7 +82,7 @@ void MCLoader::ProcessEvent(){
     // -----------------------------------------------------
     //          Fill Generated
     // -----------------------------------------------------
-    TLorentzVector genElectron = event.gen_particle(11); 
+    TLorentzVector genElectron = event.GetGeneratedParticle(11);
     PhysicsEvent   genEvent    = builder.getPhysicsEvent(genElectron); 
     int            genSector   = phiToSector(genElectron.Phi()*to_degrees);
 
@@ -99,7 +99,7 @@ void MCLoader::ProcessEvent(){
     // -----------------------------------------------------
     vector<int> electrons = filter->getVectorOfParticleIndices(event, 11);
     if ( !electrons.empty() ){
-      TLorentzVector electron   = event.getTLorentzVector(electrons[0], 11);
+      TLorentzVector electron   = event.GetTLorentzVector(electrons[0], 11);
       int sector                = event.dc_sect[electrons[0]]-1; 
       PhysicsEvent physicsEvent = builder.getPhysicsEvent(electron);
       

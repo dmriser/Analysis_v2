@@ -56,7 +56,7 @@ int main(int argc, char * argv[])
     nev = smallest(nev, fReader.GetEntries());
 
     // Setting important constants
-    int runno = fReader.runno();
+    int runno = fReader.GetRunNumber();
 
     // Setting up PID and Corrections
     ParticleFilter filter(eparfile);
@@ -79,7 +79,7 @@ int main(int argc, char * argv[])
         h22Event event = fReader.GetEvent();
 
         // keeping track of run number and making sure particle filter knows about it as well.
-        if ( runno != fReader.runno() ){ runno = fReader.runno(); filter.set_info(GSIM, runno); }
+        if ( runno != fReader.GetRunNumber() ){ runno = fReader.GetRunNumber(); filter.set_info(GSIM, runno); }
 
         // Load up hadrons if we've electron.
         if (filter.has_electron(event))

@@ -74,7 +74,7 @@ void HistogramLoader::Loop(){
 }
 
 void HistogramLoader::ProcessEvent(){
-  event.printEvent();
+  event.PrintEvent();
 }
 
 #endif

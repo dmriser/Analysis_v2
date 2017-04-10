@@ -144,7 +144,7 @@ void HIDCalibration::Initialize(){
     }
 
     filter = new ParticleFilter(pars);
-    filter->set_info(GSIM, runno());
+    filter->set_info(GSIM, GetRunNumber());
     
 }
 
@@ -179,7 +179,7 @@ void HIDCalibration::ProcessEvent(){
 
         // Take the fastest one
         int electronIndex = electronCandidates[0];
-        double start_time = corr.electron_sct(event,electronIndex,runno(),GSIM) - event.sc_r[electronIndex]/speed_of_light;
+        double start_time = corr.electron_sct(event,electronIndex,GetRunNumber(),GSIM) - event.sc_r[electronIndex]/speed_of_light;
 
         for (int ipart=0; ipart<event.gpart; ipart++){
 
@@ -189,7 +189,7 @@ void HIDCalibration::ProcessEvent(){
 
                 int sector = event.sc_sect[ipart]-1;
                 if (sector > -1){
-                    double cbeta   = event.sc_r[ipart]/(corr.hadron_sct(event,ipart,runno(),GSIM)-start_time);
+                    double cbeta   = event.sc_r[ipart]/(corr.hadron_sct(event,ipart,GetRunNumber(),GSIM)-start_time);
                     double beta    = cbeta/speed_of_light;
                     double tofmass = sqrt(pow(event.p[ipart],2)*(1-pow(beta,2))/pow(beta,2));
 
@@ -197,7 +197,7 @@ void HIDCalibration::ProcessEvent(){
                     else if (event.q[ipart] > 0)  { FillPositiveHistos(ipart, sector, beta, tofmass); }
                     else if (event.q[ipart] == 0) { FillNeutralHistos(ipart, sector, beta, tofmass);  }
 
-                    h1_dvz[sector]->Fill(corr.vz(event,electronIndex,runno(),GSIM)-corr.vz(event,ipart,runno(),GSIM));
+                    h1_dvz[sector]->Fill(corr.vz(event,electronIndex,GetRunNumber(),GSIM)-corr.vz(event,ipart,GetRunNumber(),GSIM));
                 }
             }
 

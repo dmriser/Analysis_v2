@@ -65,7 +65,7 @@ void KinematicTree::ProcessEvent(){
   }
 
   else {
-    electron         = event.gen_particle(11);
+    electron         = event.GetGeneratedParticle(11);
     eventHasElectron = true; 
 
     cout << "Electron set from MC pz=" << electron.Pz() << endl;

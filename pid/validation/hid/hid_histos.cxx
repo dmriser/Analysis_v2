@@ -55,7 +55,7 @@ int main(int argc, char * argv[]){
     nev = smallest(nev, fReader.GetEntries());
     
     // Setting important constants
-    int runno = fReader.runno();
+    int runno = fReader.GetRunNumber();
     
     // Setting up PID and Corrections
     ParticleFilter filter(eparfile);
@@ -110,7 +110,7 @@ int main(int argc, char * argv[]){
         h22Event event = fReader.GetEvent();
         
         // keeping track of run number and making sure particle filter knows about it as well.
-        if ( runno != fReader.runno() ){ runno = fReader.runno(); filter.set_info(GSIM, runno); }
+        if ( runno != fReader.GetRunNumber() ){ runno = fReader.GetRunNumber(); filter.set_info(GSIM, runno); }
         
         // Load up hadrons if we've electron.
         if (filter.has_electron(event))
@@ -126,14 +126,14 @@ int main(int argc, char * argv[]){
                 map<string,bool> results = filter.hid_map(event, ipart);
                 
                 if (results["PROT_DVZ"])   { h1_dvz[1][0]->Fill(corr.vz(event,0,runno,GSIM)-corr.vz(event,ipart,runno,GSIM)); h1_dvz[1][sector]->Fill(corr.vz(event,0,runno,GSIM)-corr.vz(event,ipart,runno,GSIM)); }
-                if (results["PROT_DCFID"]) { h2_dcr1[1][0]->Fill(event.rot_dc1x(ipart), event.rot_dc1y(ipart)); h2_dcr1[1][sector]->Fill(event.rot_dc1x(ipart), event.rot_dc1y(ipart)); }
+                if (results["PROT_DCFID"]) { h2_dcr1[1][0]->Fill(event.GetRotatedDCR1PosX(ipart), event.GetRotatedDCR1PosY(ipart)); h2_dcr1[1][sector]->Fill(event.GetRotatedDCR1PosX(ipart), event.GetRotatedDCR1PosY(ipart)); }
                 
                 //! Fill Raw
                 h1_dvz[0][0]  ->Fill(corr.vz(event,0,runno,GSIM) - corr.vz(event,ipart,runno,GSIM));
-                h2_dcr1[0][0] ->Fill(event.rot_dc1x(ipart), event.rot_dc1y(ipart));
+                h2_dcr1[0][0] ->Fill(event.GetRotatedDCR1PosX(ipart), event.GetRotatedDCR1PosY(ipart));
                 
                 h1_dvz[0][sector]  ->Fill(corr.vz(event,0,runno,GSIM) - corr.vz(event,ipart,runno,GSIM));
-                h2_dcr1[0][sector] ->Fill(event.rot_dc1x(ipart), event.rot_dc1y(ipart));
+                h2_dcr1[0][sector] ->Fill(event.GetRotatedDCR1PosX(ipart), event.GetRotatedDCR1PosY(ipart));
                 
                 if (event.q[ipart] > 0)
                 {
@@ -188,9 +188,9 @@ int main(int argc, char * argv[]){
                 int sector  = event.dc_sect[prot_index];
                 
                 h1_dvz[2][0]              ->Fill(corr.vz(event,0,runno,GSIM) - corr.vz(event,prot_index,runno,GSIM));
-                h2_dcr1[2][0]             ->Fill(event.rot_dc1x(prot_index), event.rot_dc1y(prot_index));
+                h2_dcr1[2][0]             ->Fill(event.GetRotatedDCR1PosX(prot_index), event.GetRotatedDCR1PosY(prot_index));
                 h1_dvz[2][sector]         ->Fill(corr.vz(event,0,runno,GSIM) - corr.vz(event,prot_index,runno,GSIM));
-                h2_dcr1[2][sector]        ->Fill(event.rot_dc1x(prot_index), event.rot_dc1y(prot_index));
+                h2_dcr1[2][sector]        ->Fill(event.GetRotatedDCR1PosX(prot_index), event.GetRotatedDCR1PosY(prot_index));
                 h2_p_db_prot[2][0]        ->Fill(event.p[prot_index],(event.p[prot_index]/sqrt(event.p[prot_index]*event.p[prot_index] + pid_to_mass(2212)*pid_to_mass(2212)))-beta);
                 h2_p_beta_prot[2][0]      ->Fill(event.p[prot_index],beta);
                 h2_p_db_prot[2][sector]   ->Fill(event.p[prot_index],(event.p[prot_index]/sqrt(event.p[prot_index]*event.p[prot_index] + pid_to_mass(2212)*pid_to_mass(2212)))-beta);
@@ -204,9 +204,9 @@ int main(int argc, char * argv[]){
                 int sector  = event.dc_sect[pip_index];
                 
                 h1_dvz[2][0]              ->Fill(corr.vz(event,0,runno,GSIM) - corr.vz(event,pip_index,runno,GSIM));
-                h2_dcr1[2][0]             ->Fill(event.rot_dc1x(pip_index), event.rot_dc1y(pip_index));
+                h2_dcr1[2][0]             ->Fill(event.GetRotatedDCR1PosX(pip_index), event.GetRotatedDCR1PosY(pip_index));
                 h1_dvz[2][sector]         ->Fill(corr.vz(event,0,runno,GSIM) - corr.vz(event,pip_index,runno,GSIM));
-                h2_dcr1[2][sector]        ->Fill(event.rot_dc1x(pip_index), event.rot_dc1y(pip_index));
+                h2_dcr1[2][sector]        ->Fill(event.GetRotatedDCR1PosX(pip_index), event.GetRotatedDCR1PosY(pip_index));
                 h2_p_db_pip[2][0]         ->Fill(event.p[pip_index],(event.p[pip_index]/sqrt(event.p[pip_index]*event.p[pip_index] + pid_to_mass(211)*pid_to_mass(211)))-beta);
                 h2_p_beta_pip[2][0]       ->Fill(event.p[pip_index],beta);
                 h2_p_db_pip[2][sector]    ->Fill(event.p[pip_index],(event.p[pip_index]/sqrt(event.p[pip_index]*event.p[pip_index] + pid_to_mass(211)*pid_to_mass(211)))-beta);
@@ -219,9 +219,9 @@ int main(int argc, char * argv[]){
                 int sector  = event.dc_sect[pim_index];
                 
                 h1_dvz[2][0]              ->Fill(corr.vz(event,0,runno,GSIM) - corr.vz(event,pim_index,runno,GSIM));
-                h2_dcr1[2][0]             ->Fill(event.rot_dc1x(pim_index), event.rot_dc1y(pim_index));
+                h2_dcr1[2][0]             ->Fill(event.GetRotatedDCR1PosX(pim_index), event.GetRotatedDCR1PosY(pim_index));
                 h1_dvz[2][sector]         ->Fill(corr.vz(event,0,runno,GSIM) - corr.vz(event,pim_index,runno,GSIM));
-                h2_dcr1[2][sector]        ->Fill(event.rot_dc1x(pim_index), event.rot_dc1y(pim_index));
+                h2_dcr1[2][sector]        ->Fill(event.GetRotatedDCR1PosX(pim_index), event.GetRotatedDCR1PosY(pim_index));
                 h2_p_db_pim[2][0]         ->Fill(event.p[pim_index],(event.p[pim_index]/sqrt(event.p[pim_index]*event.p[pim_index] + pid_to_mass(-211)*pid_to_mass(-211)))-beta);
                 h2_p_beta_pim[2][0]       ->Fill(event.p[pim_index],beta);
                 h2_p_db_pim[2][sector]    ->Fill(event.p[pim_index],(event.p[pim_index]/sqrt(event.p[pim_index]*event.p[pim_index] + pid_to_mass(-211)*pid_to_mass(-211)))-beta);

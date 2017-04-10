@@ -54,7 +54,7 @@ void MyAnalysis::OptimizeLoop(int numberOfEvents){
   }
 
   // optimize selector 
-  filter->getSelector(11)->optimize();
+  filter->GetSelector(11)->Optimize();
 }
 
 void MyAnalysis::ProcessEvent(){
@@ -71,7 +71,7 @@ void MyAnalysis::ProcessEvent(){
     h22ElectronEvent electronEvent(event);   
     electronEvent.SetElectronIndex(electronIndices.front());
     electronEvent.SetElectron(electrons.front()); 
-    corr.CorrectElectronEvent(&electronEvent, runno(), GSIM); 
+    corr.CorrectElectronEvent(&electronEvent, GetRunNumber(), GSIM); 
 
       if(!pims.empty()){
 	PhysicsEvent ev = builder->getPhysicsEvent(electrons[0], pims.back()); 
@@ -122,7 +122,7 @@ int main(int argc, char *argv[]){
   out->Close(); 
 
   // statistics 
-  analysis.filter->getSelector(11)->summarize();
+  analysis.filter->GetSelector(11)->PrintSummary();
 
   return 0;
 }

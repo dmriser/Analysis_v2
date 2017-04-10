@@ -30,9 +30,9 @@ class Fill : public GenericAnalysis {
 public:
     Fill(Parameters *pars, h22Options *opts, std::string outputFile) : outputFilename(outputFile), GenericAnalysis(opts) { filter = new ParticleFilter(pars); }
     ~Fill(){
-        filter->getSelector(11)->summarize();
-        filter->getSelector(211)->summarize();
-        filter->getSelector(-211)->summarize();
+        filter->GetSelector(11)->PrintSummary();
+        filter->GetSelector(211)->PrintSummary();
+        filter->GetSelector(-211)->PrintSummary();
     }
 
     Corrections         *corr;
@@ -49,7 +49,7 @@ public:
 };
 
 void Fill::Initialize(){
-    filter->set_info(runno(), GSIM);
+    filter->set_info(GetRunNumber(), GSIM);
     builder = new PhysicsEventBuilder();
     corr    = new Corrections();
 

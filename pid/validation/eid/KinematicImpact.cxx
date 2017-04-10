@@ -45,8 +45,8 @@ void Efficiency::Initialize(){
   filter->set_info(0,1);
 
   selector = new DataEventSelector();
-  selector = filter->getSelector(11);
-  selector->enable_all();
+  selector = filter->GetSelector(11);
+  selector->EnableAll();
 
   all      = new TH2F("all","all",200,0.8,3.1,200,0.5,5.0);
   combined = new TH2F("combined","combined",200,0.8,3.1,200,0.5,5.0);
@@ -66,7 +66,7 @@ void Efficiency::ProcessEvent(){
 
   for (int ipart=0; ipart<event.gpart; ++ipart){  
     if (event.q[ipart] == -1){ 
-      PhysicsEvent physicsEvent = builder->getPhysicsEvent(event.getTLorentzVector(ipart, 11)); 
+      PhysicsEvent physicsEvent = builder->getPhysicsEvent(event.GetTLorentzVector(ipart, 11)); 
       all->Fill(physicsEvent.w, physicsEvent.qq); 
       
       // Check every cut possible 
@@ -79,7 +79,7 @@ void Efficiency::ProcessEvent(){
 	}
       }
 
-      if (selector->passes(event, ipart)){ combined->Fill(physicsEvent.w, physicsEvent.qq); }
+      if (selector->IsPassed(event, ipart)){ combined->Fill(physicsEvent.w, physicsEvent.qq); }
     }
   }
 

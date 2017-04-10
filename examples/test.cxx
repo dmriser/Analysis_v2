@@ -55,7 +55,7 @@ int main(int argc, char * argv[])
     long int nev = opts.args["N"].arg;
     if (nev > fReader->GetEntries()) nev = fReader->GetEntries();
     
-    int runno = fReader->runno();
+    int runno = fReader->GetRunNumber();
     
     int n_ec_samp_fail, n_ec_geo_fail, n_ec_edep_fail;
     int n_dc_r1_fail, n_dc_r3_fail;
@@ -83,7 +83,7 @@ int main(int argc, char * argv[])
         h22Event event = fReader->GetEvent();
      
         // keep runno up to date
-        if (runno != fReader->runno() ) { runno = fReader->runno(); filter.set_info(runno,opts.args["MC"].arg); std::cout << runno << std::endl;}
+        if (runno != fReader->GetRunNumber() ) { runno = fReader->GetRunNumber(); filter.set_info(runno,opts.args["MC"].arg); std::cout << runno << std::endl;}
         
 
         if (filter.has_electron(event))

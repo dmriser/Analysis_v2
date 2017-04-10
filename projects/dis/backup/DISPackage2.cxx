@@ -130,7 +130,7 @@ void DISHistograms::fill_gen(DEvent event)
       }
   }
   
-  TLorentzVector gen_electron(event.tracks.mcpx(e_index), event.tracks.mcpy(e_index), event.tracks.mcpz(e_index), event.tracks.mcp[e_index]);
+  TLorentzVector gen_electron(event.tracks.GetMCPx(e_index), event.tracks.GetMCPy(e_index), event.tracks.GetMCPz(e_index), event.tracks.mcp[e_index]);
   event.set_electron(gen_electron); 
 
   int s = 1+floor(event.tracks.mcphi[e_index]/60.0);

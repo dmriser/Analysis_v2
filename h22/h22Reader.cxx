@@ -105,8 +105,8 @@ void h22Reader::AddFile(std::string _fname){
 void h22Reader::Init(){
 
   if ( GetEntries() > 0 ) {
-    if ( runno() > 37000 && runno() < 39000 )      GSIM = 0;
-    else if ( runno() > 50000 && runno() < 60000 ) GSIM = 0; 
+    if ( GetRunNumber() > 37000 && GetRunNumber() < 39000 )      GSIM = 0;
+    else if ( GetRunNumber() > 50000 && GetRunNumber() < 60000 ) GSIM = 0;
     else                                           GSIM = 1;
   } 
 
@@ -185,7 +185,7 @@ string h22Reader::GetFilenameChunk(int stringStart, int stringLen)
   return fname.substr(stringStart,stringLen); ;
 }
 
-int h22Reader::runno(){
+int h22Reader::GetRunNumber(){
   int runno = 0;
 
   TString filename = fchain->GetFile()->GetName(); 

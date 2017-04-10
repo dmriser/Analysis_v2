@@ -43,7 +43,7 @@ public:
 // the methods of h22Reader runno()
 // and GSIM const.
 void MyAnalysis::Initialize(){
-  filter->set_info(runno(), GSIM);
+  filter->set_info(GetRunNumber(), GSIM);
   builder     = new PhysicsEventBuilder();
 
   pTpip  = new TH1I("pTpip","",100,0,1.1);

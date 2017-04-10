@@ -145,7 +145,7 @@ void DISHistograms::fill_gen(DEvent event, int index)
       }
   }
   
-  TLorentzVector gen_electron(event.tracks.mcpx(e_index), event.tracks.mcpy(e_index), event.tracks.mcpz(e_index), event.tracks.mcp[e_index]);
+  TLorentzVector gen_electron(event.tracks.GetMCPx(e_index), event.tracks.GetMCPy(e_index), event.tracks.GetMCPz(e_index), event.tracks.mcp[e_index]);
   event.set_electron(gen_electron); 
 
   int s = 1+floor(event.tracks.mcphi[e_index]/60.0);
@@ -836,7 +836,7 @@ void DISManager::init()
     histos.init();
   
     // Setting up Electron ID from Nathan, needs to be updated while running. 
-    nathan.set_info(reader[0].runno(), reader[0].GSIM);
+    nathan.set_info(reader[0].GetRunNumber(), reader[0].GSIM);
     
     // Adding Cuts to DIS Event Selector 
     dis_selector.add_cut( qq_cut );
@@ -1371,7 +1371,7 @@ void DISManager::loop(int index)
 {
   // General Setup 
   int nev   = reader[index].GetEntries(); 
-  int runno = reader[index].runno(); 
+  int runno = reader[index].GetRunNumber(); 
 
   MomCorr_e1f momcorr(momcorr_path);
   
@@ -1382,7 +1382,7 @@ void DISManager::loop(int index)
 	if (iev%1000 == 0){ cout << "\r done " << iev << " of " << nev << flush; } 
 	reader[index].GetEntry(iev); 
 	DEvent event( reader[index].GetEvent() );
-	if (runno != reader[index].runno()) { runno = reader[index].runno(); nathan.set_info(runno, reader[index].GSIM); }
+	if (runno != reader[index].GetRunNumber()) { runno = reader[index].GetRunNumber(); nathan.set_info(runno, reader[index].GSIM); }
 	
 	int e_index = nathan.get_electron(event.tracks); 
 	if (e_index > -123) {
@@ -1409,9 +1409,9 @@ void DISManager::loop(int index)
 	    int genElectronIndex = event.getGeneratedIndex(11);
 
 	    if (genElectronIndex > -123) {
-	      TLorentzVector genElectronVector(event.tracks.mcpx(genElectronIndex),
-					       event.tracks.mcpy(genElectronIndex),
-					       event.tracks.mcpz(genElectronIndex),
+	      TLorentzVector genElectronVector(event.tracks.GetMCPx(genElectronIndex),
+					       event.tracks.GetMCPy(genElectronIndex),
+					       event.tracks.GetMCPz(genElectronIndex),
 					       event.tracks.mcp[genElectronIndex]); 
 
 	      TLorentzVector recElectronVector(event.tracks.cx[e_index]*event.tracks.p[e_index],

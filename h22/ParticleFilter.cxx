@@ -89,8 +89,8 @@ ParticleFilter::ParticleFilter(Parameters *params) : pars(params){
 
 
     // Set limits on cuts from parameters
-    negativity_cut->set_min(-1.1);
-    negativity_cut->set_max(-0.9);
+    negativity_cut->SetMin(-1.1);
+    negativity_cut->SetMax(-0.9);
 
     cc_fid_cut->a = params->getParameter("EL_CC_FIDA").getValue(0);
     cc_fid_cut->b = params->getParameter("EL_CC_FIDB").getValue(0);
@@ -101,13 +101,13 @@ ParticleFilter::ParticleFilter(Parameters *params) : pars(params){
     dcr3_fid_cut->height = params->getParameter("EL_DCR3_FIDH").getValue(0);
     dcr3_fid_cut->angle  = params->getParameter("EL_DCR3_FIDA").getValue(0);
 
-    edep_cut->set_min( params->getParameter("EL_EC_EDEP_MIN").getValue(0) );
-    ecu_cut->set_min( params->getParameter("EL_ECU_MIN").getValue(0) );
-    ecu_cut->set_max( params->getParameter("EL_ECU_MAX").getValue(0) );
-    ecv_cut->set_min( params->getParameter("EL_ECV_MIN").getValue(0) );
-    ecv_cut->set_max( params->getParameter("EL_ECV_MAX").getValue(0) );
-    ecw_cut->set_min( params->getParameter("EL_ECW_MIN").getValue(0) );
-    ecw_cut->set_max( params->getParameter("EL_ECW_MAX").getValue(0) );
+    edep_cut->SetMin( params->getParameter("EL_EC_EDEP_MIN").getValue(0) );
+    ecu_cut->SetMin( params->getParameter("EL_ECU_MIN").getValue(0) );
+    ecu_cut->SetMax( params->getParameter("EL_ECU_MAX").getValue(0) );
+    ecv_cut->SetMin( params->getParameter("EL_ECV_MIN").getValue(0) );
+    ecv_cut->SetMax( params->getParameter("EL_ECV_MAX").getValue(0) );
+    ecw_cut->SetMin( params->getParameter("EL_ECW_MIN").getValue(0) );
+    ecw_cut->SetMax( params->getParameter("EL_ECW_MAX").getValue(0) );
 
     sf_s1_cut->am     = params->getParameter("EL_SF_MU_A").getValue(0);
     sf_s1_cut->bm     = params->getParameter("EL_SF_MU_B").getValue(0);
@@ -229,48 +229,48 @@ ParticleFilter::ParticleFilter(Parameters *params) : pars(params){
     cc_theta_s6_cut->ds     = params->getParameter("EL_CCT_SIGMA_D").getValue(5);
     cc_theta_s6_cut->nsigma = params->getParameter("EL_CCT_NSIGMA").getValue(0);
 
-    vz_cut->set_min( params->getParameter("EL_VZ_MIN").getValue(0) );
-    vz_cut->set_max( params->getParameter("EL_VZ_MAX").getValue(0) );
+    vz_cut->SetMin( params->getParameter("EL_VZ_MIN").getValue(0) );
+    vz_cut->SetMax( params->getParameter("EL_VZ_MAX").getValue(0) );
 
-    nphe_cut->set_min(25);
-    nphe_cut->set_max(1000);
+    nphe_cut->SetMin(25);
+    nphe_cut->SetMax(1000);
 
-    p_cut->set_min(0.5);
-    p_cut->set_max(100.0);
+    p_cut->SetMin(0.5);
+    p_cut->SetMax(100.0);
 
     // Push back the cuts
-    electronSelector->add_cut( negativity_cut );
-    electronSelector->add_cut( nphe_cut );
-    electronSelector->add_cut( p_cut );
-    electronSelector->add_cut( cc_fid_cut );
-    electronSelector->add_cut( cc_phi_match_cut );
-    electronSelector->add_cut( cc_theta_s1_cut );
-    electronSelector->add_cut( cc_theta_s2_cut );
-    electronSelector->add_cut( cc_theta_s3_cut );
-    electronSelector->add_cut( cc_theta_s4_cut );
-    electronSelector->add_cut( cc_theta_s5_cut );
-    electronSelector->add_cut( cc_theta_s6_cut );
-    electronSelector->add_cut( dcr1_fid_cut );
-    electronSelector->add_cut( dcr3_fid_cut );
-    electronSelector->add_cut( edep_cut );
-    electronSelector->add_cut( ecu_cut );
-    electronSelector->add_cut( ecv_cut );
-    electronSelector->add_cut( ecw_cut );
-    electronSelector->add_cut( sf_s1_cut );
-    electronSelector->add_cut( sf_s2_cut );
-    electronSelector->add_cut( sf_s3_cut );
-    electronSelector->add_cut( sf_s4_cut );
-    electronSelector->add_cut( sf_s5_cut );
-    electronSelector->add_cut( sf_s6_cut );
+    electronSelector->AddCut( negativity_cut );
+    electronSelector->AddCut( nphe_cut );
+    electronSelector->AddCut( p_cut );
+    electronSelector->AddCut( cc_fid_cut );
+    electronSelector->AddCut( cc_phi_match_cut );
+    electronSelector->AddCut( cc_theta_s1_cut );
+    electronSelector->AddCut( cc_theta_s2_cut );
+    electronSelector->AddCut( cc_theta_s3_cut );
+    electronSelector->AddCut( cc_theta_s4_cut );
+    electronSelector->AddCut( cc_theta_s5_cut );
+    electronSelector->AddCut( cc_theta_s6_cut );
+    electronSelector->AddCut( dcr1_fid_cut );
+    electronSelector->AddCut( dcr3_fid_cut );
+    electronSelector->AddCut( edep_cut );
+    electronSelector->AddCut( ecu_cut );
+    electronSelector->AddCut( ecv_cut );
+    electronSelector->AddCut( ecw_cut );
+    electronSelector->AddCut( sf_s1_cut );
+    electronSelector->AddCut( sf_s2_cut );
+    electronSelector->AddCut( sf_s3_cut );
+    electronSelector->AddCut( sf_s4_cut );
+    electronSelector->AddCut( sf_s5_cut );
+    electronSelector->AddCut( sf_s6_cut );
     //    electronSelector->add_cut( qc_cut );
-    electronSelector->add_cut( vz_cut );
+    electronSelector->AddCut( vz_cut );
 
     // This can be overridden by the user by just
     // turning off the ones you don't want. This
     // happens at the time of construction so your
     // call will be after.
-    electronSelector->enable_all();
-    electronSelector->disable_by_name("NPhe Cut");
+    electronSelector->EnableAll();
+    electronSelector->DisableByName("NPhe Cut");
 
     // Neutral Pion
     for(int s=0; s<6; s++){
@@ -280,117 +280,117 @@ ParticleFilter::ParticleFilter(Parameters *params) : pars(params){
     pi0_invmass_nsigma   = params->getParameter("PI0_INVMASS_NSIGMA").getValue(0);
 
     // Setting cut values for positive pions from file
-    pip_tofmass_cut_s1->set_min(params->getParameter("PIP_TOFMASS_MU").getValue(0) -
+    pip_tofmass_cut_s1->SetMin(params->getParameter("PIP_TOFMASS_MU").getValue(0) -
                                 params->getParameter("PIP_TOFMASS_NSIGMA").getValue(0)*
                                 params->getParameter("PIP_TOFMASS_SIGMA").getValue(0));
-    pip_tofmass_cut_s1->set_max(params->getParameter("PIP_TOFMASS_MU").getValue(0) +
+    pip_tofmass_cut_s1->SetMax(params->getParameter("PIP_TOFMASS_MU").getValue(0) +
                                 params->getParameter("PIP_TOFMASS_NSIGMA").getValue(0)*
                                 params->getParameter("PIP_TOFMASS_SIGMA").getValue(0));
 
-    pip_tofmass_cut_s2->set_min(params->getParameter("PIP_TOFMASS_MU").getValue(1) -
+    pip_tofmass_cut_s2->SetMin(params->getParameter("PIP_TOFMASS_MU").getValue(1) -
                                 params->getParameter("PIP_TOFMASS_NSIGMA").getValue(0)*
                                 params->getParameter("PIP_TOFMASS_SIGMA").getValue(1));
-    pip_tofmass_cut_s2->set_max(params->getParameter("PIP_TOFMASS_MU").getValue(1) +
+    pip_tofmass_cut_s2->SetMax(params->getParameter("PIP_TOFMASS_MU").getValue(1) +
                                 params->getParameter("PIP_TOFMASS_NSIGMA").getValue(0)*
                                 params->getParameter("PIP_TOFMASS_SIGMA").getValue(1));
 
-    pip_tofmass_cut_s3->set_min(params->getParameter("PIP_TOFMASS_MU").getValue(2) -
+    pip_tofmass_cut_s3->SetMin(params->getParameter("PIP_TOFMASS_MU").getValue(2) -
                                 params->getParameter("PIP_TOFMASS_NSIGMA").getValue(0)*
                                 params->getParameter("PIP_TOFMASS_SIGMA").getValue(2));
-    pip_tofmass_cut_s3->set_max(params->getParameter("PIP_TOFMASS_MU").getValue(2) +
+    pip_tofmass_cut_s3->SetMax(params->getParameter("PIP_TOFMASS_MU").getValue(2) +
                                 params->getParameter("PIP_TOFMASS_NSIGMA").getValue(0)*
                                 params->getParameter("PIP_TOFMASS_SIGMA").getValue(2));
 
-    pip_tofmass_cut_s4->set_min(params->getParameter("PIP_TOFMASS_MU").getValue(3) -
+    pip_tofmass_cut_s4->SetMin(params->getParameter("PIP_TOFMASS_MU").getValue(3) -
                                 params->getParameter("PIP_TOFMASS_NSIGMA").getValue(0)*
                                 params->getParameter("PIP_TOFMASS_SIGMA").getValue(3));
-    pip_tofmass_cut_s4->set_max(params->getParameter("PIP_TOFMASS_MU").getValue(3) +
+    pip_tofmass_cut_s4->SetMax(params->getParameter("PIP_TOFMASS_MU").getValue(3) +
                                 params->getParameter("PIP_TOFMASS_NSIGMA").getValue(0)*
                                 params->getParameter("PIP_TOFMASS_SIGMA").getValue(3));
 
-    pip_tofmass_cut_s5->set_min(params->getParameter("PIP_TOFMASS_MU").getValue(4) -
+    pip_tofmass_cut_s5->SetMin(params->getParameter("PIP_TOFMASS_MU").getValue(4) -
                                 params->getParameter("PIP_TOFMASS_NSIGMA").getValue(0)*
                                 params->getParameter("PIP_TOFMASS_SIGMA").getValue(4));
-    pip_tofmass_cut_s5->set_max(params->getParameter("PIP_TOFMASS_MU").getValue(4) +
+    pip_tofmass_cut_s5->SetMax(params->getParameter("PIP_TOFMASS_MU").getValue(4) +
                                 params->getParameter("PIP_TOFMASS_NSIGMA").getValue(0)*
                                 params->getParameter("PIP_TOFMASS_SIGMA").getValue(4));
 
-    pip_tofmass_cut_s6->set_min(params->getParameter("PIP_TOFMASS_MU").getValue(5) -
+    pip_tofmass_cut_s6->SetMin(params->getParameter("PIP_TOFMASS_MU").getValue(5) -
                                 params->getParameter("PIP_TOFMASS_NSIGMA").getValue(0)*
                                 params->getParameter("PIP_TOFMASS_SIGMA").getValue(5));
-    pip_tofmass_cut_s6->set_max(params->getParameter("PIP_TOFMASS_MU").getValue(5) +
+    pip_tofmass_cut_s6->SetMax(params->getParameter("PIP_TOFMASS_MU").getValue(5) +
                                 params->getParameter("PIP_TOFMASS_NSIGMA").getValue(0)*
                                 params->getParameter("PIP_TOFMASS_SIGMA").getValue(5));
 
     // Now for negative pions, this is so ugly.
-    pim_tofmass_cut_s1->set_min(params->getParameter("PIM_TOFMASS_MU").getValue(0) -
+    pim_tofmass_cut_s1->SetMin(params->getParameter("PIM_TOFMASS_MU").getValue(0) -
                                 params->getParameter("PIM_TOFMASS_NSIGMA").getValue(0)*
                                 params->getParameter("PIM_TOFMASS_SIGMA").getValue(0));
-    pim_tofmass_cut_s1->set_max(params->getParameter("PIM_TOFMASS_MU").getValue(0) +
+    pim_tofmass_cut_s1->SetMax(params->getParameter("PIM_TOFMASS_MU").getValue(0) +
                                 params->getParameter("PIM_TOFMASS_NSIGMA").getValue(0)*
                                 params->getParameter("PIM_TOFMASS_SIGMA").getValue(0));
 
-    pim_tofmass_cut_s2->set_min(params->getParameter("PIM_TOFMASS_MU").getValue(1) -
+    pim_tofmass_cut_s2->SetMin(params->getParameter("PIM_TOFMASS_MU").getValue(1) -
                                 params->getParameter("PIM_TOFMASS_NSIGMA").getValue(0)*
                                 params->getParameter("PIM_TOFMASS_SIGMA").getValue(1));
-    pim_tofmass_cut_s2->set_max(params->getParameter("PIM_TOFMASS_MU").getValue(1) +
+    pim_tofmass_cut_s2->SetMax(params->getParameter("PIM_TOFMASS_MU").getValue(1) +
                                 params->getParameter("PIM_TOFMASS_NSIGMA").getValue(0)*
                                 params->getParameter("PIM_TOFMASS_SIGMA").getValue(1));
 
-    pim_tofmass_cut_s3->set_min(params->getParameter("PIM_TOFMASS_MU").getValue(2) -
+    pim_tofmass_cut_s3->SetMin(params->getParameter("PIM_TOFMASS_MU").getValue(2) -
                                 params->getParameter("PIM_TOFMASS_NSIGMA").getValue(0)*
                                 params->getParameter("PIM_TOFMASS_SIGMA").getValue(2));
-    pim_tofmass_cut_s3->set_max(params->getParameter("PIM_TOFMASS_MU").getValue(2) +
+    pim_tofmass_cut_s3->SetMax(params->getParameter("PIM_TOFMASS_MU").getValue(2) +
                                 params->getParameter("PIM_TOFMASS_NSIGMA").getValue(0)*
                                 params->getParameter("PIM_TOFMASS_SIGMA").getValue(2));
 
-    pim_tofmass_cut_s4->set_min(params->getParameter("PIM_TOFMASS_MU").getValue(3) -
+    pim_tofmass_cut_s4->SetMin(params->getParameter("PIM_TOFMASS_MU").getValue(3) -
                                 params->getParameter("PIM_TOFMASS_NSIGMA").getValue(0)*
                                 params->getParameter("PIM_TOFMASS_SIGMA").getValue(3));
-    pim_tofmass_cut_s4->set_max(params->getParameter("PIM_TOFMASS_MU").getValue(3) +
+    pim_tofmass_cut_s4->SetMax(params->getParameter("PIM_TOFMASS_MU").getValue(3) +
                                 params->getParameter("PIM_TOFMASS_NSIGMA").getValue(0)*
                                 params->getParameter("PIM_TOFMASS_SIGMA").getValue(3));
 
-    pim_tofmass_cut_s5->set_min(params->getParameter("PIM_TOFMASS_MU").getValue(4) -
+    pim_tofmass_cut_s5->SetMin(params->getParameter("PIM_TOFMASS_MU").getValue(4) -
                                 params->getParameter("PIM_TOFMASS_NSIGMA").getValue(0)*
                                 params->getParameter("PIM_TOFMASS_SIGMA").getValue(4));
-    pim_tofmass_cut_s5->set_max(params->getParameter("PIM_TOFMASS_MU").getValue(4) +
+    pim_tofmass_cut_s5->SetMax(params->getParameter("PIM_TOFMASS_MU").getValue(4) +
                                 params->getParameter("PIM_TOFMASS_NSIGMA").getValue(0)*
                                 params->getParameter("PIM_TOFMASS_SIGMA").getValue(4));
 
-    pim_tofmass_cut_s6->set_min(params->getParameter("PIM_TOFMASS_MU").getValue(5) -
+    pim_tofmass_cut_s6->SetMin(params->getParameter("PIM_TOFMASS_MU").getValue(5) -
                                 params->getParameter("PIM_TOFMASS_NSIGMA").getValue(0)*
                                 params->getParameter("PIM_TOFMASS_SIGMA").getValue(5));
-    pim_tofmass_cut_s6->set_max(params->getParameter("PIM_TOFMASS_MU").getValue(5) +
+    pim_tofmass_cut_s6->SetMax(params->getParameter("PIM_TOFMASS_MU").getValue(5) +
                                 params->getParameter("PIM_TOFMASS_NSIGMA").getValue(0)*
                                 params->getParameter("PIM_TOFMASS_SIGMA").getValue(5));
 
-    dvz_cut->set_min(-2.50);
-    dvz_cut->set_max( 2.50);
+    dvz_cut->SetMin(-2.50);
+    dvz_cut->SetMax( 2.50);
 
     // Setup pion selectors
-    positivePionSelector->add_cut(dvz_cut);
-    positivePionSelector->add_cut(pip_tofmass_cut_s1);
-    positivePionSelector->add_cut(pip_tofmass_cut_s2);
-    positivePionSelector->add_cut(pip_tofmass_cut_s3);
-    positivePionSelector->add_cut(pip_tofmass_cut_s4);
-    positivePionSelector->add_cut(pip_tofmass_cut_s5);
-    positivePionSelector->add_cut(pip_tofmass_cut_s6);
-    positivePionSelector->enable_all();
+    positivePionSelector->AddCut(dvz_cut);
+    positivePionSelector->AddCut(pip_tofmass_cut_s1);
+    positivePionSelector->AddCut(pip_tofmass_cut_s2);
+    positivePionSelector->AddCut(pip_tofmass_cut_s3);
+    positivePionSelector->AddCut(pip_tofmass_cut_s4);
+    positivePionSelector->AddCut(pip_tofmass_cut_s5);
+    positivePionSelector->AddCut(pip_tofmass_cut_s6);
+    positivePionSelector->EnableAll();
 
 
-    negativePionSelector->add_cut(dvz_cut);
-    negativePionSelector->add_cut(pim_tofmass_cut_s1);
-    negativePionSelector->add_cut(pim_tofmass_cut_s2);
-    negativePionSelector->add_cut(pim_tofmass_cut_s3);
-    negativePionSelector->add_cut(pim_tofmass_cut_s4);
-    negativePionSelector->add_cut(pim_tofmass_cut_s5);
-    negativePionSelector->add_cut(pim_tofmass_cut_s6);
-    negativePionSelector->enable_all();
+    negativePionSelector->AddCut(dvz_cut);
+    negativePionSelector->AddCut(pim_tofmass_cut_s1);
+    negativePionSelector->AddCut(pim_tofmass_cut_s2);
+    negativePionSelector->AddCut(pim_tofmass_cut_s3);
+    negativePionSelector->AddCut(pim_tofmass_cut_s4);
+    negativePionSelector->AddCut(pim_tofmass_cut_s5);
+    negativePionSelector->AddCut(pim_tofmass_cut_s6);
+    negativePionSelector->EnableAll();
 }
 
 ParticleFilter::~ParticleFilter(){
-    electronSelector->summarize();
+    electronSelector->PrintSummary();
 }
 
 // setting mc and run number status internally, mostly used for interfacing with corrections class
@@ -403,7 +403,7 @@ bool ParticleFilter::has_electron(h22Event event){
     // Simply check 0 for now, later add support for
     // loop over gpart.
 
-    if (electronSelector->passesFast(event, 0)){
+    if (electronSelector->IsPassedFast(event, 0)){
         //        event.processingStage = 1;
         //        event.electronIndex   = 0;
         //        correctEventStartTime(event);
@@ -414,7 +414,7 @@ bool ParticleFilter::has_electron(h22Event event){
     return false;
 }
 
-DataEventSelector *ParticleFilter::getSelector(int pid){
+DataEventSelector *ParticleFilter::GetSelector(int pid){
 
     if (pid == 11){
         return electronSelector;
@@ -440,7 +440,7 @@ vector<int> ParticleFilter::getVectorOfParticleIndices(h22Event event, int pid){
     if(pid == 11){
         for(int ipart=0; ipart<event.gpart; ++ipart){
 	  //            event.vz[ipart] = corr.vz(event, ipart, runno, MC);
-            if (electronSelector->passesFast(event, ipart)){ particles.push_back(ipart); }
+            if (electronSelector->IsPassedFast(event, ipart)){ particles.push_back(ipart); }
         }
     }
 
@@ -474,7 +474,7 @@ vector<int> ParticleFilter::getVectorOfParticleIndices(h22Event event, int pid){
 
     // Sort the particles by momentum
     if (!particles.empty()){
-        particles = event.sortByMomentum(particles);
+        particles = event.SortByMomentum(particles);
     }
     
     return particles;
@@ -485,7 +485,7 @@ vector<TLorentzVector> ParticleFilter::getVectorOfTLorentzVectors(h22Event event
     vector<int> particleIndices = getVectorOfParticleIndices(event, pid);
 
     for (int ipart=0; ipart<particleIndices.size(); ipart++){
-        particles.push_back(event.getTLorentzVector(particleIndices[ipart], pid));
+        particles.push_back(event.GetTLorentzVector(particleIndices[ipart], pid));
     }
 
 
@@ -496,9 +496,9 @@ vector<TLorentzVector> ParticleFilter::getVectorOfTLorentzVectors(h22Event event
 
         if (photons.size() >= 2){
             for(int iphot=0; iphot<photons.size(); iphot++){
-                TLorentzVector firstPhoton = event.getTLorentzVector(photons[iphot], 22);
+                TLorentzVector firstPhoton = event.GetTLorentzVector(photons[iphot], 22);
                 for(int jphot=iphot+1; jphot<photons.size(); jphot++){
-                    TLorentzVector secondPhoton = event.getTLorentzVector(photons[jphot], 22);
+                    TLorentzVector secondPhoton = event.GetTLorentzVector(photons[jphot], 22);
                     TLorentzVector pi0 = firstPhoton+secondPhoton;
 
                     int sector = floor((180.0 + pi0.Phi()*to_degrees)/60.0);
@@ -534,7 +534,7 @@ std::map<int, TLorentzVector> ParticleFilter::getMapOfIndexAndTLorentzVector(h22
     std::map<int, TLorentzVector> results;
 
     for(int ipart=0; ipart<particles.size(); ipart++){
-        results[particles[ipart]] = event.getTLorentzVector(particles[ipart], pid);
+        results[particles[ipart]] = event.GetTLorentzVector(particles[ipart], pid);
     }
 
     return results;
@@ -547,32 +547,32 @@ std::map<std::string, bool> ParticleFilter::eid_map(h22Event event, int index){
     
     // Probably dirt slow
     string title = Form("CCTheta Cut %d", sector);
-    results["CC_THETA"] = (electronSelector->getCut(title.c_str())->passes(event, index));
+    results["CC_THETA"] = (electronSelector->GetCut(title.c_str())->IsPassed(event, index));
 
     title = Form("Samp Frac Cut %d", sector);
-    results["EC_SAMPLING"] = (electronSelector->getCut(title.c_str())->passes(event, index));
+    results["EC_SAMPLING"] = (electronSelector->GetCut(title.c_str())->IsPassed(event, index));
 
     title = "Z-Vertex Cut";
-    results["Z_VERTEX"] = (electronSelector->getCut(title.c_str())->passes(event, index));
+    results["Z_VERTEX"] = (electronSelector->GetCut(title.c_str())->IsPassed(event, index));
 
     title = "EC Edep Inner Cut";
-    results["EC_IN_OUT"] = (electronSelector->getCut(title.c_str())->passes(event, index));
+    results["EC_IN_OUT"] = (electronSelector->GetCut(title.c_str())->IsPassed(event, index));
 
     title = "DC Region 1 Fid Cut";
-    results["DC_R1_FID"] = (electronSelector->getCut(title.c_str())->passes(event, index));
+    results["DC_R1_FID"] = (electronSelector->GetCut(title.c_str())->IsPassed(event, index));
 
     title = "DC Region 3 Fid Cut";
-    results["DC_R3_FID"] = (electronSelector->getCut(title.c_str())->passes(event, index));
+    results["DC_R3_FID"] = (electronSelector->GetCut(title.c_str())->IsPassed(event, index));
 
     title = "CC Fid Cut";
-    results["CC_FID"] = (electronSelector->getCut(title.c_str())->passes(event, index));
+    results["CC_FID"] = (electronSelector->GetCut(title.c_str())->IsPassed(event, index));
 
     title = "CCPhiPMT Match Cut";
-    results["CC_PHI"] = (electronSelector->getCut(title.c_str())->passes(event, index));
+    results["CC_PHI"] = (electronSelector->GetCut(title.c_str())->IsPassed(event, index));
 
-    results["EC_FID"] = ( electronSelector->getCut("EC-U Cut")->passes(event, index) &&
-                          electronSelector->getCut("EC-V Cut")->passes(event, index) &&
-                          electronSelector->getCut("EC-W Cut")->passes(event, index) );
+    results["EC_FID"] = ( electronSelector->GetCut("EC-U Cut")->IsPassed(event, index) &&
+                          electronSelector->GetCut("EC-V Cut")->IsPassed(event, index) &&
+                          electronSelector->GetCut("EC-W Cut")->IsPassed(event, index) );
 
 
     return results;

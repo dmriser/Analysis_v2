@@ -94,9 +94,9 @@ int main(int argc, char * argv[])
         h22Event event = fReader.GetEvent();
         
         // keeping track of run number and making sure particle filter knows about it as well.
-        if ( runno != fReader.runno() )
+        if ( runno != fReader.GetRunNumber() )
 	  {
-	    runno = fReader.runno();
+	    runno = fReader.GetRunNumber();
 	    filter.set_info(GSIM, runno);
 	    nathan.set_info(runno, GSIM);
 	    cout.width(12); cout << runno; 

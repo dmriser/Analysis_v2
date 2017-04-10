@@ -42,8 +42,8 @@ void Efficiency::Initialize(){
   filter->set_info(0,1);
 
   selector = new DataEventSelector();
-  selector = filter->getSelector(11);
-  selector->enable_all();
+  selector = filter->GetSelector(11);
+  selector->EnableAll();
 
   int numberPBins = 80; 
   double pMin = 0.7; double pMax = 4.5;

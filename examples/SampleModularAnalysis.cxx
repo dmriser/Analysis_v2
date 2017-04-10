@@ -51,7 +51,7 @@ void SampleAnalysis::loop()
   
   //sel.set_runno( fReader->runno() );
   //sel.set_mc_status( false );
-  sel.set_info( fReader->runno(), false);
+  sel.set_info( fReader->GetRunNumber(), false);
   
   int n_electrons = 0;
 

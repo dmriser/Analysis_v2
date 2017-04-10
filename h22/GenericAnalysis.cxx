@@ -92,7 +92,7 @@ void GenericAnalysis::Loop(int numberOfEvents){
 
 void GenericAnalysis::ProcessEvent(){
   // Do something with event.vars
-  event.printEvent();
+  event.PrintEvent();
 }
 
 void GenericAnalysis::Save(){

@@ -44,7 +44,7 @@ public:
 };
 
 void Fill::Initialize(){
-  filter->set_info(runno(), GSIM);
+  filter->set_info(GetRunNumber(), GSIM);
   builder     = new PhysicsEventBuilder();
   
   for(int s=0; s<6; s++){
@@ -65,7 +65,7 @@ void Fill::ProcessEvent(){
 
   if ( !electrons.empty() && !protons.empty() ){
     
-    TLorentzVector electron = event.getTLorentzVector(electrons[0],11);
+    TLorentzVector electron = event.GetTLorentzVector(electrons[0],11);
     int s                   = event.dc_sect[electrons[0]] -1;
     
     if(s > -1){

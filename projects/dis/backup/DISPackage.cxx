@@ -229,7 +229,7 @@ void DISHistograms::fill_gen(DEvent event)
 	} 
     }
 
-  TLorentzVector gen_electron(event.tracks.mcpx(e_index), event.tracks.mcpy(e_index), event.tracks.mcpz(e_index), event.tracks.mcp[e_index]);
+  TLorentzVector gen_electron(event.tracks.GetMCPx(e_index), event.tracks.GetMCPy(e_index), event.tracks.GetMCPz(e_index), event.tracks.mcp[e_index]);
   event.set_electron(gen_electron); 
 
   // Filling gen histograms
@@ -820,7 +820,7 @@ void DISManager::loop(int index)
 	if (index == 1) {
 	  histos.fill_gen(event);
 
-	  event.set_electron( TLorentzVector(event.tracks.mcpx(0), event.tracks.mcpy(0), event.tracks.mcpz(0), event.tracks.mcp[0])); 
+	  event.set_electron( TLorentzVector(event.tracks.GetMCPx(0), event.tracks.GetMCPy(0), event.tracks.GetMCPz(0), event.tracks.mcp[0])); 
 	  int xb     = find_x_bin(event.x);
 	  int qqb    = find_qq_bin(event.x, event.qq); 
 	  int mcsect = floor(event.tracks.mcphi[0]/60.0) +1; 
@@ -875,7 +875,7 @@ void DISManager::loop(int index)
 	  if (index == 1) {
 	    histos.fill_gen(event);
 
-	    event.set_electron( TLorentzVector(event.tracks.mcpx(0), event.tracks.mcpy(0), event.tracks.mcpz(0), event.tracks.mcp[0])); 
+	    event.set_electron( TLorentzVector(event.tracks.GetMCPx(0), event.tracks.GetMCPy(0), event.tracks.GetMCPz(0), event.tracks.mcp[0])); 
 	    int xb     = find_x_bin(event.x);
 	    int qqb    = find_qq_bin(event.x, event.qq); 
 	    int mcsect = floor(event.tracks.mcphi[0]/60.0) +1; 

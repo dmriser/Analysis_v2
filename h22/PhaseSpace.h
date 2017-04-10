@@ -22,19 +22,19 @@ class PhaseSpace{
   ~PhaseSpace(){}
 
  protected:
-  std::string             name; 
-  std::vector<Dimension*> dims;
+  std::string             fName;
+  std::vector<Dimension*> fDims;
 
  public:
-  void addDimension(Dimension *d){ dims.push_back(d); } 
-  void setName(std::string inputName){ name = inputName; }
+  void addDimension(Dimension *d){ fDims.push_back(d); }
+  void setName(std::string inputName){ fName = inputName; }
 
-  Dimension           *getDimension(std::string name);
+  Dimension           *getDimension(std::string fName);
   Dimension           *getDimension(int index);
-  std::string          getName(){ return name; } 
+  std::string          getName(){ return fName; }
   std::vector<double>  getRandom();
   double               getPhaseSpaceVolume();
-  int                  getRank(){ return dims.size(); }
+  int                  getRank(){ return fDims.size(); }
 };
 
 #endif

@@ -70,7 +70,7 @@ void DataLoader::ProcessEvent(){
   //  eID.set_info(runno(),GSIM);
   //  int e_index = eID.get_electron(event);
 
-  filter->set_info(runno(), GSIM);
+  filter->set_info(GetRunNumber(), GSIM);
   int e_index = filter->getByPID(event, 11);
   if (e_index > -123){
     TLorentzVector electron(event.cx[e_index]*event.p[e_index],

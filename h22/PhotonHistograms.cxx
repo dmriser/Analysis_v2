@@ -40,14 +40,14 @@ void PhotonHistograms::Fill(h22ElectronEvent event, int index) {
   h1_ecx[0]->Fill(event.ech_x[index]);
   h1_ecy[0]->Fill(event.ech_y[index]);
   h1_edep[0]->Fill(event.edep[index]);
-  h1_theta[0]->Fill(event.theta(index));
-  h1_dtheta[0]->Fill(event.theta(event.GetElectronIndex()) - event.theta(index));
-  h1_phi[0] ->Fill(event.rphi(index));
+  h1_theta[0]->Fill(event.GetTheta(index));
+  h1_dtheta[0]->Fill(event.GetTheta(event.GetElectronIndex()) - event.GetTheta(index));
+  h1_phi[0] ->Fill(event.GetRelativePhi(index));
   
-  h2_phi_theta[0]->Fill(event.rphi(index), event.theta(index));
+  h2_phi_theta[0]->Fill(event.GetRelativePhi(index), event.GetTheta(index));
   h2_ecx_ecy[0]->Fill(event.ech_x[index], event.ech_y[index]);
 
-  TVector3 ecHit = event.uvw(index);
+  TVector3 ecHit = event.GetUVWVector(index);
   h1_ecu[0]->Fill(ecHit.X());
   h1_ecv[0]->Fill(ecHit.Y());
   h1_ecw[0]->Fill(ecHit.Z());
@@ -57,14 +57,14 @@ void PhotonHistograms::Fill(h22ElectronEvent event, int index) {
   h1_ecx[s]->Fill(event.ech_x[index]);
   h1_ecy[s]->Fill(event.ech_y[index]);
   h1_edep[s]->Fill(event.edep[index]);
-  h1_theta[s]->Fill(event.theta(index));
-  h1_dtheta[s]->Fill(event.theta(event.GetElectronIndex()) - event.theta(index));
-  h1_phi[s] ->Fill(event.rphi(index));
+  h1_theta[s]->Fill(event.GetTheta(index));
+  h1_dtheta[s]->Fill(event.GetTheta(event.GetElectronIndex()) - event.GetTheta(index));
+  h1_phi[s] ->Fill(event.GetRelativePhi(index));
   h1_ecu[s]->Fill(ecHit.X());
   h1_ecv[s]->Fill(ecHit.Y());
   h1_ecw[s]->Fill(ecHit.Z());
   
-  h2_phi_theta[s]->Fill(event.rphi(index), event.theta(index));
+  h2_phi_theta[s]->Fill(event.GetRelativePhi(index), event.GetTheta(index));
   h2_ecx_ecy[s]->Fill(event.ech_x[index], event.ech_y[index]);
 
   if(event.IsCorrected()){

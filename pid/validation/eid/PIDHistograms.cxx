@@ -104,9 +104,9 @@ void PIDHistograms::Fill(h22Event event, int ipart, int cutType){
   h1_z_vertex[cutType][0]      ->Fill(event.vz[ipart]);
   
   // 2-D 
-  h2_cc_theta[cutType][0] ->Fill((event.cc_segm[ipart]%1000)/10, event.theta_cc(ipart));
+  h2_cc_theta[cutType][0] ->Fill((event.cc_segm[ipart]%1000)/10, event.GetThetaCC(ipart));
   h2_etot_p[cutType][0]   ->Fill(event.p[ipart], event.etot[ipart]/event.p[ipart]);
-  h2_ang_fid[cutType][0]  ->Fill(event.rphi(ipart), event.theta(ipart));
+  h2_ang_fid[cutType][0]  ->Fill(event.GetRelativePhi(ipart), event.GetTheta(ipart));
   h2_ec_edep[cutType][0]  ->Fill(event.ec_ei[ipart], event.ec_eo[ipart]);
   h2_dcr1_fid[cutType][0] ->Fill(event.tl1_x[ipart], event.tl1_y[ipart]);
   h2_dcr3_fid[cutType][0] ->Fill(event.tl3_x[ipart], event.tl3_y[ipart]);
@@ -120,9 +120,9 @@ void PIDHistograms::Fill(h22Event event, int ipart, int cutType){
       h1_p[cutType][sector]             ->Fill(event.p[ipart]);
       h1_z_vertex[cutType][sector]      ->Fill(event.vz[ipart]);
       
-      h2_cc_theta[cutType][sector] ->Fill((event.cc_segm[ipart]%1000)/10, event.theta_cc(ipart));
+      h2_cc_theta[cutType][sector] ->Fill((event.cc_segm[ipart]%1000)/10, event.GetThetaCC(ipart));
       h2_etot_p[cutType][sector]   ->Fill(event.p[ipart], event.etot[ipart]/event.p[ipart]);
-      h2_ang_fid[cutType][sector]  ->Fill(event.rphi(ipart), event.theta(ipart));
+      h2_ang_fid[cutType][sector]  ->Fill(event.GetRelativePhi(ipart), event.GetTheta(ipart));
       h2_ec_edep[cutType][sector]  ->Fill(event.ec_ei[ipart], event.ec_eo[ipart]);
       h2_dcr1_fid[cutType][sector] ->Fill(event.tl1_x[ipart], event.tl1_y[ipart]);
       h2_dcr3_fid[cutType][sector] ->Fill(event.tl3_x[ipart], event.tl3_y[ipart]);
@@ -197,7 +197,7 @@ int main (int argc, char * argv[]){
   pars->loadParameters(opts.args["PARS"].args);
   
   ParticleFilter filter(pars);
-  filter.set_info(reader.GSIM, reader.runno()); 
+  filter.set_info(reader.GSIM, reader.GetRunNumber()); 
   //  filter.getCut("Track Quality Cut")->disable();
 
   PIDHistograms histos;

@@ -37,33 +37,33 @@ class DataEventCut{
   
   // Data Types
  private:
-  bool is_enabled;
-  double min_value, max_value;
-  std::string cut_name;
+  bool fIsEnabled;
+  double fMinValue, fMaxValue;
+  std::string fCutName;
   
   // Member functions 
  public:
-  void disable(){ is_enabled = false; }
-  void enable(){ is_enabled  = true; }
-  void set_min( double x ) { min_value = x; }
-  void set_max( double x ) { max_value = x; }
-  void set_name( std::string n ){ cut_name = n; }
-  bool is_on(){ return is_enabled; }
+  void Disable(){ fIsEnabled = false; }
+  void Enable(){ fIsEnabled  = true; }
+  void SetMin( double x ) { fMinValue = x; }
+  void SetMax( double x ) { fMaxValue = x; }
+  void SetName( std::string n ){ fCutName = n; }
+  bool IsOn(){ return fIsEnabled; }
   bool operator<(DataEventCut *otherCut);
   bool operator>(DataEventCut *otherCut);
   
-  int number_pass(){ return n_pass; }
-  int number_fail(){ return n_fail; }
-  int number_total(){ return n_pass+n_fail; }
+  int NumberPass(){ return n_pass; }
+  int NumberFail(){ return n_fail; }
+  int NumberTotal(){ return n_pass+n_fail; }
   
-  double min(){ return min_value; }
-  double max(){ return max_value; }
-  double passFraction(){ return (double)n_pass/(n_pass+n_fail); }
+  double GetMin(){ return fMinValue; }
+  double GetMax(){ return fMaxValue; }
+  double GetPassFraction(){ return (double)n_pass/(n_pass+n_fail); }
   
-  std::string name(){ return cut_name; }
+  std::string GetName(){ return fCutName; }
   
-  virtual bool applies(h22Event, int); /** Pass in the event, and the particle index of interest */
-  virtual bool passes(h22Event, int); /** Pass in the event, and the particle index of interest */
+  virtual bool CanBeApplied(h22Event, int); /** Pass in the event, and the particle index of interest */
+  virtual bool IsPassed(h22Event, int); /** Pass in the event, and the particle index of interest */
 
 };
 
@@ -81,7 +81,7 @@ class ChargeCut : public DataEventCut
   ChargeCut();
   ~ChargeCut();
 
-  bool passes(h22Event, int);
+  bool IsPassed(h22Event, int);
 
 };
 
@@ -99,7 +99,7 @@ class TrackQualityCut : public DataEventCut
   TrackQualityCut();
   ~TrackQualityCut();
 
-  bool passes(h22Event, int);
+  bool IsPassed(h22Event, int);
 
 };
 
@@ -117,7 +117,7 @@ class MomentumCut : public DataEventCut
   MomentumCut();
   ~MomentumCut();
 
-  bool passes(h22Event, int);
+  bool IsPassed(h22Event, int);
 
 };
 
@@ -137,9 +137,9 @@ class SampFracCut : public DataEventCut
   ~SampFracCut();
 
   int sector; 
-  double am, as, bm, bs, cm, cs, dm, ds, nsigma, min, max;
-  bool applies(h22Event, int);
-  bool passes(h22Event, int);
+  double am, as, bm, bs, cm, cs, dm, ds, nsigma, GetMin, GetMax;
+  bool CanBeApplied(h22Event, int);
+  bool IsPassed(h22Event, int);
 };
 
 /////////////////////////////////////////////////////////////////////
@@ -157,9 +157,9 @@ class CCThetaMatchingCut : public DataEventCut
   ~CCThetaMatchingCut();
 
   int sector; 
-  double am, as, bm, bs, cm, cs, dm, ds, nsigma, min, max;
-  bool applies(h22Event, int);
-  bool passes(h22Event, int);
+  double am, as, bm, bs, cm, cs, dm, ds, nsigma, GetMin, GetMax;
+  bool CanBeApplied(h22Event, int);
+  bool IsPassed(h22Event, int);
 };
 
 /////////////////////////////////////////////////////////////////////
@@ -176,7 +176,7 @@ class ECUCut : public DataEventCut
   ECUCut();
   ~ECUCut();
 
-  bool passes(h22Event, int);
+  bool IsPassed(h22Event, int);
 
 };
 
@@ -193,7 +193,7 @@ class ECVCut : public DataEventCut
  public:
   ECVCut();
   ~ECVCut();
-  bool passes(h22Event, int);
+  bool IsPassed(h22Event, int);
 
 };
 
@@ -210,7 +210,7 @@ class ECWCut : public DataEventCut
  public:
   ECWCut();
   ~ECWCut();
-  bool passes(h22Event, int);
+  bool IsPassed(h22Event, int);
 
 };
 
@@ -228,7 +228,7 @@ class ZVertexCut : public DataEventCut
  public:
   ZVertexCut();
   ~ZVertexCut();
-  bool passes(h22Event, int);
+  bool IsPassed(h22Event, int);
 
 };
 
@@ -247,7 +247,7 @@ class CCFiducialCut : public DataEventCut
   ~CCFiducialCut();
 
   double a, b, c; 
-  bool passes(h22Event, int);
+  bool IsPassed(h22Event, int);
 
 };
 
@@ -264,7 +264,7 @@ class ECEdepInnerCut : public DataEventCut
  public:
   ECEdepInnerCut();
   ~ECEdepInnerCut();
-  bool passes(h22Event, int);
+  bool IsPassed(h22Event, int);
 
 };
 
@@ -284,7 +284,7 @@ class DCR1FiducialCut : public DataEventCut
 
   double angle, height; 
 
-  bool passes(h22Event, int);
+  bool IsPassed(h22Event, int);
 
 };
 
@@ -304,7 +304,7 @@ class DCR3FiducialCut : public DataEventCut
 
   double angle, height; 
   
-  bool passes(h22Event, int);
+  bool IsPassed(h22Event, int);
 
 };
 
@@ -322,7 +322,7 @@ class NPheCut : public DataEventCut
   NPheCut();
   ~NPheCut();
 
-  bool passes(h22Event, int);
+  bool IsPassed(h22Event, int);
 
 };
 
@@ -340,7 +340,7 @@ class CCPhiMatchingCut : public DataEventCut
   CCPhiMatchingCut();
   ~CCPhiMatchingCut();
 
-  bool passes(h22Event, int);
+  bool IsPassed(h22Event, int);
 
 };
 /////////////////////////////////////////////////////////////////////
@@ -356,7 +356,7 @@ class DataEventCut_DeltaBetaCut : public DataEventCut{
   DataEventCut_DeltaBetaCut();
   ~DataEventCut_DeltaBetaCut();
 
-  bool passes(h22Event event, int hadronIndex, int PID);
+  bool IsPassed(h22Event event, int hadronIndex, int PID);
 };
 
 /////////////////////////////////////////////////////////////////////
@@ -372,7 +372,7 @@ class DataEventCut_DeltaZVertexCut : public DataEventCut{
   DataEventCut_DeltaZVertexCut();
   ~DataEventCut_DeltaZVertexCut();
 
-  bool passes(h22Event event, int index); 
+  bool IsPassed(h22Event event, int index);
 };
 
 /////////////////////////////////////////////////////////////////////
@@ -390,7 +390,7 @@ class DataEventCut_TOFMassCut : public DataEventCut{
 
   int sector;
 
-  bool applies(h22Event event, int index);
-  bool passes(h22Event event, int index);
+  bool CanBeApplied(h22Event event, int index);
+  bool IsPassed(h22Event event, int index);
 };
 #endif

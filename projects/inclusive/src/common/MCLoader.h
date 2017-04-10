@@ -60,9 +60,9 @@ void MCLoader::Initialize(){
 void MCLoader::ProcessEvent(){
 
   if (EventHasGeneratedElectron()){
-    TLorentzVector genElectron   = event.gen_particle(11);   
+    TLorentzVector genElectron   = event.GetGeneratedParticle(11);   
     PhysicsEvent genPhysicsEvent = builder.getPhysicsEvent(genElectron); 
-    int mcSector                 = event.mcSectorByPID(11);
+    int mcSector                 = event.GetMCSectorByPID(11);
     
     if (mcSector > -1 && mcSector < 7) { 
       genEvents.Fill(genPhysicsEvent, mcSector); 
@@ -72,7 +72,7 @@ void MCLoader::ProcessEvent(){
   int e_index = filter->getByPID(event, 11);
   if (e_index > -123){
 
-    TLorentzVector recElectron   = event.getTLorentzVector(e_index, 11);
+    TLorentzVector recElectron   = event.GetTLorentzVector(e_index, 11);
     int sector                   = event.dc_sect[e_index]; 
     PhysicsEvent recPhysicsEvent = builder.getPhysicsEvent(recElectron);
 

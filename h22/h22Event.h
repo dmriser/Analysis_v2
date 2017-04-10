@@ -111,29 +111,29 @@ class h22Event {
    ~h22Event();
   
    // Member Functions 
-   void printEvent() const;
-   double rphi(int);     //! Azym. angle relative to sector center. 
-   double mcrphi(int);   //! MC version of above   
-   double theta(int);    //! Polar angle of track
-   TVector3 uvw(int);    //! EC Coordinates U, V, W returned as U = vector.X(), V = vector.Y(), W = vector.Z() 
-   TLorentzVector gen_particle(int);
-   int mcSectorByPID(int index);
+   void PrintEvent() const;
+   double GetRelativePhi(int);     //! Azym. angle relative to sector center.
+   double GetRelativePhiMC(int);   //! MC version of above
+   double GetTheta(int);    //! Polar angle of track
+   TVector3 GetUVWVector(int);    //! EC Coordinates U, V, W returned as U = vector.X(), V = vector.Y(), W = vector.Z()
+   TLorentzVector GetGeneratedParticle(int);
+   int GetMCSectorByPID(int index);
    
-   double rot_dc1x(int);
-   double rot_dc1y(int);
+   double GetRotatedDCR1PosX(int);
+   double GetRotatedDCR1PosY(int);
    
-   double theta_cc(int); //! Theta as reported at Cherenkov Counter
+   double GetThetaCC(int); //! Theta as reported at Cherenkov Counter
    
-   bool hasParticle(int pid){ for(int i=0;i<gpart; i++){ if(id[i]==pid) { return true; } } return false;}
+   bool HasParticle(int pid);
    
    // MC Momenta 
-   double mcpx(int);
-   double mcpy(int);
-   double mcpz(int);
+   double GetMCPx(int);
+   double GetMCPy(int);
+   double GetMCPz(int);
 
    // Sorting functions 
-   std::vector<int> sortByMomentum(std::vector<int>);
-   TLorentzVector getTLorentzVector(int index, int pid);
+   std::vector<int> SortByMomentum(std::vector<int>);
+   TLorentzVector GetTLorentzVector(int index, int pid);
 
 };
 

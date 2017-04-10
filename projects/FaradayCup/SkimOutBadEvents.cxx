@@ -63,9 +63,9 @@ public:
 // the methods of h22Reader runno()
 // and GSIM const.
 void MyAnalysis::Initialize(){
-  filter->set_info(runno(), GSIM);
+  filter->set_info(GetRunNumber(), GSIM);
 
-  outputFile  = new TFile(Form("/volatile/clas12/dmriser/analysis/e1f_analysis/skim/allGoodEventsV2/%d.root",runno()),"RECREATE");
+  outputFile  = new TFile(Form("/volatile/clas12/dmriser/analysis/e1f_analysis/skim/allGoodEventsV2/%d.root",GetRunNumber()),"RECREATE");
   clonedChain = (TChain*) fchain->CloneTree(0);
   clonedTree  = clonedChain->GetTree();
 
@@ -74,7 +74,7 @@ void MyAnalysis::Initialize(){
 
 void MyAnalysis::LoadBadEventsFile(){
   iBadWindow  = 0;
-  ifstream eventQCFile(Form("/volatile/clas12/dmriser/analysis/e1f_analysis/badEvents/%d.txt",runno()));
+  ifstream eventQCFile(Form("/volatile/clas12/dmriser/analysis/e1f_analysis/badEvents/%d.txt",GetRunNumber()));
     
   string line, buffer;
   while(getline(eventQCFile,line)){
@@ -96,7 +96,7 @@ void MyAnalysis::LoadBadEventsFile(){
   }
   eventQCFile.close();
 
-  cout << "[MyAnalysis::LoadBadEventsFile] Found " << badEventStart.size() << " bad event windows for run " << runno() << endl;
+  cout << "[MyAnalysis::LoadBadEventsFile] Found " << badEventStart.size() << " bad event windows for run " << GetRunNumber() << endl;
 }
 
 void MyAnalysis::ProcessEvent(){  

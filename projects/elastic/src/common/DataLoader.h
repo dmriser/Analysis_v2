@@ -64,7 +64,7 @@ DataLoader::DataLoader(PhysicsEventSelector *eventCriteria, MomCorr_e1f *momCorr
 }
 
 DataLoader::~DataLoader(){
-  filter->getSelector(11)->summarize(); 
+  filter->GetSelector(11)->PrintSummary(); 
 }
 
 void DataLoader::Initialize(){
@@ -75,7 +75,7 @@ void DataLoader::ProcessEvent(){
 
   vector<int> electrons = filter->getVectorOfParticleIndices(event, 11);
   if ( !electrons.empty() ){
-    TLorentzVector electron   = event.getTLorentzVector(electrons[0],     11);
+    TLorentzVector electron   = event.GetTLorentzVector(electrons[0],     11);
     electron                  = momCorrector->PcorN(electron, -1, 11); 
     int sector                = event.dc_sect[electrons[0]]; 
     PhysicsEvent physicsEvent = builder.getPhysicsEvent(electron);

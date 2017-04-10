@@ -109,10 +109,10 @@ int main(int argc, char * argv[]){
 	// Dummy call 
 	filter.has_electron(event); 
       }
-      filter.electronSelector->summarize();
-      filter.electronSelector->optimize();
+      filter.electronSelector->PrintSummary();
+      filter.electronSelector->Optimize();
       std::cout << "DataEventSelector has been optimized." << std::endl; 
-      filter.electronSelector->summarize();
+      filter.electronSelector->PrintSummary();
     }
     
 
@@ -127,7 +127,7 @@ int main(int argc, char * argv[]){
         h22Event event = fReader.GetEvent();
         
         // keeping track of run number and making sure particle filter knows about it as well.
-        if ( runno != fReader.runno() ){ runno = fReader.runno(); filter.set_info(GSIM, runno); }
+        if ( runno != fReader.GetRunNumber() ){ runno = fReader.GetRunNumber(); filter.set_info(GSIM, runno); }
         
         int sector = event.dc_sect[0];
         if (event.q[0] < 0 && sector > 0)
@@ -143,15 +143,15 @@ int main(int argc, char * argv[]){
             
             h2_ec_sampling[0][0] ->Fill(event.p[0],event.etot[0]/event.p[0]);
             h2_ec_uvw[0][0]      ->Fill(event.ech_x[0],event.ech_y[0]);
-            h2_dcr1[0][0]        ->Fill(event.rot_dc1x(0),event.rot_dc1y(0));
+            h2_dcr1[0][0]        ->Fill(event.GetRotatedDCR1PosX(0),event.GetRotatedDCR1PosY(0));
             h2_dcr3[0][0]        ->Fill(event.tl3_x[0], event.tl3_y[0]);
-            h2_cc[0][0]          ->Fill(event.rphi(0), event.theta_cc(0));
+            h2_cc[0][0]          ->Fill(event.GetRelativePhi(0), event.GetThetaCC(0));
             
             h2_ec_sampling[0][sector] ->Fill(event.p[0],event.etot[0]/event.p[0]);
             h2_ec_uvw[0][sector]      ->Fill(event.ech_x[0],event.ech_y[0]);
-            h2_dcr1[0][sector]        ->Fill(event.rot_dc1x(0),event.rot_dc1y(0));
+            h2_dcr1[0][sector]        ->Fill(event.GetRotatedDCR1PosX(0),event.GetRotatedDCR1PosY(0));
             h2_dcr3[0][sector]        ->Fill(event.tl3_x[0], event.tl3_y[0]);
-            h2_cc[0][sector]          ->Fill(event.rphi(0), event.theta_cc(0));
+            h2_cc[0][sector]          ->Fill(event.GetRelativePhi(0), event.GetThetaCC(0));
         }
 	/*    
         // Broken up for clarity not speed. Doing This cut histograms now.
@@ -186,15 +186,15 @@ int main(int argc, char * argv[]){
             
             h2_ec_sampling[2][0] ->Fill(event.p[0],event.etot[0]/event.p[0]);
             h2_ec_uvw[2][0]      ->Fill(event.ech_x[0],event.ech_y[0]);
-            h2_dcr1[2][0]        ->Fill(event.rot_dc1x(0),event.rot_dc1y(0));
+            h2_dcr1[2][0]        ->Fill(event.GetRotatedDCR1PosX(0),event.GetRotatedDCR1PosY(0));
             h2_dcr3[2][0]        ->Fill(event.tl3_x[0], event.tl3_y[0]);
-            h2_cc[2][0]          ->Fill(event.rphi(0), event.theta_cc(0));
+            h2_cc[2][0]          ->Fill(event.GetRelativePhi(0), event.GetThetaCC(0));
             
             h2_ec_sampling[2][sector] ->Fill(event.p[0],event.etot[0]/event.p[0]);
             h2_ec_uvw[2][sector]      ->Fill(event.ech_x[0],event.ech_y[0]);
-            h2_dcr1[2][sector]        ->Fill(event.rot_dc1x(0),event.rot_dc1y(0));
+            h2_dcr1[2][sector]        ->Fill(event.GetRotatedDCR1PosX(0),event.GetRotatedDCR1PosY(0));
             h2_dcr3[2][sector]        ->Fill(event.tl3_x[0], event.tl3_y[0]);
-            h2_cc[2][sector]          ->Fill(event.rphi(0), event.theta_cc(0));
+            h2_cc[2][sector]          ->Fill(event.GetRelativePhi(0), event.GetThetaCC(0));
         }
         
         // Tell the user

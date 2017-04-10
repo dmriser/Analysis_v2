@@ -56,7 +56,7 @@ void findElectronIDParameters::ProcessEvent(){
       int sectorIndex = event.dc_sect[ipart] -1;
       
       ecSamplingFraction[sectorIndex]->Fill(event.p[ipart], event.etot[ipart]/event.p[ipart]);
-      ccThetaCorrelation[sectorIndex]->Fill((event.cc_segm[ipart]%1000)/10, event.theta_cc(ipart));
+      ccThetaCorrelation[sectorIndex]->Fill((event.cc_segm[ipart]%1000)/10, event.GetThetaCC(ipart));
     }
   }
 

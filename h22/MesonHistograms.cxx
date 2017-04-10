@@ -38,11 +38,11 @@ void MesonHistograms::Fill(h22ElectronEvent event, int index) {
   h1_dcx[0]->Fill(event.tl1_x[index]);
   h1_dcy[0]->Fill(event.tl1_y[index]);
   h1_edep[0]->Fill(event.edep[index]);
-  h1_theta[0]->Fill(event.theta(index));
-  h1_dtheta[0]->Fill(event.theta(event.GetElectronIndex()) - event.theta(index));
-  h1_phi[0] ->Fill(event.rphi(index));
+  h1_theta[0]->Fill(event.GetTheta(index));
+  h1_dtheta[0]->Fill(event.GetTheta(event.GetElectronIndex()) - event.GetTheta(index));
+  h1_phi[0] ->Fill(event.GetRelativePhi(index));
   
-  h2_phi_theta[0]->Fill(event.rphi(index), event.theta(index));
+  h2_phi_theta[0]->Fill(event.GetRelativePhi(index), event.GetTheta(index));
   h2_dcx_dcy[0]->Fill(event.tl1_x[index], event.tl1_y[index]);
  
   int s = event.dc_sect[index];
@@ -50,11 +50,11 @@ void MesonHistograms::Fill(h22ElectronEvent event, int index) {
   h1_dcx[s]->Fill(event.tl1_x[index]);
   h1_dcy[s]->Fill(event.tl1_y[index]);
   h1_edep[s]->Fill(event.edep[index]);
-  h1_theta[s]->Fill(event.theta(index));
-  h1_dtheta[s]->Fill(event.theta(event.GetElectronIndex()) - event.theta(index));
-  h1_phi[s] ->Fill(event.rphi(index));
+  h1_theta[s]->Fill(event.GetTheta(index));
+  h1_dtheta[s]->Fill(event.GetTheta(event.GetElectronIndex()) - event.GetTheta(index));
+  h1_phi[s] ->Fill(event.GetRelativePhi(index));
 
-  h2_phi_theta[s]->Fill(event.rphi(index), event.theta(index));
+  h2_phi_theta[s]->Fill(event.GetRelativePhi(index), event.GetTheta(index));
   h2_dcx_dcy[s]->Fill(event.tl1_x[index], event.tl1_y[index]);
 
   if(event.IsCorrected()){

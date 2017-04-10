@@ -99,6 +99,10 @@ h22/Pars.cxx
 h22/Pars.h
 h22/ParticleFilter.cxx
 h22/ParticleFilter.h
+h22/PhotonHistograms.h
+h22/PhotonHistograms.cxx
+h22/MesonHistograms.h
+h22/MesonHistograms.cxx
 h22/PhaseSpace.cxx
 h22/PhaseSpace.h
 h22/PhysicsEvent.cxx

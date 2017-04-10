@@ -91,7 +91,7 @@ void EventMonitor::ProcessEvent(){
 						  event.p[e_index]);
     }
     
-    else { electron = event.gen_particle(11); }
+    else { electron = event.GetGeneratedParticle(11); }
     PhysicsEvent physicsEvent = builder.getPhysicsEvent(electron);
     double dataPoint[8] = {physicsEvent.x, physicsEvent.y, electron.P(),
 			   physicsEvent.w, physicsEvent.qq,electron.Theta()*to_degrees,electron.Phi()*to_degrees, physicsEvent.nu};

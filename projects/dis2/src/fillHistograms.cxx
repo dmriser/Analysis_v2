@@ -17,7 +17,7 @@ using namespace std;
 #include "PhysicsEventSelector.h"
 
 #include "common/DataLoader.h"
-#include "common/DataLoaderMVA.h"
+//#include "common/DataLoaderMVA.h"
 #include "common/FaradayCupLoader.h"
 #include "common/MCLoader.h"
 
@@ -112,17 +112,17 @@ int main(int argc, char * argv[]){
   }
 
   else if (runMode == "data_mva"){
-    MomCorr_e1f * momentumCorrection = new MomCorr_e1f("/u/home/dmriser/mydoc/analysis/root_scripts/Analysis_v2/momCorr/"); 
-    DataLoaderMVA loader(eventSelector, momentumCorrection, outputFilename, "RECREATE");
-    for (int ifile = 0; ifile < files.size(); ifile++) { loader.AddFile(files[ifile]); }
-    loader.Execute();
+    //    MomCorr_e1f * momentumCorrection = new MomCorr_e1f("/u/home/dmriser/mydoc/analysis/root_scripts/Analysis_v2/momCorr/"); 
+    //    DataLoaderMVA loader(eventSelector, momentumCorrection, outputFilename, "RECREATE");
+    //    for (int ifile = 0; ifile < files.size(); ifile++) { loader.AddFile(files[ifile]); }
+    //    loader.Execute();
 
-    DInformation * runInformation = new DInformation();
-    runInformation->load("/u/home/dmriser/mydoc/analysis/root_scripts/Analysis_v2/lists/runs.info"); 
+    //    DInformation * runInformation = new DInformation();
+    //    runInformation->load("/u/home/dmriser/mydoc/analysis/root_scripts/Analysis_v2/lists/runs.info"); 
 
-    FaradayCupAppender chargeAppender(runInformation);
-    chargeAppender.AddFiles(files);
-    chargeAppender.AppendToFile(outputFilename);
+    //    FaradayCupAppender chargeAppender(runInformation);
+    //    chargeAppender.AddFiles(files);
+    //    chargeAppender.AppendToFile(outputFilename);
   }
 
   else if (runMode == "mcrad"){

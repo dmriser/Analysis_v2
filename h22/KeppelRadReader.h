@@ -52,6 +52,7 @@ public :
    virtual void     Execute(int numberOfEvents);
 
    void AddFile(TString file);
+   void AddFile(std::string file);
    Long64_t GetEntries();
 };
 

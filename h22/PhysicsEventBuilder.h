@@ -15,13 +15,13 @@ class PhysicsEventBuilder{
  private:
   PhysicsEvent physicsEvent; 
 
-  void setVectors(TLorentzVector electron);
+  void setVectors(TLorentzVector &electron);
   void setKinematics();
   
  public:
-  PhysicsEvent getPhysicsEvent(TLorentzVector detectedElectron);
-  PhysicsEvent getPhysicsEvent(TLorentzVector detectedElectron, TLorentzVector detectedParticle);
-  PhysicsEvent getPhysicsEvent(TLorentzVector detectedElectron, TLorentzVector detectedParticle1, TLorentzVector detectedParticle2);
+  PhysicsEvent &getPhysicsEvent(TLorentzVector &detectedElectron);
+  PhysicsEvent &getPhysicsEvent(TLorentzVector &detectedElectron, TLorentzVector &detectedParticle);
+  PhysicsEvent &getPhysicsEvent(TLorentzVector &detectedElectron, TLorentzVector &detectedParticle1, TLorentzVector &detectedParticle2);
 
 };
 

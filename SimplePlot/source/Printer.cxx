@@ -32,7 +32,7 @@ namespace SimplePlot{
     canvas = new TCanvas("canvas","",800,500);
     
     style = new Style(); 
-    style->loadStyle("/u/home/dmriser/mydoc/analysis/root_scripts/Analysis_v2/SimplePlot/styles/default.style");
+    style->loadStyle("/u/home/dmriser/Analysis_v2/SimplePlot/styles/default.style");
 
     setupCommonOptions();
   }
@@ -246,7 +246,7 @@ namespace SimplePlot{
     ytit.SetTextSize(0.03);
 
     // Prepare Canvas 
-    tools.setupCanvasSpacing(canvas, 3, 2, 0.02, 0.15);
+    tools.setupCanvasSpacing(canvas, 3, 2, 0.01, 0.15);
 
 
     for(int s=0; s<6; s++){
@@ -284,7 +284,7 @@ namespace SimplePlot{
     }
 
     canvas->cd(0);
-    xtit.DrawLatex(tools.getTitleCenterPosition(xTitle, 0.005), 0.02, xTitle.c_str());
+    xtit.DrawLatex(tools.getTitleCenterPosition(xTitle, 0.001), 0.02, xTitle.c_str());
     ytit.DrawLatex(0.02, tools.getTitleCenterPosition(yTitle, 0.005), yTitle.c_str());
     tit .DrawLatex( tools.getTitleCenterPosition(title, 0.005), 0.95,  title.c_str());    
     canvas->Print(Form("%s%s.png",path.c_str(),outputTitle.c_str()));
@@ -465,7 +465,7 @@ namespace SimplePlot{
   void Printer::setStyle(string styleName){
     // This is bad to hardcode.
     //    string totalPath = Form("/u/home/dmriser/mydoc/analysis/root_scripts/Analysis_v2/SimplePlot/styles/%s.style",styleName.c_str());
-    string totalPath = Form("/Users/dmriser/Work/Analysis_v2/SimplePlot/styles/%s.style",styleName.c_str());
+    string totalPath = Form("/u/home/dmriser/Analysis_v2/SimplePlot/styles/%s.style",styleName.c_str());
     style->loadStyle(totalPath);
   }
 

@@ -40,8 +40,9 @@ class MesonHistograms {
   TH2D *h2_p_beta[7];
   TH2D *h2_p_dbeta[7];
   TH2D *h2_p_tofmass[7];
+  TH2D *h2_nphe_tofmass[7];
 
-  void Fill(h22ElectronEvent event, int index);
+  void Fill(h22ElectronEvent &event, int index);
   void Load(std::string filename);
   void Save(TFile *outputFile);
   

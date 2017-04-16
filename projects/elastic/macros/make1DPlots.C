@@ -2,7 +2,7 @@
   // --------------------------------------
   //   User Parameters 
   // --------------------------------------
-  TFile *inputFile = TFile::Open("../out.root"); 
+  TFile *inputFile = TFile::Open("../out/testWithoutMC.root"); 
   string imagePath = "/volatile/clas12/dmriser/plots/elastic/";
   const int numberSectors = 6;  
   const int numberPhiBins = 1;  

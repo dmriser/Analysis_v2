@@ -32,6 +32,10 @@ void GenericAnalysis::AddFile(TString file){
   fchain->AddFile(file);
 }
 
+void GenericAnalysis::AddFile(std::string file){
+  fchain->AddFile(file.c_str());
+}
+
 bool GenericAnalysis::RunAnalysis(){
 
   if (GetEntries() == 0){

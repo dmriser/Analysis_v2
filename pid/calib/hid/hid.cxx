@@ -287,7 +287,7 @@ int main(int argc, char * argv[]){
 
     // Setup Options
     h22Options opts;
-    opts.args["PARS"].args = "/u/home/dmriser/mydoc/analysis/root_scripts/Analysis_v2/lists/data.pars";
+    opts.args["PARS"].args = "/u/home/dmriser/Analysis_v2/lists/data.pars";
     opts.args["PARS"].type = 1;
     opts.args["PARS"].name = "Parameter file";
     opts.set(argc,argv);
@@ -305,7 +305,8 @@ int main(int argc, char * argv[]){
     Analysis.DoFits();
     Analysis.Save(opts.args["OUT"].args);
 
-    pars.saveParameters(opts.args["PARS"].args);
+    //    pars.saveParameters(opts.args["PARS"].args); 
+    pars.saveParameters("hid_run.pars"); 
 
     return 0;
 }

@@ -8,16 +8,10 @@
 #include <vector>
 using namespace std;
 
-// --------------------------------------------
-//   Root Libs 
-// --------------------------------------------
 #include "TFile.h"
 #include "TH1.h"
 #include "TH2.h"
 
-// --------------------------------------------
-//   My Libs 
-// --------------------------------------------
 #include "BostedElasticWrapper.h"
 #include "CommonTools.h"
 #include "h22Option.h"
@@ -25,53 +19,53 @@ using namespace std;
 
 class Analysis{
 public:
-    Analysis();
-    ~Analysis();
-
+  Analysis();
+  ~Analysis();
+  
 protected:
-    const static int numberSectors   = 6;
-    const static int numberThetaBins = 100;
-    const static int numberPhiBins   = 5;
-
-    vector<double> thetaBins;
-    vector<double> phiBins;
-    vector<TH1D*>  histoContainer;
-
-    ElasticHistograms *dataHistos;
-    ElasticHistograms *recHistos;
-    ElasticHistograms *genHistos;
-
-    TH1D       *dataEvents_theta[numberSectors][numberPhiBins+1];
-    TH1D       *recEvents_theta[numberSectors][numberPhiBins+1];
-    TH1D       *genEvents_theta[numberSectors][numberPhiBins+1];
-    TH1D       *acc_theta[numberSectors][numberPhiBins+1];
-    TH1D       *w_theta[numberSectors][numberPhiBins+1];
-    TH1D       *crossSection_theta[numberSectors][numberPhiBins+1];
-    TH1D       *ratio_theta[numberSectors][numberPhiBins+1];
-    TH1D       *model_theta;
-    TH1D       *modelRad_theta;
-    TH1D       *binCorr_theta;
-    TH1D       *radCorr_theta;
-    TH1D       *photonFlux_theta;
-    TFile      *inputFile;
-
-    double               totalCharge;
-    double               thetaStep;
-    double               phiStep;
-    BostedElasticWrapper model;
-
+  const static int numberSectors   = 6;
+  const static int numberThetaBins = 100;
+  const static int numberPhiBins   = 5;
+  
+  vector<double> thetaBins;
+  vector<double> phiBins;
+  vector<TH1D*>  histoContainer;
+  
+  ElasticHistograms *dataHistos;
+  ElasticHistograms *recHistos;
+  ElasticHistograms *genHistos;
+  
+  TH1D       *dataEvents_theta[numberSectors][numberPhiBins+1];
+  TH1D       *recEvents_theta[numberSectors][numberPhiBins+1];
+  TH1D       *genEvents_theta[numberSectors][numberPhiBins+1];
+  TH1D       *acc_theta[numberSectors][numberPhiBins+1];
+  TH1D       *w_theta[numberSectors][numberPhiBins+1];
+  TH1D       *crossSection_theta[numberSectors][numberPhiBins+1];
+  TH1D       *ratio_theta[numberSectors][numberPhiBins+1];
+  TH1D       *model_theta;
+  TH1D       *modelRad_theta;
+  TH1D       *binCorr_theta;
+  TH1D       *radCorr_theta;
+  TH1D       *photonFlux_theta;
+  TFile      *inputFile;
+  
+  double               totalCharge;
+  double               thetaStep;
+  double               phiStep;
+  BostedElasticWrapper model;
+  
 public:
-    void fillPhotonFlux(double beam);
-    void loadEventFile(string filename);
-    void makeProjections();
-    void makeRatio();
-    void makeBinCenteringCorrections();
-    void makeRadiativeCorrections();
-    void setupBinning();
-    void scaleByLuminosity();
-    void scaleCrossSection();
-    void loadModel();
-    void save(string outputFilename);
+  void fillPhotonFlux(double beam);
+  void loadEventFile(string filename);
+  void makeProjections();
+  void makeRatio();
+  void makeBinCenteringCorrections();
+  void makeRadiativeCorrections();
+  void setupBinning();
+  void scaleByLuminosity();
+  void scaleCrossSection();
+  void loadModel();
+  void save(string outputFilename);
 };
 
 Analysis::Analysis(){

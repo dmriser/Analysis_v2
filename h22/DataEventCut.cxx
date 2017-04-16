@@ -33,7 +33,7 @@ DataEventCut::~DataEventCut(){
 }
 
 
-bool DataEventCut::IsPassed(h22Event event, int index){
+bool DataEventCut::IsPassed(h22Event &event, int index){
     if ( !fIsEnabled ){ return false; }
 
     cout << " Inside DataEventCut::passes " << endl;
@@ -48,7 +48,7 @@ bool DataEventCut::operator>(DataEventCut *otherCut){
     return (this->GetPassFraction() > otherCut->GetPassFraction());
 }
 
-bool DataEventCut::CanBeApplied(h22Event event, int index)
+bool DataEventCut::CanBeApplied(h22Event &event, int index)
 {
     return true;
 }
@@ -70,7 +70,7 @@ ChargeCut::~ChargeCut()
 }
 
 /** Simply checking if the particle is negative */
-bool ChargeCut::IsPassed(h22Event event, int index)
+bool ChargeCut::IsPassed(h22Event &event, int index)
 {
     if ( event.q[index] > GetMin() && event.q[index] < GetMax() ) { n_pass++; return true; }
     else { n_fail++; }
@@ -95,7 +95,7 @@ TrackQualityCut::~TrackQualityCut()
 }
 
 /** Simply checking if the particle is negative */
-bool TrackQualityCut::IsPassed(h22Event event, int index)
+bool TrackQualityCut::IsPassed(h22Event &event, int index)
 {
     if ( event.cc_sect[index] > 0 && event.dc_sect[index] > 0 && event.ec_sect[index] > 0 ) { n_pass++; return true; }
     else { n_fail++; }
@@ -120,7 +120,7 @@ MomentumCut::~MomentumCut()
 
 }
 
-bool MomentumCut::IsPassed(h22Event event, int index)
+bool MomentumCut::IsPassed(h22Event &event, int index)
 {
     if ( event.p[index] > GetMin() && event.p[index] < GetMax() ) { n_pass++; return true; }
     else { n_fail++; }
@@ -145,7 +145,7 @@ NPheCut::~NPheCut()
 
 }
 
-bool NPheCut::IsPassed(h22Event event, int index)
+bool NPheCut::IsPassed(h22Event &event, int index)
 {
     if ( event.nphe[index] > GetMin() ) { n_pass++; return true; }
     else { n_fail++; }
@@ -168,7 +168,7 @@ CCPhiMatchingCut::~CCPhiMatchingCut(){
 
 }
 
-bool CCPhiMatchingCut::IsPassed(h22Event event, int index){
+bool CCPhiMatchingCut::IsPassed(h22Event &event, int index){
 
     double rphi = event.GetRelativePhi(index);
 
@@ -211,7 +211,7 @@ SampFracCut::~SampFracCut()
 
 }
 
-bool SampFracCut::IsPassed(h22Event event, int index)
+bool SampFracCut::IsPassed(h22Event &event, int index)
 {
     double samp = event.etot[index]/event.p[index];
 
@@ -222,7 +222,7 @@ bool SampFracCut::IsPassed(h22Event event, int index)
     else { n_fail++; return false; }
 }
 
-bool SampFracCut::CanBeApplied(h22Event event, int index)
+bool SampFracCut::CanBeApplied(h22Event &event, int index)
 {
     int s = event.dc_sect[index];
     if (s == sector) return true;
@@ -252,7 +252,7 @@ CCThetaMatchingCut::CCThetaMatchingCut(int s){
 CCThetaMatchingCut::~CCThetaMatchingCut(){
 }
 
-bool CCThetaMatchingCut::IsPassed(h22Event event, int index){
+bool CCThetaMatchingCut::IsPassed(h22Event &event, int index){
     double thetaCC = event.GetThetaCC(index);
     int segment    = (event.cc_segm[index]%1000/10);
 
@@ -263,7 +263,7 @@ bool CCThetaMatchingCut::IsPassed(h22Event event, int index){
     else { n_fail++; return false; }
 }
 
-bool CCThetaMatchingCut::CanBeApplied(h22Event event, int index)
+bool CCThetaMatchingCut::CanBeApplied(h22Event &event, int index)
 {
     int s = event.dc_sect[index];
     if (s == sector) return true;
@@ -285,7 +285,7 @@ ECUCut::~ECUCut()
 
 }
 
-bool ECUCut::IsPassed(h22Event event, int index)
+bool ECUCut::IsPassed(h22Event &event, int index)
 {
 
     double u = event.GetUVWVector(index).X();
@@ -306,7 +306,7 @@ ECVCut::~ECVCut()
 
 }
 
-bool ECVCut::IsPassed(h22Event event, int index)
+bool ECVCut::IsPassed(h22Event &event, int index)
 {
 
     double v = event.GetUVWVector(index).Y();
@@ -327,7 +327,7 @@ ECWCut::~ECWCut()
 
 }
 
-bool ECWCut::IsPassed(h22Event event, int index)
+bool ECWCut::IsPassed(h22Event &event, int index)
 {
 
     double w = event.GetUVWVector(index).Z();
@@ -354,7 +354,7 @@ ZVertexCut::~ZVertexCut()
 
 }
 
-bool ZVertexCut::IsPassed(h22Event event, int index)
+bool ZVertexCut::IsPassed(h22Event &event, int index)
 {
 
     if ( event.vz[index] > GetMin() && event.vz[index] < GetMax() ) { n_pass++; return true; }
@@ -380,7 +380,7 @@ CCFiducialCut::~CCFiducialCut()
 
 }
 
-bool CCFiducialCut::IsPassed(h22Event event, int index)
+bool CCFiducialCut::IsPassed(h22Event &event, int index)
 {
     SetMin(a - b*sqrt(1 - pow(event.GetRelativePhi(index),2)/c));
     
@@ -404,7 +404,7 @@ ECEdepInnerCut::~ECEdepInnerCut()
 
 }
 
-bool ECEdepInnerCut::IsPassed(h22Event event, int index)
+bool ECEdepInnerCut::IsPassed(h22Event &event, int index)
 {
 
     if ( event.ec_ei[index] > GetMin() ) { n_pass++; return true; }
@@ -432,7 +432,7 @@ DCR1FiducialCut::~DCR1FiducialCut()
 
 }
 
-bool DCR1FiducialCut::IsPassed(h22Event event, int index)
+bool DCR1FiducialCut::IsPassed(h22Event &event, int index)
 {
 
     double slope = 1/tan(0.5*to_radians*angle);
@@ -462,7 +462,7 @@ DCR3FiducialCut::~DCR3FiducialCut()
 
 }
 
-bool DCR3FiducialCut::IsPassed(h22Event event, int index)
+bool DCR3FiducialCut::IsPassed(h22Event &event, int index)
 {
 
     double slope = 1/tan(0.5*to_radians*angle);
@@ -487,7 +487,7 @@ DataEventCut_DeltaBetaCut::~DataEventCut_DeltaBetaCut(){
 }
 
 
-bool DataEventCut_DeltaBetaCut::IsPassed(h22Event event, int hadronIndex, int PID){
+bool DataEventCut_DeltaBetaCut::IsPassed(h22Event &event, int hadronIndex, int PID){
 
     // It is very important to note that this
     // routine expects CORRECTED variables.
@@ -521,7 +521,7 @@ DataEventCut_DeltaZVertexCut::~DataEventCut_DeltaZVertexCut(){
 }
 
 
-bool DataEventCut_DeltaZVertexCut::IsPassed(h22Event event, int hadronIndex){
+bool DataEventCut_DeltaZVertexCut::IsPassed(h22Event &event, int hadronIndex){
 
     // It is very important to note that this
     // routine expects CORRECTED variables.
@@ -552,11 +552,11 @@ DataEventCut_TOFMassCut::DataEventCut_TOFMassCut(int s) : sector(s){
 DataEventCut_TOFMassCut::~DataEventCut_TOFMassCut(){
 }
 
-bool DataEventCut_TOFMassCut::CanBeApplied(h22Event event, int index){
+bool DataEventCut_TOFMassCut::CanBeApplied(h22Event &event, int index){
     return (event.dc_sect[index] == sector);
 }
 
-bool DataEventCut_TOFMassCut::IsPassed(h22Event event, int hadronIndex){
+bool DataEventCut_TOFMassCut::IsPassed(h22Event &event, int hadronIndex){
     // This has to be the corrected beta before we run it.
     double startTime  = event.sc_t[0]-event.sc_r[0]/speed_of_light;
     double beta       = event.sc_r[hadronIndex]/(event.sc_t[hadronIndex]-startTime)/speed_of_light;

@@ -65,7 +65,6 @@ MCLoader::MCLoader(PhysicsEventSelector *eventCriteria, Parameters *pars, std::s
   filter->GetSelector(11)->DisableByRegex("Charge"); 
   filter->GetSelector(11)->DisableByRegex("CC"); 
   filter->GetSelector(11)->DisableByRegex("Fid"); 
-
 }
 
 MCLoader::~MCLoader(){

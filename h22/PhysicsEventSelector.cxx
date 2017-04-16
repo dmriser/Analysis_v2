@@ -31,7 +31,7 @@ PhysicsEventSelector::~PhysicsEventSelector(){
   for (vector<PhysicsEventCut*>::iterator it=cuts.begin(); it!=cuts.end(); it++ ) delete *it; 
 }
 
-bool PhysicsEventSelector::passes(PhysicsEvent event){
+bool PhysicsEventSelector::passes(PhysicsEvent &event){
   // Loop over the cuts we have and make sure all pass.
   bool status = true;
   

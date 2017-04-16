@@ -122,7 +122,7 @@ public :
    void AddFile(TString);
    void AddFile(std::string);
    int GetEntries(){return fchain->GetEntries(); }
-   h22Event GetEvent(){return event;}
+   h22Event& GetEvent(){return event;}
    std::string GetFilename(){return fchain->GetCurrentFile()->GetName();}
    std::string GetFilenameChunk(int,int);
    void AddList(std::string, int);

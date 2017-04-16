@@ -36,14 +36,14 @@ PhysicsEventCut::~PhysicsEventCut(){
 }
 
 
-bool PhysicsEventCut::passes(PhysicsEvent event){
+bool PhysicsEventCut::passes(PhysicsEvent &event){
   if ( !is_enabled ){ return false; } 
 
   cout << " Inside PhysicsEventCut::passes " << endl; 
   return true;
 }
 
-bool PhysicsEventCut::applies(PhysicsEvent event)
+bool PhysicsEventCut::applies(PhysicsEvent &event)
 {
   return true;
 }
@@ -66,7 +66,7 @@ PhysicsEventCut_MissingMass::~PhysicsEventCut_MissingMass()
 
 }
 
-bool PhysicsEventCut_MissingMass::passes(PhysicsEvent event)
+bool PhysicsEventCut_MissingMass::passes(PhysicsEvent &event)
 {
 
   double missingMass = sqrt(event.mm2); 
@@ -93,7 +93,7 @@ PhysicsEventCut_w::~PhysicsEventCut_w(){
 
 }
 
-bool PhysicsEventCut_w::passes(PhysicsEvent event){
+bool PhysicsEventCut_w::passes(PhysicsEvent &event){
 
   if ( event.w > min() && event.w < max()) { n_pass++; return true; }
   else { n_fail++; }
@@ -119,7 +119,7 @@ PhysicsEventCut_p::~PhysicsEventCut_p(){
 
 }
 
-bool PhysicsEventCut_p::passes(PhysicsEvent event){
+bool PhysicsEventCut_p::passes(PhysicsEvent &event){
 
   if ( event.finalEnergy > min() && event.finalEnergy < max()) { n_pass++; return true; }
   else { n_fail++; }
@@ -144,7 +144,7 @@ PhysicsEventCut_x::~PhysicsEventCut_x(){
 
 }
 
-bool PhysicsEventCut_x::passes(PhysicsEvent event){
+bool PhysicsEventCut_x::passes(PhysicsEvent &event){
 
   if ( event.x > min() && event.x < max()) { n_pass++; return true; }
   else { n_fail++; }
@@ -169,7 +169,7 @@ PhysicsEventCut_y::~PhysicsEventCut_y(){
 
 }
 
-bool PhysicsEventCut_y::passes(PhysicsEvent event){
+bool PhysicsEventCut_y::passes(PhysicsEvent &event){
 
   if ( event.y > min() && event.y < max()) { n_pass++; return true; }
   else { n_fail++; }
@@ -194,7 +194,7 @@ PhysicsEventCut_z::~PhysicsEventCut_z(){
 
 }
 
-bool PhysicsEventCut_z::passes(PhysicsEvent event){
+bool PhysicsEventCut_z::passes(PhysicsEvent &event){
 
   if ( event.z > min() && event.z < max()) { n_pass++; return true; }
   else { n_fail++; }
@@ -219,7 +219,7 @@ PhysicsEventCut_qq::~PhysicsEventCut_qq(){
 
 }
 
-bool PhysicsEventCut_qq::passes(PhysicsEvent event){
+bool PhysicsEventCut_qq::passes(PhysicsEvent &event){
 
   if ( event.qq > min() && event.qq < max()) { n_pass++; return true; }
   else { n_fail++; }
@@ -246,7 +246,7 @@ PhysicsEventCut_xyLineCut::~PhysicsEventCut_xyLineCut(){
 
 }
 
-bool PhysicsEventCut_xyLineCut::passes(PhysicsEvent event){
+bool PhysicsEventCut_xyLineCut::passes(PhysicsEvent &event){
 
   set_max(m*event.x + b);
 
@@ -274,7 +274,7 @@ PhysicsEventCut_relPhiCut::PhysicsEventCut_relPhiCut(){
 PhysicsEventCut_relPhiCut::~PhysicsEventCut_relPhiCut(){
 }
 
-bool PhysicsEventCut_relPhiCut::passes(PhysicsEvent event){
+bool PhysicsEventCut_relPhiCut::passes(PhysicsEvent &event){
   double relPhi = fabs(getRelativePhi(event.detectedElectron.Phi()*to_degrees));
   
   if ( relPhi > min() && relPhi < max()) { n_pass++; return true; }

@@ -34,7 +34,7 @@ DataEventSelector::~DataEventSelector(){
   for (vector<DataEventCut*>::iterator it=cuts.begin(); it!=cuts.end(); it++ ) delete *it; 
 }
 
-bool DataEventSelector::IsPassed(h22Event event, int index){
+bool DataEventSelector::IsPassed(h22Event &event, int index){
   // Loop over the cuts we have and make sure all pass.
   bool status = true;
   
@@ -61,7 +61,7 @@ void DataEventSelector::Optimize(){
   std::sort(cuts.begin(), cuts.end());
 }
 
-bool DataEventSelector::IsPassedFast(h22Event event, int index){
+bool DataEventSelector::IsPassedFast(h22Event &event, int index){
   // Loop over the cuts we have and make sure all pass.
   bool status = true;
   

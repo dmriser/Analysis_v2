@@ -36,7 +36,7 @@ void NathanEIDWrapper::set_info(int r, bool mc)
   GSIM = mc; runno = r;
 }
 
-int NathanEIDWrapper::get_electron(h22Event event)
+int NathanEIDWrapper::get_electron(h22Event &event)
 {
   // Please note opposite GSIM convention in this function. In Nathan's code bool GSIM = 0 means the file is GSIM 
   int e_index = eID(event.gpart, event.q, event.p, event.cc_sect, event.sc_sect, event.ec_sect, event.dc_sect, event.cx, event.cy,

@@ -48,11 +48,11 @@ class StandardHistograms{
   TH2D *h2_part1_p_samplingFraction[numberSector], *h2_part1_ecInner_ecOuter[numberSector], *h2_part1_samplingFraction_nphe[numberSector]; 
 
   // Member Functions
-  void Fill(h22Event event, int index);
-  void Fill(h22Event event, int index, PhysicsEvent physicsEvent);
-  void Fill(h22Event event, int index1, int index2);
-  void Fill(h22Event event, int index1, int index2, PhysicsEvent physicsEvent);
-  void Fill(PhysicsEvent physicsEvent);
+  void Fill(h22Event &event, int index);
+  void Fill(h22Event &event, int index, PhysicsEvent &physicsEvent);
+  void Fill(h22Event &event, int index1, int index2);
+  void Fill(h22Event &event, int index1, int index2, PhysicsEvent &physicsEvent);
+  void Fill(PhysicsEvent &physicsEvent);
   void Load(std::string inputFilename); 
   void Save(TFile *outputFile); 
 

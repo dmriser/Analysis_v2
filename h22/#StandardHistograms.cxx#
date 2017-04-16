@@ -156,7 +156,7 @@ void StandardHistograms::Load(std::string inputFilename){
   
 }
 
-void StandardHistograms::Fill(h22Event &event, int index){
+void StandardHistograms::Fill(h22Event event, int index){
   h1_ele_nphe[0]            ->Fill(event.nphe[index]);
   h1_ele_ecInner[0]         ->Fill(event.ec_ei[index]/event.p[index]);
   h1_ele_ecOuter[0]         ->Fill(event.ec_eo[index]/event.p[index]);
@@ -177,7 +177,7 @@ void StandardHistograms::Fill(h22Event &event, int index){
   h2_ele_samplingFraction_nphe[s]->Fill(event.etot[index]/event.p[index], event.nphe[index]); 
 }
 
-void StandardHistograms::Fill(h22Event &event, int index1, int index2){
+void StandardHistograms::Fill(h22Event event, int index1, int index2){
   h1_ele_nphe[0]              ->Fill(event.nphe[index1]);
   h1_ele_ecInner[0]           ->Fill(event.ec_ei[index1]/event.p[index1]);
   h1_ele_ecOuter[0]           ->Fill(event.ec_eo[index1]/event.p[index1]);
@@ -213,17 +213,17 @@ void StandardHistograms::Fill(h22Event &event, int index1, int index2){
   h2_part1_samplingFraction_nphe[s1]->Fill(event.etot[index2]/event.p[index2], event.nphe[index2]); 
 }
 
-void StandardHistograms::Fill(h22Event &event, int index1, int index2, PhysicsEvent &physicsEvent){
+void StandardHistograms::Fill(h22Event event, int index1, int index2, PhysicsEvent physicsEvent){
   Fill(event, index1, index2);
   Fill(physicsEvent);
 }
 
-void StandardHistograms::Fill(h22Event &event, int index, PhysicsEvent &physicsEvent){
+void StandardHistograms::Fill(h22Event event, int index, PhysicsEvent physicsEvent){
   Fill(event,index);
   Fill(physicsEvent);
 }
 
-void StandardHistograms::Fill(PhysicsEvent &physicsEvent){
+void StandardHistograms::Fill(PhysicsEvent physicsEvent){
   h1_ele_p[0]         ->Fill(physicsEvent.detectedElectron.P()); 
   h1_ele_phi[0]       ->Fill(physicsEvent.detectedElectron.Phi()*to_degrees);
   h1_ele_relPhi[0]    ->Fill(getRelativePhi(physicsEvent.detectedElectron.Phi()*to_degrees)); 
@@ -293,9 +293,9 @@ void StandardHistograms::Fill(PhysicsEvent &physicsEvent){
 void StandardHistograms::Save(TFile *outputFile){
   if(outputFile->IsOpen()){
     outputFile->cd(); 
-    outputFile->mkdir("StandardHistograms"); 
-    outputFile->cd("StandardHistograms"); 
- 
+    outputFile->mkdir("StandardHistograms");
+    output
+
     for(int s=0; s<numberSector; s++){
       h1_ele_p[s]                 ->Write(); 
       h1_ele_phi[s]               ->Write(); 
@@ -342,8 +342,6 @@ void StandardHistograms::Save(TFile *outputFile){
       h2_part1_ecInner_ecOuter[s]      ->Write(); 
       h2_part1_samplingFraction_nphe[s]->Write(); 
     }
-
-    outputFile->cd(); 
   } else {
     Color::Modifier red(Color::FG_RED); 
     Color::Modifier def(Color::FG_DEFAULT); 

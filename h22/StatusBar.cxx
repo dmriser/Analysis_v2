@@ -12,10 +12,17 @@ using std::endl;
 
 StatusBar::StatusBar(){
   //  stopwatch.Start(); 
+
+  fWidth = 40; 
+  fLeft = '[';
+  fRight = ']';
+  fWhiteSpace = ' ';
+  fFiller = '=';
+
 }
 
 StatusBar::~StatusBar(){
-  cout << "\033[49m" << endl; 
+  //  cout << "\033[49m" << endl; 
 }
 
 double StatusBar::GetTime(){
@@ -30,10 +37,26 @@ void StatusBar::PrintStatus(int done, int total){
 
 void StatusBar::PrintStatus(double doneFraction){
   if (doneFraction > 0.001){
-    cout << "[StatusBar::PrintStatus] Finished "; 
-    cout.width(10); cout << doneFraction*100 << " %, Time Elapsed = "; 
-    cout.width(10); cout << GetTime() << " Time left = "; 
-    cout.width(10); cout << (1-doneFraction)/doneFraction *GetTime() <<  endl; 
+    cout << "[StatusBar] "; 
+    cout << fLeft; 
+
+    int fillNumber = floor(doneFraction*fWidth); 
+    int currentChar = 0; 
+    while (currentChar < fWidth){
+      if (currentChar < fillNumber){
+	cout << fFiller; 
+      } else {
+	cout << fWhiteSpace; 
+      }
+
+      currentChar++; 
+    }
+
+    cout << fRight; 
+    
+    cout.width(6); cout << doneFraction*100 << " %, ("; 
+    cout << GetTime() << "/"; 
+    cout << (1-doneFraction)/doneFraction *GetTime() << ")" << endl; 
   }
 
 }

@@ -35,6 +35,11 @@ void KeppelRadReader::AddFile(TString file){
   cout << "[KeppelRadReader] Added file " << file << " to the chain. " << endl;
 }
 
+void KeppelRadReader::AddFile(std::string file){
+  fChain->AddFile(file.c_str());
+  cout << "[KeppelRadReader] Added file " << file << " to the chain. " << endl;
+}
+
 void KeppelRadReader::Init(){
    fChain->SetBranchAddress("es", &es, &b_es);
    fChain->SetBranchAddress("ep", &ep, &b_ep);

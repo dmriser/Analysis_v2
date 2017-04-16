@@ -62,8 +62,8 @@ class DataEventCut{
   
   std::string GetName(){ return fCutName; }
   
-  virtual bool CanBeApplied(h22Event, int); /** Pass in the event, and the particle index of interest */
-  virtual bool IsPassed(h22Event, int); /** Pass in the event, and the particle index of interest */
+  virtual bool CanBeApplied(h22Event &event, int); /** Pass in the event, and the particle index of interest */
+  virtual bool IsPassed(h22Event &event, int); /** Pass in the event, and the particle index of interest */
 
 };
 
@@ -81,7 +81,7 @@ class ChargeCut : public DataEventCut
   ChargeCut();
   ~ChargeCut();
 
-  bool IsPassed(h22Event, int);
+  bool IsPassed(h22Event &event, int);
 
 };
 
@@ -99,7 +99,7 @@ class TrackQualityCut : public DataEventCut
   TrackQualityCut();
   ~TrackQualityCut();
 
-  bool IsPassed(h22Event, int);
+  bool IsPassed(h22Event &event, int);
 
 };
 
@@ -117,7 +117,7 @@ class MomentumCut : public DataEventCut
   MomentumCut();
   ~MomentumCut();
 
-  bool IsPassed(h22Event, int);
+  bool IsPassed(h22Event &event, int);
 
 };
 
@@ -138,8 +138,8 @@ class SampFracCut : public DataEventCut
 
   int sector; 
   double am, as, bm, bs, cm, cs, dm, ds, nsigma, GetMin, GetMax;
-  bool CanBeApplied(h22Event, int);
-  bool IsPassed(h22Event, int);
+  bool CanBeApplied(h22Event &event, int);
+  bool IsPassed(h22Event &event, int);
 };
 
 /////////////////////////////////////////////////////////////////////
@@ -158,8 +158,8 @@ class CCThetaMatchingCut : public DataEventCut
 
   int sector; 
   double am, as, bm, bs, cm, cs, dm, ds, nsigma, GetMin, GetMax;
-  bool CanBeApplied(h22Event, int);
-  bool IsPassed(h22Event, int);
+  bool CanBeApplied(h22Event &event, int);
+  bool IsPassed(h22Event &event, int);
 };
 
 /////////////////////////////////////////////////////////////////////
@@ -176,7 +176,7 @@ class ECUCut : public DataEventCut
   ECUCut();
   ~ECUCut();
 
-  bool IsPassed(h22Event, int);
+  bool IsPassed(h22Event &event, int);
 
 };
 
@@ -193,7 +193,7 @@ class ECVCut : public DataEventCut
  public:
   ECVCut();
   ~ECVCut();
-  bool IsPassed(h22Event, int);
+  bool IsPassed(h22Event &event, int);
 
 };
 
@@ -210,7 +210,7 @@ class ECWCut : public DataEventCut
  public:
   ECWCut();
   ~ECWCut();
-  bool IsPassed(h22Event, int);
+  bool IsPassed(h22Event &event, int);
 
 };
 
@@ -228,7 +228,7 @@ class ZVertexCut : public DataEventCut
  public:
   ZVertexCut();
   ~ZVertexCut();
-  bool IsPassed(h22Event, int);
+  bool IsPassed(h22Event &event, int);
 
 };
 
@@ -247,7 +247,7 @@ class CCFiducialCut : public DataEventCut
   ~CCFiducialCut();
 
   double a, b, c; 
-  bool IsPassed(h22Event, int);
+  bool IsPassed(h22Event &event, int);
 
 };
 
@@ -264,7 +264,7 @@ class ECEdepInnerCut : public DataEventCut
  public:
   ECEdepInnerCut();
   ~ECEdepInnerCut();
-  bool IsPassed(h22Event, int);
+  bool IsPassed(h22Event &event, int);
 
 };
 
@@ -284,7 +284,7 @@ class DCR1FiducialCut : public DataEventCut
 
   double angle, height; 
 
-  bool IsPassed(h22Event, int);
+  bool IsPassed(h22Event &event, int);
 
 };
 
@@ -304,7 +304,7 @@ class DCR3FiducialCut : public DataEventCut
 
   double angle, height; 
   
-  bool IsPassed(h22Event, int);
+  bool IsPassed(h22Event &event, int);
 
 };
 
@@ -322,7 +322,7 @@ class NPheCut : public DataEventCut
   NPheCut();
   ~NPheCut();
 
-  bool IsPassed(h22Event, int);
+  bool IsPassed(h22Event &event, int);
 
 };
 
@@ -340,7 +340,7 @@ class CCPhiMatchingCut : public DataEventCut
   CCPhiMatchingCut();
   ~CCPhiMatchingCut();
 
-  bool IsPassed(h22Event, int);
+  bool IsPassed(h22Event &event, int);
 
 };
 /////////////////////////////////////////////////////////////////////
@@ -356,7 +356,7 @@ class DataEventCut_DeltaBetaCut : public DataEventCut{
   DataEventCut_DeltaBetaCut();
   ~DataEventCut_DeltaBetaCut();
 
-  bool IsPassed(h22Event event, int hadronIndex, int PID);
+  bool IsPassed(h22Event &event, int hadronIndex, int PID);
 };
 
 /////////////////////////////////////////////////////////////////////
@@ -372,7 +372,7 @@ class DataEventCut_DeltaZVertexCut : public DataEventCut{
   DataEventCut_DeltaZVertexCut();
   ~DataEventCut_DeltaZVertexCut();
 
-  bool IsPassed(h22Event event, int index);
+  bool IsPassed(h22Event &event, int index);
 };
 
 /////////////////////////////////////////////////////////////////////
@@ -390,7 +390,7 @@ class DataEventCut_TOFMassCut : public DataEventCut{
 
   int sector;
 
-  bool CanBeApplied(h22Event event, int index);
-  bool IsPassed(h22Event event, int index);
+  bool CanBeApplied(h22Event &event, int index);
+  bool IsPassed(h22Event &event, int index);
 };
 #endif

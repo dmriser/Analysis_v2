@@ -11,13 +11,18 @@ public:
   StatusBar();
   ~StatusBar(); 
 
-protected:
-TStopwatch stopwatch;
-
-public:
  double GetTime(); 
  void PrintStatus(double doneFraction); 
  void PrintStatus(int done, int total);  
+
+protected:
+ TStopwatch stopwatch;
+ char       fWhiteSpace; 
+ char       fFiller; 
+ char       fLeft; 
+ char       fRight;
+ int       fWidth; 
+
 
 };
 

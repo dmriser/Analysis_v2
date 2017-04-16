@@ -74,7 +74,7 @@ void MCLoader::ProcessEvent(){
 
   if (EventHasGeneratedElectron()){
     // Deal with the generated first.
-    TLorentzVector genElectron   = event.gen_particle(11);   
+    TLorentzVector genElectron   = event.GetGeneratedParticle(11);   
     PhysicsEvent genPhysicsEvent = builder.getPhysicsEvent(genElectron); 
     genHistos->Fill(genPhysicsEvent);
 
@@ -82,7 +82,7 @@ void MCLoader::ProcessEvent(){
     // if (event.gpart > 0), but that would probably skew acceptance 
     // by stopping all particles which went through holes ect. so it 
     // doesn't seem like what we want to do. 
-    int mcSector = event.mcSectorByPID(11);
+    int mcSector = event.GetMCSectorByPID(11);
     //    if (mcSector > -1 && mcSector < 7 && eventSelector->get_cut("Relative Phi Cut")->passes(genPhysicsEvent)) { 
     if (mcSector > -1 && mcSector < 7) { 
       genEvents.Fill(genPhysicsEvent, mcSector); 
@@ -93,14 +93,14 @@ void MCLoader::ProcessEvent(){
     int genxByQQBin = recAndGenEvents.xByQQ[0]->FindBin(genPhysicsEvent.x, genPhysicsEvent.qq);
     int genwByQQBin = recAndGenEvents.wByQQ[0]->FindBin(genPhysicsEvent.w, genPhysicsEvent.qq);
     
-    //  eID.set_info(runno(),GSIM);
+    //  eID.set_info(GetRunNumber(),GSIM);
     //  int e_index = eID.get_electron(event);
     
 
     
     int e_index = filter->getByPID(event, 11);
     if (e_index > -123){
-      TLorentzVector recElectron   = event.getTLorentzVector(e_index, 11);
+      TLorentzVector recElectron   = event.GetTLorentzVector(e_index, 11);
       int sector                   = event.dc_sect[e_index]; 
       PhysicsEvent recPhysicsEvent = builder.getPhysicsEvent(recElectron);
       

@@ -46,8 +46,8 @@ class DataEventSelector
 
   DataEventCut *GetCut(std::string cutName);
   
-  virtual bool IsPassed(h22Event, int); /** I am making this virtual in the event that we need to change something before asking if the events pass (vertex correction ect.) */
-  virtual bool IsPassedFast(h22Event, int); /** I am making this virtual in the event that we need to change something before asking if the events pass (vertex correction ect.) */
+  virtual bool IsPassed(h22Event &event, int); /** I am making this virtual in the event that we need to change something before asking if the events pass (vertex correction ect.) */
+  virtual bool IsPassedFast(h22Event &event, int); /** I am making this virtual in the event that we need to change something before asking if the events pass (vertex correction ect.) */
   std::map<std::string, double> cut_pass_fraction(); 
   
 };

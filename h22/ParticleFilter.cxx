@@ -398,7 +398,7 @@ void ParticleFilter::set_info(bool GSIM, int run){
     runno = run; MC = GSIM;
 }
 
-bool ParticleFilter::has_electron(h22Event event){
+bool ParticleFilter::has_electron(h22Event &event){
     
     // Simply check 0 for now, later add support for
     // loop over gpart.
@@ -433,7 +433,7 @@ bool ParticleFilter::isNotAnElectronCandidate(std::vector<int> electrons, int in
     return (std::find(electrons.begin(),electrons.end(),index) != electrons.end());
 }
 
-vector<int> ParticleFilter::getVectorOfParticleIndices(h22Event event, int pid){
+vector<int> ParticleFilter::getVectorOfParticleIndices(h22Event &event, int pid){
 
     vector<int> particles;
 
@@ -480,7 +480,7 @@ vector<int> ParticleFilter::getVectorOfParticleIndices(h22Event event, int pid){
     return particles;
 }
 
-vector<TLorentzVector> ParticleFilter::getVectorOfTLorentzVectors(h22Event event, int pid){
+vector<TLorentzVector> ParticleFilter::getVectorOfTLorentzVectors(h22Event &event, int pid){
     vector<TLorentzVector> particles;
     vector<int> particleIndices = getVectorOfParticleIndices(event, pid);
 

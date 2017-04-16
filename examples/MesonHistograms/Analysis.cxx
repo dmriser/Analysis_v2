@@ -2,7 +2,6 @@
 #include <vector>
 using namespace std; 
 
-
 #include "TFile.h"
 #include "TH1.h"
 #include "TLorentzVector.h"
@@ -16,6 +15,7 @@ using namespace std;
 #include "PhysicsEvent.h"
 #include "PhysicsEventBuilder.h"
 #include "MesonHistograms.h"
+#include "MomCorr.h"
 #include "ParticleFilter.h"
 #include "Parameters.h"
 
@@ -26,11 +26,15 @@ public:
 
   MesonHistograms     *pipHistos; 
   MesonHistograms     *kapHistos; 
+  MesonHistograms     *posHistos; 
+  MesonHistograms     *negHistos; 
   MesonHistograms     *pimHistos; 
+
   PhysicsEventBuilder *builder; 
   ParticleFilter      *filter; 
   Parameters          *params; 
   Corrections          corr; 
+  MomCorr_e1f         *momCorr;
 
 public:
 
@@ -54,7 +58,7 @@ void MyAnalysis::OptimizeLoop(int numberOfEvents){
   }
 
   // optimize selector 
-  filter->getSelector(11)->optimize();
+  filter->GetSelector(11)->Optimize();
 }
 
 void MyAnalysis::ProcessEvent(){
@@ -72,7 +76,7 @@ void MyAnalysis::ProcessEvent(){
     h22ElectronEvent electronEvent(event);   
     electronEvent.SetElectronIndex(electronIndices.front());
     electronEvent.SetElectron(electrons.front()); 
-    corr.CorrectElectronEvent(&electronEvent, runno(), GSIM); 
+    corr.CorrectElectronEvent(&electronEvent, GetRunNumber(), GSIM); 
 
       if(!pims.empty()){
 	pimHistos->Fill(electronEvent, pimIndices[0]);
@@ -83,16 +87,50 @@ void MyAnalysis::ProcessEvent(){
       if(!kapIndices.empty()){
 	kapHistos->Fill(electronEvent, kapIndices[0]); 
       }
+
+      // grab just positives 
+      for (int ipart=1; ipart<event.gpart; ipart++){
+
+	if (ipart != electronEvent.GetElectronIndex()){
+	  
+	  TLorentzVector part = event.GetTLorentzVector(ipart, event.id[ipart]);
+	  part = momCorr->PcorN(part, event.q[ipart], event.id[ipart]);	
+	  
+	  electronEvent.p[ipart] = part.P();
+	  //	event.cx[ipart] = part.Px()/part.P();
+	  //	event.cy[ipart] = part.Py()/part.P();
+	  //	event.cz[ipart] = part.Pz()/part.P();
+	  
+	  //	double tof_mass = electronEvent.p[ipart] * sqrt((1-pow(electronEvent.corr_b[ipart],2))/pow(electronEvent.corr_b[ipart],2)); 
+	  
+	  PhysicsEvent physicsEvent = builder->getPhysicsEvent(electrons.front(), part); 
+	  
+	    if ( fabs( electronEvent.corr_vz[ipart] - electronEvent.corr_vz[electronEvent.GetElectronIndex()] ) <= 2.50)
+	      if (physicsEvent.mm2 > 1.0 && physicsEvent.w > 2.0 && physicsEvent.qq > 1.0){
+		if (event.q[ipart] == 1)
+		  posHistos->Fill(electronEvent, ipart); 
+		
+		else if (event.q[ipart] == -1)
+		  negHistos->Fill(electronEvent, ipart); 
+	      }
+	  //	      if (tof_mass > 0.35 && tof_mass < 0.65)
+	}
+      }
+      
   }
+
 
 }
 
 void MyAnalysis::Initialize(){
   pipHistos = new MesonHistograms("testPipHistos", 211); 
   kapHistos = new MesonHistograms("testKapHistos", 321); 
+  posHistos = new MesonHistograms("testPosHistos", 321); 
+  negHistos = new MesonHistograms("testNegHistos", -321); 
   pimHistos = new MesonHistograms("testPimHistos", -211); 
   builder = new PhysicsEventBuilder(); 
   filter = new ParticleFilter(params); 
+  momCorr = new MomCorr_e1f("/u/home/dmriser/Analysis_v2/momCorr/");
 }
 
 int main(int argc, char *argv[]){
@@ -114,7 +152,7 @@ int main(int argc, char *argv[]){
   MyAnalysis analysis(opts, pars);
 
   for (int i=0; i<opts->ifiles.size(); i++) { 
-    analysis.AddFile( opts->ifiles[i].c_str() ); 
+    analysis.AddFile( opts->ifiles[i] ); 
   } 
 
   analysis.RunAnalysis();
@@ -123,10 +161,12 @@ int main(int argc, char *argv[]){
   analysis.pipHistos->Save(out); 
   analysis.kapHistos->Save(out); 
   analysis.pimHistos->Save(out); 
+  analysis.posHistos->Save(out); 
+  analysis.negHistos->Save(out); 
   out->Close(); 
 
   // statistics 
-  analysis.filter->getSelector(11)->summarize();
+  analysis.filter->GetSelector(11)->PrintSummary();
 
   return 0;
 }

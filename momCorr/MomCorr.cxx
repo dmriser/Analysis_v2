@@ -315,7 +315,7 @@ Double_t MomCorr_e1f::mom_corr_pip(Double_t MomM, Double_t ThetaM, Double_t PhiM
 }
 
 /* ================================================================= */
-TLorentzVector MomCorr_e1f::PcorN(TLorentzVector Pin, Int_t charge, Int_t ipart) {
+TLorentzVector MomCorr_e1f::PcorN(TLorentzVector &Pin, Int_t charge, Int_t ipart) {
   TLorentzVector Pc;
 
   Double_t mass = Pin.M();

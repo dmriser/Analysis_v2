@@ -52,7 +52,7 @@ void FaradayCupAppender::AddFiles(std::vector<std::string> dataFiles){
   TRegexp regexForRunNumber("[1-9][0-9][0-9][0-9][0-9]");
   for (int ifile = 0; ifile<dataFiles.size(); ifile++)
     {
-      TString file(dataFiles[ifile]);
+      TString file(dataFiles[ifile].c_str());
       TString srunno = file(regexForRunNumber);
       int runno      = srunno.Atoi();
       double charge  = (double) runInfoDatabase->info[runno].dQ/runInfoDatabase->info[runno].daq_scale;

@@ -10,14 +10,6 @@
      enough to process clas12 data if it 
      becomes root ready
 
-  -> Fix event in h22Reader to be pointer 
-     to event, so that it doesnt call the 
-     copy constructor 10000000000000 times.
-
-  -> Figure out a nice way to correct events 
-     the new h22ElectronEvent class needs to be 
-     corrected nicely 
-
 # ------------------------------------------
 #     Feature Request
 # ------------------------------------------

@@ -35,7 +35,7 @@ PhotonHistograms::PhotonHistograms(std::string name) : fName(name) {
 
 }
 
-void PhotonHistograms::Fill(h22ElectronEvent event, int index) {
+void PhotonHistograms::Fill(h22ElectronEvent &event, int index) {
   h1_p[0]->Fill(event.p[index]);
   h1_ecx[0]->Fill(event.ech_x[index]);
   h1_ecy[0]->Fill(event.ech_y[index]);
@@ -153,6 +153,7 @@ void PhotonHistograms::Save(TFile *outputFile) {
     h2_p_dbeta[s]->Write(); 
   }
 
+  outputFile->cd(); 
 }
 
 #endif

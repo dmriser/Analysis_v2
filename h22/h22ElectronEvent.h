@@ -22,7 +22,7 @@ class h22ElectronEvent : public h22Event {
   Float_t corr_sc_t[40]; 
   Float_t corr_b[40];
   Float_t corr_vz[40];
-
+ 
   void SetElectronIndex(int index) { 
     fElectronIndex = index; 
   }

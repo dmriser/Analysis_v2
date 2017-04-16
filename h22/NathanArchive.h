@@ -17,7 +17,7 @@ class NathanEIDWrapper
   bool GSIM; 
   
   void set_info(int, bool); /** Pass in run number and monte carlo status */
-  int get_electron(h22Event); /** You supply the event, we supply the electron */
+  int get_electron(h22Event &event); /** You supply the event, we supply the electron */
 
   // getters and setters for strictnesses 
   int getRunno(){ return runno; }

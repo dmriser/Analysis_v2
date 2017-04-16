@@ -48,8 +48,8 @@ class PhysicsEventCut
   
   std::string name(){ return cut_name; }
   
-  virtual bool applies(PhysicsEvent); /** Pass in the event, and the particle index of interest */
-  virtual bool passes(PhysicsEvent); /** Pass in the event, and the particle index of interest */
+  virtual bool applies(PhysicsEvent &event); /** Pass in the event, and the particle index of interest */
+  virtual bool passes(PhysicsEvent &event); /** Pass in the event, and the particle index of interest */
 
 };
 
@@ -66,7 +66,7 @@ class PhysicsEventCut_MissingMass : public PhysicsEventCut {
   PhysicsEventCut_MissingMass();
   ~PhysicsEventCut_MissingMass();
 
-  bool passes(PhysicsEvent event); 
+  bool passes(PhysicsEvent &event); 
 
 };
 
@@ -83,7 +83,7 @@ class PhysicsEventCut_w : public PhysicsEventCut {
   PhysicsEventCut_w();
   ~PhysicsEventCut_w();
 
-  bool passes(PhysicsEvent event); 
+  bool passes(PhysicsEvent &event); 
 
 };
 
@@ -100,7 +100,7 @@ class PhysicsEventCut_p : public PhysicsEventCut {
   PhysicsEventCut_p();
   ~PhysicsEventCut_p();
 
-  bool passes(PhysicsEvent event); 
+  bool passes(PhysicsEvent &event); 
 
 };
 
@@ -117,7 +117,7 @@ class PhysicsEventCut_x : public PhysicsEventCut {
   PhysicsEventCut_x();
   ~PhysicsEventCut_x();
 
-  bool passes(PhysicsEvent event); 
+  bool passes(PhysicsEvent &event); 
 
 };
 
@@ -134,7 +134,7 @@ class PhysicsEventCut_y : public PhysicsEventCut {
   PhysicsEventCut_y();
   ~PhysicsEventCut_y();
 
-  bool passes(PhysicsEvent event); 
+  bool passes(PhysicsEvent &event); 
 
 };
 
@@ -151,7 +151,7 @@ class PhysicsEventCut_z : public PhysicsEventCut {
   PhysicsEventCut_z();
   ~PhysicsEventCut_z();
 
-  bool passes(PhysicsEvent event); 
+  bool passes(PhysicsEvent &event); 
 
 };
 
@@ -168,7 +168,7 @@ class PhysicsEventCut_qq : public PhysicsEventCut {
   PhysicsEventCut_qq();
   ~PhysicsEventCut_qq();
 
-  bool passes(PhysicsEvent event); 
+  bool passes(PhysicsEvent &event); 
 
 };
 
@@ -185,7 +185,7 @@ class PhysicsEventCut_pTransverse : public PhysicsEventCut {
   PhysicsEventCut_pTransverse();
   ~PhysicsEventCut_pTransverse();
 
-  bool passes(PhysicsEvent event); 
+  bool passes(PhysicsEvent &event); 
 
 };
 
@@ -202,7 +202,7 @@ class PhysicsEventCut_relPhiCut : public PhysicsEventCut {
   PhysicsEventCut_relPhiCut();
   ~PhysicsEventCut_relPhiCut();
 
-  bool passes(PhysicsEvent event); 
+  bool passes(PhysicsEvent &event); 
 
 };
 
@@ -222,7 +222,7 @@ class PhysicsEventCut_xyLineCut : public PhysicsEventCut {
 
   double m, b;
 
-  bool passes(PhysicsEvent event); 
+  bool passes(PhysicsEvent &event); 
 
 };
 

@@ -91,16 +91,16 @@ public:
     double pi0_invmass_mu[6], pi0_invmass_sigma[6], pi0_invmass_nsigma;
     
     // Member Functions
-    bool has_electron(h22Event);
+    bool has_electron(h22Event &event);
     bool isNotAnElectronCandidate(std::vector<int> electrons, int index);
     int getByPID(h22Event, int);
     void set_info(bool, int);
     
     DataEventSelector *GetSelector(int pid);
-    std::vector<int> getVectorOfParticleIndices(h22Event event, int pid);
+    std::vector<int> getVectorOfParticleIndices(h22Event &event, int pid);
     std::map<std::string,bool> eid_map(h22Event, int);
     std::map<std::string,bool> hid_map(h22Event, int);
-    std::vector<TLorentzVector> getVectorOfTLorentzVectors(h22Event, int pid);
+    std::vector<TLorentzVector> getVectorOfTLorentzVectors(h22Event &event, int pid);
     std::map<int, TLorentzVector> getMapOfIndexAndTLorentzVector(h22Event, int pid); 
 
 };

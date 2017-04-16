@@ -11,5 +11,5 @@ env.Append(CPPPATH = ['$h22libs/include/'], LIBPATH = ['$h22libs/lib/'],LIBS = [
 #sources = glob.glob('*.cxx')
 sources = glob.glob('compareModels.cxx')
 
-for prog in sources:
-    env.Program(prog)
+env.Program('compareModels','compareModels.cxx')
+env.Program('printBostedTable','printBostedTable.cxx')

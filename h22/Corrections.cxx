@@ -81,8 +81,7 @@ void Corrections::CorrectElectronEvent(h22ElectronEvent *event, int runno, int G
 
 }
 
-double Corrections::vz(h22Event event, int ipart, int runno, int GSIM)
-{
+double Corrections::vz(h22Event &event, int ipart, int runno, int GSIM){
     // set sector need to build better protection here for case
     // of sector = -1
     int s = event.ec_sect[ipart] -1; if (s<0) return 0.00;
@@ -149,7 +148,7 @@ double Corrections::vz(h22Event event, int ipart, int runno, int GSIM)
     return cvz;
 }
 
-double Corrections::electron_sct(h22Event event,int ipart,int runno,int GSIM)
+double Corrections::electron_sct(h22Event &event,int ipart,int runno,int GSIM)
 {
     double sctime = event.sc_t[ipart];
     int paddle    = event.sc_pd[ipart];
@@ -176,7 +175,7 @@ double Corrections::electron_sct(h22Event event,int ipart,int runno,int GSIM)
     return sctime;
 }
 
-double Corrections::hadron_sct(h22Event event,int ipart,int runno,int GSIM)
+double Corrections::hadron_sct(h22Event &event,int ipart,int runno,int GSIM)
 {
     double sctime = event.sc_t[ipart];
     int paddle    = event.sc_pd[ipart];
@@ -219,7 +218,7 @@ double Corrections::hadron_sct(h22Event event,int ipart,int runno,int GSIM)
     return sctime;
 }
 
-bool Corrections::good_sc_paddle(h22Event event, int ipart)
+bool Corrections::good_sc_paddle(h22Event &event, int ipart)
 {
     int sector = event.sc_sect[ipart];
     int paddle = event.sc_pd[ipart];

@@ -67,11 +67,10 @@ double F1F209Wrapper::GetXS(double Z, double A, double Ei, double Ef, double the
     double F1, F2, r;
     double xs1, xs2;
 
-    // What is this mystery factor?
     GetF1F2IN09(Z, A, Q2, w2, F1, F2, r);
     xs1 = (2. / 137. * Ef / Q2 * cos(theta / 2.))*(2. / 137. * Ef / Q2 * cos(theta / 2.)); // mott
     xs1 = xs1 * (2. / M * F1 * tan(abs(theta) / 2.) * tan(abs(theta) / 2.) + F2 / nu);
-    xs1 = xs1 * 389.379;
+    xs1 = xs1 * 389.379; // <---- What is this factor? 
 
     GetF1F2QE09(Z, A, Q2, w2, F1, F2);
     xs2 = (2. / 137. * Ef / Q2 * cos(theta / 2.))*(2. / 137. * Ef / Q2 * cos(theta / 2.)); // mott

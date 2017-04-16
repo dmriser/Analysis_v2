@@ -75,7 +75,7 @@ private:
     Double_t mom_corr_pip(Double_t , Double_t , Double_t , Int_t);
 
 public:
-    TLorentzVector PcorN(TLorentzVector Pin, Int_t charge, Int_t ipart);
+    TLorentzVector PcorN(TLorentzVector &Pin, Int_t charge, Int_t ipart);
     void set_path(std::string);
 };
 

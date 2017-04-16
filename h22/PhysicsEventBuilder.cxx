@@ -29,14 +29,14 @@ PhysicsEventBuilder::PhysicsEventBuilder(TLorentzVector beam, TLorentzVector tar
 PhysicsEventBuilder::~PhysicsEventBuilder(){
 }
 
-PhysicsEvent PhysicsEventBuilder::getPhysicsEvent(TLorentzVector electron){
+PhysicsEvent &PhysicsEventBuilder::getPhysicsEvent(TLorentzVector &electron){
   physicsEvent.ClearKinematics(); 
   setVectors(electron);
   setKinematics();
   return physicsEvent; 
 }
 
-PhysicsEvent PhysicsEventBuilder::getPhysicsEvent(TLorentzVector electron, TLorentzVector particle){
+PhysicsEvent &PhysicsEventBuilder::getPhysicsEvent(TLorentzVector &electron, TLorentzVector &particle){
   physicsEvent.particle1 = particle; 
   physicsEvent.ClearKinematics(); 
   setVectors(electron);
@@ -69,7 +69,7 @@ PhysicsEvent PhysicsEventBuilder::getPhysicsEvent(TLorentzVector electron, TLore
   return physicsEvent; 
 }
 
-PhysicsEvent PhysicsEventBuilder::getPhysicsEvent(TLorentzVector electron, TLorentzVector particle1, TLorentzVector particle2){
+PhysicsEvent &PhysicsEventBuilder::getPhysicsEvent(TLorentzVector &electron, TLorentzVector &particle1, TLorentzVector &particle2){
   physicsEvent.particle1 = particle1; 
   physicsEvent.particle2 = particle2; 
   physicsEvent.ClearKinematics(); 
@@ -79,7 +79,7 @@ PhysicsEvent PhysicsEventBuilder::getPhysicsEvent(TLorentzVector electron, TLore
   return physicsEvent; 
 }
 
-void PhysicsEventBuilder::setVectors(TLorentzVector electron){
+void PhysicsEventBuilder::setVectors(TLorentzVector &electron){
   // Set 4-Vectors
   physicsEvent.detectedElectron = electron; 
   physicsEvent.finalEnergy      = physicsEvent.detectedElectron.E(); 

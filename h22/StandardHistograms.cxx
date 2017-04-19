@@ -58,6 +58,7 @@ void StandardHistograms::Initialize(){
    h1_z[s]              = new TH1D(Form("h1_z_sect%d_%s",s,name.c_str()),              Form("h1_z_sect%d",s),             100,0.0,1.0); 
    h1_pt2[s]            = new TH1D(Form("h1_pt2_sect%d_%s",s,name.c_str()),            Form("h1_pt2_sect%d",s),           100,0.0,2.0); 
    h1_w[s]              = new TH1D(Form("h1_w_sect%d_%s",s,name.c_str()),              Form("h1_w_sect%d",s),             100,0.5,3.5); 
+   h1_mm2[s]            = new TH1D(Form("h1_mm2_sect%d_%s",s,name.c_str()),            Form("h1_mm2_sect%d",s),           100,-1.5,2.5); 
    h1_phiH[s]           = new TH1D(Form("h1_phiH_sect%d_%s",s,name.c_str()),           Form("h1_phiH_sect%d",s),          100,-180.0,180.0); 
    h1_wProtonMass[s]    = new TH1D(Form("h1_wProtonMass_sect%d_%s",s,name.c_str()),    Form("h1_wProtonMass_sect%d",s),   100,0.7,1.2); 
    h1_q2[s]             = new TH1D(Form("h1_q2_sect%d_%s",s,name.c_str()),             Form("h1_q2_sect%d",s),            100,0.5,5.0); 
@@ -238,6 +239,7 @@ void StandardHistograms::Fill(PhysicsEvent &physicsEvent){
   h1_pt2[0]           ->Fill(physicsEvent.pT*physicsEvent.pT);
   h1_phiH[0]          ->Fill(physicsEvent.phiHadron);
   h1_w[0]             ->Fill(physicsEvent.w);
+  h1_mm2[0]           ->Fill(physicsEvent.mm2);
   h1_wProtonMass[0]   ->Fill(physicsEvent.w);
   h1_q2[0]            ->Fill(physicsEvent.qq);
   h1_nu[0]            ->Fill(physicsEvent.nu);
@@ -277,7 +279,8 @@ void StandardHistograms::Fill(PhysicsEvent &physicsEvent){
   h1_nu[s]             ->Fill(physicsEvent.nu);
   h1_ele_rapidity[s]   ->Fill(physicsEvent.detectedElectron.Rapidity());
   h1_part1_rapidity[s1]->Fill(physicsEvent.particle1.Rapidity());
-  
+  h1_mm2[s]           ->Fill(physicsEvent.mm2);
+
   h2_ele_p_theta[s]       ->Fill(physicsEvent.detectedElectron.P(),physicsEvent.detectedElectron.Theta()*to_degrees); 
   h2_ele_phi_theta[s]     ->Fill(physicsEvent.detectedElectron.Phi()*to_degrees,physicsEvent.detectedElectron.Theta()*to_degrees); 
   h2_ele_relPhi_theta[s]  ->Fill(getRelativePhi(physicsEvent.detectedElectron.Phi()*to_degrees),physicsEvent.detectedElectron.Theta()*to_degrees); 
@@ -308,6 +311,7 @@ void StandardHistograms::Save(TFile *outputFile){
       h1_xbj[s]                   ->Write(); 
       h1_y[s]                     ->Write(); 
       h1_w[s]                     ->Write(); 
+      h1_mm2[s]                   ->Write(); 
       h1_z[s]                     ->Write(); 
       h1_pt2[s]                   ->Write(); 
       h1_phiH[s]                  ->Write(); 

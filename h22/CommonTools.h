@@ -23,6 +23,9 @@
 #include <vector>
 #include <cmath>
 
+#include "TColor.h"
+#include "TStyle.h"
+
 #define pi             3.14159265359
 #define to_degrees     57.2957795131
 #define to_radians     0.01745329251
@@ -194,5 +197,41 @@ namespace Color {
     }
   };
 }
+
+namespace Global {
+  
+  class Visualization{
+  public:
+
+    static void SetCustomPalette(){
+      const static UInt_t rNCOLORS = 5;
+      Double_t rRed[rNCOLORS] = {0.00, 0.00, 0.87, 1.00, 0.51};
+      Double_t rGreen[rNCOLORS] = {0.00, 0.81, 1.00, 0.20, 0.00};
+      Double_t rBlue[rNCOLORS] = {0.51, 1.00, 0.12, 0.00, 0.00};
+      Double_t rStops[rNCOLORS] = {0.00, 0.34, 0.61, 0.84, 1.00};
+      UInt_t rNSTEPS = 255;
+      
+      TColor::CreateGradientColorTable(rNCOLORS, rStops, rRed, rGreen, rBlue, rNSTEPS);
+      gStyle->SetNumberContours(rNSTEPS);    
+    }
+
+    static void SetBentCoolWarmPalette(){
+      const static UInt_t rNCOLORS = 3;
+      Double_t rRed[rNCOLORS] = {0.33, 0.95, 0.55};
+      Double_t rGreen[rNCOLORS] = {0.28, 0.95, 0.00};
+      Double_t rBlue[rNCOLORS] = {0.76, 0.95, 0.15};
+      Double_t rStops[rNCOLORS] = {0.00, 0.5, 1.00};
+      UInt_t rNSTEPS = 255;
+      
+      TColor::CreateGradientColorTable(rNCOLORS, rStops, rRed, rGreen, rBlue, rNSTEPS);
+      gStyle->SetNumberContours(rNSTEPS);    
+    }
+
+
+
+  };
+
+}
+
 #endif
 

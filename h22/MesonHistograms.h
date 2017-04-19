@@ -46,6 +46,10 @@ class MesonHistograms {
   void Load(std::string filename);
   void Save(TFile *outputFile);
   
+  int GetPid() const {
+    return fPid;
+  }
+  
  protected:
   TFile       *fInputFile; 
   std::string  fName; 

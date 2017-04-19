@@ -14,8 +14,8 @@ MesonHistograms::MesonHistograms(std::string name, int pid) : fName(name), fPid(
     h1_p[s] = new TH1D(Form("h1_p_%d_%s",s, fName.c_str()), Form("h1_p_%d_%s",s, fName.c_str()), 100, 0.0, 4.5);
     h1_b[s] = new TH1D(Form("h1_b_%d_%s",s, fName.c_str()), Form("h1_b_%d_%s",s, fName.c_str()), 100, 0.0, 1.2);
     h1_tofmass[s] = new TH1D(Form("h1_tofmass_%d_%s",s, fName.c_str()), Form("h1_tofmass_%d_%s",s, fName.c_str()), 100, -0.6, 1.5);
-    h1_dcx[s] = new TH1D(Form("h1_dcx_%d_%s",s, fName.c_str()), Form("h1_dcx_%d_%s",s, fName.c_str()), 100, -150, 150);
-    h1_dcy[s] = new TH1D(Form("h1_dcy_%d_%s",s, fName.c_str()), Form("h1_dcy_%d_%s",s, fName.c_str()), 100, -150, 150);
+    h1_dcx[s] = new TH1D(Form("h1_dcx_%d_%s",s, fName.c_str()), Form("h1_dcx_%d_%s",s, fName.c_str()), 100, 0, 60);
+    h1_dcy[s] = new TH1D(Form("h1_dcy_%d_%s",s, fName.c_str()), Form("h1_dcy_%d_%s",s, fName.c_str()), 100, -60, 60);
     h1_edep[s] = new TH1D(Form("h1_edep_%d_%s",s, fName.c_str()), Form("h1_edep_%d_%s",s, fName.c_str()), 100, 0.0, 4.5);
     h1_dbeta[s] = new TH1D(Form("h1_dbeta_%d_%s",s, fName.c_str()), Form("h1_dbeta_%d_%s",s, fName.c_str()), 100, -2.5, 2.5);
     h1_vz[s] = new TH1D(Form("h1_vz_%d_%s",s, fName.c_str()), Form("h1_vz_%d_%s",s, fName.c_str()), 100, -40.0, 0.0);
@@ -25,7 +25,7 @@ MesonHistograms::MesonHistograms(std::string name, int pid) : fName(name), fPid(
     h1_phi[s] = new TH1D(Form("h1_phi_%d_%s",s, fName.c_str()), Form("h1_phi_%d_%s",s, fName.c_str()), 100, -30, 30);
     
     h2_phi_theta[s] = new TH2D(Form("h2_phi_theta_%d_%s",s, fName.c_str()), Form("h2_phi_theta_%d_%s",s, fName.c_str()), 100, -30, 30, 100, 0.0, 60.0); 
-    h2_dcx_dcy[s] = new TH2D(Form("h2_dcx_dcy_%d_%s",s, fName.c_str()), Form("h2_dcx_dcy_%d_%s",s, fName.c_str()), 100, -150, 150, 100, -150, 150); 
+    h2_dcx_dcy[s] = new TH2D(Form("h2_dcx_dcy_%d_%s",s, fName.c_str()), Form("h2_dcx_dcy_%d_%s",s, fName.c_str()), 100, 0, 60, 100, -60, 60); 
     h2_p_beta[s] = new TH2D(Form("h2_p_beta_%d_%s",s, fName.c_str()), Form("h2_p_beta_%d_%s",s, fName.c_str()), 100, 0.0, 4.5, 100, 0.0, 1.2); 
     h2_p_tofmass[s] = new TH2D(Form("h2_p_tofmass_%d_%s",s, fName.c_str()), Form("h2_p_tofmass_%d_%s",s, fName.c_str()), 100, 0.0, 4.5, 100, -0.6, 1.5); 
     h2_nphe_tofmass[s] = new TH2D(Form("h2_nphe_tofmass_%d_%s",s, fName.c_str()), Form("h2_nphe_tofmass_%d_%s",s, fName.c_str()), 100, 0, 100, 100, -0.6, 1.5); 
@@ -36,27 +36,27 @@ MesonHistograms::MesonHistograms(std::string name, int pid) : fName(name), fPid(
 
 void MesonHistograms::Fill(h22ElectronEvent &event, int index) {
   h1_p[0]->Fill(event.p[index]);
-  h1_dcx[0]->Fill(event.tl1_x[index]);
-  h1_dcy[0]->Fill(event.tl1_y[index]);
+  h1_dcx[0]->Fill(event.GetRotatedDCR1PosX(index));
+  h1_dcy[0]->Fill(event.GetRotatedDCR1PosY(index));
   h1_edep[0]->Fill(event.edep[index]);
   h1_theta[0]->Fill(event.GetTheta(index));
   h1_dtheta[0]->Fill(event.GetTheta(event.GetElectronIndex()) - event.GetTheta(index));
   h1_phi[0] ->Fill(event.GetRelativePhi(index));
   
   h2_phi_theta[0]->Fill(event.GetRelativePhi(index), event.GetTheta(index));
-  h2_dcx_dcy[0]->Fill(event.tl1_x[index], event.tl1_y[index]);
+  h2_dcx_dcy[0]->Fill(event.GetRotatedDCR1PosX(index), event.GetRotatedDCR1PosY(index));
  
   int s = event.dc_sect[index];
   h1_p[s]->Fill(event.p[index]);
-  h1_dcx[s]->Fill(event.tl1_x[index]);
-  h1_dcy[s]->Fill(event.tl1_y[index]);
+  h1_dcx[s]->Fill(event.GetRotatedDCR1PosX(index));
+  h1_dcy[s]->Fill(event.GetRotatedDCR1PosY(index));
   h1_edep[s]->Fill(event.edep[index]);
   h1_theta[s]->Fill(event.GetTheta(index));
   h1_dtheta[s]->Fill(event.GetTheta(event.GetElectronIndex()) - event.GetTheta(index));
   h1_phi[s] ->Fill(event.GetRelativePhi(index));
 
   h2_phi_theta[s]->Fill(event.GetRelativePhi(index), event.GetTheta(index));
-  h2_dcx_dcy[s]->Fill(event.tl1_x[index], event.tl1_y[index]);
+  h2_dcx_dcy[s]->Fill(event.GetRotatedDCR1PosX(index), event.GetRotatedDCR1PosY(index));
 
   if(event.IsCorrected()){
     h1_vz[0] ->Fill(event.corr_vz[index]);

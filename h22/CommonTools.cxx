@@ -10,11 +10,9 @@
 #ifndef COMMON_TOOLS_CXX
 #define COMMON_TOOLS_CXX
 
-// C++ headers
 #include <iostream>
 #include <sstream>
 
-// my includes
 #include "CommonTools.h"
 
 double pid_to_mass(int pid)
@@ -37,7 +35,5 @@ double pid_to_mass(int pid)
     else if (pid == phi_id) return neutron_mass;
     return 0.00;
 }
-
-
 #endif
 

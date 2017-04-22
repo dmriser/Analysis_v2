@@ -43,6 +43,8 @@ public:
     DataEventSelector *electronSelector;
     DataEventSelector *positivePionSelector;
     DataEventSelector *negativePionSelector;
+    DataEventSelector *positiveKaonSelector;
+    DataEventSelector *negativeKaonSelector;
 
     // List of the cuts used for electrons.
     ChargeCut          *negativity_cut;
@@ -71,6 +73,9 @@ public:
     TrackQualityCut    *qc_cut;
     ZVertexCut         *vz_cut;
 
+    // Testing 
+    TestCut *testCut; 
+
     // List of cuts used for pions
     DataEventCut_TOFMassCut      *pip_tofmass_cut_s1;
     DataEventCut_TOFMassCut      *pip_tofmass_cut_s2;
@@ -84,7 +89,22 @@ public:
     DataEventCut_TOFMassCut      *pim_tofmass_cut_s4;
     DataEventCut_TOFMassCut      *pim_tofmass_cut_s5;
     DataEventCut_TOFMassCut      *pim_tofmass_cut_s6;
+
+    DataEventCut_TOFMassCut      *kp_tofmass_cut_s1;
+    DataEventCut_TOFMassCut      *kp_tofmass_cut_s2;
+    DataEventCut_TOFMassCut      *kp_tofmass_cut_s3;
+    DataEventCut_TOFMassCut      *kp_tofmass_cut_s4;
+    DataEventCut_TOFMassCut      *kp_tofmass_cut_s5;
+    DataEventCut_TOFMassCut      *kp_tofmass_cut_s6;
+    DataEventCut_TOFMassCut      *km_tofmass_cut_s1;
+    DataEventCut_TOFMassCut      *km_tofmass_cut_s2;
+    DataEventCut_TOFMassCut      *km_tofmass_cut_s3;
+    DataEventCut_TOFMassCut      *km_tofmass_cut_s4;
+    DataEventCut_TOFMassCut      *km_tofmass_cut_s5;
+    DataEventCut_TOFMassCut      *km_tofmass_cut_s6;
+
     DataEventCut_DeltaZVertexCut *dvz_cut;
+    DCR1FiducialCut    *dcr1_meson_fid_cut;
 
     // Parameters for Pi-0 Invariant Mass
     // There should be a better way to do it. 

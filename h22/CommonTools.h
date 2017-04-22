@@ -22,6 +22,7 @@
 #include <string>
 #include <vector>
 #include <cmath>
+#include <cstdlib>
 
 #include "TColor.h"
 #include "TStyle.h"
@@ -226,11 +227,34 @@ namespace Global {
       TColor::CreateGradientColorTable(rNCOLORS, rStops, rRed, rGreen, rBlue, rNSTEPS);
       gStyle->SetNumberContours(rNSTEPS);    
     }
-
-
-
   };
 
+  class Environment {
+  public:
+    static std::string GetIncludePath(){
+      std::string path = ""; 
+
+      if(char *p = std::getenv("h22libs")){
+	path.append(p); 
+      } else {
+	std::cerr << "[Global::Environment::GetIncludePath] Environmental variable h22libs not set!" << std::endl;
+      }
+
+      return path; 
+    }
+
+    static std::string GetAnalysisPath(){
+      std::string path = ""; 
+
+      if(char *p = std::getenv("ANALTOP")){
+	path.append(p); 
+      } else {
+	std::cerr << "[Global::Environment::GetAnalysisPath] Environmental variable ANALTOP not set!" << std::endl;
+      }
+
+      return path; 
+    }
+  };
 }
 
 #endif

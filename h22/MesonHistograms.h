@@ -8,6 +8,7 @@
 #include "TH2.h"
 
 #include "h22ElectronEvent.h"
+#include "PhysicsEvent.h"
 
 class MesonHistograms {
  public:
@@ -41,8 +42,11 @@ class MesonHistograms {
   TH2D *h2_p_dbeta[7];
   TH2D *h2_p_tofmass[7];
   TH2D *h2_nphe_tofmass[7];
+  TH2D *h2_p_mm2[7];
 
   void Fill(h22ElectronEvent &event, int index);
+  void Fill(PhysicsEvent &physicsEvent);
+  void Fill(h22ElectronEvent &event, PhysicsEvent &physicsEvent, int index);
   void Load(std::string filename);
   void Save(TFile *outputFile);
   

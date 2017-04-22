@@ -521,22 +521,21 @@ DataEventCut_DeltaZVertexCut::~DataEventCut_DeltaZVertexCut(){
 }
 
 
-bool DataEventCut_DeltaZVertexCut::IsPassed(h22Event &event, int hadronIndex){
+bool DataEventCut_DeltaZVertexCut::IsPassed(h22ElectronEvent &event, int hadronIndex){
 
     // It is very important to note that this
     // routine expects CORRECTED variables.
-
-    double dvz = event.vz[0]-event.vz[hadronIndex];
-
-    if (dvz > GetMin() && dvz < GetMax()){
-        n_pass++;
-        return true;
-    } else {
-        n_fail++;
-        return false;
-    }
-
+  double dvz = event.corr_vz[event.GetElectronIndex()]-event.corr_vz[hadronIndex];
+  
+  if (dvz > GetMin() && dvz < GetMax()){
+    n_pass++;
+    return true;
+  } else {
+    n_fail++;
     return false;
+  }
+  
+  return false;
 }
 
 ///////////////////////////////////////////////////////////////
@@ -552,15 +551,12 @@ DataEventCut_TOFMassCut::DataEventCut_TOFMassCut(int s) : sector(s){
 DataEventCut_TOFMassCut::~DataEventCut_TOFMassCut(){
 }
 
-bool DataEventCut_TOFMassCut::CanBeApplied(h22Event &event, int index){
+bool DataEventCut_TOFMassCut::CanBeApplied(h22ElectronEvent &event, int index){
     return (event.dc_sect[index] == sector);
 }
 
-bool DataEventCut_TOFMassCut::IsPassed(h22Event &event, int hadronIndex){
-    // This has to be the corrected beta before we run it.
-    double startTime  = event.sc_t[0]-event.sc_r[0]/speed_of_light;
-    double beta       = event.sc_r[hadronIndex]/(event.sc_t[hadronIndex]-startTime)/speed_of_light;
-    double tofmass    = sqrt(pow(event.p[hadronIndex],2)*(1-pow(beta,2))/pow(beta,2));
+bool DataEventCut_TOFMassCut::IsPassed(h22ElectronEvent &event, int hadronIndex){
+    double tofmass = sqrt(pow(event.p[hadronIndex],2)*(1-pow(event.corr_b[hadronIndex],2))/pow(event.corr_b[hadronIndex],2));
 
     if (tofmass > GetMin() && tofmass < GetMax()){
         n_pass++;
@@ -571,6 +567,28 @@ bool DataEventCut_TOFMassCut::IsPassed(h22Event &event, int hadronIndex){
     }
 
     return false;
+}
+
+
+///////////////////////////////////////////////////////////////
+/*
+  TestCut 
+*/
+///////////////////////////////////////////////////////////////
+
+TestCut::TestCut(){
+    SetName("Test Cut");
+}
+
+TestCut::~TestCut(){
+}
+
+bool TestCut::CanBeApplied(h22ElectronEvent &event, int index){
+  return true; 
+}
+
+bool TestCut::IsPassed(h22ElectronEvent &event, int hadronIndex){
+  std::cout << "[TestCut::IsPassed] hadron beta = " << event.corr_b[hadronIndex] << std::endl; 
 }
 
 

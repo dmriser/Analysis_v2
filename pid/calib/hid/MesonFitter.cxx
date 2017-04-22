@@ -264,13 +264,9 @@ public:
   }
 
   ~MesonSlices(){
-
-    //    for(std::vector<TH1D*>::iterator it=beta.begin(); it!=beta.end(); ++it){ delete *it; }
-    //    for(std::vector<TH1D*>::iterator it=deltaBeta.begin(); it!=deltaBeta.end(); ++it){ delete *it; }
-    //    for(std::vector<TH1D*>::iterator it=mass.begin(); it!=mass.end(); ++it){ delete *it; }
   }
 
-  std::vector<std::vector<TH1D*> >  beta; 
+  std::vector<std::vector<TH1D*> > beta; 
   std::vector<std::vector<TH1D*> > deltaBeta; 
   std::vector<std::vector<TH1D*> > mass; 
   std::vector<double> bins; 
@@ -373,7 +369,7 @@ public:
   }
 
 protected:
-  const static int fNSlices = 35; 
+  const static int fNSlices = 48; 
   std::vector<double> fBins; 
   double fPMin, fPMax, fPWidth; 
 
@@ -403,7 +399,7 @@ protected:
 
 class MesonPlottingService {
 public:
-  MesonPlottingService(MesonSlices *s) : slices(s) { 
+  MesonPlottingService(MesonHistograms *h, MesonSlices *s) : histos(h), slices(s) { 
     fOutputPath = "unset"; 
   }
   ~MesonPlottingService(){
@@ -419,7 +415,8 @@ public:
   }
 
 
-  MesonSlices *slices; 
+  MesonSlices     *slices; 
+  MesonHistograms *histos; 
 
   void Execute(){
     if(fOutputPath != "unset"){
@@ -433,8 +430,13 @@ public:
       title.SetTextFont(102); 
       title.SetTextSize(0.05); 
 
-      int numberBins = slices->bins.size();
+      int fillColor = 13; 
+      double fillAlpha = 0.4;
+
+      int numberBins = slices->bins.size() +3;
       int numberPages = ceil(numberBins/4); 
+
+      Global::Visualization::SetBentCoolWarmPalette();
 
       for(int s=0; s<6; s++){
 	can->Print(Form("%sCompareSlicesSector%d.pdf[", fOutputPath.c_str(), s));
@@ -445,37 +447,60 @@ public:
 
 	  for(int row=1; row<5; row++){
 	    int index = 3*row -2; 
-	    
-	    if (bin <numberBins){
-	      can->cd(index);
+
+	    if (p == 0 && row == 1){
+	      can->cd(1); 
+	      gPad->SetLogz();
 	      gPad->SetMargin(0.2, 0.01, 0.2, 0.01); 
-	      gPad->SetLogy(); 
-	      slices->beta[s][bin]->SetFillColorAlpha(99,0.4);
-	      slices->beta[s][bin]->SetLineColor(99);
-	      slices->beta[s][bin]->Draw();
-	      title.DrawLatex(0.24, 0.93, Form("p = %.3f (GeV/c)",slices->bins[bin])); 
+	      histos->h2_p_beta[s+1]->Draw("colz");
 	      title.DrawLatex(0.58, 0.08, "#beta");
-	      
-	      can->cd(index+1); 
+
+	      can->cd(2); 
+	      gPad->SetLogz();
 	      gPad->SetMargin(0.2, 0.01, 0.2, 0.01); 
-	      gPad->SetLogy(); 
-	      slices->deltaBeta[s][bin]->SetFillColorAlpha(99,0.4);
-	      slices->deltaBeta[s][bin]->SetLineColor(99);
-	      slices->deltaBeta[s][bin]->Draw();
-	      title.DrawLatex(0.24, 0.93, Form("p = %.3f (GeV/c)",slices->bins[bin])); 
+	      histos->h2_p_dbeta[s+1]->Draw("colz");
 	      title.DrawLatex(0.58, 0.08, "#Delta#beta");
 
-	      can->cd(index+2); 
+	      can->cd(3); 
+	      gPad->SetLogz();
 	      gPad->SetMargin(0.2, 0.01, 0.2, 0.01); 
-	      gPad->SetLogy(); 
-	      slices->mass[s][bin]->SetFillColorAlpha(99,0.4);
-	      slices->mass[s][bin]->SetLineColor(99);
-	      slices->mass[s][bin]->Draw();
-	      title.DrawLatex(0.24, 0.93, Form("p = %.3f (GeV/c)",slices->bins[bin])); 
+	      histos->h2_p_tofmass[s+1]->Draw("colz");
 	      title.DrawLatex(0.58, 0.08, "M_{TOF}");
 	    }
 
-	    bin++; 
+	    else {
+	      
+	      if (bin <numberBins){
+		can->cd(index);
+		gPad->SetMargin(0.2, 0.01, 0.2, 0.01); 
+		gPad->SetLogy(); 
+		slices->beta[s][bin]->SetFillColorAlpha(fillColor,fillAlpha);
+		slices->beta[s][bin]->SetLineColor(fillColor);
+		slices->beta[s][bin]->Draw();
+		title.DrawLatex(0.24, 0.93, Form("p = %.3f (GeV/c)",slices->bins[bin])); 
+		title.DrawLatex(0.58, 0.08, "#beta");
+		
+		can->cd(index+1); 
+		gPad->SetMargin(0.2, 0.01, 0.2, 0.01); 
+		gPad->SetLogy(); 
+		slices->deltaBeta[s][bin]->SetFillColorAlpha(fillColor,fillAlpha);
+		slices->deltaBeta[s][bin]->SetLineColor(fillColor);
+		slices->deltaBeta[s][bin]->Draw();
+		title.DrawLatex(0.24, 0.93, Form("p = %.3f (GeV/c)",slices->bins[bin])); 
+		title.DrawLatex(0.58, 0.08, "#Delta#beta");
+		
+		can->cd(index+2); 
+		gPad->SetMargin(0.2, 0.01, 0.2, 0.01); 
+		gPad->SetLogy(); 
+		slices->mass[s][bin]->SetFillColorAlpha(fillColor,fillAlpha);
+		slices->mass[s][bin]->SetLineColor(fillColor);
+		slices->mass[s][bin]->Draw();
+		title.DrawLatex(0.24, 0.93, Form("p = %.3f (GeV/c)",slices->bins[bin])); 
+		title.DrawLatex(0.58, 0.08, "M_{TOF}");
+		
+		bin++; 
+	      }
+	    }
 	  }
 	  
 	  can->Print(Form("%sCompareSlicesSector%d.pdf", fOutputPath.c_str(), s));
@@ -508,7 +533,7 @@ int main(int argc, char * argv[]){
       
       MesonHistograms pip("pip", 211);
       pip.Load(opts.args["INPUT"].args);
-      /*      
+            
       MesonHistograms pim("pim", -211);
       pim.Load(opts.args["INPUT"].args);
       
@@ -517,14 +542,14 @@ int main(int argc, char * argv[]){
       
       MesonHistograms km("km", -321);
       km.Load(opts.args["INPUT"].args);
-      */
+      
 
       TFile *out = new TFile(opts.args["OUT"].args.c_str(), "recreate");
 
       MesonFittingService fitPip(&pip);
       fitPip.Execute();
       fitPip.Save(out);
-      /*
+
       MesonFittingService fitPim(&pim);
       fitPim.Execute();
       fitPim.Save(out);
@@ -536,11 +561,22 @@ int main(int argc, char * argv[]){
       MesonFittingService fitKm(&km);
       fitKm.Execute();
       fitKm.Save(out);
-      */
 
-      MesonPlottingService plotPip(fitPip.slices);
-      plotPip.SetOutputPath("/volatile/clas12/dmriser/plots/pid/"); 
+      MesonPlottingService plotPip(&pip, fitPip.slices);
+      plotPip.SetOutputPath("/volatile/clas12/dmriser/plots/pid/pip/"); 
       plotPip.Execute();
+
+      MesonPlottingService plotPim(&pim, fitPim.slices);
+      plotPim.SetOutputPath("/volatile/clas12/dmriser/plots/pid/pim/"); 
+      plotPim.Execute();
+
+      MesonPlottingService plotKp(&kp, fitKp.slices);
+      plotKp.SetOutputPath("/volatile/clas12/dmriser/plots/pid/kp/"); 
+      plotKp.Execute();
+
+      MesonPlottingService plotKm(&km, fitKm.slices);
+      plotKm.SetOutputPath("/volatile/clas12/dmriser/plots/pid/km/"); 
+      plotKm.Execute();
 
       out->Close(); 
 

@@ -7,6 +7,7 @@
 
 #include "CommonTools.h"
 #include "MesonHistograms.h"
+#include "PhysicsEvent.h"
 
 MesonHistograms::MesonHistograms(std::string name, int pid) : fName(name), fPid(pid) {
 
@@ -29,7 +30,8 @@ MesonHistograms::MesonHistograms(std::string name, int pid) : fName(name), fPid(
     h2_p_beta[s] = new TH2D(Form("h2_p_beta_%d_%s",s, fName.c_str()), Form("h2_p_beta_%d_%s",s, fName.c_str()), 100, 0.0, 4.5, 100, 0.0, 1.2); 
     h2_p_tofmass[s] = new TH2D(Form("h2_p_tofmass_%d_%s",s, fName.c_str()), Form("h2_p_tofmass_%d_%s",s, fName.c_str()), 100, 0.0, 4.5, 100, -0.6, 1.5); 
     h2_nphe_tofmass[s] = new TH2D(Form("h2_nphe_tofmass_%d_%s",s, fName.c_str()), Form("h2_nphe_tofmass_%d_%s",s, fName.c_str()), 100, 0, 100, 100, -0.6, 1.5); 
-    h2_p_dbeta[s] = new TH2D(Form("h2_p_dbeta_%d_%s",s, fName.c_str()), Form("h2_p_dbeta_%d_%s",s, fName.c_str()), 100, 0.0, 4.5, 100, -0.5, 0.5); 
+    h2_p_dbeta[s] = new TH2D(Form("h2_p_dbeta_%d_%s",s, fName.c_str()), Form("h2_p_dbeta_%d_%s",s, fName.c_str()), 100, 0.0, 4.5, 100, -0.5, 0.5);
+    h2_p_mm2[s] = new TH2D(Form("h2_p_mm2_%d_%s",s, fName.c_str()), Form("h2_p_mm2_%d_%s",s, fName.c_str()), 100, 0.0, 4.5, 100, -1.0, 2.5);  
   }
 
 }
@@ -88,6 +90,18 @@ void MesonHistograms::Fill(h22ElectronEvent &event, int index) {
 
 }
 
+void MesonHistograms::Fill(PhysicsEvent &physicsEvent){
+  int s = phiToSector(physicsEvent.particle1.Phi()*to_degrees); 
+
+  h2_p_mm2[0]->Fill(physicsEvent.particle1.P(), physicsEvent.mm2);
+  h2_p_mm2[s]->Fill(physicsEvent.particle1.P(), physicsEvent.mm2);
+}
+
+void MesonHistograms::Fill(h22ElectronEvent &event, PhysicsEvent &physicsEvent, int index){
+  Fill(event, index);
+  Fill(physicsEvent);
+}
+
 void MesonHistograms::Load(std::string filename) {
   fInputFile = TFile::Open(filename.c_str());
 
@@ -139,6 +153,7 @@ void MesonHistograms::Save(TFile *outputFile) {
     h2_phi_theta[s]->Write(); 
     h2_dcx_dcy[s]->Write(); 
     h2_p_beta[s]->Write(); 
+    h2_p_mm2[s]->Write(); 
     h2_p_tofmass[s]->Write(); 
     h2_nphe_tofmass[s]->Write(); 
     h2_p_dbeta[s]->Write(); 

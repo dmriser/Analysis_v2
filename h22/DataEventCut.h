@@ -26,6 +26,7 @@
 
 // my includes
 #include "h22Event.h"
+#include "h22ElectronEvent.h"
 
 class DataEventCut{
 
@@ -351,7 +352,7 @@ class CCPhiMatchingCut : public DataEventCut
  */
 /////////////////////////////////////////////////////////////////////
 
-class DataEventCut_DeltaBetaCut : public DataEventCut{
+class DataEventCut_DeltaBetaCut : public DataEventCut {
  public:
   DataEventCut_DeltaBetaCut();
   ~DataEventCut_DeltaBetaCut();
@@ -367,12 +368,12 @@ class DataEventCut_DeltaBetaCut : public DataEventCut{
  */
 /////////////////////////////////////////////////////////////////////
 
-class DataEventCut_DeltaZVertexCut : public DataEventCut{
+class DataEventCut_DeltaZVertexCut : public DataEventCut {
  public:
   DataEventCut_DeltaZVertexCut();
   ~DataEventCut_DeltaZVertexCut();
 
-  bool IsPassed(h22Event &event, int index);
+  bool IsPassed(h22ElectronEvent &event, int index);
 };
 
 /////////////////////////////////////////////////////////////////////
@@ -388,9 +389,27 @@ class DataEventCut_TOFMassCut : public DataEventCut{
   DataEventCut_TOFMassCut(int s);
   ~DataEventCut_TOFMassCut();
 
-  int sector;
+  int sector; 
 
-  bool CanBeApplied(h22Event &event, int index);
-  bool IsPassed(h22Event &event, int index);
+  bool CanBeApplied(h22ElectronEvent &event, int index);
+  bool IsPassed(h22ElectronEvent &event, int index);
 };
+
+/////////////////////////////////////////////////////////////////////
+/*
+
+  TestCut
+
+ */
+/////////////////////////////////////////////////////////////////////
+
+class TestCut : public DataEventCut{
+ public:
+  TestCut(); 
+  ~TestCut(); 
+
+  bool CanBeApplied(h22ElectronEvent &event, int index);
+  bool IsPassed(h22ElectronEvent &event, int index);
+};
+
 #endif

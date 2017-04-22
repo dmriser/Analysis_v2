@@ -40,6 +40,8 @@ ParticleFilter::ParticleFilter(Parameters *params) : pars(params){
     electronSelector     = new DataEventSelector();
     positivePionSelector = new DataEventSelector();
     negativePionSelector = new DataEventSelector();
+    positiveKaonSelector = new DataEventSelector();
+    negativeKaonSelector = new DataEventSelector();
 
     // Call cut constructors
     // These could be split into 2 selectors,
@@ -86,7 +88,21 @@ ParticleFilter::ParticleFilter(Parameters *params) : pars(params){
     pip_tofmass_cut_s4 = new DataEventCut_TOFMassCut(4);
     pip_tofmass_cut_s5 = new DataEventCut_TOFMassCut(5);
     pip_tofmass_cut_s6 = new DataEventCut_TOFMassCut(6);
+ 
+    km_tofmass_cut_s1 = new DataEventCut_TOFMassCut(1);
+    km_tofmass_cut_s2 = new DataEventCut_TOFMassCut(2);
+    km_tofmass_cut_s3 = new DataEventCut_TOFMassCut(3);
+    km_tofmass_cut_s4 = new DataEventCut_TOFMassCut(4);
+    km_tofmass_cut_s5 = new DataEventCut_TOFMassCut(5);
+    km_tofmass_cut_s6 = new DataEventCut_TOFMassCut(6);
+    kp_tofmass_cut_s1 = new DataEventCut_TOFMassCut(1);
+    kp_tofmass_cut_s2 = new DataEventCut_TOFMassCut(2);
+    kp_tofmass_cut_s3 = new DataEventCut_TOFMassCut(3);
+    kp_tofmass_cut_s4 = new DataEventCut_TOFMassCut(4);
+    kp_tofmass_cut_s5 = new DataEventCut_TOFMassCut(5);
+    kp_tofmass_cut_s6 = new DataEventCut_TOFMassCut(6);
 
+    dcr1_meson_fid_cut = new DCR1FiducialCut();
 
     // Set limits on cuts from parameters
     negativity_cut->SetMin(-1.1);
@@ -232,7 +248,7 @@ ParticleFilter::ParticleFilter(Parameters *params) : pars(params){
     vz_cut->SetMin( params->getParameter("EL_VZ_MIN").getValue(0) );
     vz_cut->SetMax( params->getParameter("EL_VZ_MAX").getValue(0) );
 
-    nphe_cut->SetMin(25);
+    nphe_cut->SetMin(20);
     nphe_cut->SetMax(1000);
 
     p_cut->SetMin(0.5);
@@ -286,7 +302,7 @@ ParticleFilter::ParticleFilter(Parameters *params) : pars(params){
     pip_tofmass_cut_s1->SetMax(params->getParameter("PIP_TOFMASS_MU").getValue(0) +
                                 params->getParameter("PIP_TOFMASS_NSIGMA").getValue(0)*
                                 params->getParameter("PIP_TOFMASS_SIGMA").getValue(0));
-
+ 
     pip_tofmass_cut_s2->SetMin(params->getParameter("PIP_TOFMASS_MU").getValue(1) -
                                 params->getParameter("PIP_TOFMASS_NSIGMA").getValue(0)*
                                 params->getParameter("PIP_TOFMASS_SIGMA").getValue(1));
@@ -365,10 +381,42 @@ ParticleFilter::ParticleFilter(Parameters *params) : pars(params){
                                 params->getParameter("PIM_TOFMASS_NSIGMA").getValue(0)*
                                 params->getParameter("PIM_TOFMASS_SIGMA").getValue(5));
 
-    dvz_cut->SetMin(-2.50);
-    dvz_cut->SetMax( 2.50);
+    // kaon min and max 
+    kp_tofmass_cut_s1->SetMin(params->getParameter("KP_TOFMASS_MIN").getValue(0));
+    kp_tofmass_cut_s2->SetMin(params->getParameter("KP_TOFMASS_MIN").getValue(1));
+    kp_tofmass_cut_s3->SetMin(params->getParameter("KP_TOFMASS_MIN").getValue(2));
+    kp_tofmass_cut_s4->SetMin(params->getParameter("KP_TOFMASS_MIN").getValue(3));
+    kp_tofmass_cut_s5->SetMin(params->getParameter("KP_TOFMASS_MIN").getValue(4));
+    kp_tofmass_cut_s6->SetMin(params->getParameter("KP_TOFMASS_MIN").getValue(5));
+    kp_tofmass_cut_s1->SetMax(params->getParameter("KP_TOFMASS_MAX").getValue(0));
+    kp_tofmass_cut_s2->SetMax(params->getParameter("KP_TOFMASS_MAX").getValue(1));
+    kp_tofmass_cut_s3->SetMax(params->getParameter("KP_TOFMASS_MAX").getValue(2));
+    kp_tofmass_cut_s4->SetMax(params->getParameter("KP_TOFMASS_MAX").getValue(3));
+    kp_tofmass_cut_s5->SetMax(params->getParameter("KP_TOFMASS_MAX").getValue(4));
+    kp_tofmass_cut_s6->SetMax(params->getParameter("KP_TOFMASS_MAX").getValue(5));
+
+    km_tofmass_cut_s1->SetMin(params->getParameter("KP_TOFMASS_MIN").getValue(0));
+    km_tofmass_cut_s2->SetMin(params->getParameter("KP_TOFMASS_MIN").getValue(1));
+    km_tofmass_cut_s3->SetMin(params->getParameter("KP_TOFMASS_MIN").getValue(2));
+    km_tofmass_cut_s4->SetMin(params->getParameter("KP_TOFMASS_MIN").getValue(3));
+    km_tofmass_cut_s5->SetMin(params->getParameter("KP_TOFMASS_MIN").getValue(4));
+    km_tofmass_cut_s6->SetMin(params->getParameter("KP_TOFMASS_MIN").getValue(5));
+    km_tofmass_cut_s1->SetMax(params->getParameter("KP_TOFMASS_MAX").getValue(0));
+    km_tofmass_cut_s2->SetMax(params->getParameter("KP_TOFMASS_MAX").getValue(1));
+    km_tofmass_cut_s3->SetMax(params->getParameter("KP_TOFMASS_MAX").getValue(2));
+    km_tofmass_cut_s4->SetMax(params->getParameter("KP_TOFMASS_MAX").getValue(3));
+    km_tofmass_cut_s5->SetMax(params->getParameter("KP_TOFMASS_MAX").getValue(4));
+    km_tofmass_cut_s6->SetMax(params->getParameter("KP_TOFMASS_MAX").getValue(5));
+
+    dcr1_meson_fid_cut->height = params->getParameter("KP_DCR1_HEIGHT").getValue(0);
+    dcr1_meson_fid_cut->angle  = params->getParameter("KP_DCR1_ANGLE").getValue(0);
+
+    dvz_cut->SetMin(-1 *params->getParameter("KP_DVZ").getValue(0) );
+    dvz_cut->SetMax( params->getParameter("KP_DVZ").getValue(0) );
 
     // Setup pion selectors
+    testCut = new TestCut(); 
+    /*    
     positivePionSelector->AddCut(dvz_cut);
     positivePionSelector->AddCut(pip_tofmass_cut_s1);
     positivePionSelector->AddCut(pip_tofmass_cut_s2);
@@ -376,9 +424,11 @@ ParticleFilter::ParticleFilter(Parameters *params) : pars(params){
     positivePionSelector->AddCut(pip_tofmass_cut_s4);
     positivePionSelector->AddCut(pip_tofmass_cut_s5);
     positivePionSelector->AddCut(pip_tofmass_cut_s6);
+    positivePionSelector->AddCut(dcr1_meson_fid_cut);
+    */
+    positivePionSelector->AddCut(testCut); 
     positivePionSelector->EnableAll();
-
-
+    /*
     negativePionSelector->AddCut(dvz_cut);
     negativePionSelector->AddCut(pim_tofmass_cut_s1);
     negativePionSelector->AddCut(pim_tofmass_cut_s2);
@@ -386,7 +436,34 @@ ParticleFilter::ParticleFilter(Parameters *params) : pars(params){
     negativePionSelector->AddCut(pim_tofmass_cut_s4);
     negativePionSelector->AddCut(pim_tofmass_cut_s5);
     negativePionSelector->AddCut(pim_tofmass_cut_s6);
+    */
+
+    negativePionSelector->AddCut(testCut);
     negativePionSelector->EnableAll();
+    /*
+    positiveKaonSelector->AddCut(dvz_cut);
+    positiveKaonSelector->AddCut(kp_tofmass_cut_s1);
+    positiveKaonSelector->AddCut(kp_tofmass_cut_s2);
+    positiveKaonSelector->AddCut(kp_tofmass_cut_s3);
+    positiveKaonSelector->AddCut(kp_tofmass_cut_s4);
+    positiveKaonSelector->AddCut(kp_tofmass_cut_s5);
+    positiveKaonSelector->AddCut(kp_tofmass_cut_s6);
+    positiveKaonSelector->AddCut(dcr1_meson_fid_cut);
+    */
+    positiveKaonSelector->AddCut(testCut);
+    positiveKaonSelector->EnableAll();
+    /*
+    negativeKaonSelector->AddCut(dvz_cut);
+    negativeKaonSelector->AddCut(km_tofmass_cut_s1);
+    negativeKaonSelector->AddCut(km_tofmass_cut_s2);
+    negativeKaonSelector->AddCut(km_tofmass_cut_s3);
+    negativeKaonSelector->AddCut(km_tofmass_cut_s4);
+    negativeKaonSelector->AddCut(km_tofmass_cut_s5);
+    negativeKaonSelector->AddCut(km_tofmass_cut_s6);
+    */
+    negativeKaonSelector->AddCut(testCut);
+    negativeKaonSelector->EnableAll();
+ 
 }
 
 ParticleFilter::~ParticleFilter(){
@@ -422,8 +499,11 @@ DataEventSelector *ParticleFilter::GetSelector(int pid){
         return positivePionSelector;
     } else if (pid == -211){
         return negativePionSelector;
-    }
-    else {
+    } else if (pid == -321){
+        return negativeKaonSelector;
+    } else if (pid == 321){
+        return positiveKaonSelector;
+    } else {
         return new DataEventSelector();
     }
 
@@ -444,27 +524,48 @@ vector<int> ParticleFilter::getVectorOfParticleIndices(h22Event &event, int pid)
         }
     }
 
-//    else if (pid == 211 || pid == -211){
-//        particles.clear();
+    else if (pid == 211 || pid == 321){
+      particles.clear(); 
 
-//        vector<int> electrons = getVectorOfParticleIndices(event, 11);
-//        if( !electrons.empty() ){
-//            for(int ipart=0; ipart<event.gpart; ipart++){
+      std::vector<int> electrons = getVectorOfParticleIndices(event, 11);
+      if (!electrons.empty()){
+	for(int ipart=0; ipart<event.gpart; ipart++){
 
-//                if(isNotAnElectronCandidate(electrons, ipart)){
-//                    // Ugly shite, should do something like add charge cut
-//                    // to the selector and then -> ->
-//                    // if(getSelector(pid)->passesFast(event,ipart)){ particles.push_back(ipart); }
-//                    if(pid == 211 && event.q[ipart] == 1){
-//                        if(positivePionSelector->passesFast(event, ipart)){ particles.push_back(ipart); }
-//                    } else if (pid == -211 && event.q[ipart] == -1){
-//                        if(negativePionSelector->passesFast(event, ipart)){ particles.push_back(ipart); }
-//                    }
-//                }
-//            }
-//        }
-//    } // End of pions
+	  if(isNotAnElectronCandidate(electrons, ipart)){
+	    // Ugly shite, should do something like add charge cut
+	    // to the selector and then -> ->
+	    // if(getSelector(pid)->passesFast(event,ipart)){ particles.push_back(ipart); }
+	    if(pid == 211 && event.q[ipart] == 1){
+	      if(positivePionSelector->IsPassedFast(event, ipart)){ particles.push_back(ipart); }
+	    } else if (pid == 321 && event.q[ipart] == 1){
+	      if(positiveKaonSelector->IsPassedFast(event, ipart)){ particles.push_back(ipart); }
+	    }
+	  }
+	}
+      }
+    }
 
+    else if (pid == -211 || pid == -321){
+      particles.clear(); 
+
+      std::vector<int> electrons = getVectorOfParticleIndices(event, 11);
+      if (!electrons.empty()){
+	for(int ipart=0; ipart<event.gpart; ipart++){
+
+	  if(isNotAnElectronCandidate(electrons, ipart)){
+	    // Ugly shite, should do something like add charge cut
+	    // to the selector and then -> ->
+	    // if(getSelector(pid)->passesFast(event,ipart)){ particles.push_back(ipart); }
+	    if(pid == -211 && event.q[ipart] == -1){
+	      if(negativePionSelector->IsPassedFast(event, ipart)){ particles.push_back(ipart); }
+	    } else if (pid == -321 && event.q[ipart] == -1){
+	      if(negativeKaonSelector->IsPassedFast(event, ipart)){ particles.push_back(ipart); }
+	    }
+	  }
+	}
+      }
+    }
+    
     // Use the built-in PID
     else{
         for(int ipart=0; ipart<event.gpart; ++ipart){

@@ -52,12 +52,14 @@ public:
     ~HIDCalibration(){ }
 
 public:
-  Parameters *pars;
-  ParticleFilter *filter;
-  Corrections corr;
+  Parameters          *pars;
+  ParticleFilter      *filter;
+  Corrections          corr;
   PhysicsEventBuilder *builder;   
-  MomCorr_e1f *momCorr; 
+  MomCorr_e1f         *momCorr; 
 
+  MesonHistograms *posHistos; 
+  MesonHistograms *negHistos; 
   MesonHistograms *pipHistos; 
   MesonHistograms *pimHistos; 
   MesonHistograms *kpHistos; 
@@ -72,6 +74,8 @@ public:
 };
 
 void HIDCalibration::InitHistos() {
+  posHistos = new MesonHistograms("pos",  321);
+  negHistos = new MesonHistograms("neg", -321);
   pipHistos = new MesonHistograms("pip",  211);
   pimHistos = new MesonHistograms("pim", -211);
   kpHistos = new MesonHistograms("kp",    321);
@@ -94,45 +98,54 @@ void HIDCalibration::Initialize(){
 
 void HIDCalibration::ProcessEvent(){
 
-    // Load up hadrons if we've electron.
-    vector<int> electronCandidates = filter->getVectorOfParticleIndices(event, 11);
-    if ( !electronCandidates.empty() ){
-      
-      // Take the fastest one
-      int electronIndex = electronCandidates[0];
-      h22ElectronEvent electronEvent(event); 
-      electronEvent.SetElectronIndex(electronIndex); 
-      corr.CorrectElectronEvent(&electronEvent, GetRunNumber(), GSIM); 
+  vector<int> electronCandidates = filter->getVectorOfParticleIndices(event, 11);
+  if ( !electronCandidates.empty() ){
+    int electronIndex = electronCandidates[0];
+    h22ElectronEvent electronEvent(event); 
+    electronEvent.SetElectronIndex(electronIndex); 
+    corr.CorrectElectronEvent(&electronEvent, GetRunNumber(), GSIM); 
+    
+    std::vector<int> pipIndices = filter->getVectorOfParticleIndices(electronEvent, 211); 
+    std::vector<int> pimIndices = filter->getVectorOfParticleIndices(electronEvent, -211); 
+    std::vector<int> kpIndices = filter->getVectorOfParticleIndices(electronEvent, 321); 
+    std::vector<int> kmIndices = filter->getVectorOfParticleIndices(electronEvent, -321); 
+    
+    TLorentzVector electron = event.GetTLorentzVector(electronIndex, 11); 
+    electron = momCorr->PcorN(electron, -1, 11);
 
-      for (int ipart=0; ipart<event.gpart; ipart++){
-	
-	// This important line stops other electrons from
-	// getting added to the plots.
- 	if (CurrentParticleIsNotElectronCandidate(electronCandidates, ipart)) {
-	  double dvz = fabs(electronEvent.corr_vz[electronIndex] - electronEvent.corr_vz[ipart]);
-	  
-	  TLorentzVector electron = event.GetTLorentzVector(electronIndex, 11);
-	  TLorentzVector candidate = event.GetTLorentzVector(ipart, event.id[ipart]);
+    if (!pipIndices.empty()){
+      TLorentzVector meson = event.GetTLorentzVector(pipIndices[0], 211);
+      meson = momCorr->PcorN(meson, 1, 211);
 
-	  // correct the momenta 
-	  electron = momCorr->PcorN(electron, -1, 11);
-	  candidate = momCorr->PcorN(candidate, event.q[ipart], event.id[ipart]);
-
-	  if (dvz < 4.0  && event.etot[ipart] > 0.01){
-	    if (event.q[ipart] == 1){ 
-	      pipHistos->Fill(electronEvent, ipart); 
-	      kpHistos->Fill(electronEvent, ipart);
-	    }
-	    else if (event.q[ipart] == -1){
-	      pimHistos->Fill(electronEvent, ipart); 
-	      kmHistos->Fill(electronEvent, ipart);
-	    }
-	  }
-
-	}
-      }
+      PhysicsEvent physicsEvent = builder->getPhysicsEvent(electron, meson); 
+      pipHistos->Fill(electronEvent, physicsEvent, pipIndices[0]);
     }
 
+    if (!pimIndices.empty()){
+      TLorentzVector meson = event.GetTLorentzVector(pimIndices[0], -211);
+      meson = momCorr->PcorN(meson, -1, -211);
+
+      PhysicsEvent physicsEvent = builder->getPhysicsEvent(electron, meson); 
+      pimHistos->Fill(electronEvent, physicsEvent, pimIndices[0]);
+    }
+
+    if (!kpIndices.empty()){
+      TLorentzVector meson = event.GetTLorentzVector(kpIndices[0], 321);
+      meson = momCorr->PcorN(meson, 1, 321);
+
+      PhysicsEvent physicsEvent = builder->getPhysicsEvent(electron, meson); 
+      kpHistos->Fill(electronEvent, physicsEvent, kpIndices[0]);
+    }
+
+    if (!kmIndices.empty()){
+      TLorentzVector meson = event.GetTLorentzVector(kmIndices[0], -321);
+      meson = momCorr->PcorN(meson, -1, -321);
+
+      PhysicsEvent physicsEvent = builder->getPhysicsEvent(electron, meson); 
+      kmHistos->Fill(electronEvent, physicsEvent, kmIndices[0]);
+    }
+    
+  }
 }
 
 bool HIDCalibration::CurrentParticleIsNotElectronCandidate(std::vector<int> &electronCandidates,int index){
@@ -142,6 +155,8 @@ bool HIDCalibration::CurrentParticleIsNotElectronCandidate(std::vector<int> &ele
 void HIDCalibration::Save(string outputFilename){
     TFile *outputFile = new TFile(outputFilename.c_str(), "recreate");
 
+    posHistos->Save(outputFile);
+    negHistos->Save(outputFile);
     pipHistos->Save(outputFile);
     kpHistos->Save(outputFile);
     pimHistos->Save(outputFile);

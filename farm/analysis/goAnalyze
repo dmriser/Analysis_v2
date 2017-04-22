@@ -1,8 +1,11 @@
 #!/bin/tcsh 
 
-set NFILES  = 20000000
+set NFILES  = 900000000
 set OUTPUT  = $1
 set binName = $2
+
+setenv h22libs /u/home/dmriser
+setenv ANALTOP /u/home/dmriser/Analysis_v2
 
 cp list.*.dat list.dat 
 chmod +x $binName

@@ -5,6 +5,7 @@
 
 #include "TVector3.h"
 
+#include "h22Event.h"
 #include "PhotonHistograms.h"
 
 PhotonHistograms::PhotonHistograms(std::string name) : fName(name) {
@@ -35,7 +36,7 @@ PhotonHistograms::PhotonHistograms(std::string name) : fName(name) {
 
 }
 
-void PhotonHistograms::Fill(h22ElectronEvent &event, int index) {
+void PhotonHistograms::Fill(h22Event &event, int index) {
   h1_p[0]->Fill(event.p[index]);
   h1_ecx[0]->Fill(event.ech_x[index]);
   h1_ecy[0]->Fill(event.ech_y[index]);

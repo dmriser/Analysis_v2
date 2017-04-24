@@ -432,8 +432,7 @@ DCR1FiducialCut::~DCR1FiducialCut()
 
 }
 
-bool DCR1FiducialCut::IsPassed(h22Event &event, int index)
-{
+bool DCR1FiducialCut::IsPassed(h22Event &event, int index) {
 
     double slope = 1/tan(0.5*to_radians*angle);
     double left  = (height - slope*event.GetRotatedDCR1PosY(index));
@@ -521,7 +520,7 @@ DataEventCut_DeltaZVertexCut::~DataEventCut_DeltaZVertexCut(){
 }
 
 
-bool DataEventCut_DeltaZVertexCut::IsPassed(h22ElectronEvent &event, int hadronIndex){
+bool DataEventCut_DeltaZVertexCut::IsPassed(h22Event &event, int hadronIndex){
 
     // It is very important to note that this
     // routine expects CORRECTED variables.
@@ -551,11 +550,11 @@ DataEventCut_TOFMassCut::DataEventCut_TOFMassCut(int s) : sector(s){
 DataEventCut_TOFMassCut::~DataEventCut_TOFMassCut(){
 }
 
-bool DataEventCut_TOFMassCut::CanBeApplied(h22ElectronEvent &event, int index){
+bool DataEventCut_TOFMassCut::CanBeApplied(h22Event &event, int index){
     return (event.dc_sect[index] == sector);
 }
 
-bool DataEventCut_TOFMassCut::IsPassed(h22ElectronEvent &event, int hadronIndex){
+bool DataEventCut_TOFMassCut::IsPassed(h22Event &event, int hadronIndex){
     double tofmass = sqrt(pow(event.p[hadronIndex],2)*(1-pow(event.corr_b[hadronIndex],2))/pow(event.corr_b[hadronIndex],2));
 
     if (tofmass > GetMin() && tofmass < GetMax()){
@@ -583,11 +582,11 @@ TestCut::TestCut(){
 TestCut::~TestCut(){
 }
 
-bool TestCut::CanBeApplied(h22ElectronEvent &event, int index){
+bool TestCut::CanBeApplied(h22Event &event, int index){
   return true; 
 }
 
-bool TestCut::IsPassed(h22ElectronEvent &event, int hadronIndex){
+bool TestCut::IsPassed(h22Event &event, int hadronIndex){
   std::cout << "[TestCut::IsPassed] hadron beta = " << event.corr_b[hadronIndex] << std::endl; 
 }
 

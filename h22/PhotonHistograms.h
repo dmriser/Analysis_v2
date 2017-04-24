@@ -7,7 +7,7 @@
 #include "TH1.h"
 #include "TH2.h"
 
-#include "h22ElectronEvent.h"
+#include "h22Event.h"
 
 class PhotonHistograms {
  public:
@@ -44,7 +44,7 @@ class PhotonHistograms {
   TH2D *h2_p_dbeta[7];
   TH2D *h2_p_tofmass[7];
 
-  void Fill(h22ElectronEvent &event, int index);
+  void Fill(h22Event &event, int index);
   void Load(std::string filename);
   void Save(TFile *outputFile);
   

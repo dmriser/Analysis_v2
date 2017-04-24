@@ -36,7 +36,7 @@ MesonHistograms::MesonHistograms(std::string name, int pid) : fName(name), fPid(
 
 }
 
-void MesonHistograms::Fill(h22ElectronEvent &event, int index) {
+void MesonHistograms::Fill(h22Event &event, int index) {
   h1_p[0]->Fill(event.p[index]);
   h1_dcx[0]->Fill(event.GetRotatedDCR1PosX(index));
   h1_dcy[0]->Fill(event.GetRotatedDCR1PosY(index));
@@ -97,7 +97,7 @@ void MesonHistograms::Fill(PhysicsEvent &physicsEvent){
   h2_p_mm2[s]->Fill(physicsEvent.particle1.P(), physicsEvent.mm2);
 }
 
-void MesonHistograms::Fill(h22ElectronEvent &event, PhysicsEvent &physicsEvent, int index){
+void MesonHistograms::Fill(h22Event &event, PhysicsEvent &physicsEvent, int index){
   Fill(event, index);
   Fill(physicsEvent);
 }

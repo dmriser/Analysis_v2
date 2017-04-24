@@ -26,7 +26,6 @@
 
 // my includes
 #include "h22Event.h"
-#include "h22ElectronEvent.h"
 
 class DataEventCut{
 
@@ -373,7 +372,7 @@ class DataEventCut_DeltaZVertexCut : public DataEventCut {
   DataEventCut_DeltaZVertexCut();
   ~DataEventCut_DeltaZVertexCut();
 
-  bool IsPassed(h22ElectronEvent &event, int index);
+  bool IsPassed(h22Event &event, int index);
 };
 
 /////////////////////////////////////////////////////////////////////
@@ -391,8 +390,8 @@ class DataEventCut_TOFMassCut : public DataEventCut{
 
   int sector; 
 
-  bool CanBeApplied(h22ElectronEvent &event, int index);
-  bool IsPassed(h22ElectronEvent &event, int index);
+  bool CanBeApplied(h22Event &event, int index);
+  bool IsPassed(h22Event &event, int index);
 };
 
 /////////////////////////////////////////////////////////////////////
@@ -408,8 +407,8 @@ class TestCut : public DataEventCut{
   TestCut(); 
   ~TestCut(); 
 
-  bool CanBeApplied(h22ElectronEvent &event, int index);
-  bool IsPassed(h22ElectronEvent &event, int index);
+  bool CanBeApplied(h22Event &event, int index);
+  bool IsPassed(h22Event &event, int index);
 };
 
 #endif

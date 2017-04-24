@@ -19,7 +19,6 @@
 #include "Corrections.h"
 #include "DataEventCut.h"
 #include "h22Event.h"
-#include "h22ElectronEvent.h"
 #include "h22Option.h"
 #include "h22Reader.h"
 #include "GenericAnalysis.h"
@@ -65,6 +64,13 @@ public:
   MesonHistograms *kpHistos; 
   MesonHistograms *kmHistos; 
 
+  StandardHistograms *posStand; 
+  StandardHistograms *negStand; 
+  StandardHistograms *pipStand; 
+  StandardHistograms *pimStand; 
+  StandardHistograms *kpStand; 
+  StandardHistograms *kmStand; 
+
   void Initialize();
   void ProcessEvent();
   void Save(string outputFilename);
@@ -80,6 +86,13 @@ void HIDCalibration::InitHistos() {
   pimHistos = new MesonHistograms("pim", -211);
   kpHistos = new MesonHistograms("kp",    321);
   kmHistos = new MesonHistograms("km",   -321);
+
+  posStand = new StandardHistograms("pos", 0); 
+  negStand = new StandardHistograms("neg", 0); 
+  pipStand = new StandardHistograms("pip", 0); 
+  pimStand = new StandardHistograms("pim", 0); 
+  kpStand = new StandardHistograms("kp", 0); 
+  kmStand = new StandardHistograms("km", 0); 
 }
 
 void HIDCalibration::Initialize(){
@@ -87,6 +100,8 @@ void HIDCalibration::Initialize(){
   
   filter = new ParticleFilter(pars);
   filter->set_info(GSIM, GetRunNumber());
+
+  builder = new PhysicsEventBuilder(); 
 
   // not really safe for use on the farm because I don't set vars 
   // so not sure what to do about this.  maybe passing in the path
@@ -101,14 +116,13 @@ void HIDCalibration::ProcessEvent(){
   vector<int> electronCandidates = filter->getVectorOfParticleIndices(event, 11);
   if ( !electronCandidates.empty() ){
     int electronIndex = electronCandidates[0];
-    h22ElectronEvent electronEvent(event); 
-    electronEvent.SetElectronIndex(electronIndex); 
-    corr.CorrectElectronEvent(&electronEvent, GetRunNumber(), GSIM); 
+    event.SetElectronIndex(electronIndex); 
+    corr.correctEvent(&event, GetRunNumber(), GSIM); 
     
-    std::vector<int> pipIndices = filter->getVectorOfParticleIndices(electronEvent, 211); 
-    std::vector<int> pimIndices = filter->getVectorOfParticleIndices(electronEvent, -211); 
-    std::vector<int> kpIndices = filter->getVectorOfParticleIndices(electronEvent, 321); 
-    std::vector<int> kmIndices = filter->getVectorOfParticleIndices(electronEvent, -321); 
+    std::vector<int> pipIndices = filter->getVectorOfParticleIndices(event, 211); 
+    std::vector<int> pimIndices = filter->getVectorOfParticleIndices(event, -211); 
+    std::vector<int> kpIndices = filter->getVectorOfParticleIndices(event, 321); 
+    std::vector<int> kmIndices = filter->getVectorOfParticleIndices(event, -321); 
     
     TLorentzVector electron = event.GetTLorentzVector(electronIndex, 11); 
     electron = momCorr->PcorN(electron, -1, 11);
@@ -118,7 +132,8 @@ void HIDCalibration::ProcessEvent(){
       meson = momCorr->PcorN(meson, 1, 211);
 
       PhysicsEvent physicsEvent = builder->getPhysicsEvent(electron, meson); 
-      pipHistos->Fill(electronEvent, physicsEvent, pipIndices[0]);
+      pipHistos->Fill(event, physicsEvent, pipIndices[0]);
+      pipStand->Fill(event, electronIndex, pipIndices[0], physicsEvent); 
     }
 
     if (!pimIndices.empty()){
@@ -126,7 +141,8 @@ void HIDCalibration::ProcessEvent(){
       meson = momCorr->PcorN(meson, -1, -211);
 
       PhysicsEvent physicsEvent = builder->getPhysicsEvent(electron, meson); 
-      pimHistos->Fill(electronEvent, physicsEvent, pimIndices[0]);
+      pimHistos->Fill(event, physicsEvent, pimIndices[0]);
+      pimStand->Fill(event, electronIndex, pimIndices[0], physicsEvent); 
     }
 
     if (!kpIndices.empty()){
@@ -134,7 +150,8 @@ void HIDCalibration::ProcessEvent(){
       meson = momCorr->PcorN(meson, 1, 321);
 
       PhysicsEvent physicsEvent = builder->getPhysicsEvent(electron, meson); 
-      kpHistos->Fill(electronEvent, physicsEvent, kpIndices[0]);
+      kpHistos->Fill(event, physicsEvent, kpIndices[0]);
+      kpStand->Fill(event, electronIndex, kpIndices[0], physicsEvent); 
     }
 
     if (!kmIndices.empty()){
@@ -142,9 +159,29 @@ void HIDCalibration::ProcessEvent(){
       meson = momCorr->PcorN(meson, -1, -321);
 
       PhysicsEvent physicsEvent = builder->getPhysicsEvent(electron, meson); 
-      kmHistos->Fill(electronEvent, physicsEvent, kmIndices[0]);
+      kmHistos->Fill(event, physicsEvent, kmIndices[0]);
+      kmStand->Fill(event, electronIndex, kmIndices[0], physicsEvent); 
     }
-    
+
+
+    // quickly scan event for positives and negatives 
+    for(int ipart=0; ipart<event.gpart; ipart++){
+      if (event.q[ipart] < 0 && CurrentParticleIsNotElectronCandidate(electronCandidates, ipart)){
+	TLorentzVector part1 = event.GetTLorentzVector(ipart, event.id[ipart]);
+	part1 = momCorr->PcorN(part1, event.q[ipart], event.id[ipart]);
+	
+	PhysicsEvent physicsEvent = builder->getPhysicsEvent(electron, part1); 
+	negHistos->Fill(event, physicsEvent, ipart);
+	negStand->Fill(event, electronIndex, ipart, physicsEvent); 
+      } else if (event.q[ipart] > 0){
+	TLorentzVector part1 = event.GetTLorentzVector(ipart, event.id[ipart]);
+	part1 = momCorr->PcorN(part1, event.q[ipart], event.id[ipart]);
+	
+	PhysicsEvent physicsEvent = builder->getPhysicsEvent(electron, part1); 
+	posHistos->Fill(event, physicsEvent, ipart);
+	posStand->Fill(event, electronIndex, ipart, physicsEvent); 
+      }
+    }
   }
 }
 
@@ -161,6 +198,13 @@ void HIDCalibration::Save(string outputFilename){
     kpHistos->Save(outputFile);
     pimHistos->Save(outputFile);
     kmHistos->Save(outputFile);
+
+    posStand->Save(outputFile); 
+    negStand->Save(outputFile); 
+    pipStand->Save(outputFile); 
+    pimStand->Save(outputFile); 
+    kpStand->Save(outputFile); 
+    kmStand->Save(outputFile); 
 
     outputFile->Write();
     outputFile->Close();
@@ -196,6 +240,11 @@ int main(int argc, char * argv[]){
     for (std::vector<std::string>::iterator it=files.begin(); it<files.end(); it++) { Analysis.AddFile(*it); }
     Analysis.RunAnalysis();
     Analysis.Save(opts.args["OUT"].args);
+
+    Analysis.filter->GetSelector(211)->PrintSummary(); 
+    Analysis.filter->GetSelector(-211)->PrintSummary(); 
+    Analysis.filter->GetSelector(321)->PrintSummary(); 
+    Analysis.filter->GetSelector(-321)->PrintSummary(); 
 
     return 0;
 }

@@ -416,7 +416,7 @@ ParticleFilter::ParticleFilter(Parameters *params) : pars(params){
 
     // Setup pion selectors
     testCut = new TestCut(); 
-    /*    
+
     positivePionSelector->AddCut(dvz_cut);
     positivePionSelector->AddCut(pip_tofmass_cut_s1);
     positivePionSelector->AddCut(pip_tofmass_cut_s2);
@@ -425,10 +425,8 @@ ParticleFilter::ParticleFilter(Parameters *params) : pars(params){
     positivePionSelector->AddCut(pip_tofmass_cut_s5);
     positivePionSelector->AddCut(pip_tofmass_cut_s6);
     positivePionSelector->AddCut(dcr1_meson_fid_cut);
-    */
-    positivePionSelector->AddCut(testCut); 
     positivePionSelector->EnableAll();
-    /*
+
     negativePionSelector->AddCut(dvz_cut);
     negativePionSelector->AddCut(pim_tofmass_cut_s1);
     negativePionSelector->AddCut(pim_tofmass_cut_s2);
@@ -436,11 +434,8 @@ ParticleFilter::ParticleFilter(Parameters *params) : pars(params){
     negativePionSelector->AddCut(pim_tofmass_cut_s4);
     negativePionSelector->AddCut(pim_tofmass_cut_s5);
     negativePionSelector->AddCut(pim_tofmass_cut_s6);
-    */
-
-    negativePionSelector->AddCut(testCut);
     negativePionSelector->EnableAll();
-    /*
+
     positiveKaonSelector->AddCut(dvz_cut);
     positiveKaonSelector->AddCut(kp_tofmass_cut_s1);
     positiveKaonSelector->AddCut(kp_tofmass_cut_s2);
@@ -449,10 +444,8 @@ ParticleFilter::ParticleFilter(Parameters *params) : pars(params){
     positiveKaonSelector->AddCut(kp_tofmass_cut_s5);
     positiveKaonSelector->AddCut(kp_tofmass_cut_s6);
     positiveKaonSelector->AddCut(dcr1_meson_fid_cut);
-    */
-    positiveKaonSelector->AddCut(testCut);
     positiveKaonSelector->EnableAll();
-    /*
+
     negativeKaonSelector->AddCut(dvz_cut);
     negativeKaonSelector->AddCut(km_tofmass_cut_s1);
     negativeKaonSelector->AddCut(km_tofmass_cut_s2);
@@ -460,8 +453,6 @@ ParticleFilter::ParticleFilter(Parameters *params) : pars(params){
     negativeKaonSelector->AddCut(km_tofmass_cut_s4);
     negativeKaonSelector->AddCut(km_tofmass_cut_s5);
     negativeKaonSelector->AddCut(km_tofmass_cut_s6);
-    */
-    negativeKaonSelector->AddCut(testCut);
     negativeKaonSelector->EnableAll();
  
 }
@@ -476,19 +467,7 @@ void ParticleFilter::set_info(bool GSIM, int run){
 }
 
 bool ParticleFilter::has_electron(h22Event &event){
-    
-    // Simply check 0 for now, later add support for
-    // loop over gpart.
-
-    if (electronSelector->IsPassedFast(event, 0)){
-        //        event.processingStage = 1;
-        //        event.electronIndex   = 0;
-        //        correctEventStartTime(event);
-        //        event.vz[0] = corr.vz(event,0,runno,MC);
-        return true;
-    }
-
-    return false;
+    return electronSelector->IsPassedFast(event, 0);
 }
 
 DataEventSelector *ParticleFilter::GetSelector(int pid){
@@ -531,13 +510,13 @@ vector<int> ParticleFilter::getVectorOfParticleIndices(h22Event &event, int pid)
       if (!electrons.empty()){
 	for(int ipart=0; ipart<event.gpart; ipart++){
 
-	  if(isNotAnElectronCandidate(electrons, ipart)){
+	  if(event.q[ipart] > 0){
 	    // Ugly shite, should do something like add charge cut
 	    // to the selector and then -> ->
 	    // if(getSelector(pid)->passesFast(event,ipart)){ particles.push_back(ipart); }
-	    if(pid == 211 && event.q[ipart] == 1){
+	    if(pid == 211){
 	      if(positivePionSelector->IsPassedFast(event, ipart)){ particles.push_back(ipart); }
-	    } else if (pid == 321 && event.q[ipart] == 1){
+	    } else if (pid == 321){
 	      if(positiveKaonSelector->IsPassedFast(event, ipart)){ particles.push_back(ipart); }
 	    }
 	  }
@@ -552,13 +531,13 @@ vector<int> ParticleFilter::getVectorOfParticleIndices(h22Event &event, int pid)
       if (!electrons.empty()){
 	for(int ipart=0; ipart<event.gpart; ipart++){
 
-	  if(isNotAnElectronCandidate(electrons, ipart)){
+	  if(isNotAnElectronCandidate(electrons, ipart) && event.q[ipart] < 0){
 	    // Ugly shite, should do something like add charge cut
 	    // to the selector and then -> ->
 	    // if(getSelector(pid)->passesFast(event,ipart)){ particles.push_back(ipart); }
-	    if(pid == -211 && event.q[ipart] == -1){
+	    if(pid == -211){
 	      if(negativePionSelector->IsPassedFast(event, ipart)){ particles.push_back(ipart); }
-	    } else if (pid == -321 && event.q[ipart] == -1){
+	    } else if (pid == -321){
 	      if(negativeKaonSelector->IsPassedFast(event, ipart)){ particles.push_back(ipart); }
 	    }
 	  }

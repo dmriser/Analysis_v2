@@ -436,7 +436,9 @@ public:
       int numberBins = slices->bins.size() +3;
       int numberPages = ceil(numberBins/4); 
 
-      Global::Visualization::SetBentCoolWarmPalette();
+      //      Global::Visualization::SetBentCoolWarmPalette();
+      Global::Visualization::SetCustomPalette(); 
+
 
       for(int s=0; s<6; s++){
 	can->Print(Form("%sCompareSlicesSector%d.pdf[", fOutputPath.c_str(), s));
@@ -453,19 +455,19 @@ public:
 	      gPad->SetLogz();
 	      gPad->SetMargin(0.2, 0.01, 0.2, 0.01); 
 	      histos->h2_p_beta[s+1]->Draw("colz");
-	      title.DrawLatex(0.58, 0.08, "#beta");
+	      title.DrawLatex(0.58, 0.08, "p (GeV/c)");
 
 	      can->cd(2); 
 	      gPad->SetLogz();
 	      gPad->SetMargin(0.2, 0.01, 0.2, 0.01); 
 	      histos->h2_p_dbeta[s+1]->Draw("colz");
-	      title.DrawLatex(0.58, 0.08, "#Delta#beta");
+	      title.DrawLatex(0.58, 0.08, "p (GeV/c)");
 
 	      can->cd(3); 
 	      gPad->SetLogz();
 	      gPad->SetMargin(0.2, 0.01, 0.2, 0.01); 
 	      histos->h2_p_tofmass[s+1]->Draw("colz");
-	      title.DrawLatex(0.58, 0.08, "M_{TOF}");
+	      title.DrawLatex(0.58, 0.08, "p (GeV/c)");
 	    }
 
 	    else {

@@ -104,12 +104,17 @@ class h22Event {
    Float_t         mcvy[40];   //[mcnentr]
    Float_t         mcvz[40];   //[mcnentr]
    Float_t         mctof[40];   //[mcnentr]
+   
+   // Extra Stuffs 
+   //   Float_t         corr_sc_r[40];
+   Float_t         corr_sc_t[40]; // Added 
+   Float_t         corr_b[40];
+   Float_t         corr_vz[40];
 
    // Const. & Dest. 
    h22Event();
    h22Event(const h22Event &event);
    ~h22Event();
-  
    // Member Functions 
    void PrintEvent() const;
    double GetRelativePhi(int);     //! Azym. angle relative to sector center.
@@ -134,6 +139,35 @@ class h22Event {
    // Sorting functions 
    std::vector<int> SortByMomentum(std::vector<int>);
    TLorentzVector GetTLorentzVector(int index, int pid);
+
+   void SetElectronIndex(int index) {
+     fElectronIndex = index;
+   }
+
+   void SetStartTime(float time){
+     fStartTime = time;
+   }
+
+   void  SetCorrectedStatus(bool corr){
+     fIsCorrected = corr;
+   }
+
+   int GetElectronIndex() const {
+     return fElectronIndex;
+   }
+
+   float GetStartTime() const {
+     return fStartTime;
+   }
+
+   bool IsCorrected() const {
+     return fIsCorrected;
+   }
+
+ protected:
+   int   fElectronIndex;
+   float fStartTime;
+   bool  fIsCorrected;  
 
 };
 

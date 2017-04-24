@@ -34,11 +34,12 @@ Corrections::~Corrections()
 }
 
 void Corrections::correctEvent(h22Event *event, int runno, int GSIM){
+  /*
     if( !GSIM ){
         // Correcting electron spot first to avoid an if statement in the
         // for loop.
-        event->vz[0]   = vz((*event), 0, runno, GSIM);
-        event->sc_t[0] = electron_sct((*event),0,runno,GSIM);
+        event->corr_vz[0]   = vz((*event), 0, runno, GSIM);
+        event->corr_sc_t[0] = electron_sct((*event),0,runno,GSIM);
 
         for(int ipart=1; ipart<event->gpart; ipart++){
             event->vz[ipart] = vz((*event), ipart, runno, GSIM);
@@ -48,11 +49,7 @@ void Corrections::correctEvent(h22Event *event, int runno, int GSIM){
             }
         }
     }
-
-}
-
-void Corrections::CorrectElectronEvent(h22ElectronEvent *event, int runno, int GSIM){
-
+  */
     if( !GSIM ){
       int electronIndex = event->GetElectronIndex();
       event->corr_vz[electronIndex]   = vz((*event), electronIndex, runno, GSIM);
@@ -66,7 +63,7 @@ void Corrections::CorrectElectronEvent(h22ElectronEvent *event, int runno, int G
 	  event->corr_vz[ipart] = vz((*event), ipart, runno, GSIM);
 
 	  double beta = event->sc_r[ipart]/(event->sc_t[ipart]-startTime)/speed_of_light;
-	  
+	    
 	  if(event->q[ipart] != 0){
 	    event->corr_sc_t[ipart] = hadron_sct((*event), ipart, runno, GSIM);
 	    beta = event->sc_r[ipart]/(event->corr_sc_t[ipart]-startTime)/speed_of_light;
@@ -78,6 +75,7 @@ void Corrections::CorrectElectronEvent(h22ElectronEvent *event, int runno, int G
       
       event->SetCorrectedStatus(1); 
     }
+
 
 }
 

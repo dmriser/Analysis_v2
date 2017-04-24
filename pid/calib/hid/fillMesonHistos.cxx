@@ -19,7 +19,6 @@
 #include "Corrections.h"
 #include "DataEventCut.h"
 #include "h22Event.h"
-#include "h22ElectronEvent.h"
 #include "h22Option.h"
 #include "h22Reader.h"
 #include "GenericAnalysis.h"
@@ -100,16 +99,15 @@ void HIDCalibration::ProcessEvent(){
       
       // Take the fastest one
       int electronIndex = electronCandidates[0];
-      h22ElectronEvent electronEvent(event); 
-      electronEvent.SetElectronIndex(electronIndex); 
-      corr.CorrectElectronEvent(&electronEvent, GetRunNumber(), GSIM); 
+      event.SetElectronIndex(electronIndex); 
+      corr.correctEvent(&event, GetRunNumber(), GSIM); 
 
       for (int ipart=0; ipart<event.gpart; ipart++){
 	
 	// This important line stops other electrons from
 	// getting added to the plots.
  	if (CurrentParticleIsNotElectronCandidate(electronCandidates, ipart)) {
-	  double dvz = fabs(electronEvent.corr_vz[electronIndex] - electronEvent.corr_vz[ipart]);
+	  double dvz = fabs(event.corr_vz[electronIndex] - event.corr_vz[ipart]);
 	  
 	  TLorentzVector electron = event.GetTLorentzVector(electronIndex, 11);
 	  TLorentzVector candidate = event.GetTLorentzVector(ipart, event.id[ipart]);
@@ -118,14 +116,17 @@ void HIDCalibration::ProcessEvent(){
 	  electron = momCorr->PcorN(electron, -1, 11);
 	  candidate = momCorr->PcorN(candidate, event.q[ipart], event.id[ipart]);
 
-	  if (dvz < 4.0  && event.etot[ipart] > 0.01){
+	  PhysicsEvent physEv = builder->getPhysicsEvent(electron, candidate); 
+
+	  //	  if (dvz < 4.0  && event.etot[ipart] > 0.01){
+	  if (dvz < 4.0){
 	    if (event.q[ipart] == 1){ 
-	      pipHistos->Fill(electronEvent, ipart); 
-	      kpHistos->Fill(electronEvent, ipart);
+	      pipHistos->Fill(event, physEv, ipart); 
+	      kpHistos->Fill(event, physEv, ipart);
 	    }
 	    else if (event.q[ipart] == -1){
-	      pimHistos->Fill(electronEvent, ipart); 
-	      kmHistos->Fill(electronEvent, ipart);
+	      pimHistos->Fill(event, physEv, ipart); 
+	      kmHistos->Fill(event, physEv, ipart);
 	    }
 	  }
 

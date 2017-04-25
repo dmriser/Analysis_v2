@@ -15,6 +15,9 @@ public:
  void PrintStatus(double doneFraction); 
  void PrintStatus(int done, int total);  
 
+ void PrintStatusFancy(double doneFraction); 
+ void PrintStatusFancy(int done, int total); 
+
 protected:
  TStopwatch stopwatch;
  char       fWhiteSpace; 

@@ -95,6 +95,9 @@ void StandardHistograms::Initialize(){
    h2_part1_p_samplingFraction[s]    = new TH2D(Form("h2_part1_p_samplingFraction_sect%d_%s",s,name.c_str()),Form("h2_part1_p_samplingFraction_sect%d",s),100,0.5,5.5,100,0.0,0.5); 
    h2_part1_ecInner_ecOuter[s]       = new TH2D(Form("h2_part1_ecInner_ecOuter_sect%d_%s",s,name.c_str()),Form("h2_part1_ecInner_ecOuter_sect%d",s),100,0.0,0.5,100,0.0,0.5); 
    h2_part1_samplingFraction_nphe[s] = new TH2D(Form("h2_part1_samplingFraction_nphe_sect%d_%s",s,name.c_str()),Form("h2_part1_samplingFraction_nphe_sect%d",s),100,0.0,0.5,100,0,200); 
+   h2_ele_vz_phi[s]                  = new TH2D(Form("h2_ele_vz_phi_sect%d_%s",s,name.c_str()),Form("h2_ele_vz_phi_sect%d_%s",s,name.c_str()),100,-45.0,0.0,100,-30.0,330.0); 
+   h2_part1_vz_phi[s]                = new TH2D(Form("h2_part1_vz_phi_sect%d_%s",s,name.c_str()),Form("h2_part1_vz_phi_sect%d_%s",s,name.c_str()),100,-45.0,0.0,100,-30.0,330.0); 
+
  }
 
 } 
@@ -153,6 +156,8 @@ void StandardHistograms::Load(std::string inputFilename){
     h2_part1_p_samplingFraction[s]    = (TH2D*) inputFile->Get(Form("StandardHistograms/h2_part1_p_samplingFraction_sect%d_%s",s,name.c_str()));
     h2_part1_ecInner_ecOuter[s]       = (TH2D*) inputFile->Get(Form("StandardHistograms/h2_part1_ecInner_ecOuter_sect%d_%s",s,name.c_str()));
     h2_part1_samplingFraction_nphe[s] = (TH2D*) inputFile->Get(Form("StandardHistograms/h2_part1_samplingFraction_nphe_sect%d_%s",s,name.c_str()));
+    h2_ele_vz_phi[s]                  = (TH2D*) inputFile->Get(Form("h2_ele_vz_phi_sect%d_%s",s,name.c_str())); 
+    h2_part1_vz_phi[s]                = (TH2D*) inputFile->Get(Form("h2_part1_vz_phi_sect%d_%s",s,name.c_str())); 
   }
   
 }
@@ -166,6 +171,7 @@ void StandardHistograms::Fill(h22Event &event, int index){
   h2_ele_p_samplingFraction[0]   ->Fill(event.p[index], event.etot[index]/event.p[index]); 
   h2_ele_ecInner_ecOuter[0]      ->Fill(event.ec_ei[index]/event.p[index], event.ec_eo[index]/event.p[index]); 
   h2_ele_samplingFraction_nphe[0]->Fill(event.etot[index]/event.p[index], event.nphe[index]); 
+  h2_ele_vz_phi[0]->Fill(event.vz[index], event.GetPhi(index));
 
   int s = event.dc_sect[index]; 
   h1_ele_nphe[s]            ->Fill(event.nphe[index]);
@@ -176,42 +182,33 @@ void StandardHistograms::Fill(h22Event &event, int index){
   h2_ele_p_samplingFraction[s]   ->Fill(event.p[index], event.etot[index]/event.p[index]); 
   h2_ele_ecInner_ecOuter[s]      ->Fill(event.ec_ei[index]/event.p[index], event.ec_eo[index]/event.p[index]); 
   h2_ele_samplingFraction_nphe[s]->Fill(event.etot[index]/event.p[index], event.nphe[index]); 
+  h2_ele_vz_phi[s]->Fill(event.vz[index], event.GetPhi(index));
 }
 
 void StandardHistograms::Fill(h22Event &event, int index1, int index2){
-  h1_ele_nphe[0]              ->Fill(event.nphe[index1]);
-  h1_ele_ecInner[0]           ->Fill(event.ec_ei[index1]/event.p[index1]);
-  h1_ele_ecOuter[0]           ->Fill(event.ec_eo[index1]/event.p[index1]);
-  h1_ele_samplingFraction[0]  ->Fill(event.etot[index1] /event.p[index1]);
+  // Fill electron stuff 
+  Fill(event, index1);
+
   h1_part1_nphe[0]            ->Fill(event.nphe[index2]);
   h1_part1_ecInner[0]         ->Fill(event.ec_ei[index2]/event.p[index2]);
   h1_part1_ecOuter[0]         ->Fill(event.ec_eo[index2]/event.p[index2]);
   h1_part1_samplingFraction[0]->Fill(event.etot[index2] /event.p[index2]);
 
-  h2_ele_p_samplingFraction[0]     ->Fill(event.p[index1], event.etot[index1]/event.p[index1]); 
-  h2_ele_ecInner_ecOuter[0]        ->Fill(event.ec_ei[index1]/event.p[index1], event.ec_eo[index1]/event.p[index1]); 
-  h2_ele_samplingFraction_nphe[0]  ->Fill(event.etot[index1]/event.p[index1], event.nphe[index1]); 
   h2_part1_p_samplingFraction[0]   ->Fill(event.p[index2], event.etot[index2]/event.p[index2]); 
   h2_part1_ecInner_ecOuter[0]      ->Fill(event.ec_ei[index2]/event.p[index2], event.ec_eo[index2]/event.p[index2]); 
   h2_part1_samplingFraction_nphe[0]->Fill(event.etot[index2]/event.p[index2], event.nphe[index2]); 
+  h2_ele_vz_phi[0]->Fill(event.vz[index2], event.GetPhi(index2));
 
-  int s  = event.dc_sect[index1]; 
   int s1 = event.dc_sect[index2]; 
-  h1_ele_nphe[s]               ->Fill(event.nphe[index1]);
-  h1_ele_ecInner[s]            ->Fill(event.ec_ei[index1]/event.p[index1]);
-  h1_ele_ecOuter[s]            ->Fill(event.ec_eo[index1]/event.p[index1]);
-  h1_ele_samplingFraction[s]   ->Fill(event.etot[index1] /event.p[index1]);
   h1_part1_nphe[s1]            ->Fill(event.nphe[index2]);
   h1_part1_ecInner[s1]         ->Fill(event.ec_ei[index2]/event.p[index2]);
   h1_part1_ecOuter[s1]         ->Fill(event.ec_eo[index2]/event.p[index2]);
   h1_part1_samplingFraction[s1]->Fill(event.etot[index2] /event.p[index2]);
 
-  h2_ele_p_samplingFraction[s]      ->Fill(event.p[index1], event.etot[index1]/event.p[index1]); 
-  h2_ele_ecInner_ecOuter[s]         ->Fill(event.ec_ei[index1]/event.p[index1], event.ec_eo[index1]/event.p[index1]); 
-  h2_ele_samplingFraction_nphe[s]   ->Fill(event.etot[index1]/event.p[index1], event.nphe[index1]); 
   h2_part1_p_samplingFraction[s1]   ->Fill(event.p[index2], event.etot[index2]/event.p[index2]); 
   h2_part1_ecInner_ecOuter[s1]      ->Fill(event.ec_ei[index2]/event.p[index2], event.ec_eo[index2]/event.p[index2]); 
   h2_part1_samplingFraction_nphe[s1]->Fill(event.etot[index2]/event.p[index2], event.nphe[index2]); 
+  h2_ele_vz_phi[s1]->Fill(event.vz[index2], event.GetPhi(index2));
 }
 
 void StandardHistograms::Fill(h22Event &event, int index1, int index2, PhysicsEvent &physicsEvent){
@@ -339,9 +336,11 @@ void StandardHistograms::Save(TFile *outputFile){
       h2_w_q2[s]                       ->Write(); 
       h2_y_w[s]                        ->Write(); 
       h2_z_pt2[s]                      ->Write(); 
+      h2_ele_vz_phi[s]                 ->Write();
       h2_ele_p_samplingFraction[s]     ->Write(); 
       h2_ele_ecInner_ecOuter[s]        ->Write(); 
-      h2_ele_samplingFraction_nphe[s]  ->Write(); 
+      h2_ele_samplingFraction_nphe[s]  ->Write();
+      h2_part1_vz_phi[s]               ->Write(); 
       h2_part1_p_samplingFraction[s]   ->Write(); 
       h2_part1_ecInner_ecOuter[s]      ->Write(); 
       h2_part1_samplingFraction_nphe[s]->Write(); 

@@ -68,10 +68,10 @@ void MyAnalysis::ProcessEvent(){
 
 
   if(!electrons.empty() && !electronIndices.empty()){
-    h22ElectronEvent electronEvent(event);   
-    electronEvent.SetElectronIndex(electronIndices.front());
-    electronEvent.SetElectron(electrons.front()); 
-    corr.CorrectElectronEvent(&electronEvent, GetRunNumber(), GSIM); 
+    event.SetElectronIndex(electronIndices.front());
+    corr.correctEvent(&event, GetRunNumber(), GSIM); 
+
+    //    std::cout << event.GetPhi(electronIndices.front()) << std::endl; 
 
       if(!pims.empty()){
 	PhysicsEvent ev = builder->getPhysicsEvent(electrons[0], pims.back()); 
@@ -79,7 +79,7 @@ void MyAnalysis::ProcessEvent(){
       }
 
       if(!phots.empty()){
-	photonHistos->Fill(electronEvent, photIndices[0]);
+	photonHistos->Fill(event, photIndices[0]);
       }
   }
 
@@ -111,7 +111,7 @@ int main(int argc, char *argv[]){
   MyAnalysis analysis(opts, pars);
 
   for (int i=0; i<opts->ifiles.size(); i++) { 
-    analysis.AddFile( opts->ifiles[i].c_str() ); 
+    analysis.AddFile( opts->ifiles[i] ); 
   } 
 
   analysis.RunAnalysis();

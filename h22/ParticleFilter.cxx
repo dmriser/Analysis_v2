@@ -489,7 +489,7 @@ DataEventSelector *ParticleFilter::GetSelector(int pid){
 }
 
 bool ParticleFilter::isNotAnElectronCandidate(std::vector<int> electrons, int index){
-    return (std::find(electrons.begin(),electrons.end(),index) != electrons.end());
+    return (std::find(electrons.begin(),electrons.end(),index) == electrons.end());
 }
 
 vector<int> ParticleFilter::getVectorOfParticleIndices(h22Event &event, int pid){
@@ -540,6 +540,19 @@ vector<int> ParticleFilter::getVectorOfParticleIndices(h22Event &event, int pid)
 	    } else if (pid == -321){
 	      if(negativeKaonSelector->IsPassedFast(event, ipart)){ particles.push_back(ipart); }
 	    }
+	  }
+	}
+      }
+    }
+
+    else if (pid == 2212){
+      particles.clear(); 
+
+      std::vector<int> electrons = getVectorOfParticleIndices(event, 11);
+      if (!electrons.empty()){
+	for(int ipart=0; ipart<event.gpart; ipart++){
+	  if(event.id[ipart] == 2212){
+	    if (dcr1_meson_fid_cut->IsPassed(event, ipart)){ particles.push_back(ipart); }
 	  }
 	}
       }

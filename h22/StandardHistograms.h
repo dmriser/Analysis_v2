@@ -46,6 +46,7 @@ class StandardHistograms{
   // Detector Variables in 2-Dimensions  
   TH2D *h2_ele_p_samplingFraction[numberSector],   *h2_ele_ecInner_ecOuter[numberSector],   *h2_ele_samplingFraction_nphe[numberSector]; 
   TH2D *h2_part1_p_samplingFraction[numberSector], *h2_part1_ecInner_ecOuter[numberSector], *h2_part1_samplingFraction_nphe[numberSector]; 
+  TH2D *h2_ele_vz_phi[numberSector], *h2_part1_vz_phi[numberSector];
 
   // Member Functions
   void Fill(h22Event &event, int index);

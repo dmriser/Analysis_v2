@@ -159,14 +159,14 @@ double h22Event::GetRelativePhiMC(int ipart){
 }
 
 TLorentzVector h22Event::GetGeneratedParticle(int pid){
-    for (int ipart=0; ipart<mcnentr; ipart++){
-        if (mcid[ipart] == pid) {
-            return TLorentzVector(GetMCPx(ipart), GetMCPy(ipart), GetMCPz(ipart), mcp[ipart]);
-        }
+  for (int ipart=0; ipart<mcnentr; ipart++){
+    if (mcid[ipart] == pid) {
+      return TLorentzVector(GetMCPx(ipart), GetMCPy(ipart), GetMCPz(ipart), pow(mcp[ipart],2) + pow(pid_to_mass(mcid[ipart]),2));
     }
-
-    //  cout << " WARNING: GEN PARTICLE NOT FOUND! " << endl;
-    return TLorentzVector(0,0,1000,1000);
+  }
+  
+  //  cout << " WARNING: GEN PARTICLE NOT FOUND! " << endl;
+  return TLorentzVector(0,0,1000,1000);
 }
 
 void h22Event::PrintEvent() const {
@@ -238,6 +238,10 @@ TVector3 h22Event::GetUVWVector(int ipart){
     TVector3 uvw(u,v,w);
     return uvw;
     
+}
+
+double h22Event::GetPhi(int index) const {
+  return 150.0+atan2(cy[index],cx[index]) *to_degrees;  
 }
 
 double h22Event::GetThetaCC(int ipart){

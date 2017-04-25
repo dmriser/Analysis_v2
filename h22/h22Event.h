@@ -120,6 +120,7 @@ class h22Event {
    double GetRelativePhi(int);     //! Azym. angle relative to sector center.
    double GetRelativePhiMC(int);   //! MC version of above
    double GetTheta(int);    //! Polar angle of track
+   double GetPhi(int index) const; 
    TVector3 GetUVWVector(int);    //! EC Coordinates U, V, W returned as U = vector.X(), V = vector.Y(), W = vector.Z()
    TLorentzVector GetGeneratedParticle(int);
    int GetMCSectorByPID(int index);

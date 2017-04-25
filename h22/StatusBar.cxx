@@ -52,11 +52,42 @@ void StatusBar::PrintStatus(double doneFraction){
       currentChar++; 
     }
 
-    cout << fRight; 
+    cout << fRight << " "; 
     
     cout.width(6); cout << doneFraction*100 << " %, ("; 
     cout << GetTime() << "/"; 
     cout << (1-doneFraction)/doneFraction *GetTime() << ")" << endl; 
+  }
+
+}
+
+
+void StatusBar::PrintStatusFancy(int done, int total){
+  PrintStatus((double)done/total); 
+}
+
+void StatusBar::PrintStatusFancy(double doneFraction){
+  if (doneFraction > 0.001){
+    cout << "\r[StatusBar] "; 
+    cout << fLeft; 
+
+    int fillNumber = floor(doneFraction*fWidth); 
+    int currentChar = 0; 
+    while (currentChar < fWidth){
+      if (currentChar < fillNumber){
+	cout << fFiller; 
+      } else {
+	cout << fWhiteSpace; 
+      }
+
+      currentChar++; 
+    }
+
+    cout << fRight << " "; 
+    
+    cout.width(6); cout << doneFraction*100 << " %, ("; 
+    cout << GetTime() << "/"; 
+    cout << (1-doneFraction)/doneFraction *GetTime() << ")" << std::flush; 
   }
 
 }

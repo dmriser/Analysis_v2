@@ -26,6 +26,7 @@
 
 #include "TColor.h"
 #include "TStyle.h"
+#include "TRandom3.h"
 
 #define pi             3.14159265359
 #define to_degrees     57.2957795131
@@ -223,6 +224,39 @@ namespace Global {
       Double_t rBlue[rNCOLORS] = {0.76, 0.95, 0.15};
       Double_t rStops[rNCOLORS] = {0.00, 0.5, 1.00};
       UInt_t rNSTEPS = 255;
+      
+      TColor::CreateGradientColorTable(rNCOLORS, rStops, rRed, rGreen, rBlue, rNSTEPS);
+      gStyle->SetNumberContours(rNSTEPS);    
+    }
+
+    static void SetExpPalette(){
+      const static UInt_t rNCOLORS = 3;
+      Double_t rRed[rNCOLORS] = {0.01, 0.01, 0.55};
+      Double_t rGreen[rNCOLORS] = {0.99, 0.95, 0.00};
+      Double_t rBlue[rNCOLORS] = {0.32, 0.21, 0.28};
+      Double_t rStops[rNCOLORS] = {0.00, 0.5, 1.00};
+      UInt_t rNSTEPS = 255;
+      
+      TColor::CreateGradientColorTable(rNCOLORS, rStops, rRed, rGreen, rBlue, rNSTEPS);
+      gStyle->SetNumberContours(rNSTEPS);    
+    }
+ 
+    static void SetRandPalette(int seed){
+      const static UInt_t rNCOLORS = 2;
+
+      TRandom3 rand(seed); 
+
+      Double_t rRed[rNCOLORS];
+      Double_t rGreen[rNCOLORS];
+      Double_t rBlue[rNCOLORS];
+      Double_t rStops[rNCOLORS] = {0.00, 1.00};
+      UInt_t rNSTEPS = 255;
+
+      for(int i=0; i<rNCOLORS; i++){
+	rRed[i] = rand.Uniform();
+	rGreen[i] = rand.Uniform();
+	rBlue[i] = rand.Uniform();
+      }
       
       TColor::CreateGradientColorTable(rNCOLORS, rStops, rRed, rGreen, rBlue, rNSTEPS);
       gStyle->SetNumberContours(rNSTEPS);    

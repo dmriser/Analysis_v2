@@ -123,6 +123,7 @@ void MesonHistograms::Load(std::string filename) {
       h2_phi_theta[s] = (TH2D*) fInputFile->Get(Form("MesonHistograms/h2_phi_theta_%d_%s",s, fName.c_str()));
       h2_dcx_dcy[s] = (TH2D*) fInputFile->Get(Form("MesonHistograms/h2_dcx_dcy_%d_%s",s, fName.c_str()));
       h2_p_beta[s] = (TH2D*) fInputFile->Get(Form("MesonHistograms/h2_p_beta_%d_%s",s, fName.c_str()));
+      h2_p_mm2[s] = (TH2D*) fInputFile->Get(Form("MesonHistograms/h2_p_mm2_%d_%s",s, fName.c_str()));
       h2_p_tofmass[s] = (TH2D*) fInputFile->Get(Form("MesonHistograms/h2_p_tofmass_%d_%s",s, fName.c_str()));
       h2_nphe_tofmass[s] = (TH2D*) fInputFile->Get(Form("MesonHistograms/h2_nphe_tofmass_%d_%s",s, fName.c_str()));
       h2_p_dbeta[s] = (TH2D*) fInputFile->Get(Form("MesonHistograms/h2_p_dbeta_%d_%s",s, fName.c_str()));

@@ -116,5 +116,5 @@
               KP_DVZ     6     e                   0                   0                   0                   0                   0                   0
       KP_TOFMASS_MAX     6     v                0.65                0.65                0.65                0.65                0.65                0.65
       KP_TOFMASS_MAX     6     e                   0                   0                   0                   0                   0                   0
-      KP_TOFMASS_MIN     6     v               0.418               0.418               0.418               0.418               0.418               0.418
+      KP_TOFMASS_MIN     6     v               0.425               0.425               0.425               0.425               0.425               0.425
       KP_TOFMASS_MIN     6     e                   0                   0                   0                   0                   0                   0

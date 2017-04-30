@@ -127,60 +127,70 @@ void HIDCalibration::ProcessEvent(){
     TLorentzVector electron = event.GetTLorentzVector(electronIndex, 11); 
     electron = momCorr->PcorN(electron, -1, 11);
 
-    if (!pipIndices.empty()){
-      TLorentzVector meson = event.GetTLorentzVector(pipIndices[0], 211);
-      meson = momCorr->PcorN(meson, 1, 211);
+    PhysicsEvent candidateEvent = builder->getPhysicsEvent(electron); 
 
-      PhysicsEvent physicsEvent = builder->getPhysicsEvent(electron, meson); 
-      pipHistos->Fill(event, physicsEvent, pipIndices[0]);
-      pipStand->Fill(event, electronIndex, pipIndices[0], physicsEvent); 
-    }
+    if (candidateEvent.qq > 1.0 && candidateEvent.w > 2.00) {
 
-    if (!pimIndices.empty()){
-      TLorentzVector meson = event.GetTLorentzVector(pimIndices[0], -211);
-      meson = momCorr->PcorN(meson, -1, -211);
-
-      PhysicsEvent physicsEvent = builder->getPhysicsEvent(electron, meson); 
-      pimHistos->Fill(event, physicsEvent, pimIndices[0]);
-      pimStand->Fill(event, electronIndex, pimIndices[0], physicsEvent); 
-    }
-
-    if (!kpIndices.empty()){
-      TLorentzVector meson = event.GetTLorentzVector(kpIndices[0], 321);
-      meson = momCorr->PcorN(meson, 1, 321);
-
-      PhysicsEvent physicsEvent = builder->getPhysicsEvent(electron, meson); 
-      kpHistos->Fill(event, physicsEvent, kpIndices[0]);
-      kpStand->Fill(event, electronIndex, kpIndices[0], physicsEvent); 
-    }
-
-    if (!kmIndices.empty()){
-      TLorentzVector meson = event.GetTLorentzVector(kmIndices[0], -321);
-      meson = momCorr->PcorN(meson, -1, -321);
-
-      PhysicsEvent physicsEvent = builder->getPhysicsEvent(electron, meson); 
-      kmHistos->Fill(event, physicsEvent, kmIndices[0]);
-      kmStand->Fill(event, electronIndex, kmIndices[0], physicsEvent); 
-    }
-
-
-    // quickly scan event for positives and negatives 
-    for(int ipart=0; ipart<event.gpart; ipart++){
-      if (event.q[ipart] < 0 && CurrentParticleIsNotElectronCandidate(electronCandidates, ipart)){
-	TLorentzVector part1 = event.GetTLorentzVector(ipart, event.id[ipart]);
-	part1 = momCorr->PcorN(part1, event.q[ipart], event.id[ipart]);
+      if (!pipIndices.empty()){
+	TLorentzVector meson = event.GetTLorentzVector(pipIndices[0], 211);
+	meson = momCorr->PcorN(meson, 1, 211);
 	
-	PhysicsEvent physicsEvent = builder->getPhysicsEvent(electron, part1); 
-	negHistos->Fill(event, physicsEvent, ipart);
-	negStand->Fill(event, electronIndex, ipart, physicsEvent); 
-      } else if (event.q[ipart] > 0){
-	TLorentzVector part1 = event.GetTLorentzVector(ipart, event.id[ipart]);
-	part1 = momCorr->PcorN(part1, event.q[ipart], event.id[ipart]);
-	
-	PhysicsEvent physicsEvent = builder->getPhysicsEvent(electron, part1); 
-	posHistos->Fill(event, physicsEvent, ipart);
-	posStand->Fill(event, electronIndex, ipart, physicsEvent); 
+	PhysicsEvent physicsEvent = builder->getPhysicsEvent(electron, meson); 
+	pipHistos->Fill(event, physicsEvent, pipIndices[0]);
+	pipStand->Fill(event, electronIndex, pipIndices[0], physicsEvent); 
       }
+      
+      if (!pimIndices.empty()){
+	TLorentzVector meson = event.GetTLorentzVector(pimIndices[0], -211);
+	meson = momCorr->PcorN(meson, -1, -211);
+	
+	PhysicsEvent physicsEvent = builder->getPhysicsEvent(electron, meson); 
+	pimHistos->Fill(event, physicsEvent, pimIndices[0]);
+	pimStand->Fill(event, electronIndex, pimIndices[0], physicsEvent); 
+      }
+      
+      if (!kpIndices.empty()){
+	TLorentzVector meson = event.GetTLorentzVector(kpIndices[0], 321);
+	meson = momCorr->PcorN(meson, 1, 321);
+	
+	PhysicsEvent physicsEvent = builder->getPhysicsEvent(electron, meson); 
+	if (physicsEvent.mm2 > 1.0){
+	  kpHistos->Fill(event, physicsEvent, kpIndices[0]);
+	  kpStand->Fill(event, electronIndex, kpIndices[0], physicsEvent); 
+	}
+      }
+
+      if (!kmIndices.empty()){
+	TLorentzVector meson = event.GetTLorentzVector(kmIndices[0], -321);
+	meson = momCorr->PcorN(meson, -1, -321);
+	
+	PhysicsEvent physicsEvent = builder->getPhysicsEvent(electron, meson); 
+	kmHistos->Fill(event, physicsEvent, kmIndices[0]);
+	kmStand->Fill(event, electronIndex, kmIndices[0], physicsEvent); 
+      }
+            
+      // quickly scan event for positives and negatives 
+      for(int ipart=0; ipart<event.gpart; ipart++){
+	if (event.q[ipart] < 0 && CurrentParticleIsNotElectronCandidate(electronCandidates, ipart)){
+	  TLorentzVector part1 = event.GetTLorentzVector(ipart, event.id[ipart]);
+	  part1 = momCorr->PcorN(part1, event.q[ipart], event.id[ipart]);
+	  
+	  PhysicsEvent physicsEvent = builder->getPhysicsEvent(electron, part1); 
+	  negHistos->Fill(event, physicsEvent, ipart);
+	  negStand->Fill(event, electronIndex, ipart, physicsEvent); 
+	} else if (event.q[ipart] > 0){
+	  TLorentzVector part1 = event.GetTLorentzVector(ipart, event.id[ipart]);
+	  part1 = momCorr->PcorN(part1, event.q[ipart], event.id[ipart]);
+	  
+	  PhysicsEvent physicsEvent = builder->getPhysicsEvent(electron, part1); 
+
+	  if (physicsEvent.mm2 > 1.0){ 
+	    posHistos->Fill(event, physicsEvent, ipart);
+	    posStand->Fill(event, electronIndex, ipart, physicsEvent); 
+	  }
+	}
+    }
+
     }
   }
 }

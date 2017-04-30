@@ -32,7 +32,7 @@ using std::string;
 
 class MyAnalysis : public GenericAnalysis {
 public:
-  MyAnalysis(Parameters *pars, DInformation *info){ filter = new ParticleFilter(pars); runInfo = info; } 
+  MyAnalysis(Parameters *pars, DInformation *info, h22Options *op) : GenericAnalysis(op) { filter = new ParticleFilter(pars); runInfo = info; } 
   ~MyAnalysis(){ }
   
   ParticleFilter       *filter;
@@ -136,11 +136,11 @@ int main(int argc, char *argv[]){
 
   if(info->has_information()){
 
-    MyAnalysis analysis(pars, info);
+    MyAnalysis analysis(pars, info, options);
 
     if( !options->ifiles.empty() ){
       analysis.AddFile(options->ifiles[0]); 
-      analysis.RunAnalysis(1e9);
+      analysis.RunAnalysis();
       analysis.Save(options->args["OUT"].args);
     }
     

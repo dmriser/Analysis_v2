@@ -271,6 +271,7 @@ public:
   std::vector<std::vector<TH1D*> > deltaBeta; 
   std::vector<std::vector<TH1D*> > mass; 
   std::vector<std::vector<TF1*> >  mass_fit;
+  std::vector<std::vector<TF1*> >  beta_fit;
   std::vector<double> bins; 
 
   void SetBins(std::vector<double> b){
@@ -288,6 +289,7 @@ public:
       for(int s=0; s<beta.size(); s++){
 	for(int b=0; b<beta[s].size(); b++){
 	  beta[s][b]->Write();
+	  beta_fit[s][b]->Write();
 	}
       }
 
@@ -326,7 +328,7 @@ public:
     //    fPMin = 0.5; 
     //    fPMax = 3.5; 
     fPMin = 0.5; 
-    fPMax = 2.0; 
+    fPMax = 1.8; 
     fPWidth = (fPMax-fPMin)/fNSlices; 
 
     for(int b=0; b<fNSlices; b++){
@@ -384,6 +386,7 @@ protected:
       std::vector<TH1D*> temp_deltaBeta; 
       std::vector<TH1D*> temp_mass; 
       std::vector<TF1*> temp_mass_fit; 
+      std::vector<TF1*> temp_beta_fit; 
 
       for(int b=0; b<fNSlices; b++){
 	double p = b*fPWidth + fPMin; 
@@ -395,24 +398,50 @@ protected:
 	
 	// Fitting TOF Mass in momentum bin
 	// Cheating to help I do seperate fits first. 
-	TF1 *pionFit = new TF1("pionFit","gaus", 0.08, 0.2); 
-	pionFit->SetParameter(1, pid_to_mass(211)); 
+	TF1 *pionMassFit = new TF1("pionFit","gaus", 0.08, 0.17); 
+	pionMassFit->SetParameter(1, pid_to_mass(211)); 
 
-	TF1 *kaonFit = new TF1("kaonFit","gaus", 0.4, 0.55); 
-	kaonFit->SetParameter(1, pid_to_mass(321)); 
+	TF1 *kaonMassFit = new TF1("kaonFit","gaus", 0.4, 0.55); 
+	kaonMassFit->SetParameter(1, pid_to_mass(321)); 
 
 	temp_mass[b]->Fit("pionFit","RQ"); 
 	temp_mass[b]->Fit("kaonFit","RQ"); 
 
-	TF1 *temp_fit = new TF1(Form("f_mass_pid%d_slice%d_sect%d",  histos->GetPid(), b, s),"gaus(0)+gaus(3)", 0.0, 0.75); 
-	temp_fit->SetParameter(0, pionFit->GetParameter(0)); 
-	temp_fit->SetParameter(1, pionFit->GetParameter(1)); 
-	temp_fit->SetParameter(2, pionFit->GetParameter(2)); 
-	temp_fit->SetParameter(3, kaonFit->GetParameter(0)); 
-	temp_fit->SetParameter(4, kaonFit->GetParameter(1)); 
-	temp_fit->SetParameter(5, kaonFit->GetParameter(2)); 
+	TF1 *temp_mfit = new TF1(Form("f_mass_pid%d_slice%d_sect%d",  histos->GetPid(), b, s),"gaus(0)+gaus(3)", 0.0, 0.75); 
+	temp_mfit->SetParameter(0, pionMassFit->GetParameter(0)); 
+	temp_mfit->SetParameter(1, pionMassFit->GetParameter(1)); 
+	temp_mfit->SetParameter(2, pionMassFit->GetParameter(2)); 
+	temp_mfit->SetParameter(3, kaonMassFit->GetParameter(0)); 
+	temp_mfit->SetParameter(4, kaonMassFit->GetParameter(1)); 
+	temp_mfit->SetParameter(5, kaonMassFit->GetParameter(2)); 
 	//	temp_mass[b]->Fit(Form("f_mass_pid%d_slice%d_sect%d",  histos->GetPid(), b, s),"RQ"); 
-	temp_mass_fit.push_back(temp_fit); 
+	temp_mass_fit.push_back(temp_mfit); 
+
+	// Now doing beta fits 
+	// First we need to guess where the peak 
+	// should be so that we can have a nice fit 
+	double mom = slices->bins[b]; 
+	double pionPeak = mom/sqrt(pow(mom,2)+pow(pid_to_mass(211),2)); 
+	double kaonPeak = mom/sqrt(pow(mom,2)+pow(pid_to_mass(321),2)); 
+
+	TF1 *pionBetaFit = new TF1("pionBetaFit","gaus", pionPeak *0.95, pionPeak*1.05); 
+	pionMassFit->SetParameter(1, pionPeak); 
+
+	TF1 *kaonBetaFit = new TF1("kaonBetaFit","gaus", kaonPeak *0.96, kaonPeak*1.04); 
+	kaonMassFit->SetParameter(1, kaonPeak); 
+
+	temp_beta[b]->Fit("pionBetaFit","RQ"); 
+	temp_beta[b]->Fit("kaonBetaFit","RQ"); 
+
+	TF1 *temp_bfit = new TF1(Form("f_beta_pid%d_slice%d_sect%d",  histos->GetPid(), b, s),"gaus(0)+gaus(3)", 0.2, 1.2); 
+	temp_bfit->SetParameter(0, pionBetaFit->GetParameter(0)); 
+	temp_bfit->SetParameter(1, pionBetaFit->GetParameter(1)); 
+	temp_bfit->SetParameter(2, pionBetaFit->GetParameter(2)); 
+	temp_bfit->SetParameter(3, kaonBetaFit->GetParameter(0)); 
+	temp_bfit->SetParameter(4, kaonBetaFit->GetParameter(1)); 
+	temp_bfit->SetParameter(5, kaonBetaFit->GetParameter(2)); 
+	//	temp_mass[b]->Fit(Form("f_mass_pid%d_slice%d_sect%d",  histos->GetPid(), b, s),"RQ"); 
+	temp_beta_fit.push_back(temp_bfit); 
 	
 	std::cout << "[MesonFittingService::Slice] Finished momentum slice " << b << " for sector " << s << std::endl; 
       }
@@ -421,6 +450,7 @@ protected:
       slices->deltaBeta.push_back(temp_deltaBeta); 
       slices->mass.push_back(temp_mass); 
       slices->mass_fit.push_back(temp_mass_fit); 
+      slices->beta_fit.push_back(temp_beta_fit); 
     }
   }
 
@@ -438,7 +468,6 @@ public:
   ~MesonCutEfficiencyService(){
   }
   
-  //  std::vector<std::vector<TH1D*> > efficiency; 
 
   void Execute(){
     // If we haven't already 
@@ -448,6 +477,12 @@ public:
     for(int s=0; s<slices->mass.size(); s++){
 
       std::vector<TH1D*> temp_eff; 
+      std::vector<TH1D*> temp_cont; 
+      std::vector<TH1D*> temp_stat; 
+
+      // keep track of best cut as funct of momentum 
+      std::vector<double> bestCutValue; 
+
       for(int b=0; b<slices->mass[s].size(); b++){
 	TF1 *pionFit = new TF1("pionFit", "gaus", slices->mass[s][b]->GetXaxis()->GetBinLowEdge(1), 
 			       slices->mass[s][b]->GetXaxis()->GetBinUpEdge( slices->mass[s][b]->GetXaxis()->GetNbins() )); 
@@ -462,6 +497,13 @@ public:
 	kaonFit->SetParameter(2, slices->mass_fit[s][b]->GetParameter(5)); 
 
 	TH1D *h1_eff = new TH1D(Form("h1_eff_slice%d_sect%d",b,s), Form("h1_eff_slice%d_sect%d",b,s), fNumberCutValues, fCutMin, fCutMax); 
+	TH1D *h1_cont = new TH1D(Form("h1_cont_slice%d_sect%d",b,s), Form("h1_cont_slice%d_sect%d",b,s), fNumberCutValues, fCutMin, fCutMax); 
+	TH1D *h1_stat = new TH1D(Form("h1_stat_slice%d_sect%d",b,s), Form("h1_stat_slice%d_sect%d",b,s), fNumberCutValues, fCutMin, fCutMax); 
+
+	// total kaon count 
+	fIntegrator.SetLowerLimit(-0.2);
+	fIntegrator.SetFunction(kaonFit);
+	double kaonTotal = fIntegrator.Integrate(); 
 	
 	for(int c=0; c<fCutValues.size(); c++){
 	  fIntegrator.SetFunction(pionFit);
@@ -471,15 +513,30 @@ public:
 	  fIntegrator.SetFunction(kaonFit);
 	  double kaonVal = fIntegrator.Integrate(); 
 
-	  double eff = kaonVal/(kaonVal + pionVal); 
+	  double eff = kaonVal/kaonTotal; 
+	  double cont = 1-kaonVal/(kaonVal + pionVal); 
+	  double stat = eff-cont; 
 
 	  h1_eff->SetBinContent(c+1, eff); 
-	  //	  std::cout << "[MesonCutEfficiencyService] sect = " << s << " bin = " << b << " lower cut = " << fCutValues[c] << " efficiency = " << eff << std::endl; 
+	  h1_cont->SetBinContent(c+1, cont); 
+	  h1_stat->SetBinContent(c+1, stat); 
 	}
+
 	temp_eff.push_back(h1_eff); 	
+	temp_cont.push_back(h1_cont); 	
+	temp_stat.push_back(h1_stat); 	
 	
+	bestCutValue.push_back(h1_stat->GetBinCenter( h1_stat->GetMaximumBin() )); 
+
+	std::cout << "[MesonCutEfficiencyService] Integrating momentum bin = " << b << " for sector = " << s << std::endl;
       }
+
       efficiency.push_back(temp_eff); 
+      contamination.push_back(temp_cont); 
+      test_statistic.push_back(temp_stat); 
+
+      fBestCutGraph[s] = new TGraph(slices->bins.size(), slices->bins.data(), bestCutValue.data());
+      fBestCutGraph[s]->SetName(Form("g_bestcut_sect%d",s)); 
     }
 
   }
@@ -504,6 +561,7 @@ public:
 
   void Save(TFile *out){
     out->cd();
+
     out->mkdir("efficiency"); 
     out->cd("efficiency/"); 
 
@@ -513,17 +571,130 @@ public:
       }
     }
 
+    out->mkdir("contamination"); 
+    out->cd("contamination/"); 
+
+    for(int s=0; s<contamination.size(); s++){
+      for(int b=0; b<contamination[s].size(); b++){
+	contamination[s][b]->Write(); 
+      }
+    }
+
+    out->mkdir("test_statistic"); 
+    out->cd("test_statistic/"); 
+
+    for(int s=0; s<test_statistic.size(); s++){
+      for(int b=0; b<test_statistic[s].size(); b++){
+	test_statistic[s][b]->Write(); 
+      }
+    }
+
+    for(int s=0; s<6; s++){
+      fBestCutGraph[s]->Write(); 
+    }
+
     out->cd(); 
   } 
 
   MesonSlices *slices; 
+  std::vector<std::vector<TH1D*> > efficiency; 
+  std::vector<std::vector<TH1D*> > contamination; 
+  std::vector<std::vector<TH1D*> > test_statistic; 
+  TGraph                          *fBestCutGraph[6]; 
 
 protected:
-  const static int fNumberCutValues = 20;
+  const static int fNumberCutValues = 100;
   double fCutMin, fCutMax; 
-  std::vector<double> fCutValues; 
-  std::vector<std::vector<TH1D*> > efficiency; 
-  TF1Integrator_Simpsons fIntegrator;
+  std::vector<double>              fCutValues; 
+  TF1Integrator_Simpsons           fIntegrator;
+
+};
+
+class MesonCutEfficiencyPlottingService {
+public:
+  MesonCutEfficiencyPlottingService(MesonHistograms *h, MesonCutEfficiencyService *s) : histos(h), efficiencyService(s) {
+    fOutputPath = "unset"; 
+  }
+  
+  void SetOutputPath(std::string p){
+    fOutputPath = p; 
+  }
+
+  std::string GetOutputPath() const {
+    return fOutputPath; 
+  }
+
+  void Execute(){
+
+    if(fOutputPath != "unset"){
+
+      gStyle->SetOptTitle(0);
+      gStyle->SetOptStat(0);
+      
+      TCanvas *can = new TCanvas("can","",800, 500); 
+      TLatex title; 
+      title.SetNDC(); 
+      title.SetTextFont(102); 
+      title.SetTextSize(0.05); 
+
+      int fillColor = 13; 
+      double fillAlpha = 0.4;
+
+      Global::Visualization::SetCustomPalette(); 
+
+      // draw best cut on 2-d distributions 
+      for (int s=0; s<6; s++){
+	histos->h2_p_tofmass[s+1]->Draw("colz"); 
+	gPad->SetLogz(); 
+	gPad->SetGridx(); 
+	gPad->SetGridy(); 
+	gPad->SetMargin(0.15,0.15, 0.15, 0.15);
+
+	efficiencyService->fBestCutGraph[s]->SetLineStyle(8);
+	efficiencyService->fBestCutGraph[s]->SetLineWidth(2);
+	efficiencyService->fBestCutGraph[s]->Draw("lsame");
+
+	title.DrawLatex(0.44, 0.92, Form("sector %d", s+1)); 
+	title.DrawLatex(0.47, 0.08, "p (GeV/c)"); 
+
+	can->Print(Form("%sBestTOFCutSector%d.png",fOutputPath.c_str(),s)); 
+      }
+
+      // draw the plots of eff/ cont/ stat 
+      for(int s=0; s<efficiencyService->efficiency.size(); s++){
+	for(int b=0; b<efficiencyService->efficiency[s].size(); b++){
+	  efficiencyService->efficiency[s][b]->SetMaximum(1.0);
+	  efficiencyService->efficiency[s][b]->SetMinimum(0.0);
+	  efficiencyService->efficiency[s][b]->SetLineColor(99);
+	  efficiencyService->contamination[s][b]->SetLineColor(77);
+	  efficiencyService->test_statistic[s][b]->SetLineColor(55);
+
+	  efficiencyService->efficiency[s][b]->Draw("l");
+	  efficiencyService->contamination[s][b]->Draw("lsame");
+	  efficiencyService->test_statistic[s][b]->Draw("lsame");
+
+	  gPad->SetGridx();
+	  gPad->SetGridy();
+	  gPad->SetMargin(0.15,0.15, 0.15, 0.15);
+
+	  title.DrawLatex(0.21, 0.92, Form("Efficiency K^{+}, Sector %d, p = %.3f (Gev/c)",s,efficiencyService->slices->bins[b])); 
+	  title.DrawLatex(0.45, 0.08, "M_{cut}"); 
+
+	  can->Print(Form("%sEffSlice%dSector%d.png",fOutputPath.c_str(),b,s)); 
+	}
+      }
+
+    } else {
+      std::cerr << "[MesonCutEfficiencyPlottingService] Output path not valid! " << std::endl;
+    }
+    
+    
+  }
+  
+  MesonCutEfficiencyService *efficiencyService;
+  MesonHistograms           *histos; 
+protected:
+  std::string fOutputPath; 
 
 };
 
@@ -661,6 +832,50 @@ public:
 	}
 	can->Print(Form("%sCompareSlicesSector%d.pdf]", fOutputPath.c_str(), s));
       }
+
+      // print the fit mass distr. 
+      TCanvas *sliceCan = new TCanvas("sliceCan", "", 800, 500); 
+      
+      for(int s=0; s<slices->mass.size(); s++){
+	for(int b=0; b<slices->mass[s].size(); b++){
+	  sliceCan->Clear(); 
+
+	  slices->mass[s][b]->Draw();
+	  gPad->SetGridx(); 
+	  gPad->SetGridy(); 
+	  gPad->SetMargin(0.15, 0.15, 0.15, 0.15); 
+	  //		gPad->SetLogy(); 
+	  slices->mass[s][b]->SetFillColorAlpha(fillColor,fillAlpha);
+	  slices->mass[s][b]->SetLineColor(fillColor);
+	  slices->mass[s][b]->Draw();
+	  
+	  TF1 *pionFit = new TF1("pionFit", "gaus", slices->mass[s][b]->GetXaxis()->GetBinLowEdge(1), 
+				 slices->mass[s][b]->GetXaxis()->GetBinUpEdge( slices->mass[s][b]->GetXaxis()->GetNbins() )); 
+	  TF1 *kaonFit = new TF1("kaonFit", "gaus", slices->mass[s][b]->GetXaxis()->GetBinLowEdge(1), 
+				 slices->mass[s][b]->GetXaxis()->GetBinUpEdge( slices->mass[s][b]->GetXaxis()->GetNbins() )); 
+	  
+	  pionFit->SetParameter(0, slices->mass_fit[s][b]->GetParameter(0)); 
+	  pionFit->SetParameter(1, slices->mass_fit[s][b]->GetParameter(1)); 
+	  pionFit->SetParameter(2, slices->mass_fit[s][b]->GetParameter(2)); 
+	  kaonFit->SetParameter(0, slices->mass_fit[s][b]->GetParameter(3)); 
+	  kaonFit->SetParameter(1, slices->mass_fit[s][b]->GetParameter(4)); 
+	  kaonFit->SetParameter(2, slices->mass_fit[s][b]->GetParameter(5)); 
+	  
+	  pionFit->SetLineColor(99); 
+	  kaonFit->SetLineColor(77);
+	  slices->mass_fit[s][b]->SetLineColor(55); 
+	  
+	  pionFit->Draw("same"); 
+	  kaonFit->Draw("same");
+	  //		slices->mass_fit[s][bin]->Draw("same"); 
+	  
+	  title.DrawLatex(0.24, 0.93, Form("p = %.3f (GeV/c)",slices->bins[b])); 
+	  title.DrawLatex(0.58, 0.08, "M_{TOF}");
+	  
+	  sliceCan->Print(Form("%sFitTofMassSlice%dSector%d.png",fOutputPath.c_str(), b, s)); 
+	}
+      }
+      
       
     } else {
       std::cerr << "[MesonPlottingService] Output path is not set. " << std::endl; 
@@ -717,9 +932,13 @@ int main(int argc, char * argv[]){
 
       MesonCutEfficiencyService effKp(fitKp.slices); 
       effKp.SetCutMin(0.2); 
-      effKp.SetCutMax(0.5); 
+      effKp.SetCutMax(0.6); 
       effKp.Execute(); 
       effKp.Save(out); 
+
+      MesonCutEfficiencyPlottingService plotKpEff(&kp, &effKp);
+      plotKpEff.SetOutputPath("/volatile/clas12/dmriser/plots/pid/kp/");
+      plotKpEff.Execute(); 
 
       MesonPlottingService plotPip(&pip, fitPip.slices);
       plotPip.SetOutputPath("/volatile/clas12/dmriser/plots/pid/pip/"); 

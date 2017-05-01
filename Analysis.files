@@ -252,3 +252,5 @@ SimplePlot/source/Tools.cxx
 SimplePlot/source/Tools.h
 SimplePlot/test/testPrinter.cxx
 SConstruct
+h22/slicefitter.h
+h22/slicefitter.cxx

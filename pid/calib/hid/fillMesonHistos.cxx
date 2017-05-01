@@ -81,7 +81,7 @@ void HIDCalibration::Initialize(){
   // as a parameter would be ok? 
   std::string path = Global::Environment::GetAnalysisPath(); 
   std::string momCorrPath = Form("%s/momCorr/",path.c_str());
-  momCorr = new MomCorr_e1f("/u/home/dmriser/Analysis_v2/momCorr/");
+  momCorr = new MomCorr_e1f(momCorrPath);
 }
 
 void HIDCalibration::ProcessEvent(){
@@ -191,7 +191,7 @@ int main(int argc, char * argv[]){
 std::vector<std::string> loadFilesFromList(std::string fileList, int numFiles){
   std::vector<std::string> theseFiles;
   
-  ifstream inputFile;
+  std::ifstream inputFile;
   inputFile.open(fileList.c_str());
 
   int ifile = 0; string line;

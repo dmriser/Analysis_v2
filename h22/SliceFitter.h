@@ -51,7 +51,6 @@ protected:
 
     TF1                *fExpectedMean;
 
-
     void SetupDefaultExpectedMean();
 };
 

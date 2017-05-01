@@ -1,7 +1,7 @@
 #include <iostream>
 #include <vector>
 
-#include "sliceFitter.h"
+#include "SliceFitter.h"
 
 #include "TF1.h"
 #include "TF2.h"
@@ -38,8 +38,8 @@ int main(int argc, char *argv[]){
   std::vector<TF1> fits    = slicer.GetFits();
 
   TGraphErrors mu    = slicer.GetGraphMu("test_graph");
-  //TGraphErrors sigma = slicer.GetGraphSigma("test_graph"); 
-  
+  TGraphErrors sigma = slicer.GetGraphSigma("test_graph"); 
+
   for (TH1D s : slices){
     s.Write(); 
   }
@@ -49,7 +49,7 @@ int main(int argc, char *argv[]){
   }
 
   mu.Write();
-  //  sigma.Write(); 
+  sigma.Write(); 
   
   h->Write();
   out->Close(); 

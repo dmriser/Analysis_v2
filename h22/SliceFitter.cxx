@@ -1,4 +1,7 @@
-#include "slicefitter.h"
+#ifndef SLICEFITTER_CXX
+#define SLICEFITTER_CXX
+
+#include "SliceFitter.h"
 
 #include <iostream>
 #include <vector>
@@ -156,7 +159,7 @@ TGraphErrors SliceFitter::GetGraphMu(std::string title){
         std::vector<double> y;
         std::vector<double> yError;
 
-        for (int i=0; 0<fSlices.size(); i++){
+        for (int i=0; i<fSlices.size(); i++){
             x.push_back(fxMin + i*(fxMax-fxMin)/fNumberSlices);
             xError.push_back(0.00);
             y.push_back(fFits[i].GetParameter(1));
@@ -181,7 +184,7 @@ TGraphErrors SliceFitter::GetGraphSigma(std::string title){
         std::vector<double> y;
         std::vector<double> yError;
 
-        for (int i=0; 0<fSlices.size(); i++){
+        for (int i=0; i<fSlices.size(); i++){
             x.push_back(fxMin + i*(fxMax-fxMin)/fNumberSlices);
             xError.push_back(0.00);
             y.push_back(fFits[i].GetParameter(2));
@@ -198,3 +201,5 @@ TGraphErrors SliceFitter::GetGraphSigma(std::string title){
         return TGraphErrors();
     }
 }
+
+#endif

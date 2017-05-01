@@ -21,6 +21,7 @@
 #include "MesonHistograms.h"
 #include "Parameters.h"
 #include "ParameterSet.h"
+#include "SliceFitter.h"
 #include "TF1Integrator.h"
 
 #include "TCanvas.h"
@@ -31,231 +32,57 @@
 #include "TH2.h"
 #include "TLatex.h"
 
-/*
-class HIDCalibration {
 
-public:
-    HIDCalibration(h22Options *opts) : GenericAnalysis(opts) { }
-    ~HIDCalibration(){ }
+class MesonBetaSliceFitter {
+public: 
+  MesonBetaSliceFitter(MesonHistograms *h, int n, double min, double max) : histos(h) {
+    fitter = new SliceFitter(n, min, max); 
+  } 
 
-public:
-  MesonHistograms *pipHistos; 
-  MesonHistograms *pimHistos; 
-  MesonHistograms *kpHistos; 
-  MesonHistograms *kmHistos; 
+  void Fit(std::string name){
 
-#if __cplusplus >= 201103L
-  static constexpr int NPBINS  = 35;
-  static constexpr int NSLICES = NPBINS;
-  static constexpr double PMIN = 0.5;
-  static constexpr double PMAX = 3.5;
-#else
-  const static int NPBINS  = 35;
-  const static int NSLICES = NPBINS;
-  const static double PMIN = 0.5;
-  const static double PMAX = 3.5;
-#endif
-
-  TH1D *h1_b_slice_kp[6][NPBINS];
-
-  TF1 *f_pol3_kp_mu[6]; 
-  TF1 *f_pol3_kp_sigma[6]; 
-  TF1 *f_pol3_kp_upper[6]; 
-  TF1 *f_pol3_kp_lower[6]; 
-
-  TGraphErrors *g_kp_mu[6]; 
-  TGraphErrors *g_kp_sigma[6]; 
-
-  double dummyAxis[NSLICES]; 
-  double dummyAxisError[NSLICES]; 
-  double mu[NSLICES];
-  double sigma[NSLICES]; 
-  double muError[NSLICES];
-  double sigmaError[NSLICES];
-
-  void DoBetaPFits();
-  void Initialize();
-  void Save(string outputFilename);
-  void WriteHardCodedParameters();
-  void InitHistos();
-  bool CurrentParticleIsNotElectronCandidate(std::vector<int> &electronCandidates, int index);
-
-};
-
-void HIDCalibration::InitHistos(){
-  allPosHistos = new MesonHistograms("allPositive", 321);
-  dvzCutHistos = new MesonHistograms("dvzCut", 321);
-  dcFidCutHistos = new MesonHistograms("dcFidCut", 321);
-  massCutHistos = new MesonHistograms("massCut", 321);
-  allCutHistos = new MesonHistograms("allCut", 321);
-  passedHistos = new StandardHistograms("kaonEvents",0); 
-
-  for (int s=0; s<6; s++) { 
-    f_pol3_kp_mu[s]    = new TF1(Form("f_pol3_kp_mu_%d",s), "pol3", PMIN, PMAX); 
-    f_pol3_kp_sigma[s] = new TF1(Form("f_pol3_kp_sigma_%d",s), "pol3", PMIN, PMAX); 
-    f_pol3_kp_upper[s] = new TF1(Form("f_pol3_kp_upper_%d",s), "pol3", PMIN, PMAX); 
-    f_pol3_kp_lower[s] = new TF1(Form("f_pol3_kp_lower_%d",s), "pol3", PMIN, PMAX); 
-  }
-
-
-  double pMinHistos = allPosHistos->h2_p_beta[0]->GetXaxis()->GetBinLowEdge(1);
-  double pMaxHistos = allPosHistos->h2_p_beta[0]->GetXaxis()->GetBinUpEdge( allPosHistos->h2_p_beta[0]->GetXaxis()->GetNbins() );
-
-  for (int b=0; b<NSLICES; b++){   
-    dummyAxis[b]      = b*(pMaxHistos-pMinHistos)/NSLICES + pMinHistos; 
-    dummyAxisError[b] = 0.0; 
-
-    for(int s=0; s<6; s++){
-      h1_b_slice_kp[s][b] = new TH1D(Form("h1_b_slice%d_kp_%d",b,s), Form("h1_b_slice%d_kp_%d",b,s), 100, 0.4, 1.2); 
-    }
-  }
-}
-
-void HIDCalibration::Initialize(){
-  InitHistos();
-}
-
-void HIDCalibration::WriteHardCodedParameters(){
-  ParameterSet deltaVz, dcr1Height, dcr1Angle, tofMassMinPars, tofMassMaxPars; 
-
-  deltaVz.setName("KP_DVZ"); 
-  dcr1Height.setName("KP_DCR1_HEIGHT"); 
-  dcr1Angle.setName("KP_DCR1_ANGLE"); 
-  tofMassMinPars.setName("KP_TOFMASS_MIN");
-  tofMassMaxPars.setName("KP_TOFMASS_MAX");
-
-  for(int s=0; s<6; s++){
-    deltaVz.addValueAndError(4.00, 0.00); 
-    dcr1Height.addValueAndError(10.00, 0.00);
-    dcr1Angle.addValueAndError(60.00, 0.00);
-    tofMassMinPars.addValueAndError(0.418, 0.00);
-    tofMassMaxPars.addValueAndError(0.650, 0.00);
-  }
-
-  pars->addParameterSet(deltaVz);
-  pars->addParameterSet(dcr1Height);
-  pars->addParameterSet(dcr1Angle);
-  pars->addParameterSet(tofMassMinPars);
-  pars->addParameterSet(tofMassMaxPars);
-}
-
-void HIDCalibration::DoBetaPFits(){
-
-  // ------------------------------------------------
-  //   Setup ParameterSets
-  // ------------------------------------------------
-  ParameterSet mu_a, mu_b, mu_c, mu_d; 
-  ParameterSet sigma_a, sigma_b, sigma_c, sigma_d; 
-  ParameterSet nsigma; 
-
-  mu_a.setName("KP_BVP_MU_A"); 
-  mu_b.setName("KP_BVP_MU_B"); 
-  mu_c.setName("KP_BVP_MU_C"); 
-  mu_d.setName("KP_BVP_MU_D"); 
-  sigma_a.setName("KP_BVP_SIGMA_A"); 
-  sigma_b.setName("KP_BVP_SIGMA_B"); 
-  sigma_c.setName("KP_BVP_SIGMA_C"); 
-  sigma_d.setName("KP_BVP_SIGMA_D"); 
-  nsigma.setName("KP_BVP_NSIGMA");
-
-  nsigma.addValueAndError(1.8, 0.0);
-  
-  // ------------------------------------------------
-  //   Calculate Parameters for beta vs. p 
-  // ------------------------------------------------
-  TF1 *fitGauss  = new TF1("fitGauss","gaus",0.0,0.6);
-  
-  for(int s=0; s<6; s++){
-    for(int b=0; b<NSLICES; b++){
-      double p = dummyAxis[b]; 
-      double theoryBeta = p/sqrt( pow(p,2) + pow(pid_to_mass(321),2) );  
-      double fitMin = theoryBeta*0.8; 
-      double fitMax = theoryBeta*1.1; 
-
-      std::cout << "Fitting bin = " << b << " fitMin = " << fitMin << " fitMax = " << fitMax << " beta = " << theoryBeta << std::endl; 
-      
-      int startBin = allPosHistos->h2_p_beta[s+1]->GetXaxis()->FindBin(p); 
-      int stopBin  = allPosHistos->h2_p_beta[s+1]->GetXaxis()->FindBin(p + (PMAX-PMIN)/NSLICES); 
-
-      fitGauss->SetParameter(1, theoryBeta);
-      fitGauss->SetRange(fitMin, fitMax); 
-
-      h1_b_slice_kp[s][b] = allCutHistos->h2_p_beta[s+1]->ProjectionY(Form("h1_b_slice%d_kp_%d",b,s), startBin, stopBin); 
-      h1_b_slice_kp[s][b]->Fit("fitGauss", "RQ");
-
-      mu[b] = fitGauss->GetParameter(1);
-      muError[b] = fitGauss->GetParError(1); 
-      sigma[b] = fitGauss->GetParameter(2);  
-      sigmaError[b] = fitGauss->GetParError(2); 
-
-      std::cout << "Fit mu = " << mu[b] << " sigma = " << sigma[b] << std::endl; 
-    }
-
-    g_kp_mu[s] = new TGraphErrors(NSLICES, dummyAxis, mu, dummyAxisError, muError); 
-    g_kp_mu[s]->SetName(Form("g_kp_mu_%d",s)); 
-    g_kp_mu[s]->Fit(Form("f_pol3_kp_mu_%d",s), "RQ"); 
-
-    g_kp_sigma[s] = new TGraphErrors(NSLICES, dummyAxis, sigma, dummyAxisError, sigmaError); 
-    g_kp_sigma[s]->SetName(Form("g_kp_sigma_%d",s)); 
-    g_kp_sigma[s]->Fit(Form("f_pol3_kp_sigma_%d",s), "RQ"); 
-
-    f_pol3_kp_upper[s]->SetParameter(3, f_pol3_kp_mu[s]->GetParameter(3)+3*f_pol3_kp_sigma[s]->GetParameter(3)); 
-    f_pol3_kp_upper[s]->SetParameter(2, f_pol3_kp_mu[s]->GetParameter(2)+3*f_pol3_kp_sigma[s]->GetParameter(2)); 
-    f_pol3_kp_upper[s]->SetParameter(1, f_pol3_kp_mu[s]->GetParameter(1)+3*f_pol3_kp_sigma[s]->GetParameter(1)); 
-    f_pol3_kp_upper[s]->SetParameter(0, f_pol3_kp_mu[s]->GetParameter(0)+3*f_pol3_kp_sigma[s]->GetParameter(0)); 
-
-    f_pol3_kp_lower[s]->SetParameter(3, f_pol3_kp_mu[s]->GetParameter(3)-3*f_pol3_kp_sigma[s]->GetParameter(3)); 
-    f_pol3_kp_lower[s]->SetParameter(2, f_pol3_kp_mu[s]->GetParameter(2)-3*f_pol3_kp_sigma[s]->GetParameter(2)); 
-    f_pol3_kp_lower[s]->SetParameter(1, f_pol3_kp_mu[s]->GetParameter(1)-3*f_pol3_kp_sigma[s]->GetParameter(1)); 
-    f_pol3_kp_lower[s]->SetParameter(0, f_pol3_kp_mu[s]->GetParameter(0)-3*f_pol3_kp_sigma[s]->GetParameter(0)); 
-
-    mu_a.addValueAndError(f_pol3_kp_mu[s]->GetParameter(3), f_pol3_kp_mu[s]->GetParError(3)); 
-    mu_b.addValueAndError(f_pol3_kp_mu[s]->GetParameter(2), f_pol3_kp_mu[s]->GetParError(2)); 
-    mu_c.addValueAndError(f_pol3_kp_mu[s]->GetParameter(1), f_pol3_kp_mu[s]->GetParError(1)); 
-    mu_d.addValueAndError(f_pol3_kp_mu[s]->GetParameter(0), f_pol3_kp_mu[s]->GetParError(0)); 
-
-    sigma_a.addValueAndError(f_pol3_kp_sigma[s]->GetParameter(3), f_pol3_kp_sigma[s]->GetParError(3)); 
-    sigma_b.addValueAndError(f_pol3_kp_sigma[s]->GetParameter(2), f_pol3_kp_sigma[s]->GetParError(2)); 
-    sigma_c.addValueAndError(f_pol3_kp_sigma[s]->GetParameter(1), f_pol3_kp_sigma[s]->GetParError(1)); 
-    sigma_d.addValueAndError(f_pol3_kp_sigma[s]->GetParameter(0), f_pol3_kp_sigma[s]->GetParError(0)); 
-  }
-
-  pars->addParameterSet(mu_a);
-  pars->addParameterSet(mu_b);
-  pars->addParameterSet(mu_c);
-  pars->addParameterSet(mu_d);
-  pars->addParameterSet(sigma_a);
-  pars->addParameterSet(sigma_b);
-  pars->addParameterSet(sigma_c);
-  pars->addParameterSet(sigma_d);
-  pars->addParameterSet(nsigma);
-}
-
-void HIDCalibration::Save(string outputFilename){
-    TFile *outputFile = new TFile(outputFilename.c_str(), "recreate");
+    std::string meanString(Form("x/sqrt(x^2 + %f)",pow(pid_to_mass(histos->GetPid()),2))); 
+    fitter->SetExpectedMean(meanString); 
+    fitter->SetLowerTolerance(0.96);
+    fitter->SetUpperTolerance(1.02); 
     
-    outputFile->cd(); 
-    outputFile->mkdir("betaSlices"); 
-    outputFile->cd("betaSlices"); 
-    for(int s=0; s<6; s++){
+    for(int s=1; s<7; s++){
+      std::string title(Form("%s_sect%d",name.c_str(),s)); 
+      fitter->Fit(histos->h2_p_beta[s], title); 
+
+      std::cout << "Fit slice " << s << std::endl; 
       
-      f_pol3_kp_mu[s]->Write(); 
-      f_pol3_kp_sigma[s]->Write(); 
-      f_pol3_kp_upper[s]->Write(); 
-      f_pol3_kp_lower[s]->Write(); 
-
-      g_kp_mu[s]->Write();
-      g_kp_sigma[s]->Write();
-
-      for(int b=0; b<NSLICES; b++){
-	h1_b_slice_kp[s][b]->Write(); 
-      }
+      muGraph[s-1] = fitter->GetGraphMu(title);
+      sigmaGraph[s-1] = fitter->GetGraphSigma(title); 
+      //      fits.push_back(fitter->GetFits());
+      //      slices.push_back(fitter->GetSlices()); 
     }
+    
+  }
 
-    outputFile->Write();
-    outputFile->Close();
-}
-*/
+  void Save(TFile *out){
+    if(out->IsOpen()){
+      for(int s=0; s<6; s++){
+	muGraph[s].Write();
+	sigmaGraph[s].Write(); 
+      }
+    } else {
+      std::cerr << "[MesonBetaSliceFitter::Save] Output file is not open. " << std::endl; 
+    }
+    
+  } 
+  
+protected:
+  MesonHistograms *histos; 
+  SliceFitter     *fitter; 
+
+  TGraphErrors muGraph[6];
+  TGraphErrors sigmaGraph[6]; 
+  
+  //  std::vector<std::vector<TF1> >  fits;
+  //  std::vector<std::vector<TH1D> > slices; 
+  
+};
 
 class MesonSlices { 
 public:
@@ -910,10 +737,15 @@ int main(int argc, char * argv[]){
       
       MesonHistograms km("km", -321);
       km.Load(opts.args["INPUT"].args);
+
+      MesonBetaSliceFitter kaonBetaSlices(&kp, 50, 0.7, 3.0); 
+      kaonBetaSlices.Fit("kp"); 
       
-
       TFile *out = new TFile(opts.args["OUT"].args.c_str(), "recreate");
-
+      kaonBetaSlices.Save(out); 
+      kp.Save(out);
+      
+      /*
       MesonFittingService fitPip(&pip);
       fitPip.Execute();
       fitPip.Save(out);
@@ -955,7 +787,8 @@ int main(int argc, char * argv[]){
       MesonPlottingService plotKm(&km, fitKm.slices);
       plotKm.SetOutputPath("/volatile/clas12/dmriser/plots/pid/km/"); 
       plotKm.Execute();
-
+      */
+      
       out->Close(); 
 
     } else {

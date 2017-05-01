@@ -13,7 +13,7 @@
 int main(int argc, char *argv[]){
 
   SliceFitter slicer(20, 0.2, 0.8);
-  slicer.SetExpectedMean("0.68"); 
+  slicer.SetExpectedMean("0.3 + 0.1/x"); 
   slicer.SetLowerTolerance(0.94);
   slicer.SetUpperTolerance(1.04); 
   

@@ -88,6 +88,9 @@ void SliceFitter::Fit(TH2D *histo, std::string title){
 
     fSourceHisto = histo;
 
+    fSlices.clear();
+    fFits.clear(); 
+    
     if (fSourceHisto){
 
     int xBins =   fSourceHisto->GetXaxis()->GetNbins();
@@ -137,12 +140,6 @@ void SliceFitter::Fit(TH2D *histo, std::string title){
         h.SetTitle(sliceTitle.c_str());
         h.SetName(sliceTitle.c_str());
         h.Fit(fitTitle.c_str(), "RQ");
-
-        // i'm not sure this is a useful block, maybe just get rid of it
-        double percentDiff = fabs((f.Eval(xMin)-fExpectedMean->Eval(xMid))/(fExpectedMean->Eval(xMid)+f.Eval(xMid)));
-        if (percentDiff > 0.2){
-            std::cout << "[SliceFitter::Fit] Warning: Fit/Expected percent diff = " << percentDiff << std::endl;
-        }
 
         fSlices.push_back(h);
         fFits.push_back(f);

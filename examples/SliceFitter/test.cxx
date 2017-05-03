@@ -40,12 +40,15 @@ int main(int argc, char *argv[]){
   TGraphErrors mu    = slicer.GetGraphMu("test_graph");
   TGraphErrors sigma = slicer.GetGraphSigma("test_graph"); 
 
-  for (TH1D s : slices){
-    s.Write(); 
-  }
-  
-  for (TF1 fit : fits){
-    fit.Write(); 
+  TF1 fitMu = slicer.GetFitToMu("pol3","test"); 
+  TF1 fitSigma = slicer.GetFitToSigma("pol3","test"); 
+
+  fitMu.Write(); 
+  fitSigma.Write(); 
+
+  for (int i=0; i<fits.size(); i++){
+    fits[i].Write(); 
+    slices[i].Write(); 
   }
 
   mu.Write();

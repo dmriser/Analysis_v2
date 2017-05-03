@@ -219,9 +219,9 @@ namespace Global {
 
     static void SetBentCoolWarmPalette(){
       const static UInt_t rNCOLORS = 3;
-      Double_t rRed[rNCOLORS] = {0.33, 0.95, 0.55};
-      Double_t rGreen[rNCOLORS] = {0.28, 0.95, 0.00};
-      Double_t rBlue[rNCOLORS] = {0.76, 0.95, 0.15};
+      Double_t rRed[rNCOLORS] = {0.43, 0.95, 0.85};
+      Double_t rGreen[rNCOLORS] = {0.38, 0.95, 0.00};
+      Double_t rBlue[rNCOLORS] = {0.96, 0.95, 0.35};
       Double_t rStops[rNCOLORS] = {0.00, 0.5, 1.00};
       UInt_t rNSTEPS = 255;
       

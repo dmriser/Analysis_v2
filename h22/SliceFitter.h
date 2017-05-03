@@ -27,6 +27,12 @@ public:
     TGraphErrors GetGraphMu(std::string title);
     TGraphErrors GetGraphSigma(std::string title);
 
+    TF1 GetFitToMu(std::string fitFunction, std::string title); 
+    TF1 GetFitToSigma(std::string fitFunction, std::string title); 
+
+    TF1 GetFitToMu(std::string fitFunction, std::string title, double min, double max); 
+    TF1 GetFitToSigma(std::string fitFunction, std::string title, double min, double max); 
+
     double GetUpperTolerance() const;
     void SetUpperTolerance(double value);
 

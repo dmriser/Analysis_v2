@@ -59,15 +59,23 @@ public:
 
   MesonHistograms *posHistos; 
   MesonHistograms *negHistos; 
-  MesonHistograms *pipHistos; 
-  MesonHistograms *pimHistos; 
+
+  MesonHistograms *posCutDVzHistos; 
+  MesonHistograms *negCutDVzHistos; 
+
+  MesonHistograms *posCutDCHistos; 
+
+  MesonHistograms *posCutDISHistos; 
+  MesonHistograms *negCutDISHistos; 
+
+  MesonHistograms *posCutDISMMHistos; 
+  MesonHistograms *negCutDISMMHistos; 
+
   MesonHistograms *kpHistos; 
   MesonHistograms *kmHistos; 
 
   StandardHistograms *posStand; 
   StandardHistograms *negStand; 
-  StandardHistograms *pipStand; 
-  StandardHistograms *pimStand; 
   StandardHistograms *kpStand; 
   StandardHistograms *kmStand; 
 
@@ -82,15 +90,22 @@ public:
 void HIDCalibration::InitHistos() {
   posHistos = new MesonHistograms("pos",  321);
   negHistos = new MesonHistograms("neg", -321);
-  pipHistos = new MesonHistograms("pip",  211);
-  pimHistos = new MesonHistograms("pim", -211);
   kpHistos = new MesonHistograms("kp",    321);
   kmHistos = new MesonHistograms("km",   -321);
 
+  posCutDVzHistos = new MesonHistograms("posCutDVz",    321);
+  negCutDVzHistos = new MesonHistograms("negCutDVz",   -321);
+
+  posCutDISHistos = new MesonHistograms("posCutDIS",    321);
+  negCutDISHistos = new MesonHistograms("negCutDIS",   -321);
+
+  posCutDISMMHistos = new MesonHistograms("posCutDISMM",    321);
+  negCutDISMMHistos = new MesonHistograms("negCutDISMM",   -321);
+
+  posCutDCHistos = new MesonHistograms("posCutDC",    321);
+
   posStand = new StandardHistograms("pos", 0); 
   negStand = new StandardHistograms("neg", 0); 
-  pipStand = new StandardHistograms("pip", 0); 
-  pimStand = new StandardHistograms("pim", 0); 
   kpStand = new StandardHistograms("kp", 0); 
   kmStand = new StandardHistograms("km", 0); 
 }
@@ -119,42 +134,26 @@ void HIDCalibration::ProcessEvent(){
     event.SetElectronIndex(electronIndex); 
     corr.correctEvent(&event, GetRunNumber(), GSIM); 
     
-    std::vector<int> pipIndices = filter->getVectorOfParticleIndices(event, 211); 
-    std::vector<int> pimIndices = filter->getVectorOfParticleIndices(event, -211); 
-    std::vector<int> kpIndices = filter->getVectorOfParticleIndices(event, 321); 
-    std::vector<int> kmIndices = filter->getVectorOfParticleIndices(event, -321); 
-    
     TLorentzVector electron = event.GetTLorentzVector(electronIndex, 11); 
     electron = momCorr->PcorN(electron, -1, 11);
+    
+    std::vector<int> kpIndices = filter->getVectorOfParticleIndices(event, 321); 
+    std::vector<int> kmIndices = filter->getVectorOfParticleIndices(event, -321); 
 
     PhysicsEvent candidateEvent = builder->getPhysicsEvent(electron); 
 
+      // ------------------------------------------------------
+      //        fill tracks that pass everything 
+      // ------------------------------------------------------
+
     if (candidateEvent.qq > 1.0 && candidateEvent.w > 2.00) {
 
-      if (!pipIndices.empty()){
-	TLorentzVector meson = event.GetTLorentzVector(pipIndices[0], 211);
-	meson = momCorr->PcorN(meson, 1, 211);
-	
-	PhysicsEvent physicsEvent = builder->getPhysicsEvent(electron, meson); 
-	pipHistos->Fill(event, physicsEvent, pipIndices[0]);
-	pipStand->Fill(event, electronIndex, pipIndices[0], physicsEvent); 
-      }
-      
-      if (!pimIndices.empty()){
-	TLorentzVector meson = event.GetTLorentzVector(pimIndices[0], -211);
-	meson = momCorr->PcorN(meson, -1, -211);
-	
-	PhysicsEvent physicsEvent = builder->getPhysicsEvent(electron, meson); 
-	pimHistos->Fill(event, physicsEvent, pimIndices[0]);
-	pimStand->Fill(event, electronIndex, pimIndices[0], physicsEvent); 
-      }
-      
       if (!kpIndices.empty()){
 	TLorentzVector meson = event.GetTLorentzVector(kpIndices[0], 321);
 	meson = momCorr->PcorN(meson, 1, 321);
 	
 	PhysicsEvent physicsEvent = builder->getPhysicsEvent(electron, meson); 
-	if (physicsEvent.mm2 > 1.0){
+	if (1){//(physicsEvent.mm2 > 1.0){
 	  kpHistos->Fill(event, physicsEvent, kpIndices[0]);
 	  kpStand->Fill(event, electronIndex, kpIndices[0], physicsEvent); 
 	}
@@ -168,30 +167,63 @@ void HIDCalibration::ProcessEvent(){
 	kmHistos->Fill(event, physicsEvent, kmIndices[0]);
 	kmStand->Fill(event, electronIndex, kmIndices[0], physicsEvent); 
       }
+    }
+
+      // ------------------------------------------------------
+      //        fill each cut 
+      // ------------------------------------------------------
             
-      // quickly scan event for positives and negatives 
       for(int ipart=0; ipart<event.gpart; ipart++){
+	double dvz = fabs(event.corr_vz[electronIndex]-event.corr_vz[ipart]); 
+	
+	// k- candidate 
 	if (event.q[ipart] < 0 && CurrentParticleIsNotElectronCandidate(electronCandidates, ipart)){
 	  TLorentzVector part1 = event.GetTLorentzVector(ipart, event.id[ipart]);
 	  part1 = momCorr->PcorN(part1, event.q[ipart], event.id[ipart]);
-	  
 	  PhysicsEvent physicsEvent = builder->getPhysicsEvent(electron, part1); 
-	  negHistos->Fill(event, physicsEvent, ipart);
-	  negStand->Fill(event, electronIndex, ipart, physicsEvent); 
-	} else if (event.q[ipart] > 0){
+ 
+	  negHistos->Fill(event, physicsEvent, ipart); 
+
+	  if (dvz < 4.0){
+	    negCutDVzHistos->Fill(event, physicsEvent, ipart); 
+	  }
+
+	  if (physicsEvent.qq > 1.0 && physicsEvent.w){ 
+	    negCutDISHistos->Fill(event, physicsEvent, ipart);
+	  }
+
+	  if (physicsEvent.qq > 1.0 && physicsEvent.w > 2.0 && physicsEvent.mm2 > 1.0){ 
+	    negCutDISMMHistos->Fill(event, physicsEvent, ipart);
+	  }
+	} 
+	
+	// k+ candidate 
+	else if (event.q[ipart] > 0){
 	  TLorentzVector part1 = event.GetTLorentzVector(ipart, event.id[ipart]);
 	  part1 = momCorr->PcorN(part1, event.q[ipart], event.id[ipart]);
-	  
 	  PhysicsEvent physicsEvent = builder->getPhysicsEvent(electron, part1); 
+ 
+	  posHistos->Fill(event, physicsEvent, ipart); 
 
-	  if (physicsEvent.mm2 > 1.0){ 
-	    posHistos->Fill(event, physicsEvent, ipart);
-	    posStand->Fill(event, electronIndex, ipart, physicsEvent); 
+	  if (dvz < 4.0){
+	    posCutDVzHistos->Fill(event, physicsEvent, ipart); 
 	  }
-	}
-    }
 
-    }
+	  if (filter->GetSelector(321)->GetCut("DC Region 1 Fid Cut")->IsPassed(event, ipart)){
+	    posCutDCHistos->Fill(event, physicsEvent, ipart); 
+	  }
+
+	  if (physicsEvent.qq > 1.0 && physicsEvent.w){ 
+	    posCutDISHistos->Fill(event, physicsEvent, ipart);
+	  }
+
+	  if (physicsEvent.qq > 1.0 && physicsEvent.w > 2.0 && physicsEvent.mm2 > 1.0){ 
+	    posCutDISMMHistos->Fill(event, physicsEvent, ipart);
+	  }
+
+
+	}
+      }
   }
 }
 
@@ -204,15 +236,23 @@ void HIDCalibration::Save(string outputFilename){
 
     posHistos->Save(outputFile);
     negHistos->Save(outputFile);
-    pipHistos->Save(outputFile);
+
+    posCutDVzHistos->Save(outputFile); 
+    negCutDVzHistos->Save(outputFile); 
+
+    posCutDCHistos->Save(outputFile); 
+
+    posCutDISHistos->Save(outputFile); 
+    negCutDISHistos->Save(outputFile); 
+
+    posCutDISMMHistos->Save(outputFile); 
+    negCutDISMMHistos->Save(outputFile); 
+
     kpHistos->Save(outputFile);
-    pimHistos->Save(outputFile);
     kmHistos->Save(outputFile);
 
     posStand->Save(outputFile); 
     negStand->Save(outputFile); 
-    pipStand->Save(outputFile); 
-    pimStand->Save(outputFile); 
     kpStand->Save(outputFile); 
     kmStand->Save(outputFile); 
 
@@ -251,8 +291,6 @@ int main(int argc, char * argv[]){
     Analysis.RunAnalysis();
     Analysis.Save(opts.args["OUT"].args);
 
-    Analysis.filter->GetSelector(211)->PrintSummary(); 
-    Analysis.filter->GetSelector(-211)->PrintSummary(); 
     Analysis.filter->GetSelector(321)->PrintSummary(); 
     Analysis.filter->GetSelector(-321)->PrintSummary(); 
 

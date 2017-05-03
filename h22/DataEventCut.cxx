@@ -571,6 +571,49 @@ bool DataEventCut_TOFMassCut::IsPassed(h22Event &event, int hadronIndex){
 
 ///////////////////////////////////////////////////////////////
 /*
+  DataEventCut_BetaPCut
+*/
+///////////////////////////////////////////////////////////////
+
+DataEventCut_BetaPCut::DataEventCut_BetaPCut(int s) : sector(s){
+  SetName(Form("Beta vs. P Cut Sector %d",sector));
+}
+
+DataEventCut_BetaPCut::~DataEventCut_BetaPCut(){
+}
+
+// wont owrk for neutral
+bool DataEventCut_BetaPCut::CanBeApplied(h22Event &event, int index){
+    return (event.dc_sect[index] == sector);
+}
+
+bool DataEventCut_BetaPCut::IsPassed(h22Event &event, int hadronIndex){
+
+  double current_min = (am-nsigma*as)*pow(event.p[hadronIndex],3) + 
+    (bm-nsigma*bs)*pow(event.p[hadronIndex],2) + 
+    (cm-nsigma*cs)*event.p[hadronIndex] + 
+    (dm-nsigma*ds);
+
+  double current_max = (am+nsigma*as)*pow(event.p[hadronIndex],3) + 
+    (bm+nsigma*bs)*pow(event.p[hadronIndex],2) + 
+    (cm+nsigma*cs)*event.p[hadronIndex] + 
+    (dm+nsigma*ds);
+  
+
+    if (event.corr_b[hadronIndex] > current_min && event.corr_b[hadronIndex] < current_max){
+        n_pass++;
+        return true;
+    } else {
+        n_fail++;
+        return false;
+    }
+
+    return false;
+}
+
+
+///////////////////////////////////////////////////////////////
+/*
   TestCut 
 */
 ///////////////////////////////////////////////////////////////

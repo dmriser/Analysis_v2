@@ -397,6 +397,29 @@ class DataEventCut_TOFMassCut : public DataEventCut{
 /////////////////////////////////////////////////////////////////////
 /*
 
+  Beta Vs. P. Pol3 Cut 
+
+ */
+/////////////////////////////////////////////////////////////////////
+
+class DataEventCut_BetaPCut : public DataEventCut{
+ public:
+  DataEventCut_BetaPCut(int s);
+  ~DataEventCut_BetaPCut();
+
+  int sector; 
+
+  double am, bm, cm, dm; 
+  double as, bs, cs, ds; 
+  double nsigma; 
+
+  bool CanBeApplied(h22Event &event, int index);
+  bool IsPassed(h22Event &event, int index);
+};
+
+/////////////////////////////////////////////////////////////////////
+/*
+
   TestCut
 
  */

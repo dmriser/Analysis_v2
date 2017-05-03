@@ -58,7 +58,7 @@ void StandardHistograms::Initialize(){
    h1_z[s]              = new TH1D(Form("h1_z_sect%d_%s",s,name.c_str()),              Form("h1_z_sect%d",s),             100,0.0,1.0); 
    h1_pt2[s]            = new TH1D(Form("h1_pt2_sect%d_%s",s,name.c_str()),            Form("h1_pt2_sect%d",s),           100,0.0,2.0); 
    h1_w[s]              = new TH1D(Form("h1_w_sect%d_%s",s,name.c_str()),              Form("h1_w_sect%d",s),             100,0.5,3.5); 
-   h1_mm2[s]            = new TH1D(Form("h1_mm2_sect%d_%s",s,name.c_str()),            Form("h1_mm2_sect%d",s),           100,-1.5,2.5); 
+   h1_mm2[s]            = new TH1D(Form("h1_mm2_sect%d_%s",s,name.c_str()),            Form("h1_mm2_sect%d",s),           100,-0.5,7.5); 
    h1_phiH[s]           = new TH1D(Form("h1_phiH_sect%d_%s",s,name.c_str()),           Form("h1_phiH_sect%d",s),          100,-180.0,180.0); 
    h1_wProtonMass[s]    = new TH1D(Form("h1_wProtonMass_sect%d_%s",s,name.c_str()),    Form("h1_wProtonMass_sect%d",s),   100,0.7,1.2); 
    h1_q2[s]             = new TH1D(Form("h1_q2_sect%d_%s",s,name.c_str()),             Form("h1_q2_sect%d",s),            100,0.5,5.0); 
@@ -120,6 +120,7 @@ void StandardHistograms::Load(std::string inputFilename){
     h1_z[s]              = (TH1D*) inputFile->Get(Form("StandardHistograms/h1_z_sect%d_%s",s,name.c_str()));
     h1_pt2[s]            = (TH1D*) inputFile->Get(Form("StandardHistograms/h1_pt2_sect%d_%s",s,name.c_str()));
     h1_w[s]              = (TH1D*) inputFile->Get(Form("StandardHistograms/h1_w_sect%d_%s",s,name.c_str()));
+    h1_mm2[s]              = (TH1D*) inputFile->Get(Form("StandardHistograms/h1_mm2_sect%d_%s",s,name.c_str()));
     h1_phiH[s]           = (TH1D*) inputFile->Get(Form("StandardHistograms/h1_phiH_sect%d_%s",s,name.c_str()));
     h1_wProtonMass[s]    = (TH1D*) inputFile->Get(Form("StandardHistograms/h1_wProtonMass_sect%d_%s",s,name.c_str()));
     h1_q2[s]             = (TH1D*) inputFile->Get(Form("StandardHistograms/h1_q2_sect%d_%s",s,name.c_str()));

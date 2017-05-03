@@ -103,6 +103,20 @@ public:
     DataEventCut_TOFMassCut      *km_tofmass_cut_s5;
     DataEventCut_TOFMassCut      *km_tofmass_cut_s6;
 
+    DataEventCut_BetaPCut        *kp_betap_cut_s1; 
+    DataEventCut_BetaPCut        *kp_betap_cut_s2; 
+    DataEventCut_BetaPCut        *kp_betap_cut_s3; 
+    DataEventCut_BetaPCut        *kp_betap_cut_s4; 
+    DataEventCut_BetaPCut        *kp_betap_cut_s5; 
+    DataEventCut_BetaPCut        *kp_betap_cut_s6; 
+
+    DataEventCut_BetaPCut        *km_betap_cut_s1; 
+    DataEventCut_BetaPCut        *km_betap_cut_s2; 
+    DataEventCut_BetaPCut        *km_betap_cut_s3; 
+    DataEventCut_BetaPCut        *km_betap_cut_s4; 
+    DataEventCut_BetaPCut        *km_betap_cut_s5; 
+    DataEventCut_BetaPCut        *km_betap_cut_s6; 
+
     DataEventCut_DeltaZVertexCut *dvz_cut;
     DCR1FiducialCut    *dcr1_meson_fid_cut;
 

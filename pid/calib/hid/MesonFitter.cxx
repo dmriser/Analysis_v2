@@ -54,10 +54,83 @@ public:
       
       muGraph[s-1] = fitter->GetGraphMu(title);
       sigmaGraph[s-1] = fitter->GetGraphSigma(title); 
-      //      fits.push_back(fitter->GetFits());
-      //      slices.push_back(fitter->GetSlices()); 
+
+      muFit[s-1] = fitter->GetFitToMu("pol3",title); 
+      sigmaFit[s-1] = fitter->GetFitToSigma("pol3",title); 
+
+      std::vector<TF1> theseFits = fitter->GetFits(); 
+      std::vector<TH1D> theseSlices = fitter->GetSlices(); 
+
+      std::cout << "[MesonBetaSliceFitter::Fit] For sector " << s << " we have slices = " << theseSlices.size() << std::endl;
+      std::cout << "[MesonBetaSliceFitter::Fit] For sector " << s << " we have fits = " << theseFits.size() << std::endl;
+
+      fits.push_back(theseFits);
+      slices.push_back(theseSlices); 
     }
     
+  }
+
+  std::string GetParticleName(){
+    std::string particle; 
+
+    int pid = histos->GetPid(); 
+
+    if (pid == 211){
+      particle = "PIP"; 
+    } else if (pid == -211){
+      particle = "PIM"; 
+    } else if (pid == 321){
+      particle = "KP"; 
+    } else if (pid == -321){
+      particle = "KM"; 
+    } else {
+      particle = "unknown"; 
+    }
+
+    return particle; 
+  }
+
+  void WriteParameters(Parameters *pars){
+
+    std::string particle = GetParticleName(); 
+
+    ParameterSet muA, muB, muC, muD;
+    ParameterSet sigmaA, sigmaB, sigmaC, sigmaD;
+    ParameterSet nSigma; 
+
+    muA.setName(Form("%s_BVP_MU_A",particle.c_str())); 
+    muB.setName(Form("%s_BVP_MU_B",particle.c_str())); 
+    muC.setName(Form("%s_BVP_MU_C",particle.c_str())); 
+    muD.setName(Form("%s_BVP_MU_D",particle.c_str())); 
+    sigmaA.setName(Form("%s_BVP_SIGMA_A",particle.c_str())); 
+    sigmaB.setName(Form("%s_BVP_SIGMA_B",particle.c_str())); 
+    sigmaC.setName(Form("%s_BVP_SIGMA_C",particle.c_str())); 
+    sigmaD.setName(Form("%s_BVP_SIGMA_D",particle.c_str())); 
+    nSigma.setName(Form("%s_BVP_NSIGMA",particle.c_str())); 
+
+    nSigma.addValueAndError(3.0, 0.0); 
+
+    for (int s=0; s<6; s++){
+      muA.addValueAndError(muFit[s].GetParameter(3), muFit[s].GetParError(3)); 
+      muB.addValueAndError(muFit[s].GetParameter(2), muFit[s].GetParError(2)); 
+      muC.addValueAndError(muFit[s].GetParameter(1), muFit[s].GetParError(1)); 
+      muD.addValueAndError(muFit[s].GetParameter(0), muFit[s].GetParError(0)); 
+
+      sigmaA.addValueAndError(sigmaFit[s].GetParameter(3), sigmaFit[s].GetParError(3)); 
+      sigmaB.addValueAndError(sigmaFit[s].GetParameter(2), sigmaFit[s].GetParError(2)); 
+      sigmaC.addValueAndError(sigmaFit[s].GetParameter(1), sigmaFit[s].GetParError(1)); 
+      sigmaD.addValueAndError(sigmaFit[s].GetParameter(0), sigmaFit[s].GetParError(0)); 
+    }
+
+    pars->addParameterSet(muA); 
+    pars->addParameterSet(muB); 
+    pars->addParameterSet(muC); 
+    pars->addParameterSet(muD); 
+    pars->addParameterSet(sigmaA); 
+    pars->addParameterSet(sigmaB); 
+    pars->addParameterSet(sigmaC); 
+    pars->addParameterSet(sigmaD); 
+    pars->addParameterSet(nSigma); 
   }
 
   void Save(TFile *out){
@@ -65,7 +138,16 @@ public:
       for(int s=0; s<6; s++){
 	muGraph[s].Write();
 	sigmaGraph[s].Write(); 
+
+	muFit[s].Write();
+	sigmaFit[s].Write(); 
+
+	for(int b=0; b<fits[s].size(); b++){
+	  slices[s][b].Write(); 
+	  fits[s][b].Write(); 
+	}
       }
+
     } else {
       std::cerr << "[MesonBetaSliceFitter::Save] Output file is not open. " << std::endl; 
     }
@@ -78,9 +160,12 @@ protected:
 
   TGraphErrors muGraph[6];
   TGraphErrors sigmaGraph[6]; 
+
+  TF1 muFit[6]; 
+  TF1 sigmaFit[6]; 
   
-  //  std::vector<std::vector<TF1> >  fits;
-  //  std::vector<std::vector<TH1D> > slices; 
+  std::vector<std::vector<TF1> >  fits;
+  std::vector<std::vector<TH1D> > slices; 
   
 };
 
@@ -97,6 +182,8 @@ public:
   std::vector<std::vector<TH1D*> > beta; 
   std::vector<std::vector<TH1D*> > deltaBeta; 
   std::vector<std::vector<TH1D*> > mass; 
+  std::vector<TH1D*>               mass_projection;     // Doesn't show everlap in signal.
+  std::vector<TF1*>                mass_projection_fit; // Doesn't really work very well. 
   std::vector<std::vector<TF1*> >  mass_fit;
   std::vector<std::vector<TF1*> >  beta_fit;
   std::vector<double> bins; 
@@ -135,6 +222,11 @@ public:
 	  mass[s][b]->Write();
 	  mass_fit[s][b]->Write();
 	}
+      }
+
+      for(int s=0; s<mass_projection.size(); s++){
+	mass_projection[s]->Write(); 
+	mass_projection_fit[s]->Write(); 
       }
 
       outputFile->cd();
@@ -223,13 +315,24 @@ protected:
 	temp_deltaBeta.push_back(histos->h2_p_dbeta[s+1]->ProjectionY(Form("h1_dbeta_pid%d_slice%d_sect%d",histos->GetPid(),b,s), startBin, stopBin));
 	temp_mass     .push_back(histos->h2_p_tofmass[s+1]->ProjectionY(Form("h1_mass_pid%d_slice%d_sect%d",histos->GetPid(),b,s), startBin, stopBin));
 	
+	double pionWidth = 0.1 + 0.05*p; 
+	double kaonWidth = 0.025;
+	double shiftedPionMass = 0.05*p + pid_to_mass(211); 
+
 	// Fitting TOF Mass in momentum bin
 	// Cheating to help I do seperate fits first. 
+	// I also add a momentum dependent term that 
+	// shifts the pion mass up in momentum 
+	// based on a simple linear reg. to p=0 
+	// and p=1.5 mass values. 
 	TF1 *pionMassFit = new TF1("pionFit","gaus", 0.08, 0.17); 
-	pionMassFit->SetParameter(1, pid_to_mass(211)); 
+	pionMassFit->SetParameter(1, shiftedPionMass); 
+	pionMassFit->SetParameter(2, pionWidth); 
+	pionMassFit->SetRange(shiftedPionMass *0.5, shiftedPionMass *1.1); 
 
 	TF1 *kaonMassFit = new TF1("kaonFit","gaus", 0.4, 0.55); 
 	kaonMassFit->SetParameter(1, pid_to_mass(321)); 
+	kaonMassFit->SetParameter(2, kaonWidth); 
 
 	temp_mass[b]->Fit("pionFit","RQ"); 
 	temp_mass[b]->Fit("kaonFit","RQ"); 
@@ -247,7 +350,7 @@ protected:
 	// Now doing beta fits 
 	// First we need to guess where the peak 
 	// should be so that we can have a nice fit 
-	double mom = slices->bins[b]; 
+	double mom      = slices->bins[b]; 
 	double pionPeak = mom/sqrt(pow(mom,2)+pow(pid_to_mass(211),2)); 
 	double kaonPeak = mom/sqrt(pow(mom,2)+pow(pid_to_mass(321),2)); 
 
@@ -273,6 +376,29 @@ protected:
 	std::cout << "[MesonFittingService::Slice] Finished momentum slice " << b << " for sector " << s << std::endl; 
       }
 
+      // do the projection over all p 
+      TH1D *thisMassProjection = histos->h2_p_tofmass[s+1]->ProjectionY(Form("h1_mass_pid%d_sect%d",histos->GetPid(),s));
+      slices->mass_projection.push_back(thisMassProjection); 
+
+      TF1 *pionMassFit = new TF1("pionFit","gaus", 0.08, 0.17); 
+      TF1 *kaonMassFit = new TF1("kaonFit","gaus", 0.4, 0.55); 
+
+      pionMassFit->SetParameter(1, pid_to_mass(211)); 
+      kaonMassFit->SetParameter(1, pid_to_mass(321)); 
+
+      thisMassProjection->Fit("pionFit","RQ"); 
+      thisMassProjection->Fit("kaonFit","RQ"); 
+
+      TF1 *temp_mfit = new TF1(Form("f_mass_pid%d_sect%d",  histos->GetPid(), s),"gaus(0)+gaus(3)", 0.0, 0.75); 
+      temp_mfit->SetParameter(0, pionMassFit->GetParameter(0)); 
+      temp_mfit->SetParameter(1, pionMassFit->GetParameter(1)); 
+      temp_mfit->SetParameter(2, pionMassFit->GetParameter(2)); 
+      temp_mfit->SetParameter(3, kaonMassFit->GetParameter(0)); 
+      temp_mfit->SetParameter(4, kaonMassFit->GetParameter(1)); 
+      temp_mfit->SetParameter(5, kaonMassFit->GetParameter(2)); 
+      
+      
+      slices->mass_projection_fit.push_back(temp_mfit); 
       slices->beta.push_back(temp_beta); 
       slices->deltaBeta.push_back(temp_deltaBeta); 
       slices->mass.push_back(temp_mass); 
@@ -467,7 +593,8 @@ public:
       int fillColor = 13; 
       double fillAlpha = 0.4;
 
-      Global::Visualization::SetCustomPalette(); 
+      //      Global::Visualization::SetCustomPalette(); 
+      Global::Visualization::SetBentCoolWarmPalette(); 
 
       // draw best cut on 2-d distributions 
       for (int s=0; s<6; s++){
@@ -490,14 +617,18 @@ public:
       // draw the plots of eff/ cont/ stat 
       for(int s=0; s<efficiencyService->efficiency.size(); s++){
 	for(int b=0; b<efficiencyService->efficiency[s].size(); b++){
-	  efficiencyService->efficiency[s][b]->SetMaximum(1.0);
-	  efficiencyService->efficiency[s][b]->SetMinimum(0.0);
-	  efficiencyService->efficiency[s][b]->SetLineColor(99);
-	  efficiencyService->contamination[s][b]->SetLineColor(77);
-	  efficiencyService->test_statistic[s][b]->SetLineColor(55);
+	  efficiencyService->efficiency[s][b]    ->SetMaximum(1.0);
+	  efficiencyService->efficiency[s][b]    ->SetMinimum(0.0);
 
-	  efficiencyService->efficiency[s][b]->Draw("l");
-	  efficiencyService->contamination[s][b]->Draw("lsame");
+	  efficiencyService->efficiency[s][b]    ->SetLineColor(99);
+	  efficiencyService->contamination[s][b] ->SetLineColor(77);
+	  efficiencyService->test_statistic[s][b]->SetLineColor(55);
+	  efficiencyService->efficiency[s][b]    ->SetLineWidth(2);
+	  efficiencyService->contamination[s][b] ->SetLineWidth(2);
+	  efficiencyService->test_statistic[s][b]->SetLineWidth(2);
+
+	  efficiencyService->efficiency[s][b]    ->Draw("l");
+	  efficiencyService->contamination[s][b] ->Draw("lsame");
 	  efficiencyService->test_statistic[s][b]->Draw("lsame");
 
 	  gPad->SetGridx();
@@ -505,6 +636,7 @@ public:
 	  gPad->SetMargin(0.15,0.15, 0.15, 0.15);
 
 	  title.DrawLatex(0.21, 0.92, Form("Efficiency K^{+}, Sector %d, p = %.3f (Gev/c)",s,efficiencyService->slices->bins[b])); 
+	  title.DrawLatex(0.21, 0.81, "#color[99]{Efficiency}, #color[77]{Contamination}, #color[55]{Difference}"); 
 	  title.DrawLatex(0.45, 0.08, "M_{cut}"); 
 
 	  can->Print(Form("%sEffSlice%dSector%d.png",fOutputPath.c_str(),b,s)); 
@@ -564,8 +696,8 @@ public:
       int numberBins = slices->bins.size() +3;
       int numberPages = ceil(numberBins/4); 
 
-      //      Global::Visualization::SetBentCoolWarmPalette();
-      Global::Visualization::SetCustomPalette(); 
+      Global::Visualization::SetBentCoolWarmPalette();
+      //      Global::Visualization::SetCustomPalette(); 
 
 
       for(int s=0; s<6; s++){
@@ -721,9 +853,15 @@ int main(int argc, char * argv[]){
     opts.args["INPUT"].args = "";
     opts.args["INPUT"].type = 1;
     opts.args["INPUT"].name = "Input file";
+    opts.args["PARS"].args = "/u/home/dmriser/Analysis_v2/lists/data.pars";
+    opts.args["PARS"].type = 1;
+    opts.args["PARS"].name = "Parameter file";
     opts.set(argc,argv);
 
-    
+   
+    Parameters *pars = new Parameters(); 
+    pars->loadParameters(opts.args["PARS"].args); 
+ 
     if (opts.args["INPUT"].args != ""){
       
       MesonHistograms pip("pip", 211);
@@ -740,12 +878,18 @@ int main(int argc, char * argv[]){
 
       MesonBetaSliceFitter kaonBetaSlices(&kp, 50, 0.7, 3.0); 
       kaonBetaSlices.Fit("kp"); 
-      
+      kaonBetaSlices.WriteParameters(pars); 
+
+      MesonBetaSliceFitter kaonNegBetaSlices(&km, 50, 0.7, 3.0); 
+      kaonNegBetaSlices.Fit("km"); 
+      kaonNegBetaSlices.WriteParameters(pars); 
+
       TFile *out = new TFile(opts.args["OUT"].args.c_str(), "recreate");
       kaonBetaSlices.Save(out); 
+      kaonNegBetaSlices.Save(out); 
       kp.Save(out);
       
-      /*
+      
       MesonFittingService fitPip(&pip);
       fitPip.Execute();
       fitPip.Save(out);
@@ -768,9 +912,19 @@ int main(int argc, char * argv[]){
       effKp.Execute(); 
       effKp.Save(out); 
 
+      MesonCutEfficiencyService effKm(fitKm.slices); 
+      effKm.SetCutMin(0.2); 
+      effKm.SetCutMax(0.6); 
+      effKm.Execute(); 
+      effKm.Save(out); 
+
       MesonCutEfficiencyPlottingService plotKpEff(&kp, &effKp);
       plotKpEff.SetOutputPath("/volatile/clas12/dmriser/plots/pid/kp/");
       plotKpEff.Execute(); 
+
+      MesonCutEfficiencyPlottingService plotKmEff(&km, &effKm);
+      plotKmEff.SetOutputPath("/volatile/clas12/dmriser/plots/pid/km/");
+      plotKmEff.Execute(); 
 
       MesonPlottingService plotPip(&pip, fitPip.slices);
       plotPip.SetOutputPath("/volatile/clas12/dmriser/plots/pid/pip/"); 
@@ -787,7 +941,7 @@ int main(int argc, char * argv[]){
       MesonPlottingService plotKm(&km, fitKm.slices);
       plotKm.SetOutputPath("/volatile/clas12/dmriser/plots/pid/km/"); 
       plotKm.Execute();
-      */
+      
       
       out->Close(); 
 
@@ -795,7 +949,7 @@ int main(int argc, char * argv[]){
       std::cerr << "[main] No input file provided with flag -INPUT=file.root" << std::endl;
     }
 
-
+    pars->saveParameters("meson.pars"); 
     return 0;
 }
 

@@ -199,4 +199,52 @@ TGraphErrors SliceFitter::GetGraphSigma(std::string title){
     }
 }
 
+TF1 SliceFitter::GetFitToMu(std::string fitFunction, std::string title, double fitMin, double fitMax){
+  TGraphErrors g = GetGraphMu(title); 
+  
+  // setup proper bounds 
+  if (fitMin < fxMin){
+    std::cout << "[SliceFitter::GetFitToMu] fitMin < function min, setting same! " << std::endl; 
+    fitMin = fxMin; 
+  } 
+  if (fitMax > fxMax){
+    std::cout << "[SliceFitter::GetFitToMu] fitMax > function max, setting same! " << std::endl; 
+    fitMax = fxMax; 
+  } 
+
+  std::string fitName(Form("%s_slicesMuFit",title.c_str())); 
+  TF1 f(fitName.c_str(),fitFunction.c_str(), fitMin, fitMax); 
+  g.Fit(fitName.c_str(),"RQ"); 
+
+  return f; 
+}
+
+TF1 SliceFitter::GetFitToMu(std::string fitFunction, std::string title){
+  return GetFitToMu(fitFunction, title, fxMin, fxMax); 
+}
+
+TF1 SliceFitter::GetFitToSigma(std::string fitFunction, std::string title, double fitMin, double fitMax){
+  TGraphErrors g = GetGraphSigma(title); 
+  
+  // setup proper bounds 
+  if (fitMin < fxMin){
+    std::cout << "[SliceFitter::GetFitToMu] fitMin < function min, setting same! " << std::endl; 
+    fitMin = fxMin; 
+  } 
+  if (fitMax > fxMax){
+    std::cout << "[SliceFitter::GetFitToMu] fitMax > function max, setting same! " << std::endl; 
+    fitMax = fxMax; 
+  } 
+
+  std::string fitName(Form("%s_slicesSigmaFit",title.c_str())); 
+  TF1 f(fitName.c_str(),fitFunction.c_str(), fitMin, fitMax); 
+  g.Fit(fitName.c_str(),"RQ"); 
+
+  return f; 
+}
+
+TF1 SliceFitter::GetFitToSigma(std::string fitFunction, std::string title){
+  return GetFitToSigma(fitFunction, title, fxMin, fxMax); 
+}
+
 #endif

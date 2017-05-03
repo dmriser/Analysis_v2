@@ -102,6 +102,19 @@ ParticleFilter::ParticleFilter(Parameters *params) : pars(params){
     kp_tofmass_cut_s5 = new DataEventCut_TOFMassCut(5);
     kp_tofmass_cut_s6 = new DataEventCut_TOFMassCut(6);
 
+    kp_betap_cut_s1 = new DataEventCut_BetaPCut(1); 
+    kp_betap_cut_s2 = new DataEventCut_BetaPCut(2); 
+    kp_betap_cut_s3 = new DataEventCut_BetaPCut(3); 
+    kp_betap_cut_s4 = new DataEventCut_BetaPCut(4); 
+    kp_betap_cut_s5 = new DataEventCut_BetaPCut(5); 
+    kp_betap_cut_s6 = new DataEventCut_BetaPCut(6); 
+    km_betap_cut_s1 = new DataEventCut_BetaPCut(1); 
+    km_betap_cut_s2 = new DataEventCut_BetaPCut(2); 
+    km_betap_cut_s3 = new DataEventCut_BetaPCut(3); 
+    km_betap_cut_s4 = new DataEventCut_BetaPCut(4); 
+    km_betap_cut_s5 = new DataEventCut_BetaPCut(5); 
+    km_betap_cut_s6 = new DataEventCut_BetaPCut(6); 
+
     dcr1_meson_fid_cut = new DCR1FiducialCut();
 
     // Set limits on cuts from parameters
@@ -288,6 +301,7 @@ ParticleFilter::ParticleFilter(Parameters *params) : pars(params){
     electronSelector->EnableAll();
     electronSelector->DisableByName("NPhe Cut");
 
+    /*
     // Neutral Pion
     for(int s=0; s<6; s++){
         pi0_invmass_mu[s]    = params->getParameter("PI0_INVMASS_MU")   .getValue(s);
@@ -381,6 +395,8 @@ ParticleFilter::ParticleFilter(Parameters *params) : pars(params){
                                 params->getParameter("PIM_TOFMASS_NSIGMA").getValue(0)*
                                 params->getParameter("PIM_TOFMASS_SIGMA").getValue(5));
 
+    */
+
     // kaon min and max 
     kp_tofmass_cut_s1->SetMin(params->getParameter("KP_TOFMASS_MIN").getValue(0));
     kp_tofmass_cut_s2->SetMin(params->getParameter("KP_TOFMASS_MIN").getValue(1));
@@ -395,18 +411,140 @@ ParticleFilter::ParticleFilter(Parameters *params) : pars(params){
     kp_tofmass_cut_s5->SetMax(params->getParameter("KP_TOFMASS_MAX").getValue(4));
     kp_tofmass_cut_s6->SetMax(params->getParameter("KP_TOFMASS_MAX").getValue(5));
 
-    km_tofmass_cut_s1->SetMin(params->getParameter("KP_TOFMASS_MIN").getValue(0));
-    km_tofmass_cut_s2->SetMin(params->getParameter("KP_TOFMASS_MIN").getValue(1));
-    km_tofmass_cut_s3->SetMin(params->getParameter("KP_TOFMASS_MIN").getValue(2));
-    km_tofmass_cut_s4->SetMin(params->getParameter("KP_TOFMASS_MIN").getValue(3));
-    km_tofmass_cut_s5->SetMin(params->getParameter("KP_TOFMASS_MIN").getValue(4));
-    km_tofmass_cut_s6->SetMin(params->getParameter("KP_TOFMASS_MIN").getValue(5));
-    km_tofmass_cut_s1->SetMax(params->getParameter("KP_TOFMASS_MAX").getValue(0));
-    km_tofmass_cut_s2->SetMax(params->getParameter("KP_TOFMASS_MAX").getValue(1));
-    km_tofmass_cut_s3->SetMax(params->getParameter("KP_TOFMASS_MAX").getValue(2));
-    km_tofmass_cut_s4->SetMax(params->getParameter("KP_TOFMASS_MAX").getValue(3));
-    km_tofmass_cut_s5->SetMax(params->getParameter("KP_TOFMASS_MAX").getValue(4));
-    km_tofmass_cut_s6->SetMax(params->getParameter("KP_TOFMASS_MAX").getValue(5));
+    km_tofmass_cut_s1->SetMin(params->getParameter("KM_TOFMASS_MIN").getValue(0));
+    km_tofmass_cut_s2->SetMin(params->getParameter("KM_TOFMASS_MIN").getValue(1));
+    km_tofmass_cut_s3->SetMin(params->getParameter("KM_TOFMASS_MIN").getValue(2));
+    km_tofmass_cut_s4->SetMin(params->getParameter("KM_TOFMASS_MIN").getValue(3));
+    km_tofmass_cut_s5->SetMin(params->getParameter("KM_TOFMASS_MIN").getValue(4));
+    km_tofmass_cut_s6->SetMin(params->getParameter("KM_TOFMASS_MIN").getValue(5));
+    km_tofmass_cut_s1->SetMax(params->getParameter("KM_TOFMASS_MAX").getValue(0));
+    km_tofmass_cut_s2->SetMax(params->getParameter("KM_TOFMASS_MAX").getValue(1));
+    km_tofmass_cut_s3->SetMax(params->getParameter("KM_TOFMASS_MAX").getValue(2));
+    km_tofmass_cut_s4->SetMax(params->getParameter("KM_TOFMASS_MAX").getValue(3));
+    km_tofmass_cut_s5->SetMax(params->getParameter("KM_TOFMASS_MAX").getValue(4));
+    km_tofmass_cut_s6->SetMax(params->getParameter("KM_TOFMASS_MAX").getValue(5));
+
+    // kaon beta vs. p values 
+    kp_betap_cut_s1->am = params->getParameter("KP_BVP_MU_A").getValue(0);
+    kp_betap_cut_s1->bm = params->getParameter("KP_BVP_MU_B").getValue(0);
+    kp_betap_cut_s1->cm = params->getParameter("KP_BVP_MU_C").getValue(0);
+    kp_betap_cut_s1->dm = params->getParameter("KP_BVP_MU_D").getValue(0);
+    kp_betap_cut_s1->as = params->getParameter("KP_BVP_SIGMA_A").getValue(0);
+    kp_betap_cut_s1->bs = params->getParameter("KP_BVP_SIGMA_B").getValue(0);
+    kp_betap_cut_s1->cs = params->getParameter("KP_BVP_SIGMA_C").getValue(0);
+    kp_betap_cut_s1->ds = params->getParameter("KP_BVP_SIGMA_D").getValue(0);
+    kp_betap_cut_s1->nsigma = params->getParameter("KP_BVP_NSIGMA").getValue(0);
+
+    kp_betap_cut_s2->am = params->getParameter("KP_BVP_MU_A").getValue(1);
+    kp_betap_cut_s2->bm = params->getParameter("KP_BVP_MU_B").getValue(1);
+    kp_betap_cut_s2->cm = params->getParameter("KP_BVP_MU_C").getValue(1);
+    kp_betap_cut_s2->dm = params->getParameter("KP_BVP_MU_D").getValue(1);
+    kp_betap_cut_s2->as = params->getParameter("KP_BVP_SIGMA_A").getValue(1);
+    kp_betap_cut_s2->bs = params->getParameter("KP_BVP_SIGMA_B").getValue(1);
+    kp_betap_cut_s2->cs = params->getParameter("KP_BVP_SIGMA_C").getValue(1);
+    kp_betap_cut_s2->ds = params->getParameter("KP_BVP_SIGMA_D").getValue(1);
+    kp_betap_cut_s2->nsigma = params->getParameter("KP_BVP_NSIGMA").getValue(0);
+
+    kp_betap_cut_s3->am = params->getParameter("KP_BVP_MU_A").getValue(2);
+    kp_betap_cut_s3->bm = params->getParameter("KP_BVP_MU_B").getValue(2);
+    kp_betap_cut_s3->cm = params->getParameter("KP_BVP_MU_C").getValue(2);
+    kp_betap_cut_s3->dm = params->getParameter("KP_BVP_MU_D").getValue(2);
+    kp_betap_cut_s3->as = params->getParameter("KP_BVP_SIGMA_A").getValue(2);
+    kp_betap_cut_s3->bs = params->getParameter("KP_BVP_SIGMA_B").getValue(2);
+    kp_betap_cut_s3->cs = params->getParameter("KP_BVP_SIGMA_C").getValue(2);
+    kp_betap_cut_s3->ds = params->getParameter("KP_BVP_SIGMA_D").getValue(2);
+    kp_betap_cut_s3->nsigma = params->getParameter("KP_BVP_NSIGMA").getValue(0);
+
+    kp_betap_cut_s4->am = params->getParameter("KP_BVP_MU_A").getValue(3);
+    kp_betap_cut_s4->bm = params->getParameter("KP_BVP_MU_B").getValue(3);
+    kp_betap_cut_s4->cm = params->getParameter("KP_BVP_MU_C").getValue(3);
+    kp_betap_cut_s4->dm = params->getParameter("KP_BVP_MU_D").getValue(3);
+    kp_betap_cut_s4->as = params->getParameter("KP_BVP_SIGMA_A").getValue(3);
+    kp_betap_cut_s4->bs = params->getParameter("KP_BVP_SIGMA_B").getValue(3);
+    kp_betap_cut_s4->cs = params->getParameter("KP_BVP_SIGMA_C").getValue(3);
+    kp_betap_cut_s4->ds = params->getParameter("KP_BVP_SIGMA_D").getValue(3);
+    kp_betap_cut_s4->nsigma = params->getParameter("KP_BVP_NSIGMA").getValue(0);
+
+    kp_betap_cut_s5->am = params->getParameter("KP_BVP_MU_A").getValue(4);
+    kp_betap_cut_s5->bm = params->getParameter("KP_BVP_MU_B").getValue(4);
+    kp_betap_cut_s5->cm = params->getParameter("KP_BVP_MU_C").getValue(4);
+    kp_betap_cut_s5->dm = params->getParameter("KP_BVP_MU_D").getValue(4);
+    kp_betap_cut_s5->as = params->getParameter("KP_BVP_SIGMA_A").getValue(4);
+    kp_betap_cut_s5->bs = params->getParameter("KP_BVP_SIGMA_B").getValue(4);
+    kp_betap_cut_s5->cs = params->getParameter("KP_BVP_SIGMA_C").getValue(4);
+    kp_betap_cut_s5->ds = params->getParameter("KP_BVP_SIGMA_D").getValue(4);
+    kp_betap_cut_s5->nsigma = params->getParameter("KP_BVP_NSIGMA").getValue(0);
+
+    kp_betap_cut_s6->am = params->getParameter("KP_BVP_MU_A").getValue(5);
+    kp_betap_cut_s6->bm = params->getParameter("KP_BVP_MU_B").getValue(5);
+    kp_betap_cut_s6->cm = params->getParameter("KP_BVP_MU_C").getValue(5);
+    kp_betap_cut_s6->dm = params->getParameter("KP_BVP_MU_D").getValue(5);
+    kp_betap_cut_s6->as = params->getParameter("KP_BVP_SIGMA_A").getValue(5);
+    kp_betap_cut_s6->bs = params->getParameter("KP_BVP_SIGMA_B").getValue(5);
+    kp_betap_cut_s6->cs = params->getParameter("KP_BVP_SIGMA_C").getValue(5);
+    kp_betap_cut_s6->ds = params->getParameter("KP_BVP_SIGMA_D").getValue(5);
+    kp_betap_cut_s6->nsigma = params->getParameter("KP_BVP_NSIGMA").getValue(0);
+
+    // negative kaon
+    km_betap_cut_s1->am = params->getParameter("KM_BVP_MU_A").getValue(0);
+    km_betap_cut_s1->bm = params->getParameter("KM_BVP_MU_B").getValue(0);
+    km_betap_cut_s1->cm = params->getParameter("KM_BVP_MU_C").getValue(0);
+    km_betap_cut_s1->dm = params->getParameter("KM_BVP_MU_D").getValue(0);
+    km_betap_cut_s1->as = params->getParameter("KM_BVP_SIGMA_A").getValue(0);
+    km_betap_cut_s1->bs = params->getParameter("KM_BVP_SIGMA_B").getValue(0);
+    km_betap_cut_s1->cs = params->getParameter("KM_BVP_SIGMA_C").getValue(0);
+    km_betap_cut_s1->ds = params->getParameter("KM_BVP_SIGMA_D").getValue(0);
+    km_betap_cut_s1->nsigma = params->getParameter("KM_BVP_NSIGMA").getValue(0);
+
+    km_betap_cut_s2->am = params->getParameter("KM_BVP_MU_A").getValue(1);
+    km_betap_cut_s2->bm = params->getParameter("KM_BVP_MU_B").getValue(1);
+    km_betap_cut_s2->cm = params->getParameter("KM_BVP_MU_C").getValue(1);
+    km_betap_cut_s2->dm = params->getParameter("KM_BVP_MU_D").getValue(1);
+    km_betap_cut_s2->as = params->getParameter("KM_BVP_SIGMA_A").getValue(1);
+    km_betap_cut_s2->bs = params->getParameter("KM_BVP_SIGMA_B").getValue(1);
+    km_betap_cut_s2->cs = params->getParameter("KM_BVP_SIGMA_C").getValue(1);
+    km_betap_cut_s2->ds = params->getParameter("KM_BVP_SIGMA_D").getValue(1);
+    km_betap_cut_s2->nsigma = params->getParameter("KM_BVP_NSIGMA").getValue(0);
+
+    km_betap_cut_s3->am = params->getParameter("KM_BVP_MU_A").getValue(2);
+    km_betap_cut_s3->bm = params->getParameter("KM_BVP_MU_B").getValue(2);
+    km_betap_cut_s3->cm = params->getParameter("KM_BVP_MU_C").getValue(2);
+    km_betap_cut_s3->dm = params->getParameter("KM_BVP_MU_D").getValue(2);
+    km_betap_cut_s3->as = params->getParameter("KM_BVP_SIGMA_A").getValue(2);
+    km_betap_cut_s3->bs = params->getParameter("KM_BVP_SIGMA_B").getValue(2);
+    km_betap_cut_s3->cs = params->getParameter("KM_BVP_SIGMA_C").getValue(2);
+    km_betap_cut_s3->ds = params->getParameter("KM_BVP_SIGMA_D").getValue(2);
+    km_betap_cut_s3->nsigma = params->getParameter("KM_BVP_NSIGMA").getValue(0);
+
+    km_betap_cut_s4->am = params->getParameter("KM_BVP_MU_A").getValue(3);
+    km_betap_cut_s4->bm = params->getParameter("KM_BVP_MU_B").getValue(3);
+    km_betap_cut_s4->cm = params->getParameter("KM_BVP_MU_C").getValue(3);
+    km_betap_cut_s4->dm = params->getParameter("KM_BVP_MU_D").getValue(3);
+    km_betap_cut_s4->as = params->getParameter("KM_BVP_SIGMA_A").getValue(3);
+    km_betap_cut_s4->bs = params->getParameter("KM_BVP_SIGMA_B").getValue(3);
+    km_betap_cut_s4->cs = params->getParameter("KM_BVP_SIGMA_C").getValue(3);
+    km_betap_cut_s4->ds = params->getParameter("KM_BVP_SIGMA_D").getValue(3);
+    km_betap_cut_s4->nsigma = params->getParameter("KM_BVP_NSIGMA").getValue(0);
+
+    km_betap_cut_s5->am = params->getParameter("KM_BVP_MU_A").getValue(4);
+    km_betap_cut_s5->bm = params->getParameter("KM_BVP_MU_B").getValue(4);
+    km_betap_cut_s5->cm = params->getParameter("KM_BVP_MU_C").getValue(4);
+    km_betap_cut_s5->dm = params->getParameter("KM_BVP_MU_D").getValue(4);
+    km_betap_cut_s5->as = params->getParameter("KM_BVP_SIGMA_A").getValue(4);
+    km_betap_cut_s5->bs = params->getParameter("KM_BVP_SIGMA_B").getValue(4);
+    km_betap_cut_s5->cs = params->getParameter("KM_BVP_SIGMA_C").getValue(4);
+    km_betap_cut_s5->ds = params->getParameter("KM_BVP_SIGMA_D").getValue(4);
+    km_betap_cut_s5->nsigma = params->getParameter("KM_BVP_NSIGMA").getValue(0);
+
+    km_betap_cut_s6->am = params->getParameter("KM_BVP_MU_A").getValue(5);
+    km_betap_cut_s6->bm = params->getParameter("KM_BVP_MU_B").getValue(5);
+    km_betap_cut_s6->cm = params->getParameter("KM_BVP_MU_C").getValue(5);
+    km_betap_cut_s6->dm = params->getParameter("KM_BVP_MU_D").getValue(5);
+    km_betap_cut_s6->as = params->getParameter("KM_BVP_SIGMA_A").getValue(5);
+    km_betap_cut_s6->bs = params->getParameter("KM_BVP_SIGMA_B").getValue(5);
+    km_betap_cut_s6->cs = params->getParameter("KM_BVP_SIGMA_C").getValue(5);
+    km_betap_cut_s6->ds = params->getParameter("KM_BVP_SIGMA_D").getValue(5);
+    km_betap_cut_s6->nsigma = params->getParameter("KM_BVP_NSIGMA").getValue(0);
 
     dcr1_meson_fid_cut->height = params->getParameter("KP_DCR1_HEIGHT").getValue(0);
     dcr1_meson_fid_cut->angle  = params->getParameter("KP_DCR1_ANGLE").getValue(0);
@@ -443,9 +581,15 @@ ParticleFilter::ParticleFilter(Parameters *params) : pars(params){
     positiveKaonSelector->AddCut(kp_tofmass_cut_s4);
     positiveKaonSelector->AddCut(kp_tofmass_cut_s5);
     positiveKaonSelector->AddCut(kp_tofmass_cut_s6);
+    positiveKaonSelector->AddCut(kp_betap_cut_s1);
+    positiveKaonSelector->AddCut(kp_betap_cut_s2);
+    positiveKaonSelector->AddCut(kp_betap_cut_s3);
+    positiveKaonSelector->AddCut(kp_betap_cut_s4);
+    positiveKaonSelector->AddCut(kp_betap_cut_s5);
+    positiveKaonSelector->AddCut(kp_betap_cut_s6);
     positiveKaonSelector->AddCut(dcr1_meson_fid_cut);
     positiveKaonSelector->EnableAll();
-
+ 
     negativeKaonSelector->AddCut(dvz_cut);
     negativeKaonSelector->AddCut(km_tofmass_cut_s1);
     negativeKaonSelector->AddCut(km_tofmass_cut_s2);
@@ -453,6 +597,12 @@ ParticleFilter::ParticleFilter(Parameters *params) : pars(params){
     negativeKaonSelector->AddCut(km_tofmass_cut_s4);
     negativeKaonSelector->AddCut(km_tofmass_cut_s5);
     negativeKaonSelector->AddCut(km_tofmass_cut_s6);
+    negativeKaonSelector->AddCut(km_betap_cut_s1);
+    negativeKaonSelector->AddCut(km_betap_cut_s2);
+    negativeKaonSelector->AddCut(km_betap_cut_s3);
+    negativeKaonSelector->AddCut(km_betap_cut_s4);
+    negativeKaonSelector->AddCut(km_betap_cut_s5);
+    negativeKaonSelector->AddCut(km_betap_cut_s6);
     negativeKaonSelector->EnableAll();
  
 }

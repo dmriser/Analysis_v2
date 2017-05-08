@@ -80,11 +80,11 @@
               KP_DVZ     6     e                   0                   0                   0                   0                   0                   0
       KP_TOFMASS_MAX     6     v                0.75                0.75                0.75                0.75                0.75                0.75
       KP_TOFMASS_MAX     6     e                   0                   0                   0                   0                   0                   0
-      KP_TOFMASS_MIN     6     v               0.415               0.415               0.415               0.415               0.415               0.415
+      KP_TOFMASS_MIN     6     v               0.392               0.411               0.415               0.415               0.407               0.390
       KP_TOFMASS_MIN     6     e                   0                   0                   0                   0                   0                   0
       KM_TOFMASS_MAX     6     v                0.75                0.75                0.75                0.75                0.75                0.75
       KM_TOFMASS_MAX     6     e                   0                   0                   0                   0                   0                   0
-      KM_TOFMASS_MIN     6     v               0.300               0.300               0.300               0.300               0.300               0.300
+      KM_TOFMASS_MIN     6     v               0.375               0.380               0.379               0.390               0.374               0.379
       KM_TOFMASS_MIN     6     e                   0                   0                   0                   0                   0                   0
        KM_BVP_NSIGMA     1     v                  2.2
        KM_BVP_NSIGMA     1     e                   0

@@ -57,27 +57,12 @@ public:
   PhysicsEventBuilder *builder;   
   MomCorr_e1f         *momCorr; 
 
-  MesonHistograms *posHistos; 
-  MesonHistograms *negHistos; 
-
-  MesonHistograms *posCutDVzHistos; 
-  MesonHistograms *negCutDVzHistos; 
-
-  MesonHistograms *posCutDCHistos; 
-
-  MesonHistograms *posCutDISHistos; 
-  MesonHistograms *negCutDISHistos; 
-
-  MesonHistograms *posCutDISMMHistos; 
-  MesonHistograms *negCutDISMMHistos; 
-
   MesonHistograms *kpHistos; 
   MesonHistograms *kmHistos; 
-
-  StandardHistograms *posStand; 
-  StandardHistograms *negStand; 
   StandardHistograms *kpStand; 
   StandardHistograms *kmStand; 
+
+  TH1D *h1_mm2_withProton[7];
 
   void Initialize();
   void ProcessEvent();
@@ -88,26 +73,14 @@ public:
 };
 
 void HIDCalibration::InitHistos() {
-  posHistos = new MesonHistograms("pos",  321);
-  negHistos = new MesonHistograms("neg", -321);
-  kpHistos = new MesonHistograms("kp",    321);
-  kmHistos = new MesonHistograms("km",   -321);
+  kpHistos = new MesonHistograms("kp",  321);
+  kmHistos = new MesonHistograms("km",  -321);
+  kpStand  = new StandardHistograms("kp", 0); 
+  kmStand  = new StandardHistograms("km", 0); 
 
-  posCutDVzHistos = new MesonHistograms("posCutDVz",    321);
-  negCutDVzHistos = new MesonHistograms("negCutDVz",   -321);
-
-  posCutDISHistos = new MesonHistograms("posCutDIS",    321);
-  negCutDISHistos = new MesonHistograms("negCutDIS",   -321);
-
-  posCutDISMMHistos = new MesonHistograms("posCutDISMM",    321);
-  negCutDISMMHistos = new MesonHistograms("negCutDISMM",   -321);
-
-  posCutDCHistos = new MesonHistograms("posCutDC",    321);
-
-  posStand = new StandardHistograms("pos", 0); 
-  negStand = new StandardHistograms("neg", 0); 
-  kpStand = new StandardHistograms("kp", 0); 
-  kmStand = new StandardHistograms("km", 0); 
+  for (int i=0; i<7; ++i){
+    h1_mm2_withProton[i] = new TH1D(Form("h1_mm2_withProton_sect%d",i), Form("h1_mm2_withProton_sect%d",i), 40, -1.5, 1.5); 
+  }
 }
 
 void HIDCalibration::Initialize(){
@@ -139,7 +112,8 @@ void HIDCalibration::ProcessEvent(){
     
     std::vector<int> kpIndices = filter->getVectorOfParticleIndices(event, 321); 
     std::vector<int> kmIndices = filter->getVectorOfParticleIndices(event, -321); 
-
+    std::vector<int> protIndices = filter->getVectorOfParticleIndices(event, -211);
+ 
     PhysicsEvent candidateEvent = builder->getPhysicsEvent(electron); 
 
       // ------------------------------------------------------
@@ -153,11 +127,21 @@ void HIDCalibration::ProcessEvent(){
 	meson = momCorr->PcorN(meson, 1, 321);
 	
 	PhysicsEvent physicsEvent = builder->getPhysicsEvent(electron, meson); 
-	if (event.p[kpIndices[0]] <= 2.3){
+	if (1){//(physicsEvent.mm2 > 1.0){
 	  kpHistos->Fill(event, physicsEvent, kpIndices[0]);
 	  kpStand->Fill(event, electronIndex, kpIndices[0], physicsEvent); 
 	}
-      }
+ 
+	if (!protIndices.empty()){
+	  TLorentzVector proton     = event.GetTLorentzVector(protIndices[0], -211); 
+	  PhysicsEvent protonEvent  = builder->getPhysicsEvent(electron, proton, meson); 
+	  int sect                  = event.dc_sect[electronIndex]; 
+	  
+	  h1_mm2_withProton[0]   ->Fill(protonEvent.mm2); 
+	  h1_mm2_withProton[sect]->Fill(protonEvent.mm2); 
+	}
+	
+     }
 
       if (!kmIndices.empty()){
 	TLorentzVector meson = event.GetTLorentzVector(kmIndices[0], -321);
@@ -168,62 +152,6 @@ void HIDCalibration::ProcessEvent(){
 	kmStand->Fill(event, electronIndex, kmIndices[0], physicsEvent); 
       }
     }
-
-      // ------------------------------------------------------
-      //        fill each cut 
-      // ------------------------------------------------------
-            
-      for(int ipart=0; ipart<event.gpart; ipart++){
-	double dvz = fabs(event.corr_vz[electronIndex]-event.corr_vz[ipart]); 
-	
-	// k- candidate 
-	if (event.q[ipart] < 0 && CurrentParticleIsNotElectronCandidate(electronCandidates, ipart)){
-	  TLorentzVector part1 = event.GetTLorentzVector(ipart, event.id[ipart]);
-	  part1 = momCorr->PcorN(part1, event.q[ipart], event.id[ipart]);
-	  PhysicsEvent physicsEvent = builder->getPhysicsEvent(electron, part1); 
- 
-	  negHistos->Fill(event, physicsEvent, ipart); 
-
-	  if (dvz < 4.0){
-	    negCutDVzHistos->Fill(event, physicsEvent, ipart); 
-	  }
-
-	  if (physicsEvent.qq > 1.0 && physicsEvent.w){ 
-	    negCutDISHistos->Fill(event, physicsEvent, ipart);
-	  }
-
-	  if (physicsEvent.qq > 1.0 && physicsEvent.w > 2.0 && physicsEvent.mm2 > 1.0){ 
-	    negCutDISMMHistos->Fill(event, physicsEvent, ipart);
-	  }
-	} 
-	
-	// k+ candidate 
-	else if (event.q[ipart] > 0){
-	  TLorentzVector part1 = event.GetTLorentzVector(ipart, event.id[ipart]);
-	  part1 = momCorr->PcorN(part1, event.q[ipart], event.id[ipart]);
-	  PhysicsEvent physicsEvent = builder->getPhysicsEvent(electron, part1); 
- 
-	  posHistos->Fill(event, physicsEvent, ipart); 
-
-	  if (dvz < 4.0){
-	    posCutDVzHistos->Fill(event, physicsEvent, ipart); 
-	  }
-
-	  if (filter->GetSelector(321)->GetCut("DC Region 1 Fid Cut")->IsPassed(event, ipart)){
-	    posCutDCHistos->Fill(event, physicsEvent, ipart); 
-	  }
-
-	  if (physicsEvent.qq > 1.0 && physicsEvent.w){ 
-	    posCutDISHistos->Fill(event, physicsEvent, ipart);
-	  }
-
-	  if (physicsEvent.qq > 1.0 && physicsEvent.w > 2.0 && physicsEvent.mm2 > 1.0){ 
-	    posCutDISMMHistos->Fill(event, physicsEvent, ipart);
-	  }
-
-
-	}
-      }
   }
 }
 
@@ -234,27 +162,14 @@ bool HIDCalibration::CurrentParticleIsNotElectronCandidate(std::vector<int> &ele
 void HIDCalibration::Save(string outputFilename){
     TFile *outputFile = new TFile(outputFilename.c_str(), "recreate");
 
-    posHistos->Save(outputFile);
-    negHistos->Save(outputFile);
-
-    posCutDVzHistos->Save(outputFile); 
-    negCutDVzHistos->Save(outputFile); 
-
-    posCutDCHistos->Save(outputFile); 
-
-    posCutDISHistos->Save(outputFile); 
-    negCutDISHistos->Save(outputFile); 
-
-    posCutDISMMHistos->Save(outputFile); 
-    negCutDISMMHistos->Save(outputFile); 
-
     kpHistos->Save(outputFile);
     kmHistos->Save(outputFile);
-
-    posStand->Save(outputFile); 
-    negStand->Save(outputFile); 
     kpStand->Save(outputFile); 
     kmStand->Save(outputFile); 
+
+    for (int i=0; i<7; ++i){
+      h1_mm2_withProton[i]->Write(); 
+    }
 
     outputFile->Write();
     outputFile->Close();

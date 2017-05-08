@@ -344,7 +344,7 @@ protected:
 	temp_mfit->SetParameter(3, kaonMassFit->GetParameter(0)); 
 	temp_mfit->SetParameter(4, kaonMassFit->GetParameter(1)); 
 	temp_mfit->SetParameter(5, kaonMassFit->GetParameter(2)); 
-	//	temp_mass[b]->Fit(Form("f_mass_pid%d_slice%d_sect%d",  histos->GetPid(), b, s),"RQ"); 
+	temp_mass[b]->Fit(Form("f_mass_pid%d_slice%d_sect%d",  histos->GetPid(), b, s),"RQ"); 
 	temp_mass_fit.push_back(temp_mfit); 
 
 	// Now doing beta fits 
@@ -490,8 +490,17 @@ public:
 
       fBestCutGraph[s] = new TGraph(slices->bins.size(), slices->bins.data(), bestCutValue.data());
       fBestCutGraph[s]->SetName(Form("g_bestcut_sect%d",s)); 
-    }
 
+      std::string bestCutFitName(Form("f_bestcut_sect%d",s));
+      fBestCut[s] = new TF1(bestCutFitName.c_str(),"[0]",0.9,1.5); 
+      fBestCutGraph[s]->Fit(bestCutFitName.c_str(),"RQ");
+    }
+  }
+
+  void DumpPars(std::string conf){
+    for(int s=0; s<6; s++){
+      std::cout << " conf=" << conf << " sect=" << s << " cut=" << fBestCut[s]->GetParameter(0) << std::endl; 
+    }
   }
 
   void SetCutMin(double min){
@@ -544,6 +553,7 @@ public:
 
     for(int s=0; s<6; s++){
       fBestCutGraph[s]->Write(); 
+      fBestCut[s]->Write(); 
     }
 
     out->cd(); 
@@ -554,6 +564,7 @@ public:
   std::vector<std::vector<TH1D*> > contamination; 
   std::vector<std::vector<TH1D*> > test_statistic; 
   TGraph                          *fBestCutGraph[6]; 
+  TF1                             *fBestCut[6];
 
 protected:
   const static int fNumberCutValues = 100;
@@ -604,9 +615,10 @@ public:
 	gPad->SetGridy(); 
 	gPad->SetMargin(0.15,0.15, 0.15, 0.15);
 
-	efficiencyService->fBestCutGraph[s]->SetLineStyle(8);
-	efficiencyService->fBestCutGraph[s]->SetLineWidth(2);
-	efficiencyService->fBestCutGraph[s]->Draw("lsame");
+	efficiencyService->fBestCut[s]->SetLineStyle(8);
+	efficiencyService->fBestCut[s]->SetLineWidth(2);
+	efficiencyService->fBestCut[s]->SetRange(0.5, 2.5);
+	efficiencyService->fBestCut[s]->Draw("lsame");
 
 	title.DrawLatex(0.44, 0.92, Form("sector %d", s+1)); 
 	title.DrawLatex(0.47, 0.08, "p (GeV/c)"); 
@@ -912,11 +924,13 @@ int main(int argc, char * argv[]){
       effKp.Execute(); 
       effKp.Save(out); 
 
+
       MesonCutEfficiencyService effKm(fitKm.slices); 
       effKm.SetCutMin(0.2); 
       effKm.SetCutMax(0.6); 
       effKm.Execute(); 
       effKm.Save(out); 
+
 
       MesonCutEfficiencyPlottingService plotKpEff(&kp, &effKp);
       plotKpEff.SetOutputPath("/volatile/clas12/dmriser/plots/pid/kp/");
@@ -942,6 +956,8 @@ int main(int argc, char * argv[]){
       plotKm.SetOutputPath("/volatile/clas12/dmriser/plots/pid/km/"); 
       plotKm.Execute();
       
+      effKm.DumpPars("km"); 
+      effKp.DumpPars("kp"); 
       
       out->Close(); 
 

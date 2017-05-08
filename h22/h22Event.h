@@ -32,6 +32,7 @@ class h22Event {
   // Declaration of leaf types
    UInt_t          evntid;
    UChar_t         ihel;
+   Int_t           corr_hel;
    Float_t         q_l;
    Float_t         tr_time;
    Int_t           gpart;

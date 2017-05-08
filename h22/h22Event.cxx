@@ -49,6 +49,7 @@ h22Event::h22Event(const h22Event &event) {
     mcnentr = event.mcnentr;
     mcnpart = event.mcnpart;
     nprt = event.nprt;
+    corr_hel = event.corr_hel; 
 
     //  This is bad, it should use
     //  std::copy(std::begin(id), std::end(id), std::begin(event.id));

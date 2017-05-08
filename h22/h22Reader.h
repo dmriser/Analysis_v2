@@ -41,6 +41,7 @@ public :
    // List of branches
    TBranch        *b_evntid;   //!
    TBranch        *b_ihel;   //!
+   TBranch        *b_corr_hel;   //!
    TBranch        *b_q_l;   //!
    TBranch        *b_tr_time;   //!
    TBranch        *b_gpart;   //!

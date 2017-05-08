@@ -653,7 +653,8 @@ vector<int> ParticleFilter::getVectorOfParticleIndices(h22Event &event, int pid)
         }
     }
 
-    else if (pid == 211 || pid == 321){
+    //    else if (pid == 211 || pid == 321){
+    else if (pid == 321){
       particles.clear(); 
 
       std::vector<int> electrons = getVectorOfParticleIndices(event, 11);
@@ -674,7 +675,8 @@ vector<int> ParticleFilter::getVectorOfParticleIndices(h22Event &event, int pid)
       }
     }
 
-    else if (pid == -211 || pid == -321){
+    //    else if (pid == -211 || pid == -321){
+    else if (pid == -321){
       particles.clear(); 
 
       std::vector<int> electrons = getVectorOfParticleIndices(event, 11);

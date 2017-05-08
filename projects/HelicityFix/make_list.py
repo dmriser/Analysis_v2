@@ -33,4 +33,5 @@ for file in all_h10files:
 
 common_files = list(set(list_10) & set(list_22))
 
-print common_files
+for f in common_files:
+    print f

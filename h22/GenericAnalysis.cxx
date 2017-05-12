@@ -100,10 +100,12 @@ void GenericAnalysis::ProcessEvent(){
 }
 
 void GenericAnalysis::Save(){
+  /*
   TFile *outputFile = new TFile(options->args["OUT"].args.c_str(),"recreate");
   std::vector<TObject*>::iterator it;
   for(it = rootObjects.begin(); it!= rootObjects.end(); ++it){ (*it)->Write(); }
   outputFile->Close();
+  */
 }
 
 #endif

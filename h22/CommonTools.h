@@ -217,6 +217,15 @@ namespace Global {
       gStyle->SetNumberContours(rNSTEPS);    
     }
 
+    static void SetPurpleYellowPalette(){
+      Double_t red[10]   = { 0./255., 61./255., 45./255., 99./255., 156./255., 212./255., 230./255., 237./255., 234./255., 242./255.};
+      Double_t green[10] = { 0./255., 0./255.,  0./255.,  0./255.,  45./255., 101./255., 168./255., 238./255., 238./255., 243./255.};
+      Double_t blue[10]  = { 0./255., 140./255.,  1./255.,  1./255.,   3./255.,   9./255.,   8./255.,  11./255.,  95./255., 230./255.};
+      Double_t stops[10] = { 0.0000, 0.1100, 0.2200, 0.3300, 0.4400, 0.5500, 0.660, 0.770, 0.8800, 1.0000};
+      TColor::CreateGradientColorTable(10, stops, red, green, blue, 255);
+      gStyle->SetNumberContours(255);    
+    }
+
     static void SetBentCoolWarmPalette(){
       const static UInt_t rNCOLORS = 3;
       Double_t rRed[rNCOLORS] = {0.43, 0.95, 0.85};

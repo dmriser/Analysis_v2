@@ -605,7 +605,8 @@ public:
       double fillAlpha = 0.4;
 
       //      Global::Visualization::SetCustomPalette(); 
-      Global::Visualization::SetBentCoolWarmPalette(); 
+      //      Global::Visualization::SetBentCoolWarmPalette(); 
+      Global::Visualization::SetPurpleYellowPalette(); 
 
       // draw best cut on 2-d distributions 
       for (int s=0; s<6; s++){

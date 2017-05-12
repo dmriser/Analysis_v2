@@ -5,7 +5,7 @@
   // -----------------------------------------
   //     User Information 
   // -----------------------------------------
-  TFile *file = TFile::Open("/volatile/clas12/dmriser/rootFiles/helicity/pip_check.root"); 
+  TFile *file = TFile::Open("/volatile/clas12/dmriser/rootFiles/helicity/pip_check_nowp_pass2.root"); 
   
 
   // -----------------------------------------
@@ -18,16 +18,17 @@
   std::vector<double> errors; 
   std::vector<double> runErr; 
 
-  std::ofstream outfile("asym.dat",std::ios::trunc);
+  std::ofstream outfile("asym_nowp.dat",std::ios::trunc);
 
   for (int i=0; i<fits.size(); i++){
     TString filename = fits[i]->GetName(); 
     TString runString(filename(10,5));
     int run = runString.Atoi(); 
 
-    std::outfile.width(8);  std::outfile << run;
-    std::outfile.width(16); std::outfile << fits[i]->GetParameter(0); 
-    std::outfile.width(16); std::outfile << fits[i]->GetParError(0) << std::endl; 
+    std::outfile << run << ",";
+    std::outfile << fits[i]->GetParameter(0) << ","; 
+    std::outfile << fits[i]->GetParError(0) << ","; 
+    std::outfile << fits[i]->GetChisquare()/fits[i]->GetNDF() << std::endl; 
 
     runs.push_back(run);
     runErr.push_back(0.0); 

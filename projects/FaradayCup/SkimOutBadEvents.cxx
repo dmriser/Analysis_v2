@@ -132,7 +132,7 @@ bool MyAnalysis::EventIsSelected(){
 	  
 	  // Very loose cuts around kaon mass, remember 
 	  // that this is not corrected 
-	  if (tofMass > 0.3 && tofMass < 0.78){ return true; }
+	  if (tofMass > 0.3 && tofMass < 0.7){ return true; }
 	}
       }      
     } 

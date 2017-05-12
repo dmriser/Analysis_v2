@@ -1,27 +1,21 @@
 ////////////////////////////////////////
 /*
  David Riser, University of Connecticut
- 
- July 13, 2016
- 
- Modified:
- March 8, 2017
- April 14, 2017 
 
- meson.cxx -> fill histograms for mesons 
+
  
  */
 ////////////////////////////////////////
 
 #include <iostream>
 #include <vector>
+#include <map>
 
 #include "CommonTools.h"
 #include "Corrections.h"
 #include "h22Event.h"
 #include "h22Option.h"
 #include "GenericAnalysis.h"
-#include "MesonHistograms.h"
 #include "MomCorr.h"
 #include "Parameters.h"
 #include "ParticleFilter.h"
@@ -29,17 +23,21 @@
 #include "PhysicsEventBuilder.h"
 #include "StandardHistograms.h"
 
+#include "common/Histos.h"
+
 #include "TFile.h"
 #include "TLorentzVector.h"
+#include "TF1.h"
+#include "TH1.h"
 
 std::vector<std::string> loadFilesFromList(std::string fileList, int numFiles);
 std::vector<std::string> loadFilesFromCommandLine(h22Options * theseOpts, int numFiles);
 
-class HIDCalibration : public GenericAnalysis {
+class Analysis : public GenericAnalysis {
 
 public:
-    HIDCalibration(h22Options *opts, Parameters *params) : GenericAnalysis(opts), pars(params) { }
-    ~HIDCalibration(){ }
+    Analysis(h22Options *opts, Parameters *params) : GenericAnalysis(opts), pars(params) { }
+    ~Analysis(){ }
 
 public:
   Parameters          *pars;
@@ -47,28 +45,22 @@ public:
   Corrections          corr;
   PhysicsEventBuilder *builder;   
   MomCorr_e1f         *momCorr; 
+  
+  AsymmetryHistograms *kAsym; 
 
-  MesonHistograms *pipHistos; 
-  MesonHistograms *pimHistos; 
-  MesonHistograms *kpHistos; 
-  MesonHistograms *kmHistos; 
 
   void Initialize();
   void ProcessEvent();
-  void Save(string outputFilename);
+  void Save(std::string outfile);
   void InitHistos();
   bool CurrentParticleIsNotElectronCandidate(std::vector<int> &electronCandidates, int index);
-
 };
 
-void HIDCalibration::InitHistos() {
-  pipHistos = new MesonHistograms("pip",  211);
-  pimHistos = new MesonHistograms("pim", -211);
-  kpHistos = new MesonHistograms("kp",    321);
-  kmHistos = new MesonHistograms("km",   -321);
+void Analysis::InitHistos() {
+  kAsym = new AsymmetryHistograms("test"); 
 }
 
-void HIDCalibration::Initialize(){
+void Analysis::Initialize(){
   InitHistos();
   
   filter = new ParticleFilter(pars);
@@ -84,75 +76,69 @@ void HIDCalibration::Initialize(){
   momCorr = new MomCorr_e1f(momCorrPath);
 }
 
-void HIDCalibration::ProcessEvent(){
+void Analysis::ProcessEvent(){
     // Load up hadrons if we've electron.
   std::vector<int> electronCandidates = filter->getVectorOfParticleIndices(event, 11);
 
-  if ( !electronCandidates.empty() ){
+  if ( !electronCandidates.empty()){
     
     // Take the fastest one
     int electronIndex = electronCandidates[0];
     event.SetElectronIndex(electronIndex); 
     corr.correctEvent(&event, GetRunNumber(), GSIM); 
 
-    TLorentzVector electron = event.GetTLorentzVector(electronIndex, 11);
-    PhysicsEvent candidateEvent = builder->getPhysicsEvent(electron); 
-    electron = momCorr->PcorN(electron, -1, 11);    
+    std::vector<int> kpCandidates = filter->getVectorOfParticleIndices(event, 321);
+    std::vector<int> kmCandidates = filter->getVectorOfParticleIndices(event, -321);
     
-    if (candidateEvent.w > 2.00 && candidateEvent.qq > 1.00 && candidateEvent.mm2 > 1.1) {
-      for (int ipart=0; ipart<event.gpart; ipart++){
-	
-	// This important line stops other electrons from
-	// getting added to the plots.
-	if (CurrentParticleIsNotElectronCandidate(electronCandidates, ipart)) {
-	  double dvz = fabs(event.corr_vz[electronIndex] - event.corr_vz[ipart]);
-	  
-	  TLorentzVector candidate = event.GetTLorentzVector(ipart, event.id[ipart]);
-	  
-	  // correct the momenta after 
-	  //	  candidate = momCorr->PcorN(candidate, event.q[ipart], event.id[ipart]);
-	  
-	  PhysicsEvent physEv = builder->getPhysicsEvent(electron, candidate); 
-	  
-	  //	  if (dvz < 4.0  && event.etot[ipart] > 0.01){
-	    if (dvz < 2.5){
-	      if (event.q[ipart] == 1){ 
-		pipHistos->Fill(event, physEv, ipart); 
-		kpHistos->Fill(event, physEv, ipart);
-	      }
-	      else if (event.q[ipart] == -1){
-		pimHistos->Fill(event, physEv, ipart); 
-		kmHistos->Fill(event, physEv, ipart);
-	      }
-	    }
+    int helicity = -1; 
+    if (event.corr_hel > 0)     { helicity = 1; }
+    else if (event.corr_hel < 0){ helicity = 0; }
 
-      }
+    if (!kpCandidates.empty() && helicity > -1) {
+      TLorentzVector electron  = event.GetTLorentzVector(electronIndex, 11); 
+      electron = momCorr->PcorN(electron, -1, 11);    
+      
+      TLorentzVector kaon = event.GetTLorentzVector(kpCandidates[0], 321);
+      //    pion = momCorr->PcorN(pion, 1, 211);
+      
+      PhysicsEvent candidateEvent = builder->getPhysicsEvent(electron, kaon);
+      
+      if (candidateEvent.w > 2.00 && candidateEvent.qq > 1.00 && candidateEvent.mm2 > 1.1
+	  && candidateEvent.z > 0.3 && kaon.P() < 2.05) {
+	
+	kAsym->Fill(candidateEvent, 0, helicity);
+	
       }
     }
+
+
+    if (!kmCandidates.empty() && helicity > -1) {
+      TLorentzVector electron  = event.GetTLorentzVector(electronIndex, 11); 
+      electron = momCorr->PcorN(electron, -1, 11);    
+      
+      TLorentzVector kaon = event.GetTLorentzVector(kmCandidates[0], -321);
+      //    pion = momCorr->PcorN(pion, 1, 211);
+      
+      PhysicsEvent candidateEvent = builder->getPhysicsEvent(electron, kaon);
+      
+      if (candidateEvent.w > 2.00 && candidateEvent.qq > 1.00 && candidateEvent.mm2 > 1.1
+	  && candidateEvent.z > 0.3 && kaon.P() < 2.75) {
+	
+	kAsym->Fill(candidateEvent, 1, helicity);
+      }
+    }
+
   }
 }
 
-bool HIDCalibration::CurrentParticleIsNotElectronCandidate(std::vector<int> &electronCandidates,int index){
+bool Analysis::CurrentParticleIsNotElectronCandidate(std::vector<int> &electronCandidates,int index){
   return (std::find(electronCandidates.begin(), electronCandidates.end(), index) == electronCandidates.end());
 }
 
-void HIDCalibration::Save(string outputFilename){
-  TFile *outputFile = new TFile(outputFilename.c_str(), "recreate");
-
-  if (outputFile->IsOpen()){
-    pipHistos->Save(outputFile);
-    kpHistos->Save(outputFile);
-    pimHistos->Save(outputFile);
-    kmHistos->Save(outputFile);
-    
-    outputFile->Write();
-    outputFile->Close();
-  } else {
-    std::cerr << "[HIDCalibration::Save] Output root file couldn't be opened. " << std::endl; 
-  }
-  
+void Analysis::Save(std::string outfile){
+  kAsym->Save(outfile, "recreate", 1); 
 }
-
+ 
 int main(int argc, char * argv[]){
   
   // Setup Options
@@ -164,11 +150,7 @@ int main(int argc, char * argv[]){
   opts.args["LIST"].type = 1;
   opts.args["LIST"].name = "List of files";
   opts.set(argc,argv);
-  
-  int GSIM        = opts.args["MC"].arg;
-  long int nev    = opts.args["N"].arg;
-  string parfile  = opts.args["PARS"].args;
-  
+
   Parameters pars;
   pars.loadParameters(opts.args["PARS"].args);
   
@@ -178,11 +160,14 @@ int main(int argc, char * argv[]){
   } else {
     files = loadFilesFromCommandLine(&opts, 10000);
   }
-  
-  HIDCalibration Analysis(&opts, &pars);
-  for (int i=0; i<files.size(); i++) { Analysis.AddFile( files[i] ); }
-  Analysis.RunAnalysis();
-  Analysis.Save(opts.args["OUT"].args); 
+
+  Analysis *Ana = new Analysis(&opts, &pars); 
+  for (int i=0; i<files.size(); i++) {   
+    Ana->AddFile(files[i]); 
+  }
+  Ana->RunAnalysis();
+  Ana->kAsym->CalculateAsymmetry();
+  Ana->Save(opts.args["OUT"].args); 
   
   return 0;
 }

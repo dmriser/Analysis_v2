@@ -178,7 +178,7 @@ int main(int argc, char *argv[]){
   std::vector<std::string> files_h10 = Tools::RunNumberStripper::GetFilesFromList(run, h10List); 
 
   // creating output filename 
-  std::string outfile(Form("/volatile/clas12/dmriser/analysis/e1f_analysis/corr_hel/%d.root", run)); 
+  std::string outfile(Form("/volatile/clas12/dmriser/analysis/e1f_analysis/corr_hel_nowp/%d.root", run)); 
 
   std::cout << hd_msg << "For run = " << run << " wave-plate is " << wavePlate << std::endl; 
   std::cout << hd_msg << "Output set to " << outfile << std::endl; 
@@ -238,7 +238,10 @@ int main(int argc, char *argv[]){
       std::cout.width(10); std::cout << (int) reader22.hel << std::endl; 
       */ 
 
-      corrHel = (int) (reader10.hel * wavePlate); 
+      // this is temporarily wrong 
+      corrHel = (int) reader10.hel;
+      //      corrHel = (int) (reader10.hel * wavePlate); 
+      //      corrHel = (int) (reader22.hel * wavePlate); 
       newTree->Fill(); 
 
       currentEvent10++; 

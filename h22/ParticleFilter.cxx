@@ -581,12 +581,14 @@ ParticleFilter::ParticleFilter(Parameters *params) : pars(params){
     positiveKaonSelector->AddCut(kp_tofmass_cut_s4);
     positiveKaonSelector->AddCut(kp_tofmass_cut_s5);
     positiveKaonSelector->AddCut(kp_tofmass_cut_s6);
+    /*
     positiveKaonSelector->AddCut(kp_betap_cut_s1);
     positiveKaonSelector->AddCut(kp_betap_cut_s2);
     positiveKaonSelector->AddCut(kp_betap_cut_s3);
     positiveKaonSelector->AddCut(kp_betap_cut_s4);
     positiveKaonSelector->AddCut(kp_betap_cut_s5);
     positiveKaonSelector->AddCut(kp_betap_cut_s6);
+    */
     positiveKaonSelector->AddCut(dcr1_meson_fid_cut);
     positiveKaonSelector->EnableAll();
  
@@ -597,12 +599,14 @@ ParticleFilter::ParticleFilter(Parameters *params) : pars(params){
     negativeKaonSelector->AddCut(km_tofmass_cut_s4);
     negativeKaonSelector->AddCut(km_tofmass_cut_s5);
     negativeKaonSelector->AddCut(km_tofmass_cut_s6);
+    /*
     negativeKaonSelector->AddCut(km_betap_cut_s1);
     negativeKaonSelector->AddCut(km_betap_cut_s2);
     negativeKaonSelector->AddCut(km_betap_cut_s3);
     negativeKaonSelector->AddCut(km_betap_cut_s4);
     negativeKaonSelector->AddCut(km_betap_cut_s5);
     negativeKaonSelector->AddCut(km_betap_cut_s6);
+    */
     negativeKaonSelector->EnableAll();
  
 }

@@ -22,6 +22,143 @@ class Plotter {
     fOutputPath = p; 
   }
 
+
+  void PlotX(){
+
+    TCanvas *can = new TCanvas("can","",1200,900); 
+    
+    gPad->SetMargin(0.15, 0.15, 0.15, 0.15); 
+    gStyle->SetOptStat(0); 
+    gStyle->SetErrorX(0.00); 
+    gStyle->SetLabelSize(0.00,"y");
+    gStyle->SetTitleSize(0.0,"y");
+    gStyle->SetTitleFont(22,"xyz");
+    gStyle->SetLabelFont(22,"xyz");
+    gStyle->SetTitleOffset(1.2,"y");
+
+    gStyle->SetCanvasColor(0);
+    gStyle->SetCanvasBorderMode(0);
+    gStyle->SetCanvasBorderSize(0);
+    can->cd(); 
+
+    fHistos->h1_x_kp->SetFillColor(99);
+    fHistos->h1_x_kp->SetLineColor(99);
+    fHistos->h1_x_kp->SetMarkerColor(99);
+    fHistos->h1_x_kp->SetMarkerStyle(24);
+    fHistos->h1_x_kp->SetMinimum(-0.06);
+    fHistos->h1_x_kp->SetMaximum(0.06);
+    fHistos->h1_x_kp->Draw("pe");
+
+    fHistos->h1_x_km->SetFillColor(55);
+    fHistos->h1_x_km->SetLineColor(55);
+    fHistos->h1_x_km->SetMarkerColor(55);
+    fHistos->h1_x_km->SetMarkerStyle(24);
+    fHistos->h1_x_km->Draw("pesame");
+
+    TLatex title; 
+    title.SetNDC();
+    title.SetTextSize(0.03); 
+    title.DrawLatex(0.4, 0.95, "Asymmetry #color[99]{K^{+}}, #color[55]{K^{-}}"); 
+
+    title.DrawLatex(0.47, 0.05, "x_{Bjorken}"); 
+    
+    title.SetTextAngle(90.0);
+    title.DrawLatex(0.07, 0.47, "A_{LU}^{sin(#phi)}"); 
+
+    can->Print(Form("%sx.png",fOutputPath.c_str())); 
+  }
+
+  void PlotZ(){
+
+    TCanvas *can = new TCanvas("can","",1200,900); 
+    
+    gPad->SetMargin(0.15, 0.15, 0.15, 0.15); 
+    gStyle->SetOptStat(0); 
+    gStyle->SetErrorX(0.00); 
+    gStyle->SetLabelSize(0.00,"y");
+    gStyle->SetTitleSize(0.0,"y");
+    gStyle->SetTitleFont(22,"xyz");
+    gStyle->SetLabelFont(22,"xyz");
+    gStyle->SetTitleOffset(1.2,"y");
+
+    gStyle->SetCanvasColor(0);
+    gStyle->SetCanvasBorderMode(0);
+    gStyle->SetCanvasBorderSize(0);
+    can->cd(); 
+
+    fHistos->h1_z_kp->SetFillColor(99);
+    fHistos->h1_z_kp->SetLineColor(99);
+    fHistos->h1_z_kp->SetMarkerColor(99);
+    fHistos->h1_z_kp->SetMarkerStyle(24);
+    fHistos->h1_z_kp->SetMinimum(-0.06);
+    fHistos->h1_z_kp->SetMaximum(0.06);
+    fHistos->h1_z_kp->Draw("pe");
+
+    fHistos->h1_z_km->SetFillColor(55);
+    fHistos->h1_z_km->SetLineColor(55);
+    fHistos->h1_z_km->SetMarkerColor(55);
+    fHistos->h1_z_km->SetMarkerStyle(24);
+    fHistos->h1_z_km->Draw("pesame");
+
+    TLatex title; 
+    title.SetNDC();
+    title.SetTextSize(0.03); 
+    title.DrawLatex(0.4, 0.95, "Asymmetry #color[99]{K^{+}}, #color[55]{K^{-}}"); 
+
+    title.DrawLatex(0.47, 0.05, "z"); 
+    
+    title.SetTextAngle(90.0);
+    title.DrawLatex(0.07, 0.47, "A_{LU}^{sin(#phi)}"); 
+
+    can->Print(Form("%sz.png",fOutputPath.c_str())); 
+  }
+
+  void PlotPt(){
+
+    TCanvas *can = new TCanvas("can","",1200,900); 
+    
+    gPad->SetMargin(0.15, 0.15, 0.15, 0.15); 
+    gStyle->SetOptStat(0); 
+    gStyle->SetErrorX(0.00); 
+    gStyle->SetLabelSize(0.00,"y");
+    gStyle->SetTitleSize(0.0,"y");
+    gStyle->SetTitleFont(22,"xyz");
+    gStyle->SetLabelFont(22,"xyz");
+    gStyle->SetTitleOffset(1.2,"y");
+
+    gStyle->SetCanvasColor(0);
+    gStyle->SetCanvasBorderMode(0);
+    gStyle->SetCanvasBorderSize(0);
+    can->cd(); 
+
+    fHistos->h1_pt_kp->SetFillColor(99);
+    fHistos->h1_pt_kp->SetLineColor(99);
+    fHistos->h1_pt_kp->SetMarkerColor(99);
+    fHistos->h1_pt_kp->SetMarkerStyle(24);
+    fHistos->h1_pt_kp->SetMinimum(-0.06);
+    fHistos->h1_pt_kp->SetMaximum(0.06);
+    fHistos->h1_pt_kp->Draw("pe");
+
+    fHistos->h1_pt_km->SetFillColor(55);
+    fHistos->h1_pt_km->SetLineColor(55);
+    fHistos->h1_pt_km->SetMarkerColor(55);
+    fHistos->h1_pt_km->SetMarkerStyle(24);
+    fHistos->h1_pt_km->Draw("pesame");
+
+    TLatex title; 
+    title.SetNDC();
+    title.SetTextSize(0.03); 
+    title.DrawLatex(0.4, 0.95, "Asymmetry #color[99]{K^{+}}, #color[55]{K^{-}}"); 
+
+    title.DrawLatex(0.47, 0.05, "P_{T}"); 
+    
+    title.SetTextAngle(90.0);
+    title.DrawLatex(0.07, 0.47, "A_{LU}^{sin(#phi)}"); 
+
+    can->Print(Form("%spt.png",fOutputPath.c_str())); 
+
+  }
+ 
   void PlotGridXZKp(){
 
     TCanvas *can = new TCanvas("can","",1200,900); 
@@ -82,10 +219,13 @@ class Plotter {
 	else if (y == 0){ color = 55; }
 	if (x == 0 && y == 0){ color = 77; }
 	fHistos->h1_asym_kp[0][x][y][0]->SetLineColor(color);
-	fHistos->h1_asym_kp[0][x][y][0]->SetLineWidth(2);
+ 	fHistos->h1_asym_kp[0][x][y][0]->SetLineWidth(2);
 	fHistos->h1_asym_kp[0][x][y][0]->SetMarkerColor(color);
 	fHistos->h1_asym_kp[0][x][y][0]->SetMarkerStyle(24);
 	fHistos->h1_asym_kp[0][x][y][0]->SetMarkerSize(1);
+	fHistos->h1_asym_kp[0][x][y][0]->SetMinimum(-0.1);
+	fHistos->h1_asym_kp[0][x][y][0]->SetMaximum(0.1);
+
 	fHistos->h1_asym_kp[0][x][y][0]->Draw("pe");
 
 	fHistos->fit_kp[0][x][y][0]->SetLineColor(color);
@@ -174,6 +314,8 @@ class Plotter {
 	fHistos->h1_asym_km[0][x][y][0]->SetMarkerColor(color);
 	fHistos->h1_asym_km[0][x][y][0]->SetMarkerStyle(24);
 	fHistos->h1_asym_km[0][x][y][0]->SetMarkerSize(1);
+	fHistos->h1_asym_km[0][x][y][0]->SetMinimum(-0.1);
+	fHistos->h1_asym_km[0][x][y][0]->SetMaximum(0.1);
 	fHistos->h1_asym_km[0][x][y][0]->Draw("pe");
 
 	fHistos->fit_km[0][x][y][0]->SetLineColor(color);

@@ -25,6 +25,9 @@ int main(int nargs, char *args[]){
   p.PlotGridXZKm();   
   p.PlotGridPtZKp();   
   p.PlotGridPtZKm();   
+  p.PlotX(); 
+  p.PlotZ(); 
+  p.PlotPt(); 
 
   return 0;
 }

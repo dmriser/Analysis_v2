@@ -46,8 +46,8 @@ class AsymmetryHistograms {
   const static int nz_kp  = 4; 
   const static int npt_kp = 4; 
   const static int nx_km  = 3; 
-  const static int nz_km  = 2; 
-  const static int npt_km = 4; 
+  const static int nz_km  = 3; 
+  const static int npt_km = 3; 
   const static int nphi_kp = 18; 
   const static int nphi_km = 18; 
   const static int nmeson = 2; 
@@ -63,9 +63,13 @@ class AsymmetryHistograms {
   TF1  *fit_kp[nsect+1][nx_kp+1][nz_kp+1][npt_kp+1]; 
   TF1  *fit_km[nsect+1][nx_km+1][nz_km+1][npt_km+1]; 
 
-  //  TH1D *h1_x[nmeson][nsect+1][nhel][nz+1][npt+1][nphi+1]; 
-  //  TH1D *h1_z[nmeson][nsect+1][nhel][npt+1][nphi+1][nx+1]; 
-  //  TH1D *h1_pt[nmeson][nsect+1][nhel][nphi+1][nx+1][nz+1]; 
+  TH1D *h1_x_kp; 
+  TH1D *h1_z_kp;
+  TH1D *h1_pt_kp; 
+
+  TH1D *h1_x_km; 
+  TH1D *h1_z_km;
+  TH1D *h1_pt_km; 
 
   // m is meson (0 = km, 1 = kp)
   // h is helicity (0 = -1, 1 = 1)
@@ -206,6 +210,47 @@ class AsymmetryHistograms {
       }
     }
 
+    // set the histogram points in the x,z,pt histograms 
+    h1_x_kp  = new TH1D(Form("h1_x_kp_%s",fName.c_str()),"",xbins[1].GetNumber(), xbins[1].GetLimits().data()); 
+    h1_z_kp  = new TH1D(Form("h1_z_kp_%s",fName.c_str()),"",zbins[1].GetNumber(), zbins[1].GetLimits().data()); 
+    h1_pt_kp = new TH1D(Form("h1_pt_kp_%s",fName.c_str()),"",ptbins[1].GetNumber(), ptbins[1].GetLimits().data()); 
+
+    h1_x_km  = new TH1D(Form("h1_x_km_%s",fName.c_str()),"",xbins[0].GetNumber(), xbins[0].GetLimits().data()); 
+    h1_z_km  = new TH1D(Form("h1_z_km_%s",fName.c_str()),"",zbins[0].GetNumber(), zbins[0].GetLimits().data()); 
+    h1_pt_km = new TH1D(Form("h1_pt_km_%s",fName.c_str()),"",ptbins[0].GetNumber(), ptbins[0].GetLimits().data()); 
+
+
+    for(int b=1; b<=nx_kp; b++){
+      h1_x_kp->SetBinContent(b, fit_kp[0][b][0][0]->GetParameter(0));
+      h1_x_kp->SetBinError(b, fit_kp[0][b][0][0]->GetParError(0));
+    }
+
+    for(int b=1; b<=nz_kp; b++){
+      h1_z_kp->SetBinContent(b, fit_kp[0][0][b][0]->GetParameter(0));
+      h1_z_kp->SetBinError(b, fit_kp[0][0][b][0]->GetParError(0));
+    }
+
+    for(int b=1; b<=npt_kp; b++){
+      h1_pt_kp->SetBinContent(b, fit_kp[0][0][0][b]->GetParameter(0));
+      h1_pt_kp->SetBinError(b, fit_kp[0][0][0][b]->GetParError(0));
+    }
+
+    for(int b=1; b<=nx_km; b++){
+      h1_x_km->SetBinContent(b, fit_km[0][b][0][0]->GetParameter(0));
+      h1_x_km->SetBinError(b, fit_km[0][b][0][0]->GetParError(0));
+    }
+
+    for(int b=1; b<=nz_km; b++){
+      h1_z_km->SetBinContent(b, fit_km[0][0][b][0]->GetParameter(0));
+      h1_z_km->SetBinError(b, fit_km[0][0][b][0]->GetParError(0));
+    }
+
+    for(int b=1; b<=npt_km; b++){
+      h1_pt_km->SetBinContent(b, fit_km[0][0][0][b]->GetParameter(0));
+      h1_pt_km->SetBinError(b, fit_km[0][0][0][b]->GetParError(0));
+    }
+
+
   }
 
   
@@ -280,6 +325,14 @@ class AsymmetryHistograms {
     } 
     
     out->cd("/");
+    
+    h1_x_kp->Write(); 
+    h1_z_kp->Write(); 
+    h1_pt_kp->Write(); 
+    h1_x_km->Write(); 
+    h1_z_km->Write(); 
+    h1_pt_km->Write(); 
+
     out->Close(); 
   }
 
@@ -321,6 +374,13 @@ class AsymmetryHistograms {
       }
 
     if (stage == 2) {
+      h1_x_kp  = (TH1D*) inputFile->Get(Form("h1_x_kp_%s", fName.c_str()));
+      h1_z_kp  = (TH1D*) inputFile->Get(Form("h1_z_kp_%s", fName.c_str()));
+      h1_pt_kp = (TH1D*) inputFile->Get(Form("h1_pt_kp_%s",fName.c_str()));
+      h1_x_km  = (TH1D*) inputFile->Get(Form("h1_x_km_%s", fName.c_str()));
+      h1_z_km  = (TH1D*) inputFile->Get(Form("h1_z_km_%s", fName.c_str()));
+      h1_pt_km = (TH1D*) inputFile->Get(Form("h1_pt_km_%s",fName.c_str()));
+
       for (int s=0; s<nsect+1; s++){
 	for(int i=0; i<nx_km+1; i++){
 	  for(int j=0; j<nz_km+1; j++){
@@ -358,14 +418,58 @@ class AsymmetryHistograms {
     // vxbins.push_back(0.48); 
     // xbins = DLineBins(nx, vxbins);
  
-    xbins[0]   = DLineBins(nx_km,      0.0,   0.7); 
-    zbins[0]   = DLineBins(nz_km,      0.3,   0.8); 
-    ptbins[0]  = DLineBins(npt_km,     0.0,   1.0); 
+    // this binning scheme was produced by running 
+    // the code ./src/find_binning out/file.root 
+    // on a file from this code that has standard 
+    // histograms inside of it. 
+    std::vector<double> vxbins_kp; 
+    vxbins_kp.push_back(0.1);
+    vxbins_kp.push_back(0.195);
+    vxbins_kp.push_back(0.255);
+    vxbins_kp.push_back(0.325);
+    vxbins_kp.push_back(0.600);
+ 
+    std::vector<double> vzbins_kp; 
+    vzbins_kp.push_back(0.3);
+    vzbins_kp.push_back(0.355);
+    vzbins_kp.push_back(0.415);
+    vzbins_kp.push_back(0.495);
+    vzbins_kp.push_back(0.700);
+ 
+    std::vector<double> vptbins_kp; 
+    vptbins_kp.push_back(0.0);
+    vptbins_kp.push_back(0.264);
+    vptbins_kp.push_back(0.387);
+    vptbins_kp.push_back(0.519);
+    vptbins_kp.push_back(1.0);
+ 
+    std::vector<double> vxbins_km; 
+    vxbins_km.push_back(0.1);
+    vxbins_km.push_back(0.215);
+    vxbins_km.push_back(0.295);
+    vxbins_km.push_back(0.600);
+ 
+    std::vector<double> vzbins_km; 
+    vzbins_km.push_back(0.3);
+    vzbins_km.push_back(0.365);
+    vzbins_km.push_back(0.465);
+    vzbins_km.push_back(0.700);
+ 
+    std::vector<double> vptbins_km; 
+    vptbins_km.push_back(0.0);
+    vptbins_km.push_back(0.412);
+    vptbins_km.push_back(0.556);
+    vptbins_km.push_back(1.0);
+
+
+    xbins[0]   = DLineBins(nx_km,   vxbins_km); 
+    zbins[0]   = DLineBins(nz_km,   vzbins_km);
+    ptbins[0]  = DLineBins(npt_km,  vptbins_km);
     phibins[0] = DLineBins(nphi_km, -180.0, 180.0); 
  
-    xbins[1]   = DLineBins(nx_kp,      0.0,   0.7); 
-    zbins[1]   = DLineBins(nz_kp,      0.3,   0.8); 
-    ptbins[1]  = DLineBins(npt_kp,     0.0,   1.0); 
+    xbins[1]   = DLineBins(nx_kp,   vxbins_kp); 
+    zbins[1]   = DLineBins(nz_kp,   vzbins_kp); 
+    ptbins[1]  = DLineBins(npt_kp,  vptbins_kp); 
     phibins[1] = DLineBins(nphi_kp, -180.0, 180.0); 
   }
 

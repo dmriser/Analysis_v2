@@ -17,6 +17,7 @@
 #include "h22Option.h"
 #include "GenericAnalysis.h"
 #include "MomCorr.h"
+#include "MesonHistograms.h"
 #include "Parameters.h"
 #include "ParticleFilter.h"
 #include "PhysicsEvent.h"
@@ -47,7 +48,8 @@ public:
   MomCorr_e1f         *momCorr; 
   
   AsymmetryHistograms *kAsym; 
-
+  MesonHistograms     *kpHistos, *kmHistos; 
+  StandardHistograms  *kpStand,  *kmStand; 
 
   void Initialize();
   void ProcessEvent();
@@ -57,7 +59,11 @@ public:
 };
 
 void Analysis::InitHistos() {
-  kAsym = new AsymmetryHistograms("test"); 
+  kAsym    = new AsymmetryHistograms("test"); 
+  kpHistos = new MesonHistograms("kp", 321);
+  kmHistos = new MesonHistograms("km",-321);
+  kpStand = new StandardHistograms("kp", 0); 
+  kmStand = new StandardHistograms("km", 0); 
 }
 
 void Analysis::Initialize(){
@@ -104,10 +110,12 @@ void Analysis::ProcessEvent(){
       PhysicsEvent candidateEvent = builder->getPhysicsEvent(electron, kaon);
       
       if (candidateEvent.w > 2.00 && candidateEvent.qq > 1.00 && candidateEvent.mm2 > 1.1
-	  && candidateEvent.z > 0.3 && kaon.P() < 2.05) {
+	  && candidateEvent.z > 0.3 && event.p[kpCandidates[0]] < 2.05) {
 	
-	kAsym->Fill(candidateEvent, 0, helicity);
-	
+	kAsym->Fill(candidateEvent, 1, helicity);
+	kpHistos->Fill(event, candidateEvent, kpCandidates[0]); 
+	kpStand ->Fill(event, electronIndex, kpCandidates[0], candidateEvent); 
+
       }
     }
 
@@ -122,9 +130,12 @@ void Analysis::ProcessEvent(){
       PhysicsEvent candidateEvent = builder->getPhysicsEvent(electron, kaon);
       
       if (candidateEvent.w > 2.00 && candidateEvent.qq > 1.00 && candidateEvent.mm2 > 1.1
-	  && candidateEvent.z > 0.3 && kaon.P() < 2.75) {
+	  && candidateEvent.z > 0.3 && event.p[kmCandidates[0]] < 4.75) {
 	
-	kAsym->Fill(candidateEvent, 1, helicity);
+	kAsym->Fill(candidateEvent, 0, helicity);
+	kmHistos->Fill(event, candidateEvent, kmCandidates[0]); 
+	kmStand ->Fill(event, electronIndex, kmCandidates[0], candidateEvent); 
+
       }
     }
 
@@ -137,6 +148,12 @@ bool Analysis::CurrentParticleIsNotElectronCandidate(std::vector<int> &electronC
 
 void Analysis::Save(std::string outfile){
   kAsym->Save(outfile, "recreate", 1); 
+
+  TFile *out = new TFile(outfile.c_str(), "update"); 
+  kpHistos->Save(out); 
+  kmHistos->Save(out); 
+  kpStand-> Save(out); 
+  kmStand-> Save(out); 
 }
  
 int main(int argc, char * argv[]){

@@ -16,10 +16,13 @@
 
 #define BEAM_POL 0.751
 
-enum MesonTypes {
-  KP,
-  KM
-};
+
+/**
+   The histograms are indexed for helicity and kaon charge 
+   by assuming that, 
+   positive = 1, negative = 0
+
+*/
 
 class AsymmetryHistograms {
   
@@ -39,105 +42,173 @@ class AsymmetryHistograms {
 
   // binning setup 
   const static int nsect  = 6; 
-  const static int nx     = 4; 
-  const static int nz     = 4; 
-  const static int npt    = 1; 
-  const static int nphi   = 18; 
+  const static int nx_kp  = 4; 
+  const static int nz_kp  = 4; 
+  const static int npt_kp = 4; 
+  const static int nx_km  = 3; 
+  const static int nz_km  = 2; 
+  const static int npt_km = 4; 
+  const static int nphi_kp = 18; 
+  const static int nphi_km = 18; 
   const static int nmeson = 2; 
   const static int nhel   = 2; 
 
-  DLineBins xbins, zbins, ptbins, phibins; 
+  DLineBins xbins[2], zbins[2], ptbins[2], phibins[2]; 
 
   // the order is always x, z, pt, phi
-  TH1D *h1_phi[nmeson][nsect+1][nhel][nx+1][nz+1][npt+1]; 
-  TH1D *h1_asym[nmeson][nsect+1][nx+1][nz+1][npt+1]; 
-  TF1  *fit[nmeson][nsect+1][nx+1][nz+1][npt+1]; 
+  TH1D *h1_phi_kp[nsect+1][nhel][nx_kp+1][nz_kp+1][npt_kp+1]; 
+  TH1D *h1_phi_km[nsect+1][nhel][nx_km+1][nz_km+1][npt_km+1]; 
+  TH1D *h1_asym_kp[nsect+1][nx_kp+1][nz_kp+1][npt_kp+1]; 
+  TH1D *h1_asym_km[nsect+1][nx_km+1][nz_km+1][npt_km+1]; 
+  TF1  *fit_kp[nsect+1][nx_kp+1][nz_kp+1][npt_kp+1]; 
+  TF1  *fit_km[nsect+1][nx_km+1][nz_km+1][npt_km+1]; 
+
   //  TH1D *h1_x[nmeson][nsect+1][nhel][nz+1][npt+1][nphi+1]; 
   //  TH1D *h1_z[nmeson][nsect+1][nhel][npt+1][nphi+1][nx+1]; 
   //  TH1D *h1_pt[nmeson][nsect+1][nhel][nphi+1][nx+1][nz+1]; 
 
-  // m is meson (0 = kp, 1 = km)
+  // m is meson (0 = km, 1 = kp)
   // h is helicity (0 = -1, 1 = 1)
   void Fill(PhysicsEvent &ev, int m, int h){
     int s   = phiToSector(ev.detectedElectron.Phi()*to_degrees); 
-    int x   = 1+xbins.FindBin(ev.x);
-    int z   = 1+zbins.FindBin(ev.z);
-    int pt  = 1+ptbins.FindBin(ev.pT);
-    int phi = 1+phibins.FindBin(ev.phiHadron); 
+    int x   = 1+xbins[m].FindBin(ev.x);
+    int z   = 1+zbins[m].FindBin(ev.z);
+    int pt  = 1+ptbins[m].FindBin(ev.pT);
+    int phi = 1+phibins[m].FindBin(ev.phiHadron); 
 
-    if (IndexIsSafe(m, s, h, x, z, pt, phi)){
-      h1_phi[m][0][h][0][0][0]->Fill(ev.phiHadron); 
+    if (IndexIsSafe(s, h, x, z, pt, phi)){
 
-      h1_phi[m][0][h][x][0][0]->Fill(ev.phiHadron); 
-      h1_phi[m][0][h][0][z][0]->Fill(ev.phiHadron); 
-      h1_phi[m][0][h][0][0][pt]->Fill(ev.phiHadron); 
+      if (m == 0){
+	h1_phi_km[0][h][0][0][0]->Fill(ev.phiHadron); 
+	
+	h1_phi_km[0][h][x][0][0]->Fill(ev.phiHadron); 
+	h1_phi_km[0][h][0][z][0]->Fill(ev.phiHadron); 
+	h1_phi_km[0][h][0][0][pt]->Fill(ev.phiHadron); 
+	
+	h1_phi_km[0][h][0][z][pt]->Fill(ev.phiHadron); 
+	h1_phi_km[0][h][x][0][pt]->Fill(ev.phiHadron); 
+	h1_phi_km[0][h][x][z][0]->Fill(ev.phiHadron); 
+	
+	h1_phi_km[s][h][x][0][0]->Fill(ev.phiHadron); 
+	h1_phi_km[s][h][0][z][0]->Fill(ev.phiHadron); 
+	h1_phi_km[s][h][0][0][pt]->Fill(ev.phiHadron); 
+	
+	h1_phi_km[s][h][0][z][pt]->Fill(ev.phiHadron); 
+	h1_phi_km[s][h][x][0][pt]->Fill(ev.phiHadron); 
+ 	h1_phi_km[s][h][x][z][0]->Fill(ev.phiHadron); 
+	
+	h1_phi_km[s][h][x][z][pt]->Fill(ev.phiHadron); 
+      }
 
-      h1_phi[m][0][h][0][z][pt]->Fill(ev.phiHadron); 
-      h1_phi[m][0][h][x][0][pt]->Fill(ev.phiHadron); 
-      h1_phi[m][0][h][x][z][0]->Fill(ev.phiHadron); 
-
-      h1_phi[m][s][h][x][0][0]->Fill(ev.phiHadron); 
-      h1_phi[m][s][h][0][z][0]->Fill(ev.phiHadron); 
-      h1_phi[m][s][h][0][0][pt]->Fill(ev.phiHadron); 
-
-      h1_phi[m][s][h][0][z][pt]->Fill(ev.phiHadron); 
-      h1_phi[m][s][h][x][0][pt]->Fill(ev.phiHadron); 
-      h1_phi[m][s][h][x][z][0]->Fill(ev.phiHadron); 
-
-      h1_phi[m][s][h][x][z][pt]->Fill(ev.phiHadron); 
+      else if (m == 1){
+	h1_phi_kp[0][h][0][0][0]->Fill(ev.phiHadron); 
+	
+	h1_phi_kp[0][h][x][0][0]->Fill(ev.phiHadron); 
+	h1_phi_kp[0][h][0][z][0]->Fill(ev.phiHadron); 
+	h1_phi_kp[0][h][0][0][pt]->Fill(ev.phiHadron); 
+	
+	h1_phi_kp[0][h][0][z][pt]->Fill(ev.phiHadron); 
+	h1_phi_kp[0][h][x][0][pt]->Fill(ev.phiHadron); 
+	h1_phi_kp[0][h][x][z][0]->Fill(ev.phiHadron); 
+	
+	h1_phi_kp[s][h][x][0][0]->Fill(ev.phiHadron); 
+	h1_phi_kp[s][h][0][z][0]->Fill(ev.phiHadron); 
+	h1_phi_kp[s][h][0][0][pt]->Fill(ev.phiHadron); 
+	
+	h1_phi_kp[s][h][0][z][pt]->Fill(ev.phiHadron); 
+	h1_phi_kp[s][h][x][0][pt]->Fill(ev.phiHadron); 
+ 	h1_phi_kp[s][h][x][z][0]->Fill(ev.phiHadron); 
+	
+	h1_phi_kp[s][h][x][z][pt]->Fill(ev.phiHadron); 
+      }
     }
 
   }
 
   void CalculateAsymmetry(){
-
-    for(int m=0; m<nmeson; m++){
-      for (int s=0; s<nsect+1; s++){
-	for(int i=0; i<nx+1; i++){
-	  for(int j=0; j<nz+1; j++){
-	    for(int k=0; k<npt+1; k++){
+    
+    for (int s=0; s<nsect+1; s++){
+      for(int i=0; i<nx_km+1; i++){
+	for(int j=0; j<nz_km+1; j++){
+	  for(int k=0; k<npt_km+1; k++){
+	    
+	    for (int b=1; b<=h1_phi_km[s][0][i][j][k]->GetXaxis()->GetNbins(); b++){
 	      
-	      for (int b=1; b<=h1_phi[m][s][0][i][j][k]->GetXaxis()->GetNbins(); b++){
-
-		double plus  = h1_phi[m][s][1][i][j][k]->GetBinContent(b);
-		double minus = h1_phi[m][s][0][i][j][k]->GetBinContent(b);
-		double sum   = plus+minus;
-		double diff  = plus-minus;
-		double err   = sqrt((1-pow(diff/sum,2))/sum);
-
-		if (sum > 0.0) {
-		  h1_asym[m][s][i][j][k]->SetBinContent(b,diff/sum/BEAM_POL);
-		  h1_asym[m][s][i][j][k]->SetBinError(b, err);
-		}
+	      double plus  = h1_phi_km[s][1][i][j][k]->GetBinContent(b);
+	      double minus = h1_phi_km[s][0][i][j][k]->GetBinContent(b);
+	      double sum   = plus+minus;
+	      double diff  = plus-minus;
+	      double err   = sqrt((1-pow(diff/sum,2))/sum);
+	      
+	      if (sum > 0.0) {
+		h1_asym_km[s][i][j][k]->SetBinContent(b,diff/sum/BEAM_POL);
+		h1_asym_km[s][i][j][k]->SetBinError(b, err);
 	      }
-	      
 	    }
 	  }
 	}
       }
     }
+
+    for (int s=0; s<nsect+1; s++){
+      for(int i=0; i<nx_kp+1; i++){
+	for(int j=0; j<nz_kp+1; j++){
+	  for(int k=0; k<npt_kp+1; k++){
+	    
+	    for (int b=1; b<=h1_phi_kp[s][0][i][j][k]->GetXaxis()->GetNbins(); b++){
+	      
+	      double plus  = h1_phi_kp[s][1][i][j][k]->GetBinContent(b);
+	      double minus = h1_phi_kp[s][0][i][j][k]->GetBinContent(b);
+	      double sum   = plus+minus;
+	      double diff  = plus-minus;
+	      double err   = sqrt((1-pow(diff/sum,2))/sum);
+	      
+	      if (sum > 0.0) {
+		h1_asym_kp[s][i][j][k]->SetBinContent(b,diff/sum/BEAM_POL);
+		h1_asym_kp[s][i][j][k]->SetBinError(b, err);
+	      }
+	    }
+	  }
+	}
+      }
+    }
+    
 
   }
 
   void Fit(){
-    std::string names[2] = {"kp", "km"};
     
-    for(int m=0; m<nmeson; m++){
-      for (int s=0; s<nsect+1; s++){
-	for(int i=0; i<nx+1; i++){
-	  for(int j=0; j<nz+1; j++){
-	    for(int k=0; k<npt+1; k++){
-	      std::string current_name(Form("fit_asym_%s_sect%d_x%d_z%d_pt%d",names[m].c_str(), s, i, j, k));
-
-	      fit[m][s][i][j][k] = new TF1(current_name.c_str(),"[0]*sin((3.14159/180.0)*x)",phibins.GetMin(), phibins.GetMax());
-	      h1_asym[m][s][i][j][k]->Fit(current_name.c_str(), "RQ"); 
-	    }
+    for (int s=0; s<nsect+1; s++){
+      for(int i=0; i<nx_km+1; i++){
+	for(int j=0; j<nz_km+1; j++){
+ 	  for(int k=0; k<npt_km+1; k++){
+	    std::string current_name(Form("fit_asym_km_sect%d_x%d_z%d_pt%d_%s", s, i, j, k, fName.c_str()));
+	    
+	    fit_km[s][i][j][k] = new TF1(current_name.c_str(),"[0]*sin((3.14159/180.0)*x)",phibins[0].GetMin(), phibins[0].GetMax());
+	    //	    fit_km[s][i][j][k] = new TF1(current_name.c_str(),"[0]*sin((3.14159/180.0)*x)/(1 + [1]*cos((3.14159/180.0)*x)+ [2]*cos(2*(3.14159/180.0)*x))",phibins[0].GetMin(), phibins[0].GetMax());
+	    h1_asym_km[s][i][j][k]->Fit(current_name.c_str(), "RQ"); 
 	  }
 	}
       }
     }
+    
+    for (int s=0; s<nsect+1; s++){
+      for(int i=0; i<nx_kp+1; i++){
+	for(int j=0; j<nz_kp+1; j++){
+ 	  for(int k=0; k<npt_kp+1; k++){
+	    std::string current_name(Form("fit_asym_kp_sect%d_x%d_z%d_pt%d_%s", s, i, j, k, fName.c_str()));
+	    
+	    fit_kp[s][i][j][k] = new TF1(current_name.c_str(),"[0]*sin((3.14159/180.0)*x)",phibins[1].GetMin(), phibins[1].GetMax());
+	    //	    fit_kp[s][i][j][k] = new TF1(current_name.c_str(),"[0]*sin((3.14159/180.0)*x)/(1 + [1]*cos((3.14159/180.0)*x)+ [2]*cos(2*(3.14159/180.0)*x))",phibins[1].GetMin(), phibins[1].GetMax());
+	    h1_asym_kp[s][i][j][k]->Fit(current_name.c_str(), "RQ"); 
+	  }
+	}
+      }
+    }
+
   }
 
+  
   void Save(std::string outfile, std::string saveOpts, int stage){
     TFile *out = new TFile(outfile.c_str(), saveOpts.c_str()); 
 
@@ -145,13 +216,19 @@ class AsymmetryHistograms {
       out->mkdir("phi");
       out->cd("phi/");
       for(int s=0; s<nsect+1; s++){
-	for(int i=0; i<nx+1; i++){
-	  for(int j=0; j<nz+1; j++){
-	    for(int k=0; k<npt+1; k++){
-	      h1_phi[0][s][0][i][j][k]->Write(); 
-	      h1_phi[0][s][1][i][j][k]->Write(); 
-	      h1_phi[1][s][0][i][j][k]->Write(); 
-	      h1_phi[1][s][1][i][j][k]->Write(); 
+	for(int i=0; i<nx_km+1; i++){
+	  for(int j=0; j<nz_km+1; j++){
+	    for(int k=0; k<npt_km+1; k++){
+	      h1_phi_km[s][0][i][j][k]->Write(); 
+	      h1_phi_km[s][1][i][j][k]->Write(); 
+	    }
+	  }
+	}
+	for(int i=0; i<nx_kp+1; i++){
+	  for(int j=0; j<nz_kp+1; j++){
+	    for(int k=0; k<npt_kp+1; k++){
+	      h1_phi_kp[s][0][i][j][k]->Write(); 
+	      h1_phi_kp[s][1][i][j][k]->Write(); 
 	    }
 	  }
 	}
@@ -162,11 +239,17 @@ class AsymmetryHistograms {
       out->mkdir("asym");
       out->cd("asym/");
       for(int s=0; s<nsect+1; s++){
-	for(int i=0; i<nx+1; i++){
-	  for(int j=0; j<nz+1; j++){
-	    for(int k=0; k<npt+1; k++){
-	      h1_asym[0][s][i][j][k]->Write(); 
-	      h1_asym[1][s][i][j][k]->Write(); 
+	for(int i=0; i<nx_km+1; i++){
+	  for(int j=0; j<nz_km+1; j++){
+	    for(int k=0; k<npt_km+1; k++){
+	      h1_asym_km[s][i][j][k]->Write(); 
+	    }
+	  }
+	}
+	for(int i=0; i<nx_kp+1; i++){
+	  for(int j=0; j<nz_kp+1; j++){
+	    for(int k=0; k<npt_kp+1; k++){
+	      h1_asym_kp[s][i][j][k]->Write(); 
 	    }
 	  }
 	}
@@ -177,13 +260,18 @@ class AsymmetryHistograms {
       
       out->mkdir("fit"); 
       out->cd("fit");
-      for(int m=0; m<nmeson; m++){
-	for (int s=0; s<nsect+1; s++){
-	  for(int i=0; i<nx+1; i++){
-	    for(int j=0; j<nz+1; j++){
-	      for(int k=0; k<npt+1; k++){
-		fit[m][s][i][j][k]->Write();
-	      }
+      for (int s=0; s<nsect+1; s++){
+	for(int i=0; i<nx_km+1; i++){
+	  for(int j=0; j<nz_km+1; j++){
+	    for(int k=0; k<npt_km+1; k++){
+	      fit_km[s][i][j][k]->Write();
+	    }
+	  }
+	}
+	for(int i=0; i<nx_kp+1; i++){
+	  for(int j=0; j<nz_kp+1; j++){
+	    for(int k=0; k<npt_kp+1; k++){
+	      fit_kp[s][i][j][k]->Write();
 	    }
 	  }
 	}
@@ -196,31 +284,63 @@ class AsymmetryHistograms {
   }
 
   void Load(std::string file, int stage){
-    //    inputFile = new TFile(file.c_str(), "update"); 
     inputFile = TFile::Open(file.c_str()); 
 
-    std::string names[2] = {"kp", "km"};
-    if (stage == 1){
-      for(int m=0; m<nmeson; m++){
-	for (int s=0; s<nsect+1; s++){
-	  for(int i=0; i<nx+1; i++){
-	    for(int j=0; j<nz+1; j++){
-	      for(int k=0; k<npt+1; k++){
-		h1_phi[m][s][0][i][j][k] = (TH1D*) inputFile->Get(Form("phi/h1_phi_%s_helMinus_sect%d_x%d_z%d_pt%d", 
-								       names[m].c_str(), s, i, j, k));
+    std::string names[2] = {"km", "kp"};
+    if (stage == 1 || stage == 2)
+      for (int s=0; s<nsect+1; s++){
+	for(int i=0; i<nx_km+1; i++){
+	  for(int j=0; j<nz_km+1; j++){
+	    for(int k=0; k<npt_km+1; k++){
+	      h1_phi_km[s][0][i][j][k] = (TH1D*) inputFile->Get(Form("phi/h1_phi_km_helMinus_sect%d_x%d_z%d_pt%d_%s", 
+								     s, i, j, k, fName.c_str()));
+	      
+	      h1_phi_km[s][1][i][j][k] = (TH1D*) inputFile->Get(Form("phi/h1_phi_km_helPlus_sect%d_x%d_z%d_pt%d_%s", 
+								     s, i, j, k, fName.c_str()));
+	      
+	      h1_asym_km[s][i][j][k] = (TH1D*) inputFile->Get(Form("asym/h1_asym_km_sect%d_x%d_z%d_pt%d_%s",
+								   s, i, j, k, fName.c_str()));
+	    }
+	  }
+	}
+	
+	for(int i=0; i<nx_kp+1; i++){
+	  for(int j=0; j<nz_kp+1; j++){
+	    for(int k=0; k<npt_kp+1; k++){
+		h1_phi_kp[s][0][i][j][k] = (TH1D*) inputFile->Get(Form("phi/h1_phi_kp_helMinus_sect%d_x%d_z%d_pt%d_%s", 
+								       s, i, j, k, fName.c_str()));
 		
-		h1_phi[m][s][1][i][j][k] = (TH1D*) inputFile->Get(Form("phi/h1_phi_%s_helPlus_sect%d_x%d_z%d_pt%d", 
-								       names[m].c_str(), s, i, j, k));
+		h1_phi_kp[s][1][i][j][k] = (TH1D*) inputFile->Get(Form("phi/h1_phi_kp_helPlus_sect%d_x%d_z%d_pt%d_%s", 
+								       s, i, j, k, fName.c_str()));
 		
-		h1_asym[m][s][i][j][k] = (TH1D*) inputFile->Get(Form("asym/h1_asym_%s_sect%d_x%d_z%d_pt%d",
-								     names[m].c_str(),s, i, j, k));
-	      }
+		h1_asym_kp[s][i][j][k] = (TH1D*) inputFile->Get(Form("asym/h1_asym_kp_sect%d_x%d_z%d_pt%d_%s",
+								     s, i, j, k, fName.c_str()));
 	    }
 	  }
 	}
       }
+
+    if (stage == 2) {
+      for (int s=0; s<nsect+1; s++){
+	for(int i=0; i<nx_km+1; i++){
+	  for(int j=0; j<nz_km+1; j++){
+	    for(int k=0; k<npt_km+1; k++){
+	      fit_km[s][i][j][k] = (TF1*) inputFile->Get(Form("fit/fit_asym_km_sect%d_x%d_z%d_pt%d_%s",
+							       s, i, j, k, fName.c_str()));
+	    }
+	  }
+	}
+
+	for(int i=0; i<nx_kp+1; i++){
+	  for(int j=0; j<nz_kp+1; j++){
+	    for(int k=0; k<npt_kp+1; k++){
+	      fit_kp[s][i][j][k] = (TF1*) inputFile->Get(Form("fit/fit_asym_kp_sect%d_x%d_z%d_pt%d_%s",
+							       s, i, j, k, fName.c_str()));
+	    }
+	  }
+	}
+      }      
     }
-    
   }
 
  protected:
@@ -238,53 +358,73 @@ class AsymmetryHistograms {
     // vxbins.push_back(0.48); 
     // xbins = DLineBins(nx, vxbins);
  
-    xbins   = DLineBins(nx,      0.0,   0.7); 
-    zbins   = DLineBins(nz,      0.3,   0.8); 
-    ptbins  = DLineBins(npt,     0.0,   1.0); 
-    phibins = DLineBins(nphi, -180.0, 180.0); 
+    xbins[0]   = DLineBins(nx_km,      0.0,   0.7); 
+    zbins[0]   = DLineBins(nz_km,      0.3,   0.8); 
+    ptbins[0]  = DLineBins(npt_km,     0.0,   1.0); 
+    phibins[0] = DLineBins(nphi_km, -180.0, 180.0); 
+ 
+    xbins[1]   = DLineBins(nx_kp,      0.0,   0.7); 
+    zbins[1]   = DLineBins(nz_kp,      0.3,   0.8); 
+    ptbins[1]  = DLineBins(npt_kp,     0.0,   1.0); 
+    phibins[1] = DLineBins(nphi_kp, -180.0, 180.0); 
   }
 
   void Init(){    
-    std::string names[2] = {"kp", "km"};
+    std::string names[2] = {"km", "kp"};
 
-    for(int m=0; m<nmeson; m++){
-      for (int s=0; s<nsect+1; s++){
-	for(int i=0; i<nx+1; i++){
-	  for(int j=0; j<nz+1; j++){
-	    for(int k=0; k<npt+1; k++){
-	      h1_phi[m][s][0][i][j][k] = new TH1D(Form("h1_phi_%s_helMinus_sect%d_x%d_z%d_pt%d", 
-						       names[m].c_str(), s, i, j, k),"", phibins.GetNumber(), 
-						  phibins.GetMin(), phibins.GetMax());
-	      
-	      h1_phi[m][s][1][i][j][k] = new TH1D(Form("h1_phi_%s_helPlus_sect%d_x%d_z%d_pt%d", 
-						       names[m].c_str(), s, i, j, k),"", phibins.GetNumber(), 
-						  phibins.GetMin(), phibins.GetMax());
-	      
-	      h1_asym[m][s][i][j][k] = new TH1D(Form("h1_asym_%s_sect%d_x%d_z%d_pt%d", 
-						     names[m].c_str(), s, i, j, k),"", phibins.GetNumber(), 
-						phibins.GetMin(), phibins.GetMax());
-	      
+    for (int s=0; s<nsect+1; s++){
+      for(int i=0; i<nx_km+1; i++){
+	for(int j=0; j<nz_km+1; j++){
+	  for(int k=0; k<npt_km+1; k++){
+	    h1_phi_km[s][0][i][j][k] = new TH1D(Form("h1_phi_km_helMinus_sect%d_x%d_z%d_pt%d_%s", 
+							s, i, j, k, fName.c_str()),"", phibins[0].GetNumber(), 
+						   phibins[0].GetMin(), phibins[0].GetMax());
+	    
+	    h1_phi_km[s][1][i][j][k] = new TH1D(Form("h1_phi_km_helPlus_sect%d_x%d_z%d_pt%d_%s", 
+							s, i, j, k, fName.c_str()),"", phibins[0].GetNumber(), 
+						   phibins[0].GetMin(), phibins[0].GetMax());
+	    
+	    h1_asym_km[s][i][j][k] = new TH1D(Form("h1_asym_km_sect%d_x%d_z%d_pt%d_%s", 
+						      s, i, j, k, fName.c_str()),"", phibins[0].GetNumber(), 
+						 phibins[0].GetMin(), phibins[0].GetMax());
+	    
 	    }
 	  }
 	}
-      }
-    }
-    
+
+      for(int i=0; i<nx_kp+1; i++){
+	for(int j=0; j<nz_kp+1; j++){
+	  for(int k=0; k<npt_kp+1; k++){
+	    h1_phi_kp[s][0][i][j][k] = new TH1D(Form("h1_phi_kp_helMinus_sect%d_x%d_z%d_pt%d_%s", 
+						     s, i, j, k, fName.c_str()),"", phibins[1].GetNumber(), 
+						phibins[1].GetMin(), phibins[1].GetMax());
+	    
+	    h1_phi_kp[s][1][i][j][k] = new TH1D(Form("h1_phi_kp_helPlus_sect%d_x%d_z%d_pt%d_%s", 
+							s, i, j, k, fName.c_str()),"", phibins[1].GetNumber(), 
+						   phibins[1].GetMin(), phibins[1].GetMax());
+	    
+	    h1_asym_kp[s][i][j][k] = new TH1D(Form("h1_asym_kp_sect%d_x%d_z%d_pt%d_%s", 
+						      s, i, j, k, fName.c_str()),"", phibins[1].GetNumber(), 
+						 phibins[1].GetMin(), phibins[1].GetMax());
+	    
+	    }
+	  }
+	}
+
+    } 
   }
 
-  bool IndexIsSafe(int m, int s, int h, int x, int z, int pt, int phi){
-    if (m>-1 && m<2)
-      if (s>0 && s<7)
-	if (h>-1 && h<2)
-	  if (x > 0)
-	    if (z > 0)
-	      if (pt > 0)
-		if (phi > 0)
-		  return true;
-
+  bool IndexIsSafe(int s, int h, int x, int z, int pt, int phi){
+    if (s>0 && s<7)
+      if (h>-1 && h<2)
+	if (x > 0)
+	  if (z > 0)
+	    if (pt > 0)
+	      if (phi > 0)
+		return true;
+    
     return false; 
   }
-
 
 };
 

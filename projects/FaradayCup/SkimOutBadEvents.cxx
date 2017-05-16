@@ -68,7 +68,7 @@ void MyAnalysis::Initialize(){
   filter->set_info(GetRunNumber(), GSIM);
   builder = new PhysicsEventBuilder(); 
 
-  outputFile  = new TFile(Form("/volatile/clas12/dmriser/analysis/e1f_analysis/skim/kaon/%d.root",GetRunNumber()),"RECREATE");
+  outputFile  = new TFile(Form("/volatile/clas12/dmriser/data/kaon/root/%d.root",GetRunNumber()),"RECREATE");
   clonedChain = (TChain*) fchain->CloneTree(0);
   clonedTree  = clonedChain->GetTree();
 

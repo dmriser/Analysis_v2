@@ -2,7 +2,7 @@
 
   gROOT->LoadMacro("loadHistos.C"); 
 
-  TFile *f = TFile::Open("../out/asym_test.root");
+  TFile *f = TFile::Open("../out/asym_refactor_test.root");
   int eventThreshold = 5000; 
 
   std::vector<TH1D*> kp_phi = loadHistos(f, "phi/h1_phi_kp");

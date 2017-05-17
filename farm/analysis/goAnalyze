@@ -11,11 +11,11 @@ cp list.*.dat list.dat
 chmod +x $binName
 
 # helicity check 
-./$binName -N=$NFILES -PARS=$ANALTOP/lists/data.pars -OUT=del.root -LIST=list.dat 
-cp Asymmetry.root $OUTPUT
+#./$binName -N=$NFILES -PARS=$ANALTOP/lists/data.pars -OUT=del.root -LIST=list.dat 
+#cp Asymmetry.root $OUTPUT
 
-# meson pid script
-#./$binName -N=$NFILES -LIST=list.dat -PARS=$ANALTOP/lists/data.pars -OUT=$OUTPUT
+# Asymmetry Script 
+./$binName -N=$NFILES -LIST=list.dat -PARS=$ANALTOP/lists/data.pars -OUT=$OUTPUT
 
 # Elastic Script 
 #./$binName -N=$NFILES -TYPE=data -WMIN=0.1 -WMAX=1.1 -LIST=list.dat -PARS=/u/home/dmriser/mydoc/analysis/root_scripts/Analysis_v2/lists/data.pars -OUT=$OUTPUT

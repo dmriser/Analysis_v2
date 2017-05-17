@@ -16,6 +16,7 @@ namespace constants {
 
   struct Names{
     const static std::string mesons[NMESON]; 
+    const static std::string latex[NMESON]; 
   };
 
   struct Pid {
@@ -24,6 +25,7 @@ namespace constants {
 }
 
 const std::string constants::Names::mesons[NMESON] = {"pm","pp","km","kp"};
+const std::string constants::Names::latex[NMESON]  = {"#pi^{-}","#pi^{+}","K^{-}","K^{+}"};
 const int constants::Pid::pid[NMESON] = {-211, 211, -321, 321};
 
 #endif

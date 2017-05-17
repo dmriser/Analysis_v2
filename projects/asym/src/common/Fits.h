@@ -24,7 +24,11 @@ class Fits {
  public:
  Fits(Histos *h, std::string name, int index) : fHistos(h), fName(name), fMesonIndex(index) {
     SetupBinning();
+    inputFile = new TFile(); 
+  }
 
+ Fits(std::string name, int index) : fName(name), fMesonIndex(index) {
+    SetupBinning();
     inputFile = new TFile(); 
   }
   
@@ -50,6 +54,7 @@ class Fits {
 	  for(int j=0; j<bins->GetZBins()->GetNumber()+1; j++){
 	    for(int k=0; k<bins->GetPtBins()->GetNumber()+1; k++){
 	      fit_asym[s][i][j][k]->Write(); 
+	      std::cout << "[Fits::Load] Loaded " << fit_asym[s][i][j][k]->GetName() << std::endl; 
 	    }
 	  }
 	}
@@ -72,7 +77,9 @@ class Fits {
 	for(int i=0; i<bins->GetXBins()->GetNumber()+1; i++){
 	  for(int j=0; j<bins->GetZBins()->GetNumber()+1; j++){
 	    for(int k=0; k<bins->GetPtBins()->GetNumber()+1; k++){
-	      fit_asym[s][i][j][k]->Write();
+	      fit_asym[s][i][j][k] = (TF1*) inputFile->Get(Form("fit/%s/fit_asym_%s_sect%d_x%d_z%d_pt%d_%s", constants::Names::mesons[fMesonIndex].c_str(), 
+								constants::Names::mesons[fMesonIndex].c_str(), s, i, j, k, fName.c_str()));
+	      std::cout << "[Fit::Load] Loaded " << fit_asym[s][i][j][k]->GetName() << std::endl;
 	    }
 	  }
 	}
@@ -86,7 +93,7 @@ class Fits {
 	for(int j=0; j<bins->GetZBins()->GetNumber()+1; j++){
 	  for(int k=0; k<bins->GetPtBins()->GetNumber()+1; k++){
 	    std::string current_name(Form("fit_asym_%s_sect%d_x%d_z%d_pt%d_%s", constants::Names::mesons[fMesonIndex].c_str(), s, i, j, k, fName.c_str()));
-
+ 
 	    fit_asym[s][i][j][k] = new TF1(current_name.c_str(),"[0]*sin((3.14159/180.0)*x)",bins->GetPhiBins()->GetMin(), bins->GetPhiBins()->GetMax());
 	    fHistos->h1_asym[s][i][j][k]->Fit(current_name.c_str(), "RQ");
 	  }

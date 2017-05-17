@@ -20,18 +20,22 @@ int main(int nargs, char *args[]){
   Histos kp_hist("test", Meson::kKaonPositive); 
   kp_hist.Load(inputFile, 1);
   kp_hist.CalculateAsymmetry(); 
+  kp_hist.Save(inputFile, "update", 2); 
 
   Histos km_hist("test", Meson::kKaonNegative); 
   km_hist.Load(inputFile, 1);
   km_hist.CalculateAsymmetry(); 
+  km_hist.Save(inputFile, "update", 2); 
 
   Histos pp_hist("test", Meson::kPionPositive); 
   pp_hist.Load(inputFile, 1);
   pp_hist.CalculateAsymmetry(); 
+  pp_hist.Save(inputFile, "update", 2); 
 
   Histos pm_hist("test", Meson::kPionNegative); 
   pm_hist.Load(inputFile, 1);
   pm_hist.CalculateAsymmetry(); 
+  pm_hist.Save(inputFile, "update", 2); 
 
   Fits kp_fit(&kp_hist, "test", Meson::kKaonPositive); 
   kp_fit.Fit(); 
@@ -48,6 +52,7 @@ int main(int nargs, char *args[]){
   Fits pm_fit(&pm_hist, "test", Meson::kPionNegative); 
   pm_fit.Fit(); 
   pm_fit.Save(inputFile, "update", 1); 
-   
+
+
   return 0;
 }

@@ -67,9 +67,30 @@ class Bins {
 class KaonPositiveBins : public Bins {
  public:
   KaonPositiveBins(){
-    xbins   = new DLineBins(5,     0.1,   0.6); 
-    zbins   = new DLineBins(5,     0.3,   0.7); 
-    ptbins  = new DLineBins(5,     0.0,   1.0); 
+    std::vector<double> vx;
+    vx.push_back(0.100);
+    vx.push_back(0.195);
+    vx.push_back(0.255);
+    vx.push_back(0.325);
+    vx.push_back(0.600);
+
+    std::vector<double> vz;
+    vz.push_back(0.300);
+    vz.push_back(0.355);
+    vz.push_back(0.415);
+    vz.push_back(0.495);
+    vz.push_back(0.700);
+
+    std::vector<double> vpt;
+    vpt.push_back(0.000);
+    vpt.push_back(0.264);
+    vpt.push_back(0.387);
+    vpt.push_back(0.519);
+    vpt.push_back(1.000);
+
+    xbins   = new DLineBins(4, vx);
+    zbins   = new DLineBins(4, vz);
+    ptbins  = new DLineBins(4, vpt);
     phibins = new DLineBins(18, -180.0, 180.0); 
 
     std::cout << "KaonPositiveBins have been created." << std::endl; 
@@ -79,9 +100,27 @@ class KaonPositiveBins : public Bins {
 class KaonNegativeBins : public Bins {
  public:
   KaonNegativeBins(){
-    xbins   = new DLineBins(5,     0.1,   0.6); 
-    zbins   = new DLineBins(5,     0.3,   0.7); 
-    ptbins  = new DLineBins(5,     0.0,   1.0); 
+    std::vector<double> vx;
+    vx.push_back(0.100);
+    vx.push_back(0.215);
+    vx.push_back(0.295);
+    vx.push_back(0.600);
+
+    std::vector<double> vz;
+    vz.push_back(0.300);
+    vz.push_back(0.365);
+    vz.push_back(0.465);
+    vz.push_back(0.700);
+
+    std::vector<double> vpt;
+    vpt.push_back(0.000);
+    vpt.push_back(0.412);
+    vpt.push_back(0.556);
+    vpt.push_back(1.000);
+
+    xbins   = new DLineBins(3, vx);
+    zbins   = new DLineBins(3, vz);
+    ptbins  = new DLineBins(3, vpt);
     phibins = new DLineBins(18, -180.0, 180.0); 
 
     std::cout << "KaonNegativeBins have been created." << std::endl; 

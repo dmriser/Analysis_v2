@@ -14,8 +14,8 @@
 #include "h22Event.h"
 #include "PhysicsEvent.h"
 
-#define BEAM_POL 0.751
-
+#include "Constants.h"
+#include "Types.h"
 
 /**
    The histograms are indexed for helicity and kaon charge 
@@ -145,7 +145,7 @@ class AsymmetryHistograms {
 	      double err   = sqrt((1-pow(diff/sum,2))/sum);
 	      
 	      if (sum > 0.0) {
-		h1_asym_km[s][i][j][k]->SetBinContent(b,diff/sum/BEAM_POL);
+		h1_asym_km[s][i][j][k]->SetBinContent(b,diff/sum/constants::BEAM_POL);
 		h1_asym_km[s][i][j][k]->SetBinError(b, err);
 	      }
 	    }
@@ -168,7 +168,7 @@ class AsymmetryHistograms {
 	      double err   = sqrt((1-pow(diff/sum,2))/sum);
 	      
 	      if (sum > 0.0) {
-		h1_asym_kp[s][i][j][k]->SetBinContent(b,diff/sum/BEAM_POL);
+		h1_asym_kp[s][i][j][k]->SetBinContent(b,diff/sum/constants::BEAM_POL);
 		h1_asym_kp[s][i][j][k]->SetBinError(b, err);
 	      }
 	    }

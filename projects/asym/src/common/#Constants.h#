@@ -1,0 +1,26 @@
+#ifndef constants_h
+#define constants_h
+
+#include <iostream>
+
+#include "Types.h"
+
+namespace constants {
+  const static int NSECT        = 6;
+  const static int NMESON       = 4;
+  const static int MAX_BINS_x   = 8; 
+  const static int MAX_BINS_Z   = 8; 
+  const static int MAX_BINS_PT  = 8; 
+  const static float BEAM_POL   = 0.749;
+
+  struct Names{
+    const static std::string mesons[NMESON]; 
+  };
+}
+
+const static std::string constants::Names::mesons[kPositiveKaon] = "kp";
+const static constants::Names::mesons[kNegativeKaon] = "km";
+const static constants::Names::mesons[kPositivePion] = "pp";
+const static constants::Names::mesons[kNegativePion] = "pm";
+
+#endif

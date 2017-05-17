@@ -24,7 +24,9 @@
 #include "PhysicsEventBuilder.h"
 #include "StandardHistograms.h"
 
-#include "common/Histos.h"
+#include "common/Histograms.h"
+#include "common/Constants.h"
+#include "common/Types.h"
 
 #include "TFile.h"
 #include "TLorentzVector.h"
@@ -47,23 +49,28 @@ public:
   PhysicsEventBuilder *builder;   
   MomCorr_e1f         *momCorr; 
   
-  AsymmetryHistograms *kAsym; 
-  MesonHistograms     *kpHistos, *kmHistos; 
-  StandardHistograms  *kpStand,  *kmStand; 
+
+  // setup the histogramming package 
+  Histos              *histos[constants::NMESON]; 
+  MesonHistograms     *mesonHistos[constants::NMESON];
+  StandardHistograms  *standardHistos[constants::NMESON]; 
 
   void Initialize();
   void ProcessEvent();
   void Save(std::string outfile);
   void InitHistos();
-  bool CurrentParticleIsNotElectronCandidate(std::vector<int> &electronCandidates, int index);
 };
 
 void Analysis::InitHistos() {
-  kAsym    = new AsymmetryHistograms("test"); 
-  kpHistos = new MesonHistograms("kp", 321);
-  kmHistos = new MesonHistograms("km",-321);
-  kpStand = new StandardHistograms("kp", 0); 
-  kmStand = new StandardHistograms("km", 0); 
+  histos[Meson::kPionNegative] = new Histos("test", Meson::kPionNegative); 
+  histos[Meson::kPionPositive] = new Histos("test", Meson::kPionPositive); 
+  histos[Meson::kKaonNegative] = new Histos("test", Meson::kKaonNegative); 
+  histos[Meson::kKaonPositive] = new Histos("test", Meson::kKaonPositive); 
+
+  for (int m=0; m<constants::NMESON; m++){
+    mesonHistos[m]    = new MesonHistograms(constants::Names::mesons[m], constants::Pid::pid[m]); 
+    standardHistos[m] = new StandardHistograms(constants::Names::mesons[m], 0);
+  }
 }
 
 void Analysis::Initialize(){
@@ -77,9 +84,9 @@ void Analysis::Initialize(){
   // not really safe for use on the farm because I don't set vars 
   // so not sure what to do about this.  maybe passing in the path
   // as a parameter would be ok? 
-  std::string path = Global::Environment::GetAnalysisPath(); 
+  std::string path        = Global::Environment::GetAnalysisPath(); 
   std::string momCorrPath = Form("%s/momCorr/",path.c_str());
-  momCorr = new MomCorr_e1f(momCorrPath);
+  momCorr                 = new MomCorr_e1f(momCorrPath);
 }
 
 void Analysis::ProcessEvent(){
@@ -93,67 +100,86 @@ void Analysis::ProcessEvent(){
     event.SetElectronIndex(electronIndex); 
     corr.correctEvent(&event, GetRunNumber(), GSIM); 
 
-    std::vector<int> kpCandidates = filter->getVectorOfParticleIndices(event, 321);
-    std::vector<int> kmCandidates = filter->getVectorOfParticleIndices(event, -321);
+    std::vector<int> kps = filter->getVectorOfParticleIndices(event,  321);
+    std::vector<int> kms = filter->getVectorOfParticleIndices(event, -321);
+    std::vector<int> pps = filter->getVectorOfParticleIndices(event,  211);
+    std::vector<int> pms = filter->getVectorOfParticleIndices(event, -211);
     
     int helicity = -1; 
-    if (event.corr_hel > 0)     { helicity = 1; }
-    else if (event.corr_hel < 0){ helicity = 0; }
+    if (event.corr_hel > 0)      { helicity = Helicity::kPositive; }
+    else if (event.corr_hel < 0) { helicity = Helicity::kNegative; }
 
-    if (!kpCandidates.empty() && helicity > -1) {
-      TLorentzVector electron  = event.GetTLorentzVector(electronIndex, 11); 
-      electron = momCorr->PcorN(electron, -1, 11);    
+    TLorentzVector electron  = event.GetTLorentzVector(electronIndex, 11); 
+    electron = momCorr->PcorN(electron, -1, 11);    
+    if (!kps.empty() && helicity > -1) {
       
-      TLorentzVector kaon = event.GetTLorentzVector(kpCandidates[0], 321);
+      TLorentzVector meson = event.GetTLorentzVector(kps[0], 321);
       //    pion = momCorr->PcorN(pion, 1, 211);
+       
+      PhysicsEvent ev = builder->getPhysicsEvent(electron, meson);
       
-      PhysicsEvent candidateEvent = builder->getPhysicsEvent(electron, kaon);
-      
-      if (candidateEvent.w > 2.00 && candidateEvent.qq > 1.00 && candidateEvent.mm2 > 1.1
-	  && candidateEvent.z > 0.3 && event.p[kpCandidates[0]] < 2.05) {
-	
-	kAsym->Fill(candidateEvent, 1, helicity);
-	kpHistos->Fill(event, candidateEvent, kpCandidates[0]); 
-	kpStand ->Fill(event, electronIndex, kpCandidates[0], candidateEvent); 
-
+      if (ev.w > 2.00 && ev.qq > 1.00 && ev.mm2 > 1.1 && ev.z > 0.3 && event.p[kps[0]] < 2.05) {
+	histos[Meson::kKaonPositive]        ->Fill(ev, helicity);
+	mesonHistos[Meson::kKaonPositive]   ->Fill(event, ev, kps[0]); 
+	standardHistos[Meson::kKaonPositive]->Fill(event, electronIndex, kps[0], ev); 
       }
     }
 
-
-    if (!kmCandidates.empty() && helicity > -1) {
-      TLorentzVector electron  = event.GetTLorentzVector(electronIndex, 11); 
-      electron = momCorr->PcorN(electron, -1, 11);    
+    if (!pms.empty() && helicity > -1) {
+      TLorentzVector meson = event.GetTLorentzVector(pms[0], -211);
+      //    pion = momCorr->PcorN(pion, 1, 211);
+       
+      PhysicsEvent ev = builder->getPhysicsEvent(electron, meson);
       
-      TLorentzVector kaon = event.GetTLorentzVector(kmCandidates[0], -321);
+      if (ev.w > 2.00 && ev.qq > 1.00 && ev.mm2 > 1.1 && ev.z > 0.3){
+	histos[Meson::kPionNegative]        ->Fill(ev, helicity);
+	mesonHistos[Meson::kPionNegative]   ->Fill(event, ev, pms[0]); 
+	standardHistos[Meson::kPionNegative]->Fill(event, electronIndex, pms[0], ev); 
+      }
+    }
+
+    if (!pps.empty() && helicity > -1) {
+      TLorentzVector meson = event.GetTLorentzVector(pps[0], 211);
       //    pion = momCorr->PcorN(pion, 1, 211);
       
-      PhysicsEvent candidateEvent = builder->getPhysicsEvent(electron, kaon);
+      PhysicsEvent ev = builder->getPhysicsEvent(electron, meson);
       
-      if (candidateEvent.w > 2.00 && candidateEvent.qq > 1.00 && candidateEvent.mm2 > 1.1
-	  && candidateEvent.z > 0.3 && event.p[kmCandidates[0]] < 4.75) {
-	
-	kAsym->Fill(candidateEvent, 0, helicity);
-	kmHistos->Fill(event, candidateEvent, kmCandidates[0]); 
-	kmStand ->Fill(event, electronIndex, kmCandidates[0], candidateEvent); 
+      if (ev.w > 2.00 && ev.qq > 1.00 && ev.mm2 > 1.1 && ev.z > 0.3) {
+	histos[Meson::kPionPositive]        ->Fill(ev, helicity);
+	mesonHistos[Meson::kPionPositive]   ->Fill(event, ev, pps[0]); 
+	standardHistos[Meson::kPionPositive]->Fill(event, electronIndex, pps[0], ev); 
+      }
+    }
 
+    if (!kms.empty() && helicity > -1) {
+      TLorentzVector meson = event.GetTLorentzVector(kms[0], -321);
+      //    pion = momCorr->PcorN(pion, 1, 211);
+       
+      PhysicsEvent ev = builder->getPhysicsEvent(electron, meson);
+      
+      if (ev.w > 2.00 && ev.qq > 1.00 && ev.mm2 > 1.1 && ev.z > 0.3) {
+	histos[Meson::kKaonNegative]        ->Fill(ev, helicity);
+	mesonHistos[Meson::kKaonNegative]   ->Fill(event, ev, kms[0]); 
+	standardHistos[Meson::kKaonNegative]->Fill(event, electronIndex, kms[0], ev); 
       }
     }
 
   }
 }
 
-bool Analysis::CurrentParticleIsNotElectronCandidate(std::vector<int> &electronCandidates,int index){
-  return (std::find(electronCandidates.begin(), electronCandidates.end(), index) == electronCandidates.end());
-}
-
 void Analysis::Save(std::string outfile){
-  kAsym->Save(outfile, "recreate", 1); 
+    histos[0]->Save(outfile, "recreate", 1); 
+
+  for(int m=1; m<constants::NMESON; m++) {
+    histos[m]->Save(outfile, "update", 1); 
+  }
 
   TFile *out = new TFile(outfile.c_str(), "update"); 
-  kpHistos->Save(out); 
-  kmHistos->Save(out); 
-  kpStand-> Save(out); 
-  kmStand-> Save(out); 
+  for(int m=0; m<constants::NMESON; m++) {
+    mesonHistos[m]   ->Save(out); 
+    standardHistos[m]->Save(out); 
+  }
+
 }
  
 int main(int argc, char * argv[]){
@@ -183,7 +209,10 @@ int main(int argc, char * argv[]){
     Ana->AddFile(files[i]); 
   }
   Ana->RunAnalysis();
-  Ana->kAsym->CalculateAsymmetry();
+  //  Ana->histos[Meson::kKaonPositive]->CalculateAsymmetry();
+  //  Ana->histos[Meson::kPionPositive]->CalculateAsymmetry();
+  //  Ana->histos[Meson::kKaonNegative]->CalculateAsymmetry();
+  //  Ana->histos[Meson::kPionNegative]->CalculateAsymmetry();
   Ana->Save(opts.args["OUT"].args); 
   
   return 0;

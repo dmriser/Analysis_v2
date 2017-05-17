@@ -17,8 +17,13 @@ namespace constants {
   struct Names{
     const static std::string mesons[NMESON]; 
   };
+
+  struct Pid {
+    const static int pid[NMESON];
+  };
 }
 
 const std::string constants::Names::mesons[NMESON] = {"pm","pp","km","kp"};
+const int constants::Pid::pid[NMESON] = {-211, 211, -321, 321};
 
 #endif

@@ -91,9 +91,36 @@ class KaonNegativeBins : public Bins {
 class PionPositiveBins : public Bins {
  public:
   PionPositiveBins(){
-    xbins   = new DLineBins(5,     0.1,   0.6); 
-    zbins   = new DLineBins(5,     0.3,   0.7); 
-    ptbins  = new DLineBins(5,     0.0,   1.0); 
+    std::vector<double> vx;
+    vx.push_back(0.100);
+    vx.push_back(0.165);
+    vx.push_back(0.215);
+    vx.push_back(0.255);
+    vx.push_back(0.305);
+    vx.push_back(0.365);
+    vx.push_back(0.600);
+
+    std::vector<double> vz;
+    vz.push_back(0.300);
+    vz.push_back(0.325);
+    vz.push_back(0.365);
+    vz.push_back(0.405);
+    vz.push_back(0.465);
+    vz.push_back(0.545);
+    vz.push_back(0.700);
+
+    std::vector<double> vpt;
+    vpt.push_back(0.000);
+    vpt.push_back(0.220);
+    vpt.push_back(0.330);
+    vpt.push_back(0.410);
+    vpt.push_back(0.500);
+    vpt.push_back(0.610);
+    vpt.push_back(1.000);
+
+    xbins   = new DLineBins(6, vx);
+    zbins   = new DLineBins(6, vz);
+    ptbins  = new DLineBins(6, vpt);
     phibins = new DLineBins(18, -180.0, 180.0); 
 
     std::cout << "PionPositiveBins have been created." << std::endl; 
@@ -103,9 +130,30 @@ class PionPositiveBins : public Bins {
 class PionNegativeBins : public Bins {
  public:
   PionNegativeBins(){
-    xbins   = new DLineBins(5,     0.1,   0.6); 
-    zbins   = new DLineBins(5,     0.3,   0.7); 
-    ptbins  = new DLineBins(5,     0.0,   1.0); 
+    std::vector<double> vx;
+    vx.push_back(0.100);
+    vx.push_back(0.205);
+    vx.push_back(0.265);
+    vx.push_back(0.335);
+    vx.push_back(0.600);
+
+    std::vector<double> vz;
+    vz.push_back(0.300);
+    vz.push_back(0.335);
+    vz.push_back(0.385);
+    vz.push_back(0.465);
+    vz.push_back(0.700);
+
+    std::vector<double> vpt;
+    vpt.push_back(0.000);
+    vpt.push_back(0.410);
+    vpt.push_back(0.520);
+    vpt.push_back(0.640);
+    vpt.push_back(1.000);
+
+    xbins   = new DLineBins(4, vx);
+    zbins   = new DLineBins(4, vz);
+    ptbins  = new DLineBins(4, vpt);
     phibins = new DLineBins(18, -180.0, 180.0); 
 
     std::cout << "PionNegativeBins have been created." << std::endl; 

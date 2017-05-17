@@ -7,7 +7,7 @@
 
 #include "TH1.h"
 
-std::vector<float> FindBins(TH1D *h, int nbins, float min, float max, float tolerance);
+void FindBins(TH1D *h, int nbins, float min, float max, float tolerance);
 
 int main(int nargs, char *args[]){
 
@@ -20,24 +20,38 @@ int main(int nargs, char *args[]){
   
   std::string inputFile(args[1]); 
 
-  StandardHistograms kPlusHistos("kp", 1); 
-  kPlusHistos.Load(inputFile);
+  StandardHistograms kp("kp", 1); 
+  kp.Load(inputFile);
 
-  std::vector<float> xbinsKp = FindBins(kPlusHistos.h1_xbj[0], 4, 0.1, 0.6, 0.05);
-  std::vector<float> zbinsKp = FindBins(kPlusHistos.h1_z[0], 4, 0.3, 0.7, 0.05);
-  std::vector<float> pt2binsKp = FindBins(kPlusHistos.h1_pt2[0], 4, 0.0, 1.0, 0.05);
+  FindBins(kp.h1_xbj[0], 4, 0.1, 0.6, 0.05);
+  FindBins(kp.h1_z[0], 4, 0.3, 0.7, 0.05);
+  FindBins(kp.h1_pt2[0], 4, 0.0, 1.0, 0.05);
 
-  StandardHistograms kMinusHistos("km", 1); 
-  kMinusHistos.Load(inputFile);
+  StandardHistograms km("km", 1); 
+  km.Load(inputFile);
 
-  std::vector<float> xbinsKm = FindBins(kMinusHistos.h1_xbj[0], 3, 0.1, 0.6, 0.05);
-  std::vector<float> zbinsKm = FindBins(kMinusHistos.h1_z[0], 3, 0.3, 0.7, 0.05);
-  std::vector<float> pt2binsKm = FindBins(kMinusHistos.h1_pt2[0], 3, 0.0, 1.0, 0.05);
+  FindBins(km.h1_xbj[0], 3, 0.1, 0.6, 0.05);
+  FindBins(km.h1_z[0], 3, 0.3, 0.7, 0.05);
+  FindBins(km.h1_pt2[0], 3, 0.0, 1.0, 0.05);
 
+  StandardHistograms pp("pp", 1); 
+  pp.Load(inputFile);
+
+  FindBins(pp.h1_xbj[0], 6, 0.1, 0.6, 0.1);
+  FindBins(pp.h1_z[0], 6, 0.3, 0.7, 0.1);
+  FindBins(pp.h1_pt2[0], 6, 0.0, 1.0, 0.1);
+
+  StandardHistograms pm("pm", 1); 
+  pm.Load(inputFile);
+
+  FindBins(pm.h1_xbj[0], 4, 0.1, 0.6, 0.05);
+  FindBins(pm.h1_z[0], 4, 0.3, 0.7, 0.05);
+  FindBins(pm.h1_pt2[0], 4, 0.0, 1.0, 0.05);
+ 
   return 0;
 }
 
-std::vector<float> FindBins(TH1D *h, int nbins, float min, float max, float tolerance){
+void FindBins(TH1D *h, int nbins, float min, float max, float tolerance){
   
   std::vector<float> binLimits; 
   std::vector<float> binContent; 
@@ -64,6 +78,7 @@ std::vector<float> FindBins(TH1D *h, int nbins, float min, float max, float tole
       if (binLimits.size() == nbins){
 	binLimits.push_back(max);
 
+
 	float theRest = total;
 	for (int b=0; b<binContent.size(); b++){ 
 	  theRest -= binContent[b]; 
@@ -85,21 +100,19 @@ std::vector<float> FindBins(TH1D *h, int nbins, float min, float max, float tole
     if (binLimits.size() != nbins+1){
       std::cerr << "Something bad happened" << std::endl; 
     } else {
-      std::cout << "Found binning for " << h->GetName() << std::endl; 
+      std::cout << "Found binning for " << h->GetName();
       for(int b=0; b<binLimits.size(); b++){
 	std::cout.width(14); std::cout << binLimits[b]; 
-	std::cout << std::endl; 
       }
-      std::cout << "With fills: " << std::endl; 
+      std::cout << std::endl; 
+      std::cout << "With fills: ";
       for(int b=0; b<binContent.size(); b++){
 	std::cout.width(14); std::cout << binContent[b]; 
-	std::cout << std::endl; 
-      }
+      }	
+      std::cout << std::endl; 
     }
 
   } else {
     std::cerr << "[FindBins] Problem finding limits for the histogram axis " << std::endl; 
   }
-
-  return binLimits; 
 }

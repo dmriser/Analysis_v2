@@ -102,6 +102,10 @@ class Fits {
     } 
   }
 
+  Bins *GetBinning() const {
+    return bins; 
+  }
+
  protected:
   std::string  fName; 
   int          fMesonIndex; 

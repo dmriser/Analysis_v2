@@ -2,7 +2,7 @@
 #include <iostream>
 
 #include "common/Histograms.h"
-#include "common/NewPlotter.h"
+#include "common/Plotter.h"
 
 #include "CommonTools.h"
 
@@ -41,15 +41,34 @@ int main(int nargs, char *args[]){
 
   Plotter pkp(&kph, &kpf, Meson::kKaonPositive);
   pkp.PlotGridZX();  
+  pkp.PlotGridZPt();  
 
   Plotter pkm(&kmh, &kmf, Meson::kKaonNegative);
   pkm.PlotGridZX();  
+  pkm.PlotGridZPt();  
 
   Plotter ppp(&pph, &ppf, Meson::kPionPositive);
   ppp.PlotGridZX();  
+  ppp.PlotGridZPt();  
 
   Plotter ppm(&pmh, &pmf, Meson::kPionNegative);
   ppm.PlotGridZX();  
+  ppm.PlotGridZPt();  
+
+  IntegratedHistos kp_int(inputFile, Meson::kKaonPositive); 
+  IntegratedHistos km_int(inputFile, Meson::kKaonNegative); 
+  IntegratedHistos pp_int(inputFile, Meson::kPionPositive); 
+  IntegratedHistos pm_int(inputFile, Meson::kPionNegative); 
+
+  IntegratedPlotter plot_int;
+  plot_int.Add(&kp_int, Meson::kKaonPositive); 
+  plot_int.Add(&km_int, Meson::kKaonNegative); 
+  plot_int.Add(&pp_int, Meson::kPionPositive); 
+  plot_int.Add(&pm_int, Meson::kPionNegative); 
+
+  plot_int.PlotX(); 
+  plot_int.PlotZ(); 
+  plot_int.PlotPt(); 
 
   return 0;
 }

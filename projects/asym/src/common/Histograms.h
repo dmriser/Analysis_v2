@@ -15,7 +15,6 @@
 #include "PhysicsEvent.h"
 
 #include "Bins.h"
-#include "BinFactory.h"
 #include "Constants.h"
 #include "Types.h"
 
@@ -35,6 +34,14 @@ class Histos {
     	inputFile->Write(); 
     	inputFile->Close(); 
       }
+  }
+
+  int GetMesonIndex() const {
+    return fMesonIndex; 
+  }
+
+  std::string GetName() const {
+    return fName; 
   }
 
   // the order is always x, z, pt, phi

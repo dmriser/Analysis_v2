@@ -2,7 +2,9 @@
 #include <iostream>
 
 #include "common/Fits.h"
+#include "common/Fitter.h"
 #include "common/Histograms.h"
+#include "common/IntegratedHistograms.h"
 #include "common/Types.h"
 
 #include "CommonTools.h"
@@ -38,21 +40,34 @@ int main(int nargs, char *args[]){
   pm_hist.Save(inputFile, "update", 2); 
 
   Fits kp_fit(&kp_hist, "test", Meson::kKaonPositive); 
-  kp_fit.Fit(); 
-  kp_fit.Save(inputFile, "update", 1); 
-
   Fits km_fit(&km_hist, "test", Meson::kKaonNegative); 
-  km_fit.Fit(); 
-  km_fit.Save(inputFile, "update", 1); 
-
   Fits pp_fit(&pp_hist, "test", Meson::kPionPositive); 
-  pp_fit.Fit(); 
-  pp_fit.Save(inputFile, "update", 1); 
-
   Fits pm_fit(&pm_hist, "test", Meson::kPionNegative); 
-  pm_fit.Fit(); 
-  pm_fit.Save(inputFile, "update", 1); 
 
+  // Uses just the A sin(phi) 
+  BasicFitter fitter; 
+
+  // Uses A sin(phi)/(1 + B cos(phi) + C cos(2phi))
+  //  BasicAllMomentFitter fitter; 
+  fitter.Fit(&kp_hist, &kp_fit); 
+  fitter.Fit(&km_hist, &km_fit); 
+  fitter.Fit(&pp_hist, &pp_fit); 
+  fitter.Fit(&pm_hist, &pm_fit); 
+
+  kp_fit.Save(inputFile, "update", 1); 
+  km_fit.Save(inputFile, "update", 1); 
+  pp_fit.Save(inputFile, "update", 1); 
+  pm_fit.Save(inputFile, "update", 1);   
+
+  IntegratedHistos kp_integ(&kp_fit, Meson::kKaonPositive);
+  IntegratedHistos km_integ(&km_fit, Meson::kKaonNegative);
+  IntegratedHistos pp_integ(&pp_fit, Meson::kPionPositive);
+  IntegratedHistos pm_integ(&pm_fit, Meson::kPionNegative);
+
+  kp_integ.Save(inputFile, "update"); 
+  km_integ.Save(inputFile, "update"); 
+  pp_integ.Save(inputFile, "update"); 
+  pm_integ.Save(inputFile, "update"); 
 
   return 0;
 }

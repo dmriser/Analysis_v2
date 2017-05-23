@@ -114,6 +114,18 @@ ParticleFilter::ParticleFilter(Parameters *params) : pars(params){
     km_betap_cut_s4 = new DataEventCut_BetaPCut(4); 
     km_betap_cut_s5 = new DataEventCut_BetaPCut(5); 
     km_betap_cut_s6 = new DataEventCut_BetaPCut(6); 
+    pp_betap_cut_s1 = new DataEventCut_BetaPCut(1); 
+    pp_betap_cut_s2 = new DataEventCut_BetaPCut(2); 
+    pp_betap_cut_s3 = new DataEventCut_BetaPCut(3); 
+    pp_betap_cut_s4 = new DataEventCut_BetaPCut(4); 
+    pp_betap_cut_s5 = new DataEventCut_BetaPCut(5); 
+    pp_betap_cut_s6 = new DataEventCut_BetaPCut(6); 
+    pm_betap_cut_s1 = new DataEventCut_BetaPCut(1); 
+    pm_betap_cut_s2 = new DataEventCut_BetaPCut(2); 
+    pm_betap_cut_s3 = new DataEventCut_BetaPCut(3); 
+    pm_betap_cut_s4 = new DataEventCut_BetaPCut(4); 
+    pm_betap_cut_s5 = new DataEventCut_BetaPCut(5); 
+    pm_betap_cut_s6 = new DataEventCut_BetaPCut(6); 
 
     dcr1_meson_fid_cut = new DCR1FiducialCut();
 
@@ -545,6 +557,128 @@ ParticleFilter::ParticleFilter(Parameters *params) : pars(params){
     km_betap_cut_s6->cs = params->getParameter("KM_BVP_SIGMA_C").getValue(5);
     km_betap_cut_s6->ds = params->getParameter("KM_BVP_SIGMA_D").getValue(5);
     km_betap_cut_s6->nsigma = params->getParameter("KM_BVP_NSIGMA").getValue(0);
+   
+    // pion positive 
+    pp_betap_cut_s1->am = params->getParameter("PIP_BVP_MU_A").getValue(0);
+    pp_betap_cut_s1->bm = params->getParameter("PIP_BVP_MU_B").getValue(0);
+    pp_betap_cut_s1->cm = params->getParameter("PIP_BVP_MU_C").getValue(0);
+    pp_betap_cut_s1->dm = params->getParameter("PIP_BVP_MU_D").getValue(0);
+    pp_betap_cut_s1->as = params->getParameter("PIP_BVP_SIGMA_A").getValue(0);
+    pp_betap_cut_s1->bs = params->getParameter("PIP_BVP_SIGMA_B").getValue(0);
+    pp_betap_cut_s1->cs = params->getParameter("PIP_BVP_SIGMA_C").getValue(0);
+    pp_betap_cut_s1->ds = params->getParameter("PIP_BVP_SIGMA_D").getValue(0);
+    pp_betap_cut_s1->nsigma = params->getParameter("PIP_BVP_NSIGMA").getValue(0);
+
+    pp_betap_cut_s2->am = params->getParameter("PIP_BVP_MU_A").getValue(1);
+    pp_betap_cut_s2->bm = params->getParameter("PIP_BVP_MU_B").getValue(1);
+    pp_betap_cut_s2->cm = params->getParameter("PIP_BVP_MU_C").getValue(1);
+    pp_betap_cut_s2->dm = params->getParameter("PIP_BVP_MU_D").getValue(1);
+    pp_betap_cut_s2->as = params->getParameter("PIP_BVP_SIGMA_A").getValue(1);
+    pp_betap_cut_s2->bs = params->getParameter("PIP_BVP_SIGMA_B").getValue(1);
+    pp_betap_cut_s2->cs = params->getParameter("PIP_BVP_SIGMA_C").getValue(1);
+    pp_betap_cut_s2->ds = params->getParameter("PIP_BVP_SIGMA_D").getValue(1);
+    pp_betap_cut_s2->nsigma = params->getParameter("PIP_BVP_NSIGMA").getValue(0);
+
+    pp_betap_cut_s3->am = params->getParameter("PIP_BVP_MU_A").getValue(2);
+    pp_betap_cut_s3->bm = params->getParameter("PIP_BVP_MU_B").getValue(2);
+    pp_betap_cut_s3->cm = params->getParameter("PIP_BVP_MU_C").getValue(2);
+    pp_betap_cut_s3->dm = params->getParameter("PIP_BVP_MU_D").getValue(2);
+    pp_betap_cut_s3->as = params->getParameter("PIP_BVP_SIGMA_A").getValue(2);
+    pp_betap_cut_s3->bs = params->getParameter("PIP_BVP_SIGMA_B").getValue(2);
+    pp_betap_cut_s3->cs = params->getParameter("PIP_BVP_SIGMA_C").getValue(2);
+    pp_betap_cut_s3->ds = params->getParameter("PIP_BVP_SIGMA_D").getValue(2);
+    pp_betap_cut_s3->nsigma = params->getParameter("PIP_BVP_NSIGMA").getValue(0);
+
+    pp_betap_cut_s4->am = params->getParameter("PIP_BVP_MU_A").getValue(3);
+    pp_betap_cut_s4->bm = params->getParameter("PIP_BVP_MU_B").getValue(3);
+    pp_betap_cut_s4->cm = params->getParameter("PIP_BVP_MU_C").getValue(3);
+    pp_betap_cut_s4->dm = params->getParameter("PIP_BVP_MU_D").getValue(3);
+    pp_betap_cut_s4->as = params->getParameter("PIP_BVP_SIGMA_A").getValue(3);
+    pp_betap_cut_s4->bs = params->getParameter("PIP_BVP_SIGMA_B").getValue(3);
+    pp_betap_cut_s4->cs = params->getParameter("PIP_BVP_SIGMA_C").getValue(3);
+    pp_betap_cut_s4->ds = params->getParameter("PIP_BVP_SIGMA_D").getValue(3);
+    pp_betap_cut_s4->nsigma = params->getParameter("PIP_BVP_NSIGMA").getValue(0);
+
+    pp_betap_cut_s5->am = params->getParameter("PIP_BVP_MU_A").getValue(4);
+    pp_betap_cut_s5->bm = params->getParameter("PIP_BVP_MU_B").getValue(4);
+    pp_betap_cut_s5->cm = params->getParameter("PIP_BVP_MU_C").getValue(4);
+    pp_betap_cut_s5->dm = params->getParameter("PIP_BVP_MU_D").getValue(4);
+    pp_betap_cut_s5->as = params->getParameter("PIP_BVP_SIGMA_A").getValue(4);
+    pp_betap_cut_s5->bs = params->getParameter("PIP_BVP_SIGMA_B").getValue(4);
+    pp_betap_cut_s5->cs = params->getParameter("PIP_BVP_SIGMA_C").getValue(4);
+    pp_betap_cut_s5->ds = params->getParameter("PIP_BVP_SIGMA_D").getValue(4);
+    pp_betap_cut_s5->nsigma = params->getParameter("PIP_BVP_NSIGMA").getValue(0);
+
+    pp_betap_cut_s6->am = params->getParameter("PIP_BVP_MU_A").getValue(5);
+    pp_betap_cut_s6->bm = params->getParameter("PIP_BVP_MU_B").getValue(5);
+    pp_betap_cut_s6->cm = params->getParameter("PIP_BVP_MU_C").getValue(5);
+    pp_betap_cut_s6->dm = params->getParameter("PIP_BVP_MU_D").getValue(5);
+    pp_betap_cut_s6->as = params->getParameter("PIP_BVP_SIGMA_A").getValue(5);
+    pp_betap_cut_s6->bs = params->getParameter("PIP_BVP_SIGMA_B").getValue(5);
+    pp_betap_cut_s6->cs = params->getParameter("PIP_BVP_SIGMA_C").getValue(5);
+    pp_betap_cut_s6->ds = params->getParameter("PIP_BVP_SIGMA_D").getValue(5);
+    pp_betap_cut_s6->nsigma = params->getParameter("PIP_BVP_NSIGMA").getValue(0);
+
+    // negative pion
+    pm_betap_cut_s1->am = params->getParameter("PIM_BVP_MU_A").getValue(0);
+    pm_betap_cut_s1->bm = params->getParameter("PIM_BVP_MU_B").getValue(0);
+    pm_betap_cut_s1->cm = params->getParameter("PIM_BVP_MU_C").getValue(0);
+    pm_betap_cut_s1->dm = params->getParameter("PIM_BVP_MU_D").getValue(0);
+    pm_betap_cut_s1->as = params->getParameter("PIM_BVP_SIGMA_A").getValue(0);
+    pm_betap_cut_s1->bs = params->getParameter("PIM_BVP_SIGMA_B").getValue(0);
+    pm_betap_cut_s1->cs = params->getParameter("PIM_BVP_SIGMA_C").getValue(0);
+    pm_betap_cut_s1->ds = params->getParameter("PIM_BVP_SIGMA_D").getValue(0);
+    pm_betap_cut_s1->nsigma = params->getParameter("PIM_BVP_NSIGMA").getValue(0);
+
+    pm_betap_cut_s2->am = params->getParameter("PIM_BVP_MU_A").getValue(1);
+    pm_betap_cut_s2->bm = params->getParameter("PIM_BVP_MU_B").getValue(1);
+    pm_betap_cut_s2->cm = params->getParameter("PIM_BVP_MU_C").getValue(1);
+    pm_betap_cut_s2->dm = params->getParameter("PIM_BVP_MU_D").getValue(1);
+    pm_betap_cut_s2->as = params->getParameter("PIM_BVP_SIGMA_A").getValue(1);
+    pm_betap_cut_s2->bs = params->getParameter("PIM_BVP_SIGMA_B").getValue(1);
+    pm_betap_cut_s2->cs = params->getParameter("PIM_BVP_SIGMA_C").getValue(1);
+    pm_betap_cut_s2->ds = params->getParameter("PIM_BVP_SIGMA_D").getValue(1);
+    pm_betap_cut_s2->nsigma = params->getParameter("PIM_BVP_NSIGMA").getValue(0);
+
+    pm_betap_cut_s3->am = params->getParameter("PIM_BVP_MU_A").getValue(2);
+    pm_betap_cut_s3->bm = params->getParameter("PIM_BVP_MU_B").getValue(2);
+    pm_betap_cut_s3->cm = params->getParameter("PIM_BVP_MU_C").getValue(2);
+    pm_betap_cut_s3->dm = params->getParameter("PIM_BVP_MU_D").getValue(2);
+    pm_betap_cut_s3->as = params->getParameter("PIM_BVP_SIGMA_A").getValue(2);
+    pm_betap_cut_s3->bs = params->getParameter("PIM_BVP_SIGMA_B").getValue(2);
+    pm_betap_cut_s3->cs = params->getParameter("PIM_BVP_SIGMA_C").getValue(2);
+    pm_betap_cut_s3->ds = params->getParameter("PIM_BVP_SIGMA_D").getValue(2);
+    pm_betap_cut_s3->nsigma = params->getParameter("PIM_BVP_NSIGMA").getValue(0);
+
+    pm_betap_cut_s4->am = params->getParameter("PIM_BVP_MU_A").getValue(3);
+    pm_betap_cut_s4->bm = params->getParameter("PIM_BVP_MU_B").getValue(3);
+    pm_betap_cut_s4->cm = params->getParameter("PIM_BVP_MU_C").getValue(3);
+    pm_betap_cut_s4->dm = params->getParameter("PIM_BVP_MU_D").getValue(3);
+    pm_betap_cut_s4->as = params->getParameter("PIM_BVP_SIGMA_A").getValue(3);
+    pm_betap_cut_s4->bs = params->getParameter("PIM_BVP_SIGMA_B").getValue(3);
+    pm_betap_cut_s4->cs = params->getParameter("PIM_BVP_SIGMA_C").getValue(3);
+    pm_betap_cut_s4->ds = params->getParameter("PIM_BVP_SIGMA_D").getValue(3);
+    pm_betap_cut_s4->nsigma = params->getParameter("PIM_BVP_NSIGMA").getValue(0);
+
+    pm_betap_cut_s5->am = params->getParameter("PIM_BVP_MU_A").getValue(4);
+    pm_betap_cut_s5->bm = params->getParameter("PIM_BVP_MU_B").getValue(4);
+    pm_betap_cut_s5->cm = params->getParameter("PIM_BVP_MU_C").getValue(4);
+    pm_betap_cut_s5->dm = params->getParameter("PIM_BVP_MU_D").getValue(4);
+    pm_betap_cut_s5->as = params->getParameter("PIM_BVP_SIGMA_A").getValue(4);
+    pm_betap_cut_s5->bs = params->getParameter("PIM_BVP_SIGMA_B").getValue(4);
+    pm_betap_cut_s5->cs = params->getParameter("PIM_BVP_SIGMA_C").getValue(4);
+    pm_betap_cut_s5->ds = params->getParameter("PIM_BVP_SIGMA_D").getValue(4);
+    pm_betap_cut_s5->nsigma = params->getParameter("PIM_BVP_NSIGMA").getValue(0);
+
+    pm_betap_cut_s6->am = params->getParameter("PIM_BVP_MU_A").getValue(5);
+    pm_betap_cut_s6->bm = params->getParameter("PIM_BVP_MU_B").getValue(5);
+    pm_betap_cut_s6->cm = params->getParameter("PIM_BVP_MU_C").getValue(5);
+    pm_betap_cut_s6->dm = params->getParameter("PIM_BVP_MU_D").getValue(5);
+    pm_betap_cut_s6->as = params->getParameter("PIM_BVP_SIGMA_A").getValue(5);
+    pm_betap_cut_s6->bs = params->getParameter("PIM_BVP_SIGMA_B").getValue(5);
+    pm_betap_cut_s6->cs = params->getParameter("PIM_BVP_SIGMA_C").getValue(5);
+    pm_betap_cut_s6->ds = params->getParameter("PIM_BVP_SIGMA_D").getValue(5);
+    pm_betap_cut_s6->nsigma = params->getParameter("PIM_BVP_NSIGMA").getValue(0);
 
     dcr1_meson_fid_cut->height = params->getParameter("KP_DCR1_HEIGHT").getValue(0);
     dcr1_meson_fid_cut->angle  = params->getParameter("KP_DCR1_ANGLE").getValue(0);
@@ -556,22 +690,22 @@ ParticleFilter::ParticleFilter(Parameters *params) : pars(params){
     testCut = new TestCut(); 
 
     positivePionSelector->AddCut(dvz_cut);
-    positivePionSelector->AddCut(pip_tofmass_cut_s1);
-    positivePionSelector->AddCut(pip_tofmass_cut_s2);
-    positivePionSelector->AddCut(pip_tofmass_cut_s3);
-    positivePionSelector->AddCut(pip_tofmass_cut_s4);
-    positivePionSelector->AddCut(pip_tofmass_cut_s5);
-    positivePionSelector->AddCut(pip_tofmass_cut_s6);
+    positivePionSelector->AddCut(pp_betap_cut_s1); 
+    positivePionSelector->AddCut(pp_betap_cut_s2); 
+    positivePionSelector->AddCut(pp_betap_cut_s3); 
+    positivePionSelector->AddCut(pp_betap_cut_s4); 
+    positivePionSelector->AddCut(pp_betap_cut_s5); 
+    positivePionSelector->AddCut(pp_betap_cut_s6); 
     positivePionSelector->AddCut(dcr1_meson_fid_cut);
     positivePionSelector->EnableAll();
 
     negativePionSelector->AddCut(dvz_cut);
-    negativePionSelector->AddCut(pim_tofmass_cut_s1);
-    negativePionSelector->AddCut(pim_tofmass_cut_s2);
-    negativePionSelector->AddCut(pim_tofmass_cut_s3);
-    negativePionSelector->AddCut(pim_tofmass_cut_s4);
-    negativePionSelector->AddCut(pim_tofmass_cut_s5);
-    negativePionSelector->AddCut(pim_tofmass_cut_s6);
+    negativePionSelector->AddCut(pm_betap_cut_s1); 
+    negativePionSelector->AddCut(pm_betap_cut_s2); 
+    negativePionSelector->AddCut(pm_betap_cut_s3); 
+    negativePionSelector->AddCut(pm_betap_cut_s4); 
+    negativePionSelector->AddCut(pm_betap_cut_s5); 
+    negativePionSelector->AddCut(pm_betap_cut_s6); 
     negativePionSelector->EnableAll();
 
     positiveKaonSelector->AddCut(dvz_cut);
@@ -657,8 +791,8 @@ vector<int> ParticleFilter::getVectorOfParticleIndices(h22Event &event, int pid)
         }
     }
 
-    //    else if (pid == 211 || pid == 321){
-    else if (pid == 321){
+    else if (pid == 211 || pid == 321){
+    //    else if (pid == 321){
       particles.clear(); 
 
       std::vector<int> electrons = getVectorOfParticleIndices(event, 11);
@@ -679,8 +813,8 @@ vector<int> ParticleFilter::getVectorOfParticleIndices(h22Event &event, int pid)
       }
     }
 
-    //    else if (pid == -211 || pid == -321){
-    else if (pid == -321){
+    else if (pid == -211 || pid == -321){
+      //    else if (pid == -321){
       particles.clear(); 
 
       std::vector<int> electrons = getVectorOfParticleIndices(event, 11);

@@ -896,6 +896,14 @@ int main(int argc, char * argv[]){
       kaonNegBetaSlices.Fit("km"); 
       kaonNegBetaSlices.WriteParameters(pars); 
 
+      MesonBetaSliceFitter pionBetaSlices(&pip, 50, 0.7, 3.0); 
+      pionBetaSlices.Fit("pp"); 
+      pionBetaSlices.WriteParameters(pars); 
+
+      MesonBetaSliceFitter pionNegBetaSlices(&pim, 50, 0.7, 3.0); 
+      pionNegBetaSlices.Fit("pm"); 
+      pionNegBetaSlices.WriteParameters(pars); 
+
       TFile *out = new TFile(opts.args["OUT"].args.c_str(), "recreate");
       kaonBetaSlices.Save(out); 
       kaonNegBetaSlices.Save(out); 

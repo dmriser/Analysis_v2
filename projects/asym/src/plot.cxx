@@ -69,6 +69,9 @@ int main(int nargs, char *args[]){
   plot_int.PlotX(); 
   plot_int.PlotZ(); 
   plot_int.PlotPt(); 
+  plot_int.PlotXByZ(Meson::kPionPositive);
+  plot_int.PlotXByZ(Meson::kKaonPositive);
+  plot_int.PlotSummary(); 
 
   return 0;
 }

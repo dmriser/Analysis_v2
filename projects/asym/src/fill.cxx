@@ -25,6 +25,7 @@
 #include "StandardHistograms.h"
 
 #include "common/Histograms.h"
+#include "common/PIDHistograms.h"
 #include "common/Constants.h"
 #include "common/Types.h"
 
@@ -54,6 +55,7 @@ public:
   Histos              *histos[constants::NMESON]; 
   MesonHistograms     *mesonHistos[constants::NMESON];
   StandardHistograms  *standardHistos[constants::NMESON]; 
+  PidHistos           *pidHistos[constants::NMESON]; 
 
   void Initialize();
   void ProcessEvent();
@@ -66,6 +68,11 @@ void Analysis::InitHistos() {
   histos[Meson::kPionPositive] = new Histos("test", Meson::kPionPositive); 
   histos[Meson::kKaonNegative] = new Histos("test", Meson::kKaonNegative); 
   histos[Meson::kKaonPositive] = new Histos("test", Meson::kKaonPositive); 
+
+  pidHistos[Meson::kPionNegative] = new PidHistos("test", Meson::kPionNegative); 
+  pidHistos[Meson::kPionPositive] = new PidHistos("test", Meson::kPionPositive); 
+  pidHistos[Meson::kKaonNegative] = new PidHistos("test", Meson::kKaonNegative); 
+  pidHistos[Meson::kKaonPositive] = new PidHistos("test", Meson::kKaonPositive); 
 
   for (int m=0; m<constants::NMESON; m++){
     mesonHistos[m]    = new MesonHistograms(constants::Names::mesons[m], constants::Pid::pid[m]); 
@@ -111,6 +118,7 @@ void Analysis::ProcessEvent(){
 
     TLorentzVector electron  = event.GetTLorentzVector(electronIndex, 11); 
     electron = momCorr->PcorN(electron, -1, 11);    
+
     if (!kps.empty() && helicity > -1) {
       
       TLorentzVector meson = event.GetTLorentzVector(kps[0], 321);
@@ -122,6 +130,7 @@ void Analysis::ProcessEvent(){
 	histos[Meson::kKaonPositive]        ->Fill(ev, helicity);
 	mesonHistos[Meson::kKaonPositive]   ->Fill(event, ev, kps[0]); 
 	standardHistos[Meson::kKaonPositive]->Fill(event, electronIndex, kps[0], ev); 
+	pidHistos[Meson::kKaonPositive]     ->Fill(event, ev, kps[0]);
       }
     }
 
@@ -135,6 +144,7 @@ void Analysis::ProcessEvent(){
 	histos[Meson::kPionNegative]        ->Fill(ev, helicity);
 	mesonHistos[Meson::kPionNegative]   ->Fill(event, ev, pms[0]); 
 	standardHistos[Meson::kPionNegative]->Fill(event, electronIndex, pms[0], ev); 
+	pidHistos[Meson::kPionNegative]     ->Fill(event, ev, pms[0]);
       }
     }
 
@@ -148,6 +158,7 @@ void Analysis::ProcessEvent(){
 	histos[Meson::kPionPositive]        ->Fill(ev, helicity);
 	mesonHistos[Meson::kPionPositive]   ->Fill(event, ev, pps[0]); 
 	standardHistos[Meson::kPionPositive]->Fill(event, electronIndex, pps[0], ev); 
+	pidHistos[Meson::kPionPositive]     ->Fill(event, ev, pps[0]);
       }
     }
 
@@ -161,6 +172,7 @@ void Analysis::ProcessEvent(){
 	histos[Meson::kKaonNegative]        ->Fill(ev, helicity);
 	mesonHistos[Meson::kKaonNegative]   ->Fill(event, ev, kms[0]); 
 	standardHistos[Meson::kKaonNegative]->Fill(event, electronIndex, kms[0], ev); 
+	pidHistos[Meson::kKaonNegative]     ->Fill(event, ev, kms[0]);
       }
     }
 
@@ -172,6 +184,10 @@ void Analysis::Save(std::string outfile){
 
   for(int m=1; m<constants::NMESON; m++) {
     histos[m]->Save(outfile, "update", 1); 
+  }
+
+  for(int m=0; m<constants::NMESON; m++) {
+    pidHistos[m]->Save(outfile, "update"); 
   }
 
   TFile *out = new TFile(outfile.c_str(), "update"); 

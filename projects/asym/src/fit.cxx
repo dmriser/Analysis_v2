@@ -45,10 +45,10 @@ int main(int nargs, char *args[]){
   Fits pm_fit(&pm_hist, "test", Meson::kPionNegative); 
 
   // Uses just the A sin(phi) 
-  BasicFitter fitter; 
+  //  BasicFitter fitter; 
 
   // Uses A sin(phi)/(1 + B cos(phi) + C cos(2phi))
-  //  BasicAllMomentFitter fitter; 
+  BasicAllMomentFitter fitter; 
   fitter.Fit(&kp_hist, &kp_fit); 
   fitter.Fit(&km_hist, &km_fit); 
   fitter.Fit(&pp_hist, &pp_fit); 

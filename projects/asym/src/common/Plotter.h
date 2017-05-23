@@ -112,14 +112,14 @@ class Plotter {
     TLatex title; 
     title.SetNDC();
     title.SetTextSize(0.03); 
-    title.DrawLatex(0.4, 0.95, Form("%s Asymmetry", constants::names::latex[fMesonIndex].c_str())); 
+    title.DrawLatex(0.4, 0.95, Form("%s Asymmetry", constants::Names::latex[fMesonIndex].c_str())); 
 
     title.SetTextSize(0.02); 
     title.DrawLatex(0.05, 0.12, "#color[99]{Integrated z}"); 
     title.DrawLatex(0.05, 0.09, "#color[55]{Integrated x}"); 
     title.DrawLatex(0.05, 0.06, "#color[77]{Integrated both}"); 
     
-    can->Print(Form("%sgrid_z_x_%s.png",fOutputPath.c_str(), constants::names::mesons[fMesonIndex].c_str())); 
+    can->Print(Form("%sgrid_z_x_%s.png",fOutputPath.c_str(), constants::Names::mesons[fMesonIndex].c_str())); 
   }
 
   // ============================================= 
@@ -204,14 +204,14 @@ class Plotter {
     TLatex title; 
     title.SetNDC();
     title.SetTextSize(0.03); 
-    title.DrawLatex(0.4, 0.95, Form("%s Asymmetry", constants::names::latex[fMesonIndex].c_str())); 
+    title.DrawLatex(0.4, 0.95, Form("%s Asymmetry", constants::Names::latex[fMesonIndex].c_str())); 
 
     title.SetTextSize(0.02); 
     title.DrawLatex(0.05, 0.12, "#color[99]{Integrated P_{T}}"); 
     title.DrawLatex(0.05, 0.09, "#color[55]{Integrated x}"); 
     title.DrawLatex(0.05, 0.06, "#color[77]{Integrated both}"); 
     
-    can->Print(Form("%sgrid_z_pt_%s.png",fOutputPath.c_str(), constants::names::mesons[fMesonIndex].c_str())); 
+    can->Print(Form("%sgrid_z_pt_%s.png",fOutputPath.c_str(), constants::Names::mesons[fMesonIndex].c_str())); 
   }
   
  protected:
@@ -352,7 +352,7 @@ class IntegratedPlotter {
       ptline.Draw("same"); 
 
       can->cd(); 
-      title.DrawLatex(0.2 + 0.2*x, 0.9, Form("%s", constants::names::latex[x].c_str())); 
+      title.DrawLatex(0.2 + 0.2*x, 0.9, Form("%s", constants::Names::latex[x].c_str())); 
 
       if (x == 0){
 	title.DrawLatex(0.04, 0.75, "x");
@@ -403,7 +403,7 @@ class IntegratedPlotter {
 
     title.DrawLatex(0.2, 0.87, "A_{LU}^{sin #phi}"); 
     for(int m=0; m<constants::NMESON; m++)
-      title.DrawLatex(0.55 + 0.03*m, 0.87, Form("#color[%d]{%s}", colors[m], constants::names::latex[fMesonIndex[m]].c_str())); 
+      title.DrawLatex(0.55 + 0.03*m, 0.87, Form("#color[%d]{%s}", colors[m], constants::Names::latex[fMesonIndex[m]].c_str())); 
 
     title.DrawLatex(0.47, 0.05, "x_{Bjorken}"); 
     title.SetTextAngle(90.0);
@@ -451,7 +451,7 @@ class IntegratedPlotter {
 
     title.DrawLatex(0.2, 0.87, "A_{LU}^{sin #phi}"); 
     for(int m=0; m<constants::NMESON; m++)
-      title.DrawLatex(0.55 + 0.03*m, 0.87, Form("#color[%d]{%s}", colors[m], constants::names::latex[fMesonIndex[m]].c_str())); 
+      title.DrawLatex(0.55 + 0.03*m, 0.87, Form("#color[%d]{%s}", colors[m], constants::Names::latex[fMesonIndex[m]].c_str())); 
 
     title.DrawLatex(0.47, 0.05, "z"); 
     title.SetTextAngle(90.0);
@@ -499,7 +499,7 @@ class IntegratedPlotter {
 
     title.DrawLatex(0.2, 0.87, "A_{LU}^{sin #phi}"); 
     for(int m=0; m<constants::NMESON; m++)
-      title.DrawLatex(0.55 + 0.03*m, 0.87, Form("#color[%d]{%s}", colors[m], constants::names::latex[fMesonIndex[m]].c_str())); 
+      title.DrawLatex(0.55 + 0.03*m, 0.87, Form("#color[%d]{%s}", colors[m], constants::Names::latex[fMesonIndex[m]].c_str())); 
 
     title.DrawLatex(0.47, 0.05, "P_{T} (GeV/c)"); 
     title.SetTextAngle(90.0);
@@ -555,7 +555,7 @@ class IntegratedPlotter {
     title.SetTextAngle(90.0);
     title.DrawLatex(0.07, 0.47, "A_{LU}^{sin(#phi)}"); 
 
-    can->Print(Form("%sx_by_z_%s.png",fOutputPath.c_str(), constants::names::mesons[index].c_str())); 
+    can->Print(Form("%sx_by_z_%s.png",fOutputPath.c_str(), constants::Names::mesons[index].c_str())); 
   }
 
  protected:
@@ -648,9 +648,9 @@ class PidPlotter {
     TLatex title; 
     title.SetNDC();
     title.SetTextSize(0.03); 
-    title.DrawLatex(0.4, 0.95, Form("%s Binned PID Plots", constants::names::latex[fMesonIndex].c_str())); 
+    title.DrawLatex(0.4, 0.95, Form("%s Binned PID Plots", constants::Names::latex[fMesonIndex].c_str())); 
 
-    can->Print(Form("%sgrid_p_b_%s.png",fOutputPath.c_str(), constants::names::mesons[fMesonIndex].c_str())); 
+    can->Print(Form("%sgrid_p_b_%s.png",fOutputPath.c_str(), constants::Names::mesons[fMesonIndex].c_str())); 
   }
   
  protected:

@@ -14,18 +14,18 @@ namespace constants {
   const static int MAX_BINS_PT  = 8; 
   const static float BEAM_POL   = 0.749;
 
-  struct names{
+  struct Names{
     const static std::string mesons[NMESON]; 
     const static std::string latex[NMESON]; 
   };
 
-  struct pid {
+  struct PID {
     const static int pid[NMESON];
   };
 }
 
-const std::string constants::names::mesons[NMESON] = {"pm","pp","km","kp"};
-const std::string constants::names::latex[NMESON]  = {"#pi^{-}","#pi^{+}","K^{-}","K^{+}"};
-const int constants::pid::pid[NMESON] = {-211, 211, -321, 321};
+const std::string constants::Names::mesons[NMESON] = {"pm","pp","km","kp"};
+const std::string constants::Names::latex[NMESON]  = {"#pi^{-}","#pi^{+}","K^{-}","K^{+}"};
+const int constants::PID::pid[NMESON] = {-211, 211, -321, 321};
 
 #endif

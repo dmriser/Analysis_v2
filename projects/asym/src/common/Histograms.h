@@ -87,7 +87,7 @@ class Histos {
 	for(int j=0; j<bins->GetZBins()->GetNumber()+1; j++){
 	  for(int k=0; k<bins->GetPtBins()->GetNumber()+1; k++){
 	    h1_asym[s][i][j][k] = new TH1D(Form("h1_asym_%s_sect%d_x%d_z%d_pt%d_%s", 
-						constants::names::mesons[fMesonIndex].c_str(), s, i, j, k, fName.c_str()),"", bins->GetPhiBins()->GetNumber(), 
+						constants::Names::mesons[fMesonIndex].c_str(), s, i, j, k, fName.c_str()),"", bins->GetPhiBins()->GetNumber(), 
 					   bins->GetPhiBins()->GetMin(), bins->GetPhiBins()->GetMax());
 	    
 	    for (int b=1; b<=h1_phi[s][Helicity::kNegative][i][j][k]->GetXaxis()->GetNbins(); b++){	      
@@ -112,8 +112,8 @@ class Histos {
     TFile *out = new TFile(outfile.c_str(), saveOpts.c_str()); 
 
     if (stage == 1){
-      out->mkdir(Form("phi/%s", constants::names::mesons[fMesonIndex].c_str()));
-      out->cd(Form("phi/%s/", constants::names::mesons[fMesonIndex].c_str()));
+      out->mkdir(Form("phi/%s", constants::Names::mesons[fMesonIndex].c_str()));
+      out->cd(Form("phi/%s/", constants::Names::mesons[fMesonIndex].c_str()));
       for(int s=0; s<constants::NSECT+1; s++){
 	for(int i=0; i<bins->GetXBins()->GetNumber()+1; i++){
 	  for(int j=0; j<bins->GetZBins()->GetNumber()+1; j++){
@@ -128,8 +128,8 @@ class Histos {
     }
 
     if (stage == 2){      
-      out->mkdir(Form("asym/%s", constants::names::mesons[fMesonIndex].c_str()));
-      out->cd(Form("asym/%s/", constants::names::mesons[fMesonIndex].c_str()));
+      out->mkdir(Form("asym/%s", constants::Names::mesons[fMesonIndex].c_str()));
+      out->cd(Form("asym/%s/", constants::Names::mesons[fMesonIndex].c_str()));
       for(int s=0; s<constants::NSECT+1; s++){
 	for(int i=0; i<bins->GetXBins()->GetNumber()+1; i++){
 	  for(int j=0; j<bins->GetZBins()->GetNumber()+1; j++){
@@ -159,23 +159,23 @@ class Histos {
 	for(int i=0; i<bins->GetXBins()->GetNumber()+1; i++){
 	  for(int j=0; j<bins->GetZBins()->GetNumber()+1; j++){
 	    for(int k=0; k<bins->GetPtBins()->GetNumber()+1; k++){
-	      h1_phi[s][Helicity::kNegative][i][j][k] = (TH1D*) inputFile->Get(Form("phi/%s/h1_phi_%s_helMinus_sect%d_x%d_z%d_pt%d_%s", constants::names::mesons[fMesonIndex].c_str(), 
-										    constants::names::mesons[fMesonIndex].c_str(), s, i, j, k, fName.c_str()));
+	      h1_phi[s][Helicity::kNegative][i][j][k] = (TH1D*) inputFile->Get(Form("phi/%s/h1_phi_%s_helMinus_sect%d_x%d_z%d_pt%d_%s", constants::Names::mesons[fMesonIndex].c_str(), 
+										    constants::Names::mesons[fMesonIndex].c_str(), s, i, j, k, fName.c_str()));
  
-	      h1_phi[s][Helicity::kPositive][i][j][k] = (TH1D*) inputFile->Get(Form("phi/%s/h1_phi_%s_helPlus_sect%d_x%d_z%d_pt%d_%s", constants::names::mesons[fMesonIndex].c_str(), 
-										    constants::names::mesons[fMesonIndex].c_str(), s, i, j, k, fName.c_str()));
+	      h1_phi[s][Helicity::kPositive][i][j][k] = (TH1D*) inputFile->Get(Form("phi/%s/h1_phi_%s_helPlus_sect%d_x%d_z%d_pt%d_%s", constants::Names::mesons[fMesonIndex].c_str(), 
+										    constants::Names::mesons[fMesonIndex].c_str(), s, i, j, k, fName.c_str()));
  
-	      h1_asym[s][i][j][k] = (TH1D*) inputFile->Get(Form("asym/%s/h1_asym_%s_sect%d_x%d_z%d_pt%d_%s", constants::names::mesons[fMesonIndex].c_str(), 
-								constants::names::mesons[fMesonIndex].c_str(), s, i, j, k, fName.c_str()));
+	      h1_asym[s][i][j][k] = (TH1D*) inputFile->Get(Form("asym/%s/h1_asym_%s_sect%d_x%d_z%d_pt%d_%s", constants::Names::mesons[fMesonIndex].c_str(), 
+								constants::Names::mesons[fMesonIndex].c_str(), s, i, j, k, fName.c_str()));
 	    }
 	  }
 	}
       }
 
     if (stage == 2) {
-      h1_x   = (TH1D*) inputFile->Get(Form("h1_x_%s_%s", constants::names::mesons[fMesonIndex].c_str(), fName.c_str()));
-      h1_z   = (TH1D*) inputFile->Get(Form("h1_z_%s_%s", constants::names::mesons[fMesonIndex].c_str(), fName.c_str()));
-      h1_pt  = (TH1D*) inputFile->Get(Form("h1_pt_%s_%s",constants::names::mesons[fMesonIndex].c_str(), fName.c_str()));
+      h1_x   = (TH1D*) inputFile->Get(Form("h1_x_%s_%s", constants::Names::mesons[fMesonIndex].c_str(), fName.c_str()));
+      h1_z   = (TH1D*) inputFile->Get(Form("h1_z_%s_%s", constants::Names::mesons[fMesonIndex].c_str(), fName.c_str()));
+      h1_pt  = (TH1D*) inputFile->Get(Form("h1_pt_%s_%s",constants::Names::mesons[fMesonIndex].c_str(), fName.c_str()));
     }
   }
 
@@ -198,15 +198,15 @@ class Histos {
 	for(int j=0; j<bins->GetZBins()->GetNumber()+1; j++){
 	  for(int k=0; k<bins->GetPtBins()->GetNumber()+1; k++){
 	    h1_phi[s][Helicity::kNegative][i][j][k] = new TH1D(Form("h1_phi_%s_helMinus_sect%d_x%d_z%d_pt%d_%s", 
-								    constants::names::mesons[fMesonIndex].c_str(), s, i, j, k, fName.c_str()),"", bins->GetPhiBins()->GetNumber(), 
+								    constants::Names::mesons[fMesonIndex].c_str(), s, i, j, k, fName.c_str()),"", bins->GetPhiBins()->GetNumber(), 
 							       bins->GetPhiBins()->GetMin(), bins->GetPhiBins()->GetMax());
 	    
 	    h1_phi[s][Helicity::kPositive][i][j][k] = new TH1D(Form("h1_phi_%s_helPlus_sect%d_x%d_z%d_pt%d_%s", 
-								   constants::names::mesons[fMesonIndex].c_str(), s, i, j, k, fName.c_str()),"", bins->GetPhiBins()->GetNumber(), 
+								   constants::Names::mesons[fMesonIndex].c_str(), s, i, j, k, fName.c_str()),"", bins->GetPhiBins()->GetNumber(), 
 							      bins->GetPhiBins()->GetMin(), bins->GetPhiBins()->GetMax());
  	    
 	    h1_asym[s][i][j][k] = new TH1D(Form("h1_asym_%s_sect%d_x%d_z%d_pt%d_%s", 
-						constants::names::mesons[fMesonIndex].c_str(), s, i, j, k, fName.c_str()),"", bins->GetPhiBins()->GetNumber(), 
+						constants::Names::mesons[fMesonIndex].c_str(), s, i, j, k, fName.c_str()),"", bins->GetPhiBins()->GetNumber(), 
 					   bins->GetPhiBins()->GetMin(), bins->GetPhiBins()->GetMax());
 	    
 	    }

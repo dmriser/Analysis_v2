@@ -62,7 +62,7 @@ public:
       std::vector<TH1D> theseSlices = fitter->GetSlices(); 
 
       std::cout << "[MesonBetaSliceFitter::Fit] For sector " << s << " we have slices = " << theseSlices.size() << std::endl;
-      std::cout << "[MesonBetaSliceFitter::Fit] For sector " << s << " we have fits = " << theseFits.size() << std::endl;
+      std::cout << "[MesonBetaSliceFitter::Fit] For sector " << s << " we have fits = "   << theseFits.size() << std::endl;
 
       fits.push_back(theseFits);
       slices.push_back(theseSlices); 
@@ -91,7 +91,6 @@ public:
   }
 
   void WriteParameters(Parameters *pars){
-
     std::string particle = GetParticleName(); 
 
     ParameterSet muA, muB, muC, muD;

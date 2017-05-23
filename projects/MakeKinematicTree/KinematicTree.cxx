@@ -13,8 +13,9 @@ using std::endl;
 #include "TTree.h"
 #include "TBranch.h"
 
-KinematicTree::KinematicTree(){
+KinematicTree::KinematicTree(h22Options *opts, Parameters *p) : GenericAnalysis(opts), fPars(p) {
   isMonteCarlo = false; 
+  fFilter = new ParticleFilter(fPars); 
 }
 
 KinematicTree::~KinematicTree(){
@@ -33,63 +34,35 @@ void KinematicTree::SetupTree(){
   b_w        = kinematicTree->Branch("w",        &w);
   b_nu       = kinematicTree->Branch("nu",       &nu);
   b_electron = kinematicTree->Branch("electron", &electron);
+  b_meson    = kinematicTree->Branch("meson", &meson);
 
 }
 
 void KinematicTree::ProcessEvent(){
 
-  // We can access the event directly because GenericAnalysis 
-  // inherits from h22Reader which contains event. 
-  int electronIndex     = -1; 
-  bool eventHasElectron = false;
+  std::vector<int> electrons = fFilter->getVectorOfParticleIndices(event, 11); 
+  std::vector<int> mesons    = fFilter->getVectorOfParticleIndices(event, 211); 
 
-  if (!isMonteCarlo){
-    for (int ipart=0; ipart<event.gpart; ipart++){
-      // This is one way of getting electrons 
-      // from data, but not the best way. 
-      
-      if (event.id[ipart] == 11){
-      electronIndex    = ipart; 
-      eventHasElectron = true; 
-      break;
-      }
-    }
+  bool eventIsGood = (!electrons.empty() && !mesons.empty()); 
 
     // Process
-    if (eventHasElectron){    
-      electron = TLorentzVector(event.cx[electronIndex]*event.p[electronIndex], 
-				event.cy[electronIndex]*event.p[electronIndex],
-				event.cz[electronIndex]*event.p[electronIndex],
-				event.p[electronIndex]);
+    if (eventIsGood){    
+      int electronIndex = electrons[0]; 
+      int mesonIndex    = mesons[0];
+
+      electron = event.GetTLorentzVector(electronIndex, 11); 
+      meson    = event.GetTLorentzVector(mesonIndex, 211); 
+
+      PhysicsEvent ev = builder.getPhysicsEvent(electron, meson);
+
+      x  = ev.x; 
+      y  = ev.y; 
+      qq = ev.qq; 
+      w  = ev.w;  
+      nu = ev.nu; 
+
+      kinematicTree->Fill(); 
     }
-  }
-
-  else {
-    electron         = event.GetGeneratedParticle(11);
-    eventHasElectron = true; 
-
-    cout << "Electron set from MC pz=" << electron.Pz() << endl;
-  }
-
-  if (eventHasElectron){
-    
-    PhysicsEvent physicsEvent = builder.getPhysicsEvent(electron); 
-    
-    x  = physicsEvent.x; 
-    y  = physicsEvent.y; 
-    qq = physicsEvent.qq; 
-    nu = physicsEvent.nu; 
-    w  = physicsEvent.w; 
-
-    cout.width(14); cout << x; 
-    cout.width(14); cout << y; 
-    cout.width(14); cout << qq; 
-    cout.width(14); cout << nu; 
-    cout.width(14); cout << w << endl; 
-
-    // Add this entry to the output.
-    kinematicTree->Fill();
-  }
 }
 
 void KinematicTree::Save(string outputFilename){

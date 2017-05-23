@@ -73,5 +73,30 @@ int main(int nargs, char *args[]){
   plot_int.PlotXByZ(Meson::kKaonPositive);
   plot_int.PlotSummary(); 
 
+  PidHistos pp_pid("test", Meson::kPionPositive);
+  pp_pid.Load(inputFile);
+
+  PidHistos pm_pid("test", Meson::kPionNegative);
+  pm_pid.Load(inputFile);
+
+  PidHistos kp_pid("test", Meson::kKaonPositive);
+  kp_pid.Load(inputFile);
+
+  PidHistos km_pid("test", Meson::kKaonNegative);
+  km_pid.Load(inputFile);
+
+  PidPlotter pp_pid_plot(&pp_pid, Meson::kPionPositive);
+  pp_pid_plot.PlotGridZPt(); 
+
+  PidPlotter pm_pid_plot(&pm_pid, Meson::kPionNegative);
+  pm_pid_plot.PlotGridZPt(); 
+
+  PidPlotter kp_pid_plot(&kp_pid, Meson::kKaonPositive);
+  kp_pid_plot.PlotGridZPt(); 
+
+  PidPlotter km_pid_plot(&km_pid, Meson::kKaonNegative);
+  km_pid_plot.PlotGridZPt(); 
+
+
   return 0;
 }

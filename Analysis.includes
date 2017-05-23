@@ -10,6 +10,7 @@ momCorr
 pid/calib/eid
 pid/calib/photon
 projects/appendInformationToNtuple
+projects/asym/src/common
 projects/dis
 projects/dis/backup
 projects/dis2/src/common

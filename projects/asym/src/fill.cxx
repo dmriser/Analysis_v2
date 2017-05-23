@@ -75,8 +75,8 @@ void Analysis::InitHistos() {
   pidHistos[Meson::kKaonPositive] = new PidHistos("test", Meson::kKaonPositive); 
 
   for (int m=0; m<constants::NMESON; m++){
-    mesonHistos[m]    = new MesonHistograms(constants::Names::mesons[m], constants::Pid::pid[m]); 
-    standardHistos[m] = new StandardHistograms(constants::Names::mesons[m], 0);
+    mesonHistos[m]    = new MesonHistograms(constants::names::mesons[m], constants::pid::pid[m]); 
+    standardHistos[m] = new StandardHistograms(constants::names::mesons[m], 0);
   }
 }
 

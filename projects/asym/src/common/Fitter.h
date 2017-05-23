@@ -36,7 +36,7 @@ class BasicFitter : public Fitter {
 	     }
 	   }
 
-	   std::string current_name(Form("fit_asym_%s_sect%d_x%d_z%d_pt%d_%s", constants::Names::mesons[h->GetMesonIndex()].c_str(), s, i, j, k, h->GetName().c_str()));
+	   std::string current_name(Form("fit_asym_%s_sect%d_x%d_z%d_pt%d_%s", constants::names::mesons[h->GetMesonIndex()].c_str(), s, i, j, k, h->GetName().c_str()));
  
 	   f->fit_asym[s][i][j][k] = new TF1(current_name.c_str(),"[0]*sin((3.14159/180.0)*x)",f->GetBinning()->GetPhiBins()->GetMin(), f->GetBinning()->GetPhiBins()->GetMax());
 	   histo->Fit(current_name.c_str(), "RQ"); 
@@ -59,7 +59,7 @@ class BasicAllMomentFitter : public Fitter {
      for (int i=0; i<f->GetBinning()->GetXBins()->GetNumber()+1; i++){
        for(int j=0; j<f->GetBinning()->GetZBins()->GetNumber()+1; j++){
 	 for(int k=0; k<f->GetBinning()->GetPtBins()->GetNumber()+1; k++){
-	   std::string current_name(Form("fit_asym_%s_sect%d_x%d_z%d_pt%d_%s", constants::Names::mesons[h->GetMesonIndex()].c_str(), s, i, j, k, h->GetName().c_str()));
+	   std::string current_name(Form("fit_asym_%s_sect%d_x%d_z%d_pt%d_%s", constants::names::mesons[h->GetMesonIndex()].c_str(), s, i, j, k, h->GetName().c_str()));
 
 	   TH1D *histo = (TH1D*) h->h1_asym[s][i][j][k]->Clone();
 	   

@@ -65,8 +65,8 @@ class PidHistos {
   void Save(std::string outfile, std::string saveOpts){
     TFile *out = new TFile(outfile.c_str(), saveOpts.c_str()); 
 
-    out->mkdir(Form("pid/%s/", constants::Names::mesons[fMesonIndex].c_str()));
-    out->cd(Form("pid/%s/",constants::Names::mesons[fMesonIndex].c_str()));
+    out->mkdir(Form("pid/%s/", constants::names::mesons[fMesonIndex].c_str()));
+    out->cd(Form("pid/%s/",constants::names::mesons[fMesonIndex].c_str()));
     for(int i=0; i<bins->GetXBins()->GetNumber()+1; i++){
       for(int j=0; j<bins->GetZBins()->GetNumber()+1; j++){
 	for(int k=0; k<bins->GetPtBins()->GetNumber()+1; k++){
@@ -85,7 +85,7 @@ class PidHistos {
 	for(int i=0; i<bins->GetXBins()->GetNumber()+1; i++){
 	  for(int j=0; j<bins->GetZBins()->GetNumber()+1; j++){
 	    for(int k=0; k<bins->GetPtBins()->GetNumber()+1; k++){
-	      h2_p_b[i][j][k] = (TH2D*) inputFile->Get(Form("pid/%s/h2_p_b_%s_x%d_z%d_pt%d_%s", constants::Names::mesons[fMesonIndex].c_str(), constants::Names::mesons[fMesonIndex].c_str(), 
+	      h2_p_b[i][j][k] = (TH2D*) inputFile->Get(Form("pid/%s/h2_p_b_%s_x%d_z%d_pt%d_%s", constants::names::mesons[fMesonIndex].c_str(), constants::names::mesons[fMesonIndex].c_str(), 
 							    i, j, k, fName.c_str()));
 
 	      // for some reason these arent loading properly 
@@ -109,7 +109,7 @@ class PidHistos {
       for(int i=0; i<bins->GetXBins()->GetNumber()+1; i++){
 	for(int j=0; j<bins->GetZBins()->GetNumber()+1; j++){
 	  for(int k=0; k<bins->GetPtBins()->GetNumber()+1; k++){
-	    h2_p_b[i][j][k] = new TH2D(Form("h2_p_b_%s_x%d_z%d_pt%d_%s", constants::Names::mesons[fMesonIndex].c_str(), 
+	    h2_p_b[i][j][k] = new TH2D(Form("h2_p_b_%s_x%d_z%d_pt%d_%s", constants::names::mesons[fMesonIndex].c_str(), 
 					    i, j, k, fName.c_str()), "", 100, 0.5, 3.0, 100, 0.2, 1.1);
 	  }
 	}

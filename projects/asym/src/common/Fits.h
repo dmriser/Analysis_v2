@@ -47,8 +47,8 @@ class Fits {
     TFile *out = new TFile(outfile.c_str(), saveOpts.c_str()); 
 
     if (stage == 1){
-      out->mkdir(Form("fit/%s", constants::Names::mesons[fMesonIndex].c_str()));
-      out->cd(Form("fit/%s/", constants::Names::mesons[fMesonIndex].c_str()));
+      out->mkdir(Form("fit/%s", constants::names::mesons[fMesonIndex].c_str()));
+      out->cd(Form("fit/%s/", constants::names::mesons[fMesonIndex].c_str()));
       for(int s=0; s<constants::NSECT+1; s++){
 	for(int i=0; i<bins->GetXBins()->GetNumber()+1; i++){
 	  for(int j=0; j<bins->GetZBins()->GetNumber()+1; j++){
@@ -77,8 +77,8 @@ class Fits {
 	for(int i=0; i<bins->GetXBins()->GetNumber()+1; i++){
 	  for(int j=0; j<bins->GetZBins()->GetNumber()+1; j++){
 	    for(int k=0; k<bins->GetPtBins()->GetNumber()+1; k++){
-	      fit_asym[s][i][j][k] = (TF1*) inputFile->Get(Form("fit/%s/fit_asym_%s_sect%d_x%d_z%d_pt%d_%s", constants::Names::mesons[fMesonIndex].c_str(), 
-								constants::Names::mesons[fMesonIndex].c_str(), s, i, j, k, fName.c_str()));
+	      fit_asym[s][i][j][k] = (TF1*) inputFile->Get(Form("fit/%s/fit_asym_%s_sect%d_x%d_z%d_pt%d_%s", constants::names::mesons[fMesonIndex].c_str(), 
+								constants::names::mesons[fMesonIndex].c_str(), s, i, j, k, fName.c_str()));
 	      std::cout << "[Fit::Load] Loaded " << fit_asym[s][i][j][k]->GetName() << std::endl;
 	    }
 	  }
@@ -92,7 +92,7 @@ class Fits {
       for(int i=0; i<bins->GetXBins()->GetNumber()+1; i++){
 	for(int j=0; j<bins->GetZBins()->GetNumber()+1; j++){
 	  for(int k=0; k<bins->GetPtBins()->GetNumber()+1; k++){
-	    std::string current_name(Form("fit_asym_%s_sect%d_x%d_z%d_pt%d_%s", constants::Names::mesons[fMesonIndex].c_str(), s, i, j, k, fName.c_str()));
+	    std::string current_name(Form("fit_asym_%s_sect%d_x%d_z%d_pt%d_%s", constants::names::mesons[fMesonIndex].c_str(), s, i, j, k, fName.c_str()));
  
 	    fit_asym[s][i][j][k] = new TF1(current_name.c_str(),"[0]*sin((3.14159/180.0)*x)",bins->GetPhiBins()->GetMin(), bins->GetPhiBins()->GetMax());
 	    fHistos->h1_asym[s][i][j][k]->Fit(current_name.c_str(), "RQ");

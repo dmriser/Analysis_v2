@@ -43,19 +43,19 @@ class IntegratedHistos {
     
     for (int i=0; i<bins->GetZBins()->GetNumber()+1; i++){
       for(int j=0; j<bins->GetPtBins()->GetNumber()+1; j++){
-	h1_x[i][j] = (TH1D*) fInputFile->Get(Form("integrated/%s/h1_x_z%d_pt%d",constants::Names::mesons[fMesonIndex].c_str(), i, j));
+	h1_x[i][j] = (TH1D*) fInputFile->Get(Form("integrated/%s/h1_x_z%d_pt%d",constants::names::mesons[fMesonIndex].c_str(), i, j));
       }
     }
 
     for (int i=0; i<bins->GetPtBins()->GetNumber()+1; i++){
       for(int j=0; j<bins->GetXBins()->GetNumber()+1; j++){
- 	h1_z[i][j] = (TH1D*) fInputFile->Get(Form("integrated/%s/h1_z_pt%d_x%d",constants::Names::mesons[fMesonIndex].c_str(), i, j));
+ 	h1_z[i][j] = (TH1D*) fInputFile->Get(Form("integrated/%s/h1_z_pt%d_x%d",constants::names::mesons[fMesonIndex].c_str(), i, j));
       }
     } 
 
     for (int i=0; i<bins->GetXBins()->GetNumber()+1; i++){
       for(int j=0; j<bins->GetZBins()->GetNumber()+1; j++){
-	h1_pt[i][j] = (TH1D*) fInputFile->Get(Form("integrated/%s/h1_pt_x%d_z%d",constants::Names::mesons[fMesonIndex].c_str(), i, j));
+	h1_pt[i][j] = (TH1D*) fInputFile->Get(Form("integrated/%s/h1_pt_x%d_z%d",constants::names::mesons[fMesonIndex].c_str(), i, j));
       }
     }
   }
@@ -63,7 +63,7 @@ class IntegratedHistos {
   void Save(std::string outfile, std::string mode){
     TFile *out = new TFile(outfile.c_str(), mode.c_str()); 
     
-    std::string dir(Form("integrated/%s/", constants::Names::mesons[fMesonIndex].c_str()));
+    std::string dir(Form("integrated/%s/", constants::names::mesons[fMesonIndex].c_str()));
     out->mkdir(dir.c_str()); 
     out->cd(dir.c_str()); 
 		    

@@ -650,7 +650,78 @@ class PidPlotter {
     title.SetTextSize(0.03); 
     title.DrawLatex(0.4, 0.95, Form("%s Binned PID Plots", constants::Names::latex[fMesonIndex].c_str())); 
 
-    can->Print(Form("%sgrid_p_b_%s.png",fOutputPath.c_str(), constants::Names::mesons[fMesonIndex].c_str())); 
+    can->Print(Form("%sgrid_pid_z_pt_%s.png",fOutputPath.c_str(), constants::Names::mesons[fMesonIndex].c_str())); 
+  }
+  void PlotGridZX(){
+
+    TCanvas *can = new TCanvas("can","",1200,900); 
+
+    gStyle->SetOptStat(0); 
+    gStyle->SetErrorX(0.00); 
+    gStyle->SetLabelSize(0.00,"y");
+    gStyle->SetTitleSize(0.0,"y");
+    gStyle->SetTitleFont(22,"xyz");
+    gStyle->SetLabelFont(22,"xyz");
+    gStyle->SetTitleOffset(1.2,"y");
+
+    gStyle->SetCanvasColor(0);
+    gStyle->SetCanvasBorderMode(0);
+    gStyle->SetCanvasBorderSize(0);
+    can->cd(); 
+ 
+    TGaxis *zAxis = new TGaxis(0.32, 0.1, 0.9, 0.1, fBins->GetZBins()->GetMin(), fBins->GetZBins()->GetMax(), 5, "");
+    zAxis->SetTitle("z");
+    zAxis->SetLabelSize(0.03);
+    zAxis->Draw();
+
+    TGaxis *xAxis = new TGaxis(0.1, 0.32, 0.1, 0.9, fBins->GetXBins()->GetMin(), fBins->GetXBins()->GetMax(), 5, "");
+    xAxis->SetTitle("x");
+    xAxis->SetLabelSize(0.03);
+    xAxis->Draw();    
+
+    TPad *pads[constants::MAX_BINS_Z][constants::MAX_BINS_X];
+    
+    int nx = fBins->GetXBins()->GetNumber(); 
+    int nz = fBins->GetZBins()->GetNumber(); 
+
+    double padding = 0.01; 
+    double xstop   = 0.9; 
+    double xstart  = 0.18; 
+    double ystop   = 0.9; 
+    double ystart  = 0.18; 
+    double xwidth  = ((xstop-xstart) - (nz-1)*padding)/(1+nz); 
+    double ywidth  = ((ystop-ystart) - (nx-1)*padding)/(1+nx); 
+
+    for (int x=0; x<nz+1; x++){
+      for (int y=0; y<nx+1; y++){
+	std::string padTitle(Form("pad_%d%d",x,y)); 
+	
+	double padStartX = xstart + (x)*xwidth + (x)*padding; 
+	double padStopX  = padStartX + xwidth; 
+	
+	double padStartY = ystart + (y)*ywidth + (y)*padding; 
+	double padStopY  = padStartY + ywidth; 
+
+	can->cd(); 
+	pads[y][x] = new TPad(padTitle.c_str(), padTitle.c_str(), padStartX, padStartY, padStopX, padStopY); 
+	pads[y][x]->Draw(); 
+	pads[y][x]->cd(); 
+	pads[y][x]->SetGrid(); 
+	pads[y][x]->SetLogz(); 
+	pads[y][x]->SetMargin(0.01, 0.01, 0.01, 0.01);
+
+	fHistos->h2_p_b[y][x][0]->Draw("colz"); 
+      }
+    }
+
+    can->cd(); 
+
+    TLatex title; 
+    title.SetNDC();
+    title.SetTextSize(0.03); 
+    title.DrawLatex(0.4, 0.95, Form("%s Binned PID Plots", constants::Names::latex[fMesonIndex].c_str())); 
+    
+    can->Print(Form("%sgrid_pid_z_x_%s.png",fOutputPath.c_str(), constants::Names::mesons[fMesonIndex].c_str())); 
   }
   
  protected:

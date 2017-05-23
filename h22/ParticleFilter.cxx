@@ -923,7 +923,7 @@ std::map<int, TLorentzVector> ParticleFilter::getMapOfIndexAndTLorentzVector(h22
     return results;
 }
 
-std::map<std::string, bool> ParticleFilter::eid_map(h22Event event, int index){
+std::map<std::string, bool> ParticleFilter::eid_map(h22Event &event, int index){
 
     int sector = event.dc_sect[index];
     std::map<std::string, bool> results;

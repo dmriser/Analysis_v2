@@ -87,15 +87,19 @@ int main(int nargs, char *args[]){
 
   PidPlotter pp_pid_plot(&pp_pid, Meson::kPionPositive);
   pp_pid_plot.PlotGridZPt(); 
+  pp_pid_plot.PlotGridZX(); 
 
   PidPlotter pm_pid_plot(&pm_pid, Meson::kPionNegative);
   pm_pid_plot.PlotGridZPt(); 
+  pm_pid_plot.PlotGridZX(); 
 
   PidPlotter kp_pid_plot(&kp_pid, Meson::kKaonPositive);
   kp_pid_plot.PlotGridZPt(); 
+  kp_pid_plot.PlotGridZX(); 
 
   PidPlotter km_pid_plot(&km_pid, Meson::kKaonNegative);
   km_pid_plot.PlotGridZPt(); 
+  km_pid_plot.PlotGridZX(); 
 
 
   return 0;

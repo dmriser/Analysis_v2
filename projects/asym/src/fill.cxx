@@ -1,7 +1,7 @@
 ////////////////////////////////////////
 /*
- David Riser, University of Connecticut
 
+ David Riser, University of Connecticut
 
  
  */
@@ -119,6 +119,8 @@ void Analysis::ProcessEvent(){
     TLorentzVector electron  = event.GetTLorentzVector(electronIndex, 11); 
     electron = momCorr->PcorN(electron, -1, 11);    
 
+    PhysicsEvent electron_ev = builder->getPhysicsEvent(electron); 
+
     if (!kps.empty() && helicity > -1) {
       
       TLorentzVector meson = event.GetTLorentzVector(kps[0], 321);
@@ -131,6 +133,7 @@ void Analysis::ProcessEvent(){
 	mesonHistos[Meson::kKaonPositive]   ->Fill(event, ev, kps[0]); 
 	standardHistos[Meson::kKaonPositive]->Fill(event, electronIndex, kps[0], ev); 
 	pidHistos[Meson::kKaonPositive]     ->Fill(event, ev, kps[0]);
+	pidHistos[Meson::kPionPositive]     ->Fill(event, ev, kps[0]);
       }
     }
 
@@ -145,6 +148,7 @@ void Analysis::ProcessEvent(){
 	mesonHistos[Meson::kPionNegative]   ->Fill(event, ev, pms[0]); 
 	standardHistos[Meson::kPionNegative]->Fill(event, electronIndex, pms[0], ev); 
 	pidHistos[Meson::kPionNegative]     ->Fill(event, ev, pms[0]);
+	pidHistos[Meson::kKaonNegative]     ->Fill(event, ev, pms[0]);
       }
     }
 
@@ -159,6 +163,7 @@ void Analysis::ProcessEvent(){
 	mesonHistos[Meson::kPionPositive]   ->Fill(event, ev, pps[0]); 
 	standardHistos[Meson::kPionPositive]->Fill(event, electronIndex, pps[0], ev); 
 	pidHistos[Meson::kPionPositive]     ->Fill(event, ev, pps[0]);
+	pidHistos[Meson::kKaonPositive]     ->Fill(event, ev, pps[0]);
       }
     }
 
@@ -173,6 +178,7 @@ void Analysis::ProcessEvent(){
 	mesonHistos[Meson::kKaonNegative]   ->Fill(event, ev, kms[0]); 
 	standardHistos[Meson::kKaonNegative]->Fill(event, electronIndex, kms[0], ev); 
 	pidHistos[Meson::kKaonNegative]     ->Fill(event, ev, kms[0]);
+	pidHistos[Meson::kPionNegative]     ->Fill(event, ev, kms[0]);
       }
     }
 

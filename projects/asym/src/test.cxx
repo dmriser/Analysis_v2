@@ -4,18 +4,13 @@
 #include "common/PIDHistograms.h"
 #include "common/IntegratedHistograms.h"
 #include "common/Plotter.h"
+#include "common/SignalBackground.h"
 #include "common/Types.h"
 
 
 int main(){
 
-  Histos test_histos("test_histos", Meson::kPionPositive); 
-
-  Fits f("test",Meson::kPionPositive); 
-  f.Load("out/refactor_fill.root",1); 
-
-  IntegratedHistos int_histos(&f, Meson::kPionPositive);
-  int_histos.Save("out/test_int_histos.root","recreate"); 
+  std::cout << "Your test here." << std::endl; 
 
   return 0; 
 }

@@ -27,6 +27,7 @@ class KinematicTree : public GenericAnalysis {
   TBranch *b_y;
   TBranch *b_z;
   TBranch *b_w;
+  TBranch *b_mm2;
   TBranch *b_hel;
   TBranch *b_meson_id;
   TBranch *b_tof_mass; 
@@ -39,13 +40,18 @@ class KinematicTree : public GenericAnalysis {
   TBranch *b_pass_ec;
   TBranch *b_ele_vz;
   TBranch *b_mes_vz;
+  TBranch *b_ele_p;
+  TBranch *b_mes_p;
 
   Double_t qq; 
   Double_t x; 
   Double_t w; 
   Double_t y; 
+  Double_t mm2; 
   Double_t z; 
   Double_t pt; 
+  Double_t ele_p; 
+  Double_t mes_p; 
   Double_t ele_vz; 
   Double_t mes_vz; 
   Double_t phiH;

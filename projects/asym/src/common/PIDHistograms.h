@@ -42,6 +42,7 @@ class PidHistos {
 
   // the order is always x, z, pt, phi
   TH2D *h2_p_b[constants::MAX_BINS_X][constants::MAX_BINS_Z][constants::MAX_BINS_PT]; 
+  TH1D *h1_tof_mass[constants::MAX_BINS_X][constants::MAX_BINS_Z][constants::MAX_BINS_PT]; 
 
   void Fill(h22Event &event, PhysicsEvent &ev, int index){
     int x   = 1+bins->GetXBins()->FindBin(ev.x);
@@ -58,6 +59,16 @@ class PidHistos {
       h2_p_b[x][0][pt]->Fill(event.p[index], event.corr_b[index]);
       h2_p_b[x][z][0]->Fill(event.p[index], event.corr_b[index]);
       h2_p_b[x][z][pt]->Fill(event.p[index], event.corr_b[index]);
+
+      double tof_mass = event.p[index] * sqrt((1-pow(event.corr_b[index],2))/pow(event.corr_b[index],2)); 
+      h1_tof_mass[0][0][0] ->Fill(tof_mass);
+      h1_tof_mass[x][0][0] ->Fill(tof_mass);
+      h1_tof_mass[0][z][0] ->Fill(tof_mass);
+      h1_tof_mass[0][0][pt]->Fill(tof_mass);
+      h1_tof_mass[0][z][pt]->Fill(tof_mass);
+      h1_tof_mass[x][0][pt]->Fill(tof_mass);
+      h1_tof_mass[x][z][0] ->Fill(tof_mass);
+      h1_tof_mass[x][z][pt]->Fill(tof_mass);
     }
   }
 
@@ -70,7 +81,8 @@ class PidHistos {
     for(int i=0; i<bins->GetXBins()->GetNumber()+1; i++){
       for(int j=0; j<bins->GetZBins()->GetNumber()+1; j++){
 	for(int k=0; k<bins->GetPtBins()->GetNumber()+1; k++){
-	  h2_p_b[i][j][k]->Write(); 
+	  h2_p_b[i][j][k]     ->Write(); 
+	  h1_tof_mass[i][j][k]->Write(); 
 	}
       }
     }
@@ -85,11 +97,11 @@ class PidHistos {
 	for(int i=0; i<bins->GetXBins()->GetNumber()+1; i++){
 	  for(int j=0; j<bins->GetZBins()->GetNumber()+1; j++){
 	    for(int k=0; k<bins->GetPtBins()->GetNumber()+1; k++){
-	      h2_p_b[i][j][k] = (TH2D*) inputFile->Get(Form("pid/%s/h2_p_b_%s_x%d_z%d_pt%d_%s", constants::Names::mesons[fMesonIndex].c_str(), constants::Names::mesons[fMesonIndex].c_str(), 
-							    i, j, k, fName.c_str()));
-
-	      // for some reason these arent loading properly 
-	      std::cout << "[PidHistos::Load] Loaded " << h2_p_b[i][j][k]->GetName() << " with entries = " << h2_p_b[i][j][k]->GetEntries() << std::endl;
+	      h2_p_b[i][j][k]      = (TH2D*) inputFile->Get(Form("pid/%s/h2_p_b_%s_x%d_z%d_pt%d_%s", constants::Names::mesons[fMesonIndex].c_str(), constants::Names::mesons[fMesonIndex].c_str(), 
+								 i, j, k, fName.c_str()));
+	      
+	      h1_tof_mass[i][j][k] = (TH1D*) inputFile->Get(Form("pid/%s/h1_tof_mass_%s_x%d_z%d_pt%d_%s", constants::Names::mesons[fMesonIndex].c_str(),  constants::Names::mesons[fMesonIndex].c_str(), 
+								 i, j, k, fName.c_str()));
 	    }
 	  }
 	}
@@ -111,10 +123,12 @@ class PidHistos {
 	  for(int k=0; k<bins->GetPtBins()->GetNumber()+1; k++){
 	    h2_p_b[i][j][k] = new TH2D(Form("h2_p_b_%s_x%d_z%d_pt%d_%s", constants::Names::mesons[fMesonIndex].c_str(), 
 					    i, j, k, fName.c_str()), "", 100, 0.5, 3.0, 100, 0.2, 1.1);
+	    
+	    h1_tof_mass[i][j][k] = new TH1D(Form("h1_tof_mass_%s_x%d_z%d_pt%d_%s", constants::Names::mesons[fMesonIndex].c_str(), 
+						 i, j, k, fName.c_str()), "", 100, 0.0, 1.0);
 	  }
 	}
-      }
-      
+      }      
   }
 
   bool IndexIsSafe(int x, int z, int pt, int phi){

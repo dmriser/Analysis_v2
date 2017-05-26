@@ -55,10 +55,10 @@ int main(int nargs, char *args[]){
   ppm.PlotGridZX();  
   ppm.PlotGridZPt();  
 
-  IntegratedHistos kp_int(inputFile, Meson::kKaonPositive); 
-  IntegratedHistos km_int(inputFile, Meson::kKaonNegative); 
-  IntegratedHistos pp_int(inputFile, Meson::kPionPositive); 
-  IntegratedHistos pm_int(inputFile, Meson::kPionNegative); 
+  IntegratedHistos kp_int(inputFile, "base", Meson::kKaonPositive); 
+  IntegratedHistos km_int(inputFile, "base", Meson::kKaonNegative); 
+  IntegratedHistos pp_int(inputFile, "base", Meson::kPionPositive); 
+  IntegratedHistos pm_int(inputFile, "base", Meson::kPionNegative); 
 
   IntegratedPlotter plot_int;
   plot_int.Add(&kp_int, Meson::kKaonPositive); 

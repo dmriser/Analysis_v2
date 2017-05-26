@@ -1,0 +1,10 @@
+# todo 
+
+-> Add feature to save mass fits 
+-> Fix some classes constructors to just be no args and then 
+   pass in the things for actions for example plotting it doesnt 
+   need to always have the histograms 
+-> Plot uncorrected/corrected 
+-> Check how contaminated bins are 
+-> Remove sectors ? 
+-> Cook all files of miniTree ?

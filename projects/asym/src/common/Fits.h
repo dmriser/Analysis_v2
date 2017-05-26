@@ -27,10 +27,35 @@ class Fits {
     inputFile = new TFile(); 
   }
 
+ Fits(Fits *f, std::string name) : fName(name) {
+    inputFile = new TFile(); 
+
+    bins        = f->GetBinning();
+    fMesonIndex = f->GetMesonIndex(); 
+    fHistos     = f->GetHistos(); 
+
+    for (int s=0; s<constants::NSECT+1; s++){
+      for(int i=0; i<bins->GetXBins()->GetNumber()+1; i++){
+	for(int j=0; j<bins->GetZBins()->GetNumber()+1; j++){
+	  for(int k=0; k<bins->GetPtBins()->GetNumber()+1; k++){
+	    std::string current_name(Form("fit_asym_%s_sect%d_x%d_z%d_pt%d_%s", constants::Names::mesons[fMesonIndex].c_str(), s, i, j, k, fName.c_str()));
+ 
+	    fit_asym[s][i][j][k] = (TF1*) f->fit_asym[s][i][j][k]->Clone(); 
+	    fit_asym[s][i][j][k]->SetName(current_name.c_str()); 
+	    fit_asym[s][i][j][k]->SetTitle(current_name.c_str()); 
+	  }
+	}
+      }
+    } 
+
+  }
+
  Fits(std::string name, int index) : fName(name), fMesonIndex(index) {
     SetupBinning();
     inputFile = new TFile(); 
   }
+
+
   
   ~Fits(){
     if (inputFile)
@@ -104,6 +129,14 @@ class Fits {
 
   Bins *GetBinning() const {
     return bins; 
+  }
+
+  int GetMesonIndex() const {
+    return fMesonIndex; 
+  }
+
+  Histos *GetHistos() const {
+    return fHistos; 
   }
 
  protected:

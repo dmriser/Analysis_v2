@@ -14,13 +14,13 @@ class IntegratedHistos {
  public:
 
   // Used when they dont exist
- IntegratedHistos(Fits *f, int index): fFits(f), fMesonIndex(index) {
+ IntegratedHistos(Fits *f, std::string name, int index): fFits(f), fName(name), fMesonIndex(index) {
     CreateHistograms(); 
     fInputFile = new TFile(); 
   }
 
   //  Used when they are being loaded.
- IntegratedHistos(std::string infile, int index) : fMesonIndex(index){
+ IntegratedHistos(std::string infile, std::string name, int index) : fName(name), fMesonIndex(index){
     Load(infile);
   }
 
@@ -43,19 +43,19 @@ class IntegratedHistos {
     
     for (int i=0; i<bins->GetZBins()->GetNumber()+1; i++){
       for(int j=0; j<bins->GetPtBins()->GetNumber()+1; j++){
-	h1_x[i][j] = (TH1D*) fInputFile->Get(Form("integrated/%s/h1_x_z%d_pt%d",constants::Names::mesons[fMesonIndex].c_str(), i, j));
+	h1_x[i][j] = (TH1D*) fInputFile->Get(Form("integrated/%s/h1_x_z%d_pt%d_%s",constants::Names::mesons[fMesonIndex].c_str(), i, j, fName.c_str()));
       }
     }
 
     for (int i=0; i<bins->GetPtBins()->GetNumber()+1; i++){
       for(int j=0; j<bins->GetXBins()->GetNumber()+1; j++){
- 	h1_z[i][j] = (TH1D*) fInputFile->Get(Form("integrated/%s/h1_z_pt%d_x%d",constants::Names::mesons[fMesonIndex].c_str(), i, j));
+ 	h1_z[i][j] = (TH1D*) fInputFile->Get(Form("integrated/%s/h1_z_pt%d_x%d_%s",constants::Names::mesons[fMesonIndex].c_str(), i, j, fName.c_str()));
       }
     } 
 
     for (int i=0; i<bins->GetXBins()->GetNumber()+1; i++){
       for(int j=0; j<bins->GetZBins()->GetNumber()+1; j++){
-	h1_pt[i][j] = (TH1D*) fInputFile->Get(Form("integrated/%s/h1_pt_x%d_z%d",constants::Names::mesons[fMesonIndex].c_str(), i, j));
+	h1_pt[i][j] = (TH1D*) fInputFile->Get(Form("integrated/%s/h1_pt_x%d_z%d_%s",constants::Names::mesons[fMesonIndex].c_str(), i, j, fName.c_str()));
       }
     }
   }
@@ -90,15 +90,16 @@ class IntegratedHistos {
   }
 
 protected:
-  int fMesonIndex; 
-  Fits *fFits; 
-  TFile *fInputFile; 
+  std::string fName; 
+  int         fMesonIndex; 
+  Fits       *fFits; 
+  TFile      *fInputFile; 
 
   void CreateHistograms(){
 
     for (int i=0; i<fFits->GetBinning()->GetZBins()->GetNumber()+1; i++){
       for(int j=0; j<fFits->GetBinning()->GetPtBins()->GetNumber()+1; j++){
-	h1_x[i][j] = new TH1D(Form("h1_x_z%d_pt%d", i, j), "", fFits->GetBinning()->GetXBins()->GetNumber(), fFits->GetBinning()->GetXBins()->GetLimits().data());
+	h1_x[i][j] = new TH1D(Form("h1_x_z%d_pt%d_%s", i, j, fName.c_str()), "", fFits->GetBinning()->GetXBins()->GetNumber(), fFits->GetBinning()->GetXBins()->GetLimits().data());
 
 	// iterate on the bins in x, adding them to the histogram 
 	for (int k=1; k<fFits->GetBinning()->GetXBins()->GetNumber()+1; k++){
@@ -110,7 +111,7 @@ protected:
 
     for (int i=0; i<fFits->GetBinning()->GetPtBins()->GetNumber()+1; i++){
       for(int j=0; j<fFits->GetBinning()->GetXBins()->GetNumber()+1; j++){
-	h1_z[i][j] = new TH1D(Form("h1_z_pt%d_x%d", i, j), "", fFits->GetBinning()->GetZBins()->GetNumber(), fFits->GetBinning()->GetZBins()->GetLimits().data());    
+	h1_z[i][j] = new TH1D(Form("h1_z_pt%d_x%d_%s", i, j, fName.c_str()), "", fFits->GetBinning()->GetZBins()->GetNumber(), fFits->GetBinning()->GetZBins()->GetLimits().data());    
 
 	// iterate on the bins in x, adding them to the histogram 
 	for (int k=1; k<fFits->GetBinning()->GetZBins()->GetNumber()+1; k++){
@@ -122,7 +123,7 @@ protected:
 
     for (int i=0; i<fFits->GetBinning()->GetXBins()->GetNumber()+1; i++){
       for(int j=0; j<fFits->GetBinning()->GetZBins()->GetNumber()+1; j++){
-	h1_pt[i][j] = new TH1D(Form("h1_pt_x%d_z%d", i, j), "", fFits->GetBinning()->GetPtBins()->GetNumber(), fFits->GetBinning()->GetPtBins()->GetLimits().data());    
+	h1_pt[i][j] = new TH1D(Form("h1_pt_x%d_z%d_%s", i, j, fName.c_str()), "", fFits->GetBinning()->GetPtBins()->GetNumber(), fFits->GetBinning()->GetPtBins()->GetLimits().data());    
 
 	// iterate on the bins in x, adding them to the histogram 
 	for (int k=1; k<fFits->GetBinning()->GetPtBins()->GetNumber()+1; k++){

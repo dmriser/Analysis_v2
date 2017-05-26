@@ -4,7 +4,9 @@
 #include "common/Fits.h"
 #include "common/Fitter.h"
 #include "common/Histograms.h"
+#include "common/PIDHistograms.h"
 #include "common/IntegratedHistograms.h"
+#include "common/SignalBackground.h"
 #include "common/Types.h"
 
 #include "CommonTools.h"
@@ -59,15 +61,28 @@ int main(int nargs, char *args[]){
   pp_fit.Save(inputFile, "update", 1); 
   pm_fit.Save(inputFile, "update", 1);   
 
-  IntegratedHistos kp_integ(&kp_fit, Meson::kKaonPositive);
-  IntegratedHistos km_integ(&km_fit, Meson::kKaonNegative);
-  IntegratedHistos pp_integ(&pp_fit, Meson::kPionPositive);
-  IntegratedHistos pm_integ(&pm_fit, Meson::kPionNegative);
+  IntegratedHistos kp_integ(&kp_fit, "base", Meson::kKaonPositive);
+  IntegratedHistos km_integ(&km_fit, "base", Meson::kKaonNegative);
+  IntegratedHistos pp_integ(&pp_fit, "base", Meson::kPionPositive);
+  IntegratedHistos pm_integ(&pm_fit, "base", Meson::kPionNegative);
 
   kp_integ.Save(inputFile, "update"); 
   km_integ.Save(inputFile, "update"); 
   pp_integ.Save(inputFile, "update"); 
   pm_integ.Save(inputFile, "update"); 
+
+  PidHistos pp_pid("test", Meson::kPionPositive);
+  pp_pid.Load(inputFile);
+
+  SignalBackgroundFitter sb_fitter(&pp_pid, "test", Meson::kPionPositive); 
+  sb_fitter.Fit(0.0, 0.4, 0.7); 
+  sb_fitter.CorrectAsymmetry(&pp_fit, &kp_fit); 
+
+  IntegratedHistos *pp_corr_int = sb_fitter.GetPionHistos(); 
+  IntegratedHistos *kp_corr_int = sb_fitter.GetKaonHistos(); 
+  
+  pp_corr_int->Save(inputFile, "update"); 
+  kp_corr_int->Save(inputFile, "update"); 
 
   return 0;
 }

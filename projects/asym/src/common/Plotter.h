@@ -237,7 +237,99 @@ class IntegratedPlotter {
    }
  }
 
+ void CompareTwo(IntegratedHistos *h1, IntegratedHistos *h2, std::string name1, std::string name2){
+    TCanvas *can = new TCanvas("can","",1200,400); 
+    can->Divide(3,1);     
 
+    gPad->SetMargin(0.15, 0.15, 0.15, 0.15); 
+    gStyle->SetOptStat(0); 
+    gStyle->SetErrorX(0.00); 
+    gStyle->SetLabelSize(0.00,"y");
+    gStyle->SetTitleSize(0.0,"y");
+    gStyle->SetTitleFont(22,"xyz");
+    gStyle->SetLabelFont(22,"xyz");
+    gStyle->SetTitleOffset(1.2,"y");
+
+    gStyle->SetCanvasColor(0);
+    gStyle->SetCanvasBorderMode(0);
+    gStyle->SetCanvasBorderSize(0);
+
+    int colors[2] = {55, 99};
+
+    can->cd(1); 
+    h1->h1_x[0][0]->SetFillColor(colors[0]);
+    h1->h1_x[0][0]->SetLineColor(colors[0]);
+    h1->h1_x[0][0]->SetLineWidth(2);
+    h1->h1_x[0][0]->SetMarkerColor(colors[0]);
+    h1->h1_x[0][0]->SetMarkerStyle(8);
+    h1->h1_x[0][0]->SetMarkerSize(2);
+    h1->h1_x[0][0]->SetMinimum(-0.08);
+    h1->h1_x[0][0]->SetMaximum(0.08);
+    h1->h1_x[0][0]->Draw("pesame");
+
+    h2->h1_x[0][0]->SetFillColor(colors[1]);
+    h2->h1_x[0][0]->SetLineColor(colors[1]);
+    h2->h1_x[0][0]->SetLineWidth(2);
+    h2->h1_x[0][0]->SetMarkerColor(colors[1]);
+    h2->h1_x[0][0]->SetMarkerStyle(8);
+    h2->h1_x[0][0]->SetMarkerSize(2);
+    h2->h1_x[0][0]->SetMinimum(-0.08);
+    h2->h1_x[0][0]->SetMaximum(0.08);
+    h2->h1_x[0][0]->Draw("pesame");
+    gPad->SetGrid();
+
+    can->cd(2); 
+    h1->h1_z[0][0]->SetFillColor(colors[0]);
+    h1->h1_z[0][0]->SetLineColor(colors[0]);
+    h1->h1_z[0][0]->SetLineWidth(2);
+    h1->h1_z[0][0]->SetMarkerColor(colors[0]);
+    h1->h1_z[0][0]->SetMarkerStyle(8);
+    h1->h1_z[0][0]->SetMarkerSize(2);
+    h1->h1_z[0][0]->SetMinimum(-0.08);
+    h1->h1_z[0][0]->SetMaximum(0.08);
+    h1->h1_z[0][0]->Draw("pesame");
+
+    h2->h1_z[0][0]->SetFillColor(colors[1]);
+    h2->h1_z[0][0]->SetLineColor(colors[1]);
+    h2->h1_z[0][0]->SetLineWidth(2);
+    h2->h1_z[0][0]->SetMarkerColor(colors[1]);
+    h2->h1_z[0][0]->SetMarkerStyle(8);
+    h2->h1_z[0][0]->SetMarkerSize(2);
+    h2->h1_z[0][0]->SetMinimum(-0.08);
+    h2->h1_z[0][0]->SetMaximum(0.08);
+    h2->h1_z[0][0]->Draw("pesame");
+    gPad->SetGrid();
+
+    can->cd(3); 
+    h1->h1_pt[0][0]->SetFillColor(colors[0]);
+    h1->h1_pt[0][0]->SetLineColor(colors[0]);
+    h1->h1_pt[0][0]->SetLineWidth(2);
+    h1->h1_pt[0][0]->SetMarkerColor(colors[0]);
+    h1->h1_pt[0][0]->SetMarkerStyle(8);
+    h1->h1_pt[0][0]->SetMarkerSize(2);
+    h1->h1_pt[0][0]->SetMinimum(-0.08);
+    h1->h1_pt[0][0]->SetMaximum(0.08);
+    h1->h1_pt[0][0]->Draw("pesame");
+
+    h2->h1_pt[0][0]->SetFillColor(colors[1]);
+    h2->h1_pt[0][0]->SetLineColor(colors[1]);
+    h2->h1_pt[0][0]->SetLineWidth(2);
+    h2->h1_pt[0][0]->SetMarkerColor(colors[1]);
+    h2->h1_pt[0][0]->SetMarkerStyle(8);
+    h2->h1_pt[0][0]->SetMarkerSize(2);
+    h2->h1_pt[0][0]->SetMinimum(-0.08);
+    h2->h1_pt[0][0]->SetMaximum(0.08);
+    h2->h1_pt[0][0]->Draw("pesame");
+    gPad->SetGrid();
+
+    TLatex title; 
+    title.SetNDC();
+    title.SetTextSize(0.03); 
+
+    title.DrawLatex(0.46, 0.87, "A_{LU}^{sin #phi}"); 
+
+    can->Print(Form("%scompare_%s_%s.png",fOutputPath.c_str(), name1.c_str(), name2.c_str())); 
+ }
 
   void PlotSummary(){
     TCanvas *can = new TCanvas("can","",1200,900); 
@@ -364,7 +456,7 @@ class IntegratedPlotter {
 
     can->Print(Form("%sintegrated_summary.png",fOutputPath.c_str())); 
   }
-
+ 
   void PlotX(){
     TCanvas *can = new TCanvas("can","",1200,900); 
     

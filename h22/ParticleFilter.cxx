@@ -422,6 +422,32 @@ ParticleFilter::ParticleFilter(Parameters *params) : pars(params){
     kp_tofmass_cut_s4->SetMax(params->getParameter("KP_TOFMASS_MAX").getValue(3));
     kp_tofmass_cut_s5->SetMax(params->getParameter("KP_TOFMASS_MAX").getValue(4));
     kp_tofmass_cut_s6->SetMax(params->getParameter("KP_TOFMASS_MAX").getValue(5));
+ 
+    pip_tofmass_cut_s1->SetMin(params->getParameter("PIP_TOFMASS_MIN").getValue(0));
+    pip_tofmass_cut_s2->SetMin(params->getParameter("PIP_TOFMASS_MIN").getValue(1));
+    pip_tofmass_cut_s3->SetMin(params->getParameter("PIP_TOFMASS_MIN").getValue(2));
+    pip_tofmass_cut_s4->SetMin(params->getParameter("PIP_TOFMASS_MIN").getValue(3));
+    pip_tofmass_cut_s5->SetMin(params->getParameter("PIP_TOFMASS_MIN").getValue(4));
+    pip_tofmass_cut_s6->SetMin(params->getParameter("PIP_TOFMASS_MIN").getValue(5));
+    pip_tofmass_cut_s1->SetMax(params->getParameter("PIP_TOFMASS_MAX").getValue(0));
+    pip_tofmass_cut_s2->SetMax(params->getParameter("PIP_TOFMASS_MAX").getValue(1));
+    pip_tofmass_cut_s3->SetMax(params->getParameter("PIP_TOFMASS_MAX").getValue(2));
+    pip_tofmass_cut_s4->SetMax(params->getParameter("PIP_TOFMASS_MAX").getValue(3));
+    pip_tofmass_cut_s5->SetMax(params->getParameter("PIP_TOFMASS_MAX").getValue(4));
+    pip_tofmass_cut_s6->SetMax(params->getParameter("PIP_TOFMASS_MAX").getValue(5));
+
+    pim_tofmass_cut_s1->SetMin(params->getParameter("PIM_TOFMASS_MIN").getValue(0));
+    pim_tofmass_cut_s2->SetMin(params->getParameter("PIM_TOFMASS_MIN").getValue(1));
+    pim_tofmass_cut_s3->SetMin(params->getParameter("PIM_TOFMASS_MIN").getValue(2));
+    pim_tofmass_cut_s4->SetMin(params->getParameter("PIM_TOFMASS_MIN").getValue(3));
+    pim_tofmass_cut_s5->SetMin(params->getParameter("PIM_TOFMASS_MIN").getValue(4));
+    pim_tofmass_cut_s6->SetMin(params->getParameter("PIM_TOFMASS_MIN").getValue(5));
+    pim_tofmass_cut_s1->SetMax(params->getParameter("PIM_TOFMASS_MAX").getValue(0));
+    pim_tofmass_cut_s2->SetMax(params->getParameter("PIM_TOFMASS_MAX").getValue(1));
+    pim_tofmass_cut_s3->SetMax(params->getParameter("PIM_TOFMASS_MAX").getValue(2));
+    pim_tofmass_cut_s4->SetMax(params->getParameter("PIM_TOFMASS_MAX").getValue(3));
+    pim_tofmass_cut_s5->SetMax(params->getParameter("PIM_TOFMASS_MAX").getValue(4));
+    pim_tofmass_cut_s6->SetMax(params->getParameter("PIM_TOFMASS_MAX").getValue(5));
 
     km_tofmass_cut_s1->SetMin(params->getParameter("KM_TOFMASS_MIN").getValue(0));
     km_tofmass_cut_s2->SetMin(params->getParameter("KM_TOFMASS_MIN").getValue(1));
@@ -690,22 +716,39 @@ ParticleFilter::ParticleFilter(Parameters *params) : pars(params){
     testCut = new TestCut(); 
 
     positivePionSelector->AddCut(dvz_cut);
+    /*
     positivePionSelector->AddCut(pp_betap_cut_s1); 
     positivePionSelector->AddCut(pp_betap_cut_s2); 
     positivePionSelector->AddCut(pp_betap_cut_s3); 
     positivePionSelector->AddCut(pp_betap_cut_s4); 
     positivePionSelector->AddCut(pp_betap_cut_s5); 
     positivePionSelector->AddCut(pp_betap_cut_s6); 
+    */
+    positivePionSelector->AddCut(pip_tofmass_cut_s1); 
+    positivePionSelector->AddCut(pip_tofmass_cut_s2); 
+    positivePionSelector->AddCut(pip_tofmass_cut_s3); 
+    positivePionSelector->AddCut(pip_tofmass_cut_s4); 
+    positivePionSelector->AddCut(pip_tofmass_cut_s5); 
+    positivePionSelector->AddCut(pip_tofmass_cut_s6); 
     positivePionSelector->AddCut(dcr1_meson_fid_cut);
     positivePionSelector->EnableAll();
 
     negativePionSelector->AddCut(dvz_cut);
+    /*
     negativePionSelector->AddCut(pm_betap_cut_s1); 
     negativePionSelector->AddCut(pm_betap_cut_s2); 
     negativePionSelector->AddCut(pm_betap_cut_s3); 
     negativePionSelector->AddCut(pm_betap_cut_s4); 
     negativePionSelector->AddCut(pm_betap_cut_s5); 
     negativePionSelector->AddCut(pm_betap_cut_s6); 
+    */
+
+    negativePionSelector->AddCut(pim_tofmass_cut_s1); 
+    negativePionSelector->AddCut(pim_tofmass_cut_s2); 
+    negativePionSelector->AddCut(pim_tofmass_cut_s3); 
+    negativePionSelector->AddCut(pim_tofmass_cut_s4); 
+    negativePionSelector->AddCut(pim_tofmass_cut_s5); 
+    negativePionSelector->AddCut(pim_tofmass_cut_s6); 
     negativePionSelector->EnableAll();
 
     positiveKaonSelector->AddCut(dvz_cut);

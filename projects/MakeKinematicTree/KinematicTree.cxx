@@ -40,10 +40,13 @@ void KinematicTree::SetupTree(){
   b_x         = kinematicTree->Branch("w",         &w);
   b_y         = kinematicTree->Branch("y",         &y);
   b_z         = kinematicTree->Branch("z",         &z);
+  b_mm2       = kinematicTree->Branch("mm2",       &mm2);
   b_hel       = kinematicTree->Branch("hel",       &hel);
   b_pt        = kinematicTree->Branch("pt",        &pt);
   b_ele_vz    = kinematicTree->Branch("ele_vz",    &ele_vz);
   b_mes_vz    = kinematicTree->Branch("mes_vz",    &mes_vz);
+  b_ele_p     = kinematicTree->Branch("ele_p",    &ele_p);
+  b_mes_p     = kinematicTree->Branch("mes_p",    &mes_p);
   b_pass_sf   = kinematicTree->Branch("pass_sf",   &pass_sf);
   b_pass_dc1  = kinematicTree->Branch("pass_dc1",  &pass_dc1);
   b_pass_dc3  = kinematicTree->Branch("pass_dc3",  &pass_dc3);
@@ -73,11 +76,16 @@ void KinematicTree::CheckForMesonAndFill(int index){
       ele_vz = event.corr_vz[electronIndex]; 
       mes_vz = event.corr_vz[mesonIndex]; 
 
+      // this needs to be replaced 
+      ele_p = event.p[electronIndex]; 
+      mes_p = event.p[mesonIndex];
+
       x    = ev.x; 
       w    = ev.w; 
       y    = ev.y; 
       z    = ev.z; 
       qq   = ev.qq; 
+      mm2  = ev.mm2; 
       phiH = ev.phiHadron; 
       pt   = ev.pT; 
       tof_mass = event.p[mesons[0]] * sqrt((1-pow(event.corr_b[mesons[0]],2))/pow(event.corr_b[mesons[0]],2)); 
@@ -88,12 +96,15 @@ void KinematicTree::CheckForMesonAndFill(int index){
       outfile << y << ","; 
       outfile << z << ","; 
       outfile << w << ","; 
+      outfile << mm2 << ","; 
       outfile << pt << ","; 
       outfile << qq << ","; 
       outfile << phiH << ","; 
       outfile << tof_mass << ","; 
       outfile << ele_vz << ","; 
       outfile << mes_vz << ","; 
+      outfile << ele_p << ","; 
+      outfile << mes_p << ","; 
       outfile << pass_sf << ","; 
       outfile << pass_dc1 << ","; 
       outfile << pass_dc3 << ","; 

@@ -103,8 +103,8 @@ protected:
 
 	// iterate on the bins in x, adding them to the histogram 
 	for (int k=1; k<fFits->GetBinning()->GetXBins()->GetNumber()+1; k++){
-	  h1_x[i][j]->SetBinContent(k, fFits->fit_asym[0][k][i][j]->GetParameter(0)); 	  
-	  h1_x[i][j]->SetBinError(k, fFits->fit_asym[0][k][i][j]->GetParError(0)); 
+	  h1_x[i][j]->SetBinContent(k, fFits->fit_asym[k][i][j]->GetParameter(0)); 	  
+	  h1_x[i][j]->SetBinError(k, fFits->fit_asym[k][i][j]->GetParError(0)); 
 	}
       }
     }
@@ -115,8 +115,8 @@ protected:
 
 	// iterate on the bins in x, adding them to the histogram 
 	for (int k=1; k<fFits->GetBinning()->GetZBins()->GetNumber()+1; k++){
-	  h1_z[i][j]->SetBinContent(k, fFits->fit_asym[0][j][k][i]->GetParameter(0)); 	  
-	  h1_z[i][j]->SetBinError(k, fFits->fit_asym[0][j][k][i]->GetParError(0)); 
+	  h1_z[i][j]->SetBinContent(k, fFits->fit_asym[j][k][i]->GetParameter(0)); 	  
+	  h1_z[i][j]->SetBinError(k, fFits->fit_asym[j][k][i]->GetParError(0)); 
 	}
       }
     } 
@@ -127,8 +127,8 @@ protected:
 
 	// iterate on the bins in x, adding them to the histogram 
 	for (int k=1; k<fFits->GetBinning()->GetPtBins()->GetNumber()+1; k++){
-	  h1_pt[i][j]->SetBinContent(k, fFits->fit_asym[0][i][j][k]->GetParameter(0)); 	  
-	  h1_pt[i][j]->SetBinError(k, fFits->fit_asym[0][i][j][k]->GetParError(0)); 
+	  h1_pt[i][j]->SetBinContent(k, fFits->fit_asym[i][j][k]->GetParameter(0)); 	  
+	  h1_pt[i][j]->SetBinError(k, fFits->fit_asym[i][j][k]->GetParError(0)); 
 	}
       }
     }

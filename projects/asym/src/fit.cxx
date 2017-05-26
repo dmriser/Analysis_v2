@@ -22,24 +22,24 @@ int main(int nargs, char *args[]){
   std::string inputFile(args[1]); 
 
   Histos kp_hist("test", Meson::kKaonPositive); 
-  kp_hist.Load(inputFile, 1);
+  kp_hist.Load(inputFile);
   kp_hist.CalculateAsymmetry(); 
-  kp_hist.Save(inputFile, "update", 2); 
+  kp_hist.Save(inputFile, "update"); 
 
   Histos km_hist("test", Meson::kKaonNegative); 
-  km_hist.Load(inputFile, 1);
+  km_hist.Load(inputFile);
   km_hist.CalculateAsymmetry(); 
-  km_hist.Save(inputFile, "update", 2); 
+  km_hist.Save(inputFile, "update"); 
 
   Histos pp_hist("test", Meson::kPionPositive); 
-  pp_hist.Load(inputFile, 1);
+  pp_hist.Load(inputFile);
   pp_hist.CalculateAsymmetry(); 
-  pp_hist.Save(inputFile, "update", 2); 
+  pp_hist.Save(inputFile, "update");
 
   Histos pm_hist("test", Meson::kPionNegative); 
-  pm_hist.Load(inputFile, 1);
+  pm_hist.Load(inputFile);
   pm_hist.CalculateAsymmetry(); 
-  pm_hist.Save(inputFile, "update", 2); 
+  pm_hist.Save(inputFile, "update"); 
 
   Fits kp_fit(&kp_hist, "test", Meson::kKaonPositive); 
   Fits km_fit(&km_hist, "test", Meson::kKaonNegative); 
@@ -56,20 +56,16 @@ int main(int nargs, char *args[]){
   fitter.Fit(&pp_hist, &pp_fit); 
   fitter.Fit(&pm_hist, &pm_fit); 
 
-  kp_fit.Save(inputFile, "update", 1); 
-  km_fit.Save(inputFile, "update", 1); 
-  pp_fit.Save(inputFile, "update", 1); 
-  pm_fit.Save(inputFile, "update", 1);   
+  kp_fit.Save(inputFile, "update"); 
+  km_fit.Save(inputFile, "update");
+  pp_fit.Save(inputFile, "update");
+  pm_fit.Save(inputFile, "update");
 
-  IntegratedHistos kp_integ(&kp_fit, "base", Meson::kKaonPositive);
-  IntegratedHistos km_integ(&km_fit, "base", Meson::kKaonNegative);
-  IntegratedHistos pp_integ(&pp_fit, "base", Meson::kPionPositive);
-  IntegratedHistos pm_integ(&pm_fit, "base", Meson::kPionNegative);
-
-  kp_integ.Save(inputFile, "update"); 
-  km_integ.Save(inputFile, "update"); 
-  pp_integ.Save(inputFile, "update"); 
-  pm_integ.Save(inputFile, "update"); 
+  // create and save integrated histograms 
+  IntegratedHistos kp_integ(&kp_fit, "base", Meson::kKaonPositive);  kp_integ.Save(inputFile, "update"); 
+  IntegratedHistos km_integ(&km_fit, "base", Meson::kKaonNegative);  km_integ.Save(inputFile, "update"); 
+  IntegratedHistos pp_integ(&pp_fit, "base", Meson::kPionPositive);  pp_integ.Save(inputFile, "update"); 
+  IntegratedHistos pm_integ(&pm_fit, "base", Meson::kPionNegative);  pm_integ.Save(inputFile, "update"); 
 
   PidHistos pp_pid("test", Meson::kPionPositive);
   pp_pid.Load(inputFile);
@@ -77,6 +73,7 @@ int main(int nargs, char *args[]){
   SignalBackgroundFitter sb_fitter(&pp_pid, "test", Meson::kPionPositive); 
   sb_fitter.Fit(0.0, 0.4, 0.7); 
   sb_fitter.CorrectAsymmetry(&pp_fit, &kp_fit); 
+  sb_fitter.Save(inputFile, "update"); 
 
   IntegratedHistos *pp_corr_int = sb_fitter.GetPionHistos(); 
   IntegratedHistos *kp_corr_int = sb_fitter.GetKaonHistos(); 

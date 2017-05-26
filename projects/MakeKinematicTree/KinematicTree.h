@@ -73,7 +73,6 @@ class KinematicTree : public GenericAnalysis {
   void CheckForMesonAndFill(int index); 
 
  protected:
-  std::ofstream   outfile; 
   Corrections     fCorr; 
   ParticleFilter *fFilter; 
   ParticleFilter *fFilterTight; 

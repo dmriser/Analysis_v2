@@ -2,7 +2,9 @@
 #include <iostream>
 
 #include "common/Histograms.h"
+#include "common/Fits.h"
 #include "common/Plotter.h"
+#include "common/SignalBackground.h"
 
 #include "CommonTools.h"
 
@@ -16,44 +18,40 @@ int main(int nargs, char *args[]){
   std::string inputFile(args[1]); 
 
   Histos kph("test", Meson::kKaonPositive);
-  kph.Load(inputFile, 2);
+  kph.Load(inputFile);
 
   Histos kmh("test", Meson::kKaonNegative);
-  kmh.Load(inputFile, 2);
+  kmh.Load(inputFile);
 
   Histos pph("test", Meson::kPionPositive);
-  pph.Load(inputFile, 2);
+  pph.Load(inputFile);
 
   Histos pmh("test", Meson::kPionNegative);
-  pmh.Load(inputFile, 2);
+  pmh.Load(inputFile);
 
   Fits kpf("test", Meson::kKaonPositive);
-  kpf.Load(inputFile, 1);
+  kpf.Load(inputFile);
 
   Fits kmf("test", Meson::kKaonNegative);
-  kmf.Load(inputFile, 1);
+  kmf.Load(inputFile);
 
   Fits ppf("test", Meson::kPionPositive);
-  ppf.Load(inputFile, 1);
+  ppf.Load(inputFile);
 
   Fits pmf("test", Meson::kPionNegative);
-  pmf.Load(inputFile, 1);
+  pmf.Load(inputFile);
 
-  Plotter pkp(&kph, &kpf, Meson::kKaonPositive);
-  pkp.PlotGridZX();  
-  pkp.PlotGridZPt();  
+  Plotter gridPlotter; 
+  gridPlotter.PlotGridZX(&kph, &kpf, Meson::kKaonPositive); 
+  gridPlotter.PlotGridZX(&kmh, &kmf, Meson::kKaonNegative); 
+  gridPlotter.PlotGridZX(&pph, &ppf, Meson::kPionPositive); 
+  gridPlotter.PlotGridZX(&pmh, &pmf, Meson::kPionNegative); 
 
-  Plotter pkm(&kmh, &kmf, Meson::kKaonNegative);
-  pkm.PlotGridZX();  
-  pkm.PlotGridZPt();  
+  gridPlotter.PlotGridZPt(&kph, &kpf, Meson::kKaonPositive); 
+  gridPlotter.PlotGridZPt(&kmh, &kmf, Meson::kKaonNegative); 
+  gridPlotter.PlotGridZPt(&pph, &ppf, Meson::kPionPositive); 
+  gridPlotter.PlotGridZPt(&pmh, &pmf, Meson::kPionNegative); 
 
-  Plotter ppp(&pph, &ppf, Meson::kPionPositive);
-  ppp.PlotGridZX();  
-  ppp.PlotGridZPt();  
-
-  Plotter ppm(&pmh, &pmf, Meson::kPionNegative);
-  ppm.PlotGridZX();  
-  ppm.PlotGridZPt();  
 
   IntegratedHistos kp_int(inputFile, "base", Meson::kKaonPositive); 
   IntegratedHistos km_int(inputFile, "base", Meson::kKaonNegative); 
@@ -101,6 +99,8 @@ int main(int nargs, char *args[]){
   km_pid_plot.PlotGridZPt(); 
   km_pid_plot.PlotGridZX(); 
 
+  SignalBackgroundFitter signalFitter("test", Meson::kPionPositive);
+  signalFitter.Load(inputFile); 
 
   return 0;
 }

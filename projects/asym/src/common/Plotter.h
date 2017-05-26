@@ -23,15 +23,17 @@
 
 class Plotter {
  public:
- Plotter(Histos *h, Fits *f, int index) : fHistos(h), fFits(f), fMesonIndex(index) {
+  Plotter(){
     fOutputPath = "/volatile/clas12/dmriser/plots/asymmetry/"; 
-    fBins       = Bins::GetInstance(fMesonIndex);
   }
 
   void SetOutputPath(std::string p){
     fOutputPath = p; 
   }
-  void PlotGridZX(){
+
+  void PlotGridZX(Histos *fHistos, Fits *fFits, int fMesonIndex){
+
+    Bins *fBins = Bins::GetInstance(fMesonIndex); 
 
     TCanvas *can = new TCanvas("can","",1200,900); 
 
@@ -92,18 +94,18 @@ class Plotter {
 	if (x == 0)          { color = 99; }
 	else if (y == 0)     { color = 55; }
 	if (x == 0 && y == 0){ color = 77; }
-	fHistos->h1_asym[0][y][x][0]->SetLineColor(color);
- 	fHistos->h1_asym[0][y][x][0]->SetLineWidth(2);
-	fHistos->h1_asym[0][y][x][0]->SetMarkerColor(color);
-	fHistos->h1_asym[0][y][x][0]->SetMarkerStyle(24);
-	fHistos->h1_asym[0][y][x][0]->SetMarkerSize(1);
-	fHistos->h1_asym[0][y][x][0]->SetMinimum(-0.1);
-	fHistos->h1_asym[0][y][x][0]->SetMaximum(0.1);
+	fHistos->h1_asym[y][x][0]->SetLineColor(color);
+ 	fHistos->h1_asym[y][x][0]->SetLineWidth(2);
+	fHistos->h1_asym[y][x][0]->SetMarkerColor(color);
+	fHistos->h1_asym[y][x][0]->SetMarkerStyle(24);
+	fHistos->h1_asym[y][x][0]->SetMarkerSize(1);
+	fHistos->h1_asym[y][x][0]->SetMinimum(-0.1);
+	fHistos->h1_asym[y][x][0]->SetMaximum(0.1);
 
-	fHistos->h1_asym[0][y][x][0]->Draw("pe");
+	fHistos->h1_asym[y][x][0]->Draw("pe");
 
-	fFits->fit_asym[0][y][x][0]->SetLineColor(color);
-	fFits->fit_asym[0][y][x][0]->Draw("same");
+	fFits->fit_asym[y][x][0]->SetLineColor(color);
+	fFits->fit_asym[y][x][0]->Draw("same");
       }
     }
 
@@ -119,11 +121,12 @@ class Plotter {
     title.DrawLatex(0.05, 0.09, "#color[55]{Integrated x}"); 
     title.DrawLatex(0.05, 0.06, "#color[77]{Integrated both}"); 
     
-    can->Print(Form("%sgrid_z_x_%s.png",fOutputPath.c_str(), constants::Names::mesons[fMesonIndex].c_str())); 
+    can->Print(Form("%sgrid_z_x_%s_%s.png",fOutputPath.c_str(), constants::Names::mesons[fMesonIndex].c_str(), fHistos->GetName().c_str())); 
   }
 
-  // ============================================= 
-  void PlotGridZPt(){
+  void PlotGridZPt(Histos *fHistos, Fits *fFits, int fMesonIndex){
+
+    Bins *fBins = Bins::GetInstance(fMesonIndex); 
 
     TCanvas *can = new TCanvas("can","",1200,900); 
 
@@ -184,18 +187,18 @@ class Plotter {
 	if (x == 0)          { color = 99; }
 	else if (y == 0)     { color = 55; }
 	if (x == 0 && y == 0){ color = 77; }
-	fHistos->h1_asym[0][0][x][y]->SetLineColor(color);
- 	fHistos->h1_asym[0][0][x][y]->SetLineWidth(2);
-	fHistos->h1_asym[0][0][x][y]->SetMarkerColor(color);
-	fHistos->h1_asym[0][0][x][y]->SetMarkerStyle(24);
-	fHistos->h1_asym[0][0][x][y]->SetMarkerSize(1);
-	fHistos->h1_asym[0][0][x][y]->SetMinimum(-0.1);
-	fHistos->h1_asym[0][0][x][y]->SetMaximum(0.1);
+	fHistos->h1_asym[0][x][y]->SetLineColor(color);
+ 	fHistos->h1_asym[0][x][y]->SetLineWidth(2);
+	fHistos->h1_asym[0][x][y]->SetMarkerColor(color);
+	fHistos->h1_asym[0][x][y]->SetMarkerStyle(24);
+	fHistos->h1_asym[0][x][y]->SetMarkerSize(1);
+	fHistos->h1_asym[0][x][y]->SetMinimum(-0.1);
+	fHistos->h1_asym[0][x][y]->SetMaximum(0.1);
 
-	fHistos->h1_asym[0][0][x][y]->Draw("pe");
+	fHistos->h1_asym[0][x][y]->Draw("pe");
 
-	fFits->fit_asym[0][0][x][y]->SetLineColor(color);
-	fFits->fit_asym[0][0][x][y]->Draw("same");
+	fFits->fit_asym[0][x][y]->SetLineColor(color);
+	fFits->fit_asym[0][x][y]->Draw("same");
       }
     }
 
@@ -211,17 +214,11 @@ class Plotter {
     title.DrawLatex(0.05, 0.09, "#color[55]{Integrated x}"); 
     title.DrawLatex(0.05, 0.06, "#color[77]{Integrated both}"); 
     
-    can->Print(Form("%sgrid_z_pt_%s.png",fOutputPath.c_str(), constants::Names::mesons[fMesonIndex].c_str())); 
+    can->Print(Form("%sgrid_z_pt_%s_%s.png",fOutputPath.c_str(), constants::Names::mesons[fMesonIndex].c_str(), fHistos->GetName().c_str())); 
   }
   
  protected:
-  Bins          *fBins; 
-  Histos        *fHistos; 
-  Fits          *fFits;
   std::string    fOutputPath; 
-  int            fMesonIndex; 
-  
-
 };
 
 class IntegratedPlotter {
@@ -388,8 +385,6 @@ class IntegratedPlotter {
       ptline.SetLineStyle(8);
       ptline.SetLineWidth(2);       
       
-      
-
       can->cd(); 
       pads[0][x] = new TPad(padTitle.c_str(), padTitle.c_str(), padStartX, padStartY, padStopX, padStopY); 
       pads[0][x]->Draw(); 

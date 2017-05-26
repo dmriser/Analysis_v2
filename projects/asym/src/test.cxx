@@ -10,7 +10,6 @@
 
 int main(){
 
-  std::cout << "Your test here." << std::endl; 
 
   return 0; 
 }

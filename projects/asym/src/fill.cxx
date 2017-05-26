@@ -128,7 +128,8 @@ void Analysis::ProcessEvent(){
        
       PhysicsEvent ev = builder->getPhysicsEvent(electron, meson);
       
-      if (ev.w > 2.00 && ev.qq > 1.00 && ev.mm2 > 1.1 && ev.z > 0.3 && event.p[kps[0]] < 2.05) {
+      //      if (ev.w > 2.00 && ev.qq > 1.00 && ev.mm2 > 1.1 && ev.z > 0.3 && event.p[kps[0]] < 2.05) {
+      if (ev.w > 2.00 && ev.qq > 1.00 && ev.mm2 > 1.1 && ev.z > 0.3) {
 	histos[Meson::kKaonPositive]        ->Fill(ev, helicity);
 	mesonHistos[Meson::kKaonPositive]   ->Fill(event, ev, kps[0]); 
 	standardHistos[Meson::kKaonPositive]->Fill(event, electronIndex, kps[0], ev); 
@@ -186,10 +187,10 @@ void Analysis::ProcessEvent(){
 }
 
 void Analysis::Save(std::string outfile){
-    histos[0]->Save(outfile, "recreate", 1); 
+    histos[0]->Save(outfile, "recreate"); 
 
   for(int m=1; m<constants::NMESON; m++) {
-    histos[m]->Save(outfile, "update", 1); 
+    histos[m]->Save(outfile, "update"); 
   }
 
   for(int m=0; m<constants::NMESON; m++) {

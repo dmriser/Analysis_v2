@@ -21,8 +21,6 @@ KinematicTree::KinematicTree(h22Options *opts, Parameters *p, Parameters *ptight
   fFilter      = new ParticleFilter(fPars); 
   fFilterLoose = new ParticleFilter(ploose); 
   fFilterTight = new ParticleFilter(ptight); 
-
-  outfile.open("out.csv",std::ios::trunc);
 }
 
 KinematicTree::~KinematicTree(){
@@ -89,27 +87,6 @@ void KinematicTree::CheckForMesonAndFill(int index){
       phiH = ev.phiHadron; 
       pt   = ev.pT; 
       tof_mass = event.p[mesons[0]] * sqrt((1-pow(event.corr_b[mesons[0]],2))/pow(event.corr_b[mesons[0]],2)); 
-      
-      outfile << meson_id << ","; 
-      outfile << hel << ","; 
-      outfile << x << ","; 
-      outfile << y << ","; 
-      outfile << z << ","; 
-      outfile << w << ","; 
-      outfile << mm2 << ","; 
-      outfile << pt << ","; 
-      outfile << qq << ","; 
-      outfile << phiH << ","; 
-      outfile << tof_mass << ","; 
-      outfile << ele_vz << ","; 
-      outfile << mes_vz << ","; 
-      outfile << ele_p << ","; 
-      outfile << mes_p << ","; 
-      outfile << pass_sf << ","; 
-      outfile << pass_dc1 << ","; 
-      outfile << pass_dc3 << ","; 
-      outfile << pass_vz << ","; 
-      outfile << pass_ec << std::endl; 
 
       kinematicTree->Fill(); 
     }
@@ -162,8 +139,6 @@ void KinematicTree::Save(string outputFilename){
   TFile *outputFile = new TFile(outputFilename.c_str(), "recreate");
   kinematicTree->Write(); 
   outputFile   ->Close();
-
-  outfile.close(); 
 }
 
 #endif

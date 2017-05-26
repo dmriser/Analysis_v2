@@ -42,6 +42,7 @@ ParticleFilter::ParticleFilter(Parameters *params) : pars(params){
     negativePionSelector = new DataEventSelector();
     positiveKaonSelector = new DataEventSelector();
     negativeKaonSelector = new DataEventSelector();
+    positiveMesonCandidateSelector = new DataEventSelector(); 
 
     // Call cut constructors
     // These could be split into 2 selectors,
@@ -715,7 +716,6 @@ ParticleFilter::ParticleFilter(Parameters *params) : pars(params){
     // Setup pion selectors
     testCut = new TestCut(); 
 
-    positivePionSelector->AddCut(dvz_cut);
     /*
     positivePionSelector->AddCut(pp_betap_cut_s1); 
     positivePionSelector->AddCut(pp_betap_cut_s2); 
@@ -730,7 +730,6 @@ ParticleFilter::ParticleFilter(Parameters *params) : pars(params){
     positivePionSelector->AddCut(pip_tofmass_cut_s4); 
     positivePionSelector->AddCut(pip_tofmass_cut_s5); 
     positivePionSelector->AddCut(pip_tofmass_cut_s6); 
-    positivePionSelector->AddCut(dcr1_meson_fid_cut);
     positivePionSelector->EnableAll();
 
     negativePionSelector->AddCut(dvz_cut);
@@ -751,7 +750,6 @@ ParticleFilter::ParticleFilter(Parameters *params) : pars(params){
     negativePionSelector->AddCut(pim_tofmass_cut_s6); 
     negativePionSelector->EnableAll();
 
-    positiveKaonSelector->AddCut(dvz_cut);
     positiveKaonSelector->AddCut(kp_tofmass_cut_s1);
     positiveKaonSelector->AddCut(kp_tofmass_cut_s2);
     positiveKaonSelector->AddCut(kp_tofmass_cut_s3);
@@ -766,7 +764,7 @@ ParticleFilter::ParticleFilter(Parameters *params) : pars(params){
     positiveKaonSelector->AddCut(kp_betap_cut_s5);
     positiveKaonSelector->AddCut(kp_betap_cut_s6);
     */
-    positiveKaonSelector->AddCut(dcr1_meson_fid_cut);
+
     positiveKaonSelector->EnableAll();
  
     negativeKaonSelector->AddCut(dvz_cut);
@@ -786,6 +784,10 @@ ParticleFilter::ParticleFilter(Parameters *params) : pars(params){
     */
     negativeKaonSelector->EnableAll();
  
+    positiveMesonCandidateSelector->AddCut(dcr1_meson_fid_cut); 
+    positiveMesonCandidateSelector->AddCut(dvz_cut); 
+    positiveMesonCandidateSelector->EnableAll(); 
+
 }
 
 ParticleFilter::~ParticleFilter(){
@@ -843,13 +845,13 @@ vector<int> ParticleFilter::getVectorOfParticleIndices(h22Event &event, int pid)
 	for(int ipart=0; ipart<event.gpart; ipart++){
 
 	  if(event.q[ipart] > 0){
-	    // Ugly shite, should do something like add charge cut
-	    // to the selector and then -> ->
-	    // if(getSelector(pid)->passesFast(event,ipart)){ particles.push_back(ipart); }
+	    if (positiveMesonCandidateSelector->IsPassedFast(event, ipart)){
 	    if(pid == 211){
 	      if(positivePionSelector->IsPassedFast(event, ipart)){ particles.push_back(ipart); }
 	    } else if (pid == 321){
 	      if(positiveKaonSelector->IsPassedFast(event, ipart)){ particles.push_back(ipart); }
+	    }
+	    
 	    }
 	  }
 	}

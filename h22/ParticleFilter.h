@@ -45,6 +45,7 @@ public:
     DataEventSelector *negativePionSelector;
     DataEventSelector *positiveKaonSelector;
     DataEventSelector *negativeKaonSelector;
+    DataEventSelector *positiveMesonCandidateSelector; 
 
     // List of the cuts used for electrons.
     ChargeCut          *negativity_cut;

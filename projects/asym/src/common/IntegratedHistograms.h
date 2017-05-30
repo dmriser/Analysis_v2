@@ -35,6 +35,30 @@ class IntegratedHistos {
   TH1D *h1_z[constants::MAX_BINS_PT][constants::MAX_BINS_X];
   TH1D *h1_pt[constants::MAX_BINS_X][constants::MAX_BINS_Z];
 
+  // assume nobody asks for weird values of x, z, pt 
+  double GetAsymmetryX(int xbin, int zbin, int ptbin){
+    return h1_x[zbin][ptbin]->GetBinContent(xbin);
+  }
+  
+  double GetStatErrorX(int xbin, int zbin, int ptbin){
+    return h1_x[zbin][ptbin]->GetBinError(xbin);
+  }
+
+  double GetAsymmetryZ(int xbin, int zbin, int ptbin){
+    return h1_z[ptbin][xbin]->GetBinContent(zbin);
+  }
+  
+  double GetStatErrorZ(int xbin, int zbin, int ptbin){
+    return h1_z[ptbin][xbin]->GetBinError(zbin);
+  }
+  double GetAsymmetryPt(int xbin, int zbin, int ptbin){
+    return h1_pt[xbin][zbin]->GetBinContent(ptbin);
+  }
+  
+  double GetStatErrorPt(int xbin, int zbin, int ptbin){
+    return h1_pt[xbin][zbin]->GetBinError(ptbin);
+  }
+
   void Load(std::string infile){
     Bins *bins = Bins::GetInstance(fMesonIndex);
 

@@ -54,6 +54,14 @@ class SignalBackgroundFitter {
   TH1D *h1_z_signal_k[constants::MAX_BINS_PT][constants::MAX_BINS_X];
   TH1D *h1_pt_signal_k[constants::MAX_BINS_X][constants::MAX_BINS_Z];
 
+  double GetPionSignal(int x, int z, int pt) const {
+    return signal_p[x][z][pt];
+  }
+
+  double GetKaonSignal(int x, int z, int pt) const {
+    return signal_k[x][z][pt];
+  }
+
   void Fit(double min, double cut, double max){
     for(int i=0; i<fBins->GetXBins()->GetNumber()+1; i++){
       for(int j=0; j<fBins->GetZBins()->GetNumber()+1; j++){
@@ -135,14 +143,19 @@ class SignalBackgroundFitter {
       for(int i=0; i<fBins->GetXBins()->GetNumber()+1; i++){
 	for(int j=0; j<fBins->GetZBins()->GetNumber()+1; j++){
 	  for(int k=0; k<fBins->GetPtBins()->GetNumber()+1; k++){
-	    fit_p[i][j][k] = (TF1*) inputFile->Get(Form("fit_p_%s_x%d_z%d_pt%d_%s", constants::Names::mesons[fMesonIndex].c_str(),
+	    fit_p[i][j][k] = (TF1*) inputFile->Get(Form("signal_fits/fit_p_%s_x%d_z%d_pt%d_%s", constants::Names::mesons[fMesonIndex].c_str(),
 							i, j, k, fName.c_str()));
-	    fit_k[i][j][k] = (TF1*) inputFile->Get(Form("fit_k_%s_x%d_z%d_pt%d_%s", constants::Names::mesons[fMesonIndex].c_str(),
+	    fit_k[i][j][k] = (TF1*) inputFile->Get(Form("signal_fits/fit_k_%s_x%d_z%d_pt%d_%s", constants::Names::mesons[fMesonIndex].c_str(),
 							i, j, k, fName.c_str()));
-	    fit_bg[i][j][k] = (TF1*) inputFile->Get(Form("fit_bg_%s_x%d_z%d_pt%d_%s", constants::Names::mesons[fMesonIndex].c_str(),
+	    fit_bg[i][j][k] = (TF1*) inputFile->Get(Form("signal_fits/fit_bg_%s_x%d_z%d_pt%d_%s", constants::Names::mesons[fMesonIndex].c_str(),
 							 i, j, k, fName.c_str()));
-	    fit_tot[i][j][k] = (TF1*) inputFile->Get(Form("fit_tot_%s_x%d_z%d_pt%d_%s", constants::Names::mesons[fMesonIndex].c_str(),
+	    fit_tot[i][j][k] = (TF1*) inputFile->Get(Form("signal_fits/fit_tot_%s_x%d_z%d_pt%d_%s", constants::Names::mesons[fMesonIndex].c_str(),
 							  i, j, k, fName.c_str()));
+
+	    std::cout << "[SignalBackgroundFitter::Load] Loaded " << fit_p[i][j][k]->GetName() << std::endl; 
+	    std::cout << "[SignalBackgroundFitter::Load] Loaded " << fit_k[i][j][k]->GetName() << std::endl; 
+	    std::cout << "[SignalBackgroundFitter::Load] Loaded " << fit_bg[i][j][k]->GetName() << std::endl; 
+	    std::cout << "[SignalBackgroundFitter::Load] Loaded " << fit_tot[i][j][k]->GetName() << std::endl; 
 	  }
 	}
       }
@@ -150,27 +163,39 @@ class SignalBackgroundFitter {
     // fill the histograms for x, z, pt 
     for (int i=0; i<fBins->GetZBins()->GetNumber()+1; i++){
       for(int j=0; j<fBins->GetPtBins()->GetNumber()+1; j++){
-	for(int b=1; b<fBins->GetXBins()->GetNumber()+1; b++){
-	  h1_x_signal_p[i][j] = (TH1D*) inputFile->Get(Form("h1_x_signal_p_z%d_pt%d_%s", i, j, fName.c_str()));
-	  h1_x_signal_k[i][j] = (TH1D*) inputFile->Get(Form("h1_x_signal_k_z%d_pt%d_%s", i, j, fName.c_str()));
+	h1_x_signal_p[i][j] = (TH1D*) inputFile->Get(Form("h1_x_signal_p_z%d_pt%d_%s", i, j, fName.c_str()));
+	h1_x_signal_k[i][j] = (TH1D*) inputFile->Get(Form("h1_x_signal_k_z%d_pt%d_%s", i, j, fName.c_str()));
+
+	// fill our local array 
+	for (int k=1; k<fBins->GetXBins()->GetNumber()+1; k++){
+	  signal_p[i][j][k] = h1_x_signal_p[i][j]->GetBinContent(k);
+	  signal_k[i][j][k] = h1_x_signal_k[i][j]->GetBinContent(k);
 	}
+
       }
     }
-
+    
     for (int i=0; i<fBins->GetPtBins()->GetNumber()+1; i++){
       for(int j=0; j<fBins->GetXBins()->GetNumber()+1; j++){
-	for(int b=1; b<fBins->GetZBins()->GetNumber()+1; b++){
-	  h1_z_signal_p[i][j] = (TH1D*) inputFile->Get(Form("h1_z_signal_p_z%d_pt%d_%s", i, j, fName.c_str()));
-	  h1_z_signal_k[i][j] = (TH1D*) inputFile->Get(Form("h1_z_signal_k_z%d_pt%d_%s", i, j, fName.c_str()));
+	h1_z_signal_p[i][j] = (TH1D*) inputFile->Get(Form("h1_z_signal_p_z%d_pt%d_%s", i, j, fName.c_str()));
+	h1_z_signal_k[i][j] = (TH1D*) inputFile->Get(Form("h1_z_signal_k_z%d_pt%d_%s", i, j, fName.c_str()));
+
+	for (int k=1; k<fBins->GetZBins()->GetNumber()+1; k++){
+	  signal_p[i][j][k] = h1_z_signal_p[i][j]->GetBinContent(k); 
+	  signal_k[i][j][k] = h1_z_signal_k[i][j]->GetBinContent(k); 
 	}
+
       }
     }
-
+    
     for (int i=0; i<fBins->GetXBins()->GetNumber()+1; i++){
       for(int j=0; j<fBins->GetZBins()->GetNumber()+1; j++){
-	for(int b=1; b<fBins->GetPtBins()->GetNumber()+1; b++){
-	  h1_pt_signal_p[i][j] = (TH1D*) inputFile->Get(Form("h1_pt_signal_p_z%d_pt%d_%s", i, j, fName.c_str()));
-	  h1_pt_signal_k[i][j] = (TH1D*) inputFile->Get(Form("h1_pt_signal_k_z%d_pt%d_%s", i, j, fName.c_str()));
+	h1_pt_signal_p[i][j] = (TH1D*) inputFile->Get(Form("h1_pt_signal_p_z%d_pt%d_%s", i, j, fName.c_str()));
+	h1_pt_signal_k[i][j] = (TH1D*) inputFile->Get(Form("h1_pt_signal_k_z%d_pt%d_%s", i, j, fName.c_str()));
+
+	for (int k=1; k<fBins->GetPtBins()->GetNumber()+1; k++){
+	  signal_p[i][j][k] = h1_pt_signal_p[i][j]->GetBinContent(k); 
+	  signal_k[i][j][k] = h1_pt_signal_k[i][j]->GetBinContent(k); 
 	}
       }
     }
@@ -297,7 +322,7 @@ class SignalBackgroundFitter {
 	  fit_bg[i][j][k] = new TF1(Form("fit_bg_%s_x%d_z%d_pt%d_%s", constants::Names::mesons[fMesonIndex].c_str(),
 					i, j, k, fName.c_str()), "pol2");
 	  fit_tot[i][j][k] = new TF1(Form("fit_tot_%s_x%d_z%d_pt%d_%s", constants::Names::mesons[fMesonIndex].c_str(),
-					i, j, k, fName.c_str()), "gaus(0) + gaus(3) + pol2(6)");
+					  i, j, k, fName.c_str()), "gaus(0) + gaus(3) + pol2(6)", 0.0, 0.7);
 
 	  // initialize the stuff to zero 
 	  signal_p[i][j][k]     = 0.0; 

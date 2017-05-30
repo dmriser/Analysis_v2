@@ -53,14 +53,82 @@ public:
 
   // setup the histogramming package 
   Histos              *histos[constants::NMESON]; 
+  Histos              *exclusiveHistos[constants::NMESON]; 
   MesonHistograms     *mesonHistos[constants::NMESON];
   StandardHistograms  *standardHistos[constants::NMESON]; 
   PidHistos           *pidHistos[constants::NMESON]; 
+  PidHistos           *exclusivePidHistos[constants::NMESON]; 
 
   void Initialize();
   void ProcessEvent();
   void Save(std::string outfile);
   void InitHistos();
+
+  bool IsInclusive(PhysicsEvent &ev, int mesonIndex){
+    
+    if (mesonIndex == Meson::kPionPositive || mesonIndex == Meson::kPionNegative){
+
+      // heavier than neutron 
+      return (ev.w > 2.00 && ev.qq > 1.00 && ev.mm2 > 1.1 && ev.z > 0.1); 
+    } else if (mesonIndex == Meson::kKaonPositive || mesonIndex == Meson::kKaonNegative){
+
+      // heavier than sigma 
+      return (ev.w > 2.00 && ev.qq > 1.00 && ev.mm2 > 1.45 && ev.z > 0.1);
+    }
+
+    return false; 
+  }
+
+  bool IsExclusive(PhysicsEvent &ev, int mesonIndex){
+    
+    if (mesonIndex == Meson::kPionPositive || mesonIndex == Meson::kPionNegative){
+
+      // lighter than neutron 
+      return (ev.w > 2.00 && ev.qq > 1.00 && ev.mm2 < 1.1 && ev.z > 0.1); 
+    } else if (mesonIndex == Meson::kKaonPositive || mesonIndex == Meson::kKaonNegative){
+
+      // lighter than sigma 
+      return (ev.w > 2.00 && ev.qq > 1.00 && ev.mm2 < 1.45 && ev.z > 0.1);
+    }
+
+    return false; 
+  }
+
+  void FillParticle(int index, int mesonIndex, int helicity, TLorentzVector electron){
+    TLorentzVector meson = event.GetTLorentzVector(index, constants::PID::pid[mesonIndex]);
+    PhysicsEvent ev      = builder->getPhysicsEvent(electron, meson);
+      
+    if (IsInclusive(ev, mesonIndex)) { FillInclusive(ev, mesonIndex, index, helicity); }
+    if (IsExclusive(ev, mesonIndex)) { FillExclusive(ev, mesonIndex, index, helicity); }
+  }
+
+
+  void FillInclusive(PhysicsEvent &ev, int mesonIndex, int index, int helicity){
+	histos[mesonIndex]        ->Fill(ev, helicity);
+	mesonHistos[mesonIndex]   ->Fill(event, ev, index); 
+	standardHistos[mesonIndex]->Fill(event, event.GetElectronIndex(), index, ev); 
+
+	if (mesonIndex == Meson::kPionNegative || mesonIndex == Meson::kKaonNegative){
+	  pidHistos[Meson::kPionNegative]->Fill(event, ev, index);
+	  pidHistos[Meson::kKaonNegative]->Fill(event, ev, index);
+	} else if (mesonIndex == Meson::kPionPositive || mesonIndex == Meson::kKaonPositive){
+	  pidHistos[Meson::kPionPositive]->Fill(event, ev, index);
+	  pidHistos[Meson::kKaonPositive]->Fill(event, ev, index);
+	}
+  }
+
+  void FillExclusive(PhysicsEvent &ev, int mesonIndex, int index, int helicity){
+    exclusiveHistos[mesonIndex]        ->Fill(ev, helicity);
+    
+    if (mesonIndex == Meson::kPionNegative || mesonIndex == Meson::kKaonNegative){
+      exclusivePidHistos[Meson::kPionNegative]->Fill(event, ev, index);
+      exclusivePidHistos[Meson::kKaonNegative]->Fill(event, ev, index);
+    } else if (mesonIndex == Meson::kPionPositive || mesonIndex == Meson::kKaonPositive){
+      exclusivePidHistos[Meson::kPionPositive]->Fill(event, ev, index);
+      exclusivePidHistos[Meson::kKaonPositive]->Fill(event, ev, index);
+    }
+  }
+  
 };
 
 void Analysis::InitHistos() {
@@ -69,10 +137,20 @@ void Analysis::InitHistos() {
   histos[Meson::kKaonNegative] = new Histos("test", Meson::kKaonNegative); 
   histos[Meson::kKaonPositive] = new Histos("test", Meson::kKaonPositive); 
 
+  exclusiveHistos[Meson::kPionNegative] = new Histos("exclusive", Meson::kPionNegative); 
+  exclusiveHistos[Meson::kPionPositive] = new Histos("exclusive", Meson::kPionPositive); 
+  exclusiveHistos[Meson::kKaonNegative] = new Histos("exclusive", Meson::kKaonNegative); 
+  exclusiveHistos[Meson::kKaonPositive] = new Histos("exclusive", Meson::kKaonPositive); 
+
   pidHistos[Meson::kPionNegative] = new PidHistos("test", Meson::kPionNegative); 
   pidHistos[Meson::kPionPositive] = new PidHistos("test", Meson::kPionPositive); 
   pidHistos[Meson::kKaonNegative] = new PidHistos("test", Meson::kKaonNegative); 
   pidHistos[Meson::kKaonPositive] = new PidHistos("test", Meson::kKaonPositive); 
+
+  exclusivePidHistos[Meson::kPionNegative] = new PidHistos("exclusive", Meson::kPionNegative); 
+  exclusivePidHistos[Meson::kPionPositive] = new PidHistos("exclusive", Meson::kPionPositive); 
+  exclusivePidHistos[Meson::kKaonNegative] = new PidHistos("exclusive", Meson::kKaonNegative); 
+  exclusivePidHistos[Meson::kKaonPositive] = new PidHistos("exclusive", Meson::kKaonPositive); 
 
   for (int m=0; m<constants::NMESON; m++){
     mesonHistos[m]    = new MesonHistograms(constants::Names::mesons[m], constants::PID::pid[m]); 
@@ -97,7 +175,6 @@ void Analysis::Initialize(){
 }
 
 void Analysis::ProcessEvent(){
-    // Load up hadrons if we've electron.
   std::vector<int> electronCandidates = filter->getVectorOfParticleIndices(event, 11);
 
   if ( !electronCandidates.empty()){
@@ -117,70 +194,13 @@ void Analysis::ProcessEvent(){
     else if (event.corr_hel < 0) { helicity = Helicity::kNegative; }
 
     TLorentzVector electron  = event.GetTLorentzVector(electronIndex, 11); 
-    electron = momCorr->PcorN(electron, -1, 11);    
+    electron                 = momCorr->PcorN(electron, -1, 11);    
 
-    PhysicsEvent electron_ev = builder->getPhysicsEvent(electron); 
-
-    if (!kps.empty() && helicity > -1) {
-      
-      TLorentzVector meson = event.GetTLorentzVector(kps[0], 321);
-      //    pion = momCorr->PcorN(pion, 1, 211);
-       
-      PhysicsEvent ev = builder->getPhysicsEvent(electron, meson);
-      
-      //      if (ev.w > 2.00 && ev.qq > 1.00 && ev.mm2 > 1.1 && ev.z > 0.3 && event.p[kps[0]] < 2.05) {
-      if (ev.w > 2.00 && ev.qq > 1.00 && ev.mm2 > 1.1 && ev.z > 0.3) {
-	histos[Meson::kKaonPositive]        ->Fill(ev, helicity);
-	mesonHistos[Meson::kKaonPositive]   ->Fill(event, ev, kps[0]); 
-	standardHistos[Meson::kKaonPositive]->Fill(event, electronIndex, kps[0], ev); 
-	pidHistos[Meson::kKaonPositive]     ->Fill(event, ev, kps[0]);
-	pidHistos[Meson::kPionPositive]     ->Fill(event, ev, kps[0]);
-      }
-    }
-
-    if (!pms.empty() && helicity > -1) {
-      TLorentzVector meson = event.GetTLorentzVector(pms[0], -211);
-      //    pion = momCorr->PcorN(pion, 1, 211);
-       
-      PhysicsEvent ev = builder->getPhysicsEvent(electron, meson);
-      
-      if (ev.w > 2.00 && ev.qq > 1.00 && ev.mm2 > 1.1 && ev.z > 0.3){
-	histos[Meson::kPionNegative]        ->Fill(ev, helicity);
-	mesonHistos[Meson::kPionNegative]   ->Fill(event, ev, pms[0]); 
-	standardHistos[Meson::kPionNegative]->Fill(event, electronIndex, pms[0], ev); 
-	pidHistos[Meson::kPionNegative]     ->Fill(event, ev, pms[0]);
-	pidHistos[Meson::kKaonNegative]     ->Fill(event, ev, pms[0]);
-      }
-    }
-
-    if (!pps.empty() && helicity > -1) {
-      TLorentzVector meson = event.GetTLorentzVector(pps[0], 211);
-      //    pion = momCorr->PcorN(pion, 1, 211);
-      
-      PhysicsEvent ev = builder->getPhysicsEvent(electron, meson);
-      
-      if (ev.w > 2.00 && ev.qq > 1.00 && ev.mm2 > 1.1 && ev.z > 0.3) {
-	histos[Meson::kPionPositive]        ->Fill(ev, helicity);
-	mesonHistos[Meson::kPionPositive]   ->Fill(event, ev, pps[0]); 
-	standardHistos[Meson::kPionPositive]->Fill(event, electronIndex, pps[0], ev); 
-	pidHistos[Meson::kPionPositive]     ->Fill(event, ev, pps[0]);
-	pidHistos[Meson::kKaonPositive]     ->Fill(event, ev, pps[0]);
-      }
-    }
-
-    if (!kms.empty() && helicity > -1) {
-      TLorentzVector meson = event.GetTLorentzVector(kms[0], -321);
-      //    pion = momCorr->PcorN(pion, 1, 211);
-       
-      PhysicsEvent ev = builder->getPhysicsEvent(electron, meson);
-      
-      if (ev.w > 2.00 && ev.qq > 1.00 && ev.mm2 > 1.1 && ev.z > 0.3) {
-	histos[Meson::kKaonNegative]        ->Fill(ev, helicity);
-	mesonHistos[Meson::kKaonNegative]   ->Fill(event, ev, kms[0]); 
-	standardHistos[Meson::kKaonNegative]->Fill(event, electronIndex, kms[0], ev); 
-	pidHistos[Meson::kKaonNegative]     ->Fill(event, ev, kms[0]);
-	pidHistos[Meson::kPionNegative]     ->Fill(event, ev, kms[0]);
-      }
+    if (helicity > -1){
+      if (!kps.empty()) { FillParticle(Meson::kKaonPositive, kps[0], helicity, electron); }
+      if (!pms.empty()) { FillParticle(Meson::kPionNegative, pms[0], helicity, electron); }
+      if (!pps.empty()) { FillParticle(Meson::kPionPositive, pps[0], helicity, electron); }
+      if (!kms.empty()) { FillParticle(Meson::kKaonNegative, kms[0], helicity, electron); }
     }
 
   }
@@ -194,7 +214,9 @@ void Analysis::Save(std::string outfile){
   }
 
   for(int m=0; m<constants::NMESON; m++) {
-    pidHistos[m]->Save(outfile, "update"); 
+    exclusiveHistos[m]    ->Save(outfile, "update"); 
+    exclusivePidHistos[m]->Save(outfile, "update"); 
+    pidHistos[m]         ->Save(outfile, "update"); 
   }
 
   TFile *out = new TFile(outfile.c_str(), "update"); 
@@ -232,10 +254,6 @@ int main(int argc, char * argv[]){
     Ana->AddFile(files[i]); 
   }
   Ana->RunAnalysis();
-  //  Ana->histos[Meson::kKaonPositive]->CalculateAsymmetry();
-  //  Ana->histos[Meson::kPionPositive]->CalculateAsymmetry();
-  //  Ana->histos[Meson::kKaonNegative]->CalculateAsymmetry();
-  //  Ana->histos[Meson::kPionNegative]->CalculateAsymmetry();
   Ana->Save(opts.args["OUT"].args); 
   
   return 0;

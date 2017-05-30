@@ -9,6 +9,7 @@
 #include "IntegratedHistograms.h"
 #include "PIDHistograms.h"
 #include "Fits.h"
+#include "SignalBackground.h"
 #include "Types.h"
 
 #include "TCanvas.h"
@@ -655,10 +656,8 @@ class IntegratedPlotter {
 
 class PidPlotter {
  public: 
- PidPlotter(PidHistos *h, int index) : fHistos(h), fMesonIndex(index) {
-    fBins = Bins::GetInstance(fMesonIndex); 
+ PidPlotter() {
     fOutputPath = std::string("/volatile/clas12/dmriser/plots/asymmetry/");
-
     Global::Visualization::SetCustomPalette(); 
   }
 
@@ -667,7 +666,9 @@ class PidPlotter {
   }
 
   // ============================================= 
-  void PlotGridZPt(){
+  void PlotGridZPt(PidHistos *fHistos, int fMesonIndex){
+
+    Bins *fBins = Bins::GetInstance(fMesonIndex); 
 
     TCanvas *can = new TCanvas("can","",1200,900); 
 
@@ -737,9 +738,11 @@ class PidPlotter {
     title.SetTextSize(0.03); 
     title.DrawLatex(0.4, 0.95, Form("%s Binned PID Plots", constants::Names::latex[fMesonIndex].c_str())); 
 
-    can->Print(Form("%sgrid_pid_z_pt_%s.png",fOutputPath.c_str(), constants::Names::mesons[fMesonIndex].c_str())); 
+    can->Print(Form("%sgrid_pid_z_pt_%s_%s.png",fOutputPath.c_str(), constants::Names::mesons[fMesonIndex].c_str(), fHistos->GetName().c_str())); 
   }
-  void PlotGridZX(){
+
+  void PlotGridZX(PidHistos *fHistos, int fMesonIndex){
+    Bins *fBins = Bins::GetInstance(fMesonIndex); 
 
     TCanvas *can = new TCanvas("can","",1200,900); 
 
@@ -808,15 +811,101 @@ class PidPlotter {
     title.SetTextSize(0.03); 
     title.DrawLatex(0.4, 0.95, Form("%s Binned PID Plots", constants::Names::latex[fMesonIndex].c_str())); 
     
-    can->Print(Form("%sgrid_pid_z_x_%s.png",fOutputPath.c_str(), constants::Names::mesons[fMesonIndex].c_str())); 
+    can->Print(Form("%sgrid_pid_z_x_%s_%s.png",fOutputPath.c_str(), constants::Names::mesons[fMesonIndex].c_str(), fHistos->GetName().c_str())); 
+  }
+
+  void PlotGridZXWithFits(PidHistos *fHistos, SignalBackgroundFitter *fitter, int fMesonIndex){
+    Bins *fBins = Bins::GetInstance(fMesonIndex); 
+
+    TCanvas *can = new TCanvas("can","",1200,900); 
+
+    gStyle->SetOptStat(0); 
+    gStyle->SetErrorX(0.00); 
+    gStyle->SetLabelSize(0.00,"y");
+    gStyle->SetTitleSize(0.0,"y");
+    gStyle->SetTitleFont(22,"xyz");
+    gStyle->SetLabelFont(22,"xyz");
+    gStyle->SetTitleOffset(1.2,"y");
+
+    gStyle->SetCanvasColor(0);
+    gStyle->SetCanvasBorderMode(0);
+    gStyle->SetCanvasBorderSize(0);
+    can->cd(); 
+ 
+    TGaxis *zAxis = new TGaxis(0.32, 0.1, 0.9, 0.1, fBins->GetZBins()->GetMin(), fBins->GetZBins()->GetMax(), 5, "");
+    zAxis->SetTitle("z");
+    zAxis->SetLabelSize(0.03);
+    zAxis->Draw();
+
+    TGaxis *xAxis = new TGaxis(0.1, 0.32, 0.1, 0.9, fBins->GetXBins()->GetMin(), fBins->GetXBins()->GetMax(), 5, "");
+    xAxis->SetTitle("x");
+    xAxis->SetLabelSize(0.03);
+    xAxis->Draw();    
+
+    TPad *pads[constants::MAX_BINS_Z][constants::MAX_BINS_X];
+    
+    int nx = fBins->GetXBins()->GetNumber(); 
+    int nz = fBins->GetZBins()->GetNumber(); 
+
+    double padding = 0.01; 
+    double xstop   = 0.9; 
+    double xstart  = 0.18; 
+    double ystop   = 0.9; 
+    double ystart  = 0.18; 
+    double xwidth  = ((xstop-xstart) - (nz-1)*padding)/(1+nz); 
+    double ywidth  = ((ystop-ystart) - (nx-1)*padding)/(1+nx); 
+
+    TLatex title; 
+    title.SetNDC();
+    title.SetTextSize(0.15); 
+
+    for (int x=0; x<nz+1; x++){
+      for (int y=0; y<nx+1; y++){
+	std::string padTitle(Form("pad_%d%d",x,y)); 
+	
+	double padStartX = xstart + (x)*xwidth + (x)*padding; 
+	double padStopX  = padStartX + xwidth; 
+	
+	double padStartY = ystart + (y)*ywidth + (y)*padding; 
+	double padStopY  = padStartY + ywidth; 
+
+	can->cd(); 
+	pads[y][x] = new TPad(padTitle.c_str(), padTitle.c_str(), padStartX, padStartY, padStopX, padStopY); 
+	pads[y][x]->Draw(); 
+	pads[y][x]->cd(); 
+	pads[y][x]->SetMargin(0.01, 0.01, 0.01, 0.01);
+
+	fHistos->h1_tof_mass[y][x][0]->Draw("histw"); 
+	fitter->fit_p[y][x][0]->SetLineColor(88); 
+	fitter->fit_p[y][x][0]->SetLineWidth(0.6);
+	fitter->fit_p[y][x][0]->Draw("same");
+	fitter->fit_k[y][x][0]->SetLineColor(77); 
+	fitter->fit_k[y][x][0]->SetLineWidth(0.6);
+	fitter->fit_k[y][x][0]->Draw("same");
+	fitter->fit_bg[y][x][0]->SetLineColor(55); 
+	fitter->fit_bg[y][x][0]->SetLineWidth(0.6);
+	fitter->fit_bg[y][x][0]->Draw("same");
+	fitter->fit_tot[y][x][0]->SetLineColor(99); 
+	fitter->fit_tot[y][x][0]->SetLineWidth(0.6);
+	fitter->fit_tot[y][x][0]->Draw("same");
+
+	title.DrawLatex(0.35, 0.82, Form("#chi^{2} = %.3f", fitter->fit_tot[y][x][0]->GetChisquare()/fitter->fit_tot[y][x][0]->GetNDF()));
+      }
+    }
+
+    can->cd(); 
+
+    title.SetTextSize(0.03); 
+    title.DrawLatex(0.4, 0.95, Form("%s Binned PID Plots", constants::Names::latex[fMesonIndex].c_str())); 
+    
+    can->Print(Form("%sgrid_tofmass_z_x_%s_%s.pdf",fOutputPath.c_str(), constants::Names::mesons[fMesonIndex].c_str(), fHistos->GetName().c_str())); 
   }
   
  protected:
-  int         fMesonIndex; 
-  Bins       *fBins; 
-  PidHistos  *fHistos; 
   std::string fOutputPath; 
 
 };
+
+
 
 #endif

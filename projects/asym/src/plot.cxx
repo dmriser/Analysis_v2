@@ -83,24 +83,20 @@ int main(int nargs, char *args[]){
   PidHistos km_pid("test", Meson::kKaonNegative);
   km_pid.Load(inputFile);
 
-  PidPlotter pp_pid_plot(&pp_pid, Meson::kPionPositive);
-  pp_pid_plot.PlotGridZPt(); 
-  pp_pid_plot.PlotGridZX(); 
-
-  PidPlotter pm_pid_plot(&pm_pid, Meson::kPionNegative);
-  pm_pid_plot.PlotGridZPt(); 
-  pm_pid_plot.PlotGridZX(); 
-
-  PidPlotter kp_pid_plot(&kp_pid, Meson::kKaonPositive);
-  kp_pid_plot.PlotGridZPt(); 
-  kp_pid_plot.PlotGridZX(); 
-
-  PidPlotter km_pid_plot(&km_pid, Meson::kKaonNegative);
-  km_pid_plot.PlotGridZPt(); 
-  km_pid_plot.PlotGridZX(); 
+  PidPlotter pidPlotter; 
+  pidPlotter.PlotGridZPt(&pp_pid, Meson::kPionPositive); 
+  pidPlotter.PlotGridZX(&pp_pid, Meson::kPionPositive); 
+  pidPlotter.PlotGridZPt(&kp_pid, Meson::kKaonPositive); 
+  pidPlotter.PlotGridZX(&kp_pid, Meson::kKaonPositive); 
+  pidPlotter.PlotGridZPt(&pm_pid, Meson::kPionNegative); 
+  pidPlotter.PlotGridZX(&pm_pid, Meson::kPionNegative); 
+  pidPlotter.PlotGridZPt(&km_pid, Meson::kKaonNegative); 
+  pidPlotter.PlotGridZX(&km_pid, Meson::kKaonNegative); 
 
   SignalBackgroundFitter signalFitter("test", Meson::kPionPositive);
   signalFitter.Load(inputFile); 
+
+  pidPlotter.PlotGridZXWithFits(&kp_pid, &signalFitter, Meson::kKaonPositive); 
 
   return 0;
 }

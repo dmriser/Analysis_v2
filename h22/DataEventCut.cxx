@@ -551,7 +551,7 @@ DataEventCut_TOFMassCut::~DataEventCut_TOFMassCut(){
 }
 
 bool DataEventCut_TOFMassCut::CanBeApplied(h22Event &event, int index){
-    return (event.dc_sect[index] == sector);
+    return (event.dc_sect[index] == sector || sector == -1);
 }
 
 bool DataEventCut_TOFMassCut::IsPassed(h22Event &event, int hadronIndex){

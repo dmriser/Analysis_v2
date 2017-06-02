@@ -1,6 +1,5 @@
 {
 
-
   TFile *f = TFile::Open("../out/asym_refactor_test.root"); 
 
   const int nx = 4; 

@@ -10,6 +10,7 @@
 #include "common/Types.h"
 
 #include "CommonTools.h"
+#include "Parameters.h"
 
 int main(int nargs, char *args[]){
 
@@ -46,20 +47,34 @@ int main(int nargs, char *args[]){
   Fits pp_fit(&pp_hist, "test", Meson::kPionPositive); 
   Fits pm_fit(&pm_hist, "test", Meson::kPionNegative); 
 
+  Fits kp_allfit(&kp_hist, "full", Meson::kKaonPositive); 
+  Fits km_allfit(&km_hist, "full", Meson::kKaonNegative); 
+  Fits pp_allfit(&pp_hist, "full", Meson::kPionPositive); 
+  Fits pm_allfit(&pm_hist, "full", Meson::kPionNegative); 
+
   // Uses just the A sin(phi) 
-  BasicFitter fitter; 
+  BasicFitter basicFitter; 
+  basicFitter.Fit(&kp_hist, &kp_fit); 
+  basicFitter.Fit(&km_hist, &km_fit); 
+  basicFitter.Fit(&pp_hist, &pp_fit); 
+  basicFitter.Fit(&pm_hist, &pm_fit); 
 
   // Uses A sin(phi)/(1 + B cos(phi) + C cos(2phi))
-  //  BasicAllMomentFitter fitter; 
-  fitter.Fit(&kp_hist, &kp_fit); 
-  fitter.Fit(&km_hist, &km_fit); 
-  fitter.Fit(&pp_hist, &pp_fit); 
-  fitter.Fit(&pm_hist, &pm_fit); 
+  BasicAllMomentFitter notBasicFitter; 
+  notBasicFitter.Fit(&kp_hist, &kp_allfit); 
+  notBasicFitter.Fit(&km_hist, &km_allfit); 
+  notBasicFitter.Fit(&pp_hist, &pp_allfit); 
+  notBasicFitter.Fit(&pm_hist, &pm_allfit); 
 
   kp_fit.Save(inputFile, "update"); 
   km_fit.Save(inputFile, "update");
   pp_fit.Save(inputFile, "update");
   pm_fit.Save(inputFile, "update");
+
+  kp_allfit.Save(inputFile, "update"); 
+  km_allfit.Save(inputFile, "update");
+  pp_allfit.Save(inputFile, "update");
+  pm_allfit.Save(inputFile, "update");
 
   // create and save integrated histograms 
   IntegratedHistos kp_integ(&kp_fit, "base", Meson::kKaonPositive);  kp_integ.Save(inputFile, "update"); 
@@ -70,8 +85,21 @@ int main(int nargs, char *args[]){
   PidHistos pp_pid("test", Meson::kPionPositive);
   pp_pid.Load(inputFile);
 
+  // parameter file is here 
+  Parameters pars; 
+
+  if (nargs == 3){
+    pars.loadParameters(args[2]); 
+  } else {
+    std::string path = Global::Environment::GetAnalysisPath(); 
+    path.append("/lists/data_tofmass.pars"); 
+    pars.loadParameters(path); 
+  }
+
   SignalBackgroundFitter sb_fitter(&pp_pid, "test", Meson::kPionPositive); 
-  sb_fitter.Fit(0.0, 0.4, 0.7); 
+  sb_fitter.Fit(pars.getParameter("PIP_TOFMASS_MIN").getValue(0), 
+		pars.getParameter("KP_TOFMASS_MIN").getValue(0), 
+		pars.getParameter("KP_TOFMASS_MAX").getValue(0)); 
   sb_fitter.CorrectAsymmetry(&pp_fit, &kp_fit); 
   sb_fitter.Save(inputFile, "update"); 
 

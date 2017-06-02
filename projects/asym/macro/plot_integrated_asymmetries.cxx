@@ -1,8 +1,8 @@
-{
+void plot_integrated_asymmetries(std::string file){
   // --------------------------------------------
   //    user parameters 
   // --------------------------------------------
-  TFile *inputFile      = TFile::Open("/volatile/clas12/dmriser/rootFiles/asymmetry/pass12.root"); 
+  TFile *inputFile      = TFile::Open(file.c_str()); 
   std::string imagePath = "/volatile/clas12/dmriser/plots/asymmetry";
 
   const int numberXBins  = 6; 
@@ -238,6 +238,105 @@
 	can->Clear(); 
       }
     }
+
+
+    TCanvas *can2 = new TCanvas("can2", "", 1200, 600); 
+
+    can2->Divide(numberXBins,2);     
+    for(int b=1; b<numberXBins+1; b++){
+      can2->cd(b); 
+      gPad->SetMargin(0.1, 0.1, 0.1, 0.1); 
+      pion_z[0][b]     ->Draw("pe");
+      pion_z_corr[0][b]->Draw("pesame");
+      kaon_z[0][b]     ->Draw("pesame");
+      kaon_z_corr[0][b]->Draw("pesame");
+
+      title.DrawLatex(0.67, 0.14, Form("x-bin %d", b)); 
+      title.DrawLatex(0.8, 0.02, "z"); 
+    }
+
+    for(int b=1; b<numberXBins+1; b++){
+      can2->cd(b +numberXBins); 
+      gPad->SetMargin(0.1, 0.1, 0.1, 0.1); 
+      pion_pt[b][0]     ->Draw("pe");
+      pion_pt_corr[b][0]->Draw("pesame");
+      kaon_pt[b][0]     ->Draw("pesame");
+      kaon_pt_corr[b][0]->Draw("pesame");
+
+      title.DrawLatex(0.67, 0.14, Form("x-bin %d", b)); 
+      title.DrawLatex(0.8, 0.02, "P_{T}"); 
+    }
+    
+    can2->cd();
+    
+    xtit.SetTextSize(0.03); 
+    xtit.DrawLatex(0.35, 0.965, "A_{LU}^{sin#phi} for #color[99]{#pi^{+}}, #color[55]{K^{+}}, open circles corrected"); 
+
+    can2->Print(Form("%s/asymmetry_x_pos.png", imagePath.c_str())); 
+
+    // -------------
+    can2->Clear(); 
+    can2->Divide(numberZBins,2);     
+    for(int b=1; b<numberZBins+1; b++){
+      can2->cd(b); 
+      gPad->SetMargin(0.1, 0.1, 0.1, 0.1); 
+      pion_pt[0][b]     ->Draw("pe");
+      pion_pt_corr[0][b]->Draw("pesame");
+      kaon_pt[0][b]     ->Draw("pesame");
+      kaon_pt_corr[0][b]->Draw("pesame");
+
+      title.DrawLatex(0.67, 0.14, Form("z-bin %d", b)); 
+      title.DrawLatex(0.8, 0.02, "P_{T}"); 
+    }
+
+    for(int b=1; b<numberZBins+1; b++){
+      can2->cd(b +numberZBins); 
+      gPad->SetMargin(0.1, 0.1, 0.1, 0.1); 
+      pion_x[b][0]     ->Draw("pe");
+      pion_x_corr[b][0]->Draw("pesame");
+      kaon_x[b][0]     ->Draw("pesame");
+      kaon_x_corr[b][0]->Draw("pesame");
+
+      title.DrawLatex(0.67, 0.14, Form("z-bin %d", b)); 
+      title.DrawLatex(0.8, 0.02, "x"); 
+    }
+    
+    can2->cd();
+    xtit.SetTextSize(0.03); 
+    xtit.DrawLatex(0.35, 0.965, "A_{LU}^{sin#phi} for #color[99]{#pi^{+}}, #color[55]{K^{+}}, open circles corrected"); 
+    can2->Print(Form("%s/asymmetry_z_pos.png", imagePath.c_str())); 
+
+    // ---------
+    can2->Clear(); 
+    can2->Divide(numberPtBins,2);     
+    for(int b=1; b<numberPtBins+1; b++){
+      can2->cd(b); 
+      gPad->SetMargin(0.1, 0.1, 0.1, 0.1); 
+      pion_x[0][b]     ->Draw("pe");
+      pion_x_corr[0][b]->Draw("pesame");
+      kaon_x[0][b]     ->Draw("pesame");
+      kaon_x_corr[0][b]->Draw("pesame");
+
+      title.DrawLatex(0.67, 0.14, Form("P_{T}-bin %d", b)); 
+      title.DrawLatex(0.8, 0.02, "x"); 
+    }
+
+    for(int b=1; b<numberPtBins+1; b++){
+      can2->cd(b +numberPtBins); 
+      gPad->SetMargin(0.1, 0.1, 0.1, 0.1); 
+      pion_z[b][0]     ->Draw("pe");
+      pion_z_corr[b][0]->Draw("pesame");
+      kaon_z[b][0]     ->Draw("pesame");
+      kaon_z_corr[b][0]->Draw("pesame");
+
+      title.DrawLatex(0.67, 0.14, Form("P_{T}-bin %d", b)); 
+      title.DrawLatex(0.8, 0.02, "z"); 
+    }
+    
+    can2->cd();
+    xtit.SetTextSize(0.03); 
+    xtit.DrawLatex(0.35, 0.965, "A_{LU}^{sin#phi} for #color[99]{#pi^{+}}, #color[55]{K^{+}}, open circles corrected"); 
+    can2->Print(Form("%s/asymmetry_pt_pos.png", imagePath.c_str())); 
 
 
 }

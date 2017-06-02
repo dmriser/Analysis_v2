@@ -34,9 +34,6 @@
 #include "TF1.h"
 #include "TH1.h"
 
-std::vector<std::string> loadFilesFromList(std::string fileList, int numFiles);
-std::vector<std::string> loadFilesFromCommandLine(h22Options * theseOpts, int numFiles);
-
 class Analysis : public GenericAnalysis {
 
 public:
@@ -69,11 +66,14 @@ public:
     if (mesonIndex == Meson::kPionPositive || mesonIndex == Meson::kPionNegative){
 
       // heavier than neutron 
-      return (ev.w > 2.00 && ev.qq > 1.00 && ev.mm2 > 1.1 && ev.z > 0.1); 
-    } else if (mesonIndex == Meson::kKaonPositive || mesonIndex == Meson::kKaonNegative){
+      return (ev.w > constants::DIS_WMIN && ev.qq > constants::DIS_Q2MIN && ev.mm2 > constants::DIS_MM2_PION_MIN && 
+	      ev.z > constants::DIS_ZMIN); 
+    } 
+    else if (mesonIndex == Meson::kKaonPositive || mesonIndex == Meson::kKaonNegative){
 
       // heavier than sigma 
-      return (ev.w > 2.00 && ev.qq > 1.00 && ev.mm2 > 1.45 && ev.z > 0.1);
+      return (ev.w > constants::DIS_WMIN && ev.qq > constants::DIS_Q2MIN && ev.mm2 > constants::DIS_MM2_KAON_MIN && 
+	      ev.z > constants::DIS_ZMIN);
     }
 
     return false; 
@@ -84,11 +84,12 @@ public:
     if (mesonIndex == Meson::kPionPositive || mesonIndex == Meson::kPionNegative){
 
       // lighter than neutron 
-      return (ev.w > 2.00 && ev.qq > 1.00 && ev.mm2 < 1.1 && ev.z > 0.1); 
-    } else if (mesonIndex == Meson::kKaonPositive || mesonIndex == Meson::kKaonNegative){
+      return (ev.w > constants::DIS_WMIN && ev.qq > constants::DIS_Q2MIN && ev.mm2 < constants::DIS_MM2_PION_MIN && ev.z > constants::DIS_ZMIN); 
+    } 
+    else if (mesonIndex == Meson::kKaonPositive || mesonIndex == Meson::kKaonNegative){
 
       // lighter than sigma 
-      return (ev.w > 2.00 && ev.qq > 1.00 && ev.mm2 < 1.45 && ev.z > 0.1);
+      return (ev.w > constants::DIS_WMIN && ev.qq > constants::DIS_Q2MIN && ev.mm2 < constants::DIS_MM2_KAON_MIN && ev.z > constants::DIS_ZMIN);
     }
 
     return false; 
@@ -98,23 +99,29 @@ public:
     TLorentzVector meson = event.GetTLorentzVector(index, constants::PID::pid[mesonIndex]);
     PhysicsEvent ev      = builder->getPhysicsEvent(electron, meson);
       
-    if (IsInclusive(ev, mesonIndex)) { FillInclusive(ev, mesonIndex, index, helicity); }
-    if (IsExclusive(ev, mesonIndex)) { FillExclusive(ev, mesonIndex, index, helicity); }
+    if (IsInclusive(ev, mesonIndex))      { FillInclusive(ev, mesonIndex, index, helicity); }
+    else if (IsExclusive(ev, mesonIndex)) { FillExclusive(ev, mesonIndex, index, helicity); }
   }
-
 
   void FillInclusive(PhysicsEvent &ev, int mesonIndex, int index, int helicity){
 	histos[mesonIndex]        ->Fill(ev, helicity);
 	mesonHistos[mesonIndex]   ->Fill(event, ev, index); 
 	standardHistos[mesonIndex]->Fill(event, event.GetElectronIndex(), index, ev); 
 
+	// This is more complicated and fills the charged pions together 
+	// for looking at contamination. 
 	if (mesonIndex == Meson::kPionNegative || mesonIndex == Meson::kKaonNegative){
 	  pidHistos[Meson::kPionNegative]->Fill(event, ev, index);
 	  pidHistos[Meson::kKaonNegative]->Fill(event, ev, index);
 	} else if (mesonIndex == Meson::kPionPositive || mesonIndex == Meson::kKaonPositive){
 	  pidHistos[Meson::kPionPositive]->Fill(event, ev, index);
 	  pidHistos[Meson::kKaonPositive]->Fill(event, ev, index);
-	}
+	}	
+
+	// This is a simple procedure that fills 
+	// each meson where it belongs
+	//	pidHistos[mesonIndex]->Fill(event, ev, index);
+
   }
 
   void FillExclusive(PhysicsEvent &ev, int mesonIndex, int index, int helicity){
@@ -197,10 +204,10 @@ void Analysis::ProcessEvent(){
     electron                 = momCorr->PcorN(electron, -1, 11);    
 
     if (helicity > -1){
-      if (!kps.empty()) { FillParticle(Meson::kKaonPositive, kps[0], helicity, electron); }
-      if (!pms.empty()) { FillParticle(Meson::kPionNegative, pms[0], helicity, electron); }
-      if (!pps.empty()) { FillParticle(Meson::kPionPositive, pps[0], helicity, electron); }
-      if (!kms.empty()) { FillParticle(Meson::kKaonNegative, kms[0], helicity, electron); }
+      if (!kps.empty() && event.p[kps[0]] < constants::KAONPMAX) { FillParticle(kps[0], Meson::kKaonPositive, helicity, electron); }
+      if (!pms.empty())                                          { FillParticle(pms[0], Meson::kPionNegative, helicity, electron); }
+      if (!pps.empty())                                          { FillParticle(pps[0], Meson::kPionPositive, helicity, electron); }
+      if (!kms.empty() && event.p[kms[0]] < constants::KAONPMAX) { FillParticle(kms[0], Meson::kKaonNegative, helicity, electron); }
     }
 
   }
@@ -214,7 +221,7 @@ void Analysis::Save(std::string outfile){
   }
 
   for(int m=0; m<constants::NMESON; m++) {
-    exclusiveHistos[m]    ->Save(outfile, "update"); 
+    exclusiveHistos[m]   ->Save(outfile, "update"); 
     exclusivePidHistos[m]->Save(outfile, "update"); 
     pidHistos[m]         ->Save(outfile, "update"); 
   }
@@ -259,30 +266,3 @@ int main(int argc, char * argv[]){
   return 0;
 }
 
-std::vector<std::string> loadFilesFromList(std::string fileList, int numFiles){
-  std::vector<std::string> theseFiles;
-  
-  std::ifstream inputFile;
-  inputFile.open(fileList.c_str());
-
-  int ifile = 0; string line;
-  while (getline(inputFile, line) && ifile < numFiles){
-    theseFiles.push_back(line);
-    ifile++;
-  }
-
-  inputFile.close();
-  return theseFiles;
-}
-
-std::vector<std::string> loadFilesFromCommandLine(h22Options * theseOpts, int numFiles){
-  std::vector<std::string> theseFiles;
-
-  for(int ifile = 0; ifile < theseOpts->ifiles.size(); ifile++){
-    theseFiles.push_back(theseOpts->ifiles[ifile]);
-
-    if (ifile == numFiles){ break; }
-  }
-
-  return theseFiles;
-}

@@ -130,6 +130,11 @@ ParticleFilter::ParticleFilter(Parameters *params) : pars(params){
 
     dcr1_meson_fid_cut = new DCR1FiducialCut();
 
+    // -1 just let's any sector be applied 
+    mesonCandidate_tofmass_cut = new DataEventCut_TOFMassCut(-1); 
+    mesonCandidate_tofmass_cut->SetMin(params->getParameter("PIP_TOFMASS_MIN").getValue(0)); 
+    mesonCandidate_tofmass_cut->SetMax(params->getParameter("KP_TOFMASS_MAX").getValue(0)); 
+
     // Set limits on cuts from parameters
     negativity_cut->SetMin(-1.1);
     negativity_cut->SetMax(-0.9);
@@ -786,6 +791,7 @@ ParticleFilter::ParticleFilter(Parameters *params) : pars(params){
  
     positiveMesonCandidateSelector->AddCut(dcr1_meson_fid_cut); 
     positiveMesonCandidateSelector->AddCut(dvz_cut); 
+    positiveMesonCandidateSelector->AddCut(mesonCandidate_tofmass_cut); 
     positiveMesonCandidateSelector->EnableAll(); 
 
 }
@@ -846,12 +852,11 @@ vector<int> ParticleFilter::getVectorOfParticleIndices(h22Event &event, int pid)
 
 	  if(event.q[ipart] > 0){
 	    if (positiveMesonCandidateSelector->IsPassedFast(event, ipart)){
-	    if(pid == 211){
-	      if(positivePionSelector->IsPassedFast(event, ipart)){ particles.push_back(ipart); }
-	    } else if (pid == 321){
-	      if(positiveKaonSelector->IsPassedFast(event, ipart)){ particles.push_back(ipart); }
-	    }
-	    
+	      if(pid == 211){
+		if(positivePionSelector->IsPassedFast(event, ipart)){ particles.push_back(ipart); }
+	      } else if (pid == 321){
+		if(positiveKaonSelector->IsPassedFast(event, ipart)){ particles.push_back(ipart); }
+	      }
 	    }
 	  }
 	}

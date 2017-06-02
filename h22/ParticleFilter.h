@@ -104,6 +104,8 @@ public:
     DataEventCut_TOFMassCut      *km_tofmass_cut_s5;
     DataEventCut_TOFMassCut      *km_tofmass_cut_s6;
 
+    DataEventCut_TOFMassCut      *mesonCandidate_tofmass_cut; 
+
     DataEventCut_BetaPCut        *kp_betap_cut_s1; 
     DataEventCut_BetaPCut        *kp_betap_cut_s2; 
     DataEventCut_BetaPCut        *kp_betap_cut_s3; 

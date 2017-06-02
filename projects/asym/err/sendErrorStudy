@@ -1,0 +1,12 @@
+#!/bin/tcsh 
+
+set parFilePath = $1 
+set names       = `ls $parFilePath`
+
+echo " Parameter files to consider.. " 
+
+foreach f ($names)
+    set name = `echo $f | cut -d'.' -f1`
+    set p = `ls $parFilePath* | grep $f`
+    ./Master $name $p
+end

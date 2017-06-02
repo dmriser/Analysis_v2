@@ -80,4 +80,8 @@ void ParameterSet::addValueAndError(double inputValue, double inputError){
   error.push_back(inputError);
 }
 
+void ParameterSet::setValue(int index, double inputValue){
+  value.at(index) = inputValue; 
+}
+
 #endif 

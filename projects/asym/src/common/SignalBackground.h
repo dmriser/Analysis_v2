@@ -9,7 +9,9 @@
 #include "IntegratedHistograms.h"
 
 #include "TF1.h"
+#include "TFitResult.h"
 #include "TH1.h"
+#include "TMatrixD.h"
 
 class SignalBackgroundFitter { 
 
@@ -36,6 +38,8 @@ class SignalBackgroundFitter {
   
   double signal_p[constants::MAX_BINS_X][constants::MAX_BINS_Z][constants::MAX_BINS_PT];
   double signal_k[constants::MAX_BINS_X][constants::MAX_BINS_Z][constants::MAX_BINS_PT];
+  double err_p[constants::MAX_BINS_X][constants::MAX_BINS_Z][constants::MAX_BINS_PT];
+  double err_k[constants::MAX_BINS_X][constants::MAX_BINS_Z][constants::MAX_BINS_PT];
   double background_p[constants::MAX_BINS_X][constants::MAX_BINS_Z][constants::MAX_BINS_PT];
   double background_k[constants::MAX_BINS_X][constants::MAX_BINS_Z][constants::MAX_BINS_PT];
 
@@ -78,9 +82,27 @@ class SignalBackgroundFitter {
 	  fit_tot[i][j][k]->SetParameter(4, fit_k[i][j][k]->GetParameter(1)); 
 	  fit_tot[i][j][k]->SetParameter(5, fit_k[i][j][k]->GetParameter(2)); 
 
-	  fHistos->h1_tof_mass[i][j][k]->Fit(Form("fit_tot_%s_x%d_z%d_pt%d_%s", constants::Names::mesons[fMesonIndex].c_str(),
-						  i, j, k, fName.c_str()), "RQ");
+	  TFitResultPtr resultOfFit = fHistos->h1_tof_mass[i][j][k]->Fit(Form("fit_tot_%s_x%d_z%d_pt%d_%s", constants::Names::mesons[fMesonIndex].c_str(),
+						  i, j, k, fName.c_str()), "RQS");
 	  
+	  TMatrixD covMatrix = resultOfFit->GetCovarianceMatrix(); 	  
+	  TMatrixD covMatrixPion(3,3); 
+	  TMatrixD covMatrixKaon(3,3); 
+	 
+	  // the first one is easy 
+	  for (int row=0; row<3; row++){
+	    for (int col=0; col<3; col++){
+	      covMatrixPion[row][col] = covMatrix[row][col];
+	    }
+	  }
+
+	  // the next one is also easy, but different
+	  for (int row=0; row<3; row++){
+	    for (int col=0; col<3; col++){
+	      covMatrixKaon[row][col] = covMatrix[row+3][col+3];
+	    }
+	  }
+
 	  fit_p[i][j][k] ->SetRange(0.0, 1.0); 
 	  fit_k[i][j][k] ->SetRange(0.0, 1.0); 
 	  fit_bg[i][j][k]->SetRange(0.0, 1.0); 
@@ -96,8 +118,23 @@ class SignalBackgroundFitter {
 	  fit_bg[i][j][k]->SetParameter(2, fit_tot[i][j][k]->GetParameter(8));
 
 	  // initialize the stuff to zero 
-	  signal_p[i][j][k]     = fit_p[i][j][k]->Integral(min, cut)/(fit_p[i][j][k]->Integral(min, cut)+fit_k[i][j][k]->Integral(min, cut)); 
-	  signal_k[i][j][k]     = fit_k[i][j][k]->Integral(cut, max)/(fit_p[i][j][k]->Integral(cut, max)+fit_k[i][j][k]->Integral(cut, max)); 
+	  double p_below = fit_p[i][j][k]->Integral(min, cut); 
+	  double p_above = fit_p[i][j][k]->Integral(cut, max); 
+	  double k_below = fit_k[i][j][k]->Integral(min, cut); 
+	  double k_above = fit_k[i][j][k]->Integral(cut, max); 
+
+	  double p_below_err = fit_p[i][j][k]->IntegralError(min, cut, fit_p[i][j][k]->GetParameters(), covMatrixPion.GetMatrixArray()); 
+	  double p_above_err = fit_p[i][j][k]->IntegralError(cut, max, fit_p[i][j][k]->GetParameters(), covMatrixPion.GetMatrixArray()); 
+	  double k_below_err = fit_k[i][j][k]->IntegralError(min, cut, fit_k[i][j][k]->GetParameters(), covMatrixKaon.GetMatrixArray()); 
+	  double k_above_err = fit_k[i][j][k]->IntegralError(cut, max, fit_k[i][j][k]->GetParameters(), covMatrixKaon.GetMatrixArray()); 
+
+	  //	  signal_p[i][j][k]     = fit_p[i][j][k]->Integral(min, cut)/(fit_p[i][j][k]->Integral(min, cut)+fit_k[i][j][k]->Integral(min, cut)); 
+	  //	  signal_k[i][j][k]     = fit_k[i][j][k]->Integral(cut, max)/(fit_p[i][j][k]->Integral(cut, max)+fit_k[i][j][k]->Integral(cut, max)); 
+	  signal_p[i][j][k]     = p_below/(p_below+k_below); 
+	  signal_k[i][j][k]     = k_above/(p_above+k_above);
+
+	  err_p[i][j][k]        = sqrt(pow(p_below_err/(p_below+k_below),2) + pow(p_below*(p_below_err+k_below_err),2)/pow(p_below+k_below,4));
+	  err_k[i][j][k]        = sqrt(pow(k_above_err/(p_above+k_above),2) + pow(k_above*(p_above_err+k_above_err),2)/pow(p_above+k_above,4));
 	  background_p[i][j][k] = 1.0 - signal_k[i][j][k]; 
 	  background_k[i][j][k] = 1.0 - signal_p[i][j][k]; 
 
@@ -112,7 +149,9 @@ class SignalBackgroundFitter {
       for(int j=0; j<fBins->GetPtBins()->GetNumber()+1; j++){
 	for(int b=1; b<fBins->GetXBins()->GetNumber()+1; b++){
 	  h1_x_signal_p[i][j]->SetBinContent(b, signal_p[b][i][j]); 
+	  h1_x_signal_p[i][j]->SetBinError(b, err_p[b][i][j]); 
 	  h1_x_signal_k[i][j]->SetBinContent(b, signal_k[b][i][j]); 
+	  h1_x_signal_k[i][j]->SetBinError(b, err_k[b][i][j]); 
 	}
       }
     }
@@ -121,7 +160,9 @@ class SignalBackgroundFitter {
       for(int j=0; j<fBins->GetXBins()->GetNumber()+1; j++){
 	for(int b=1; b<fBins->GetZBins()->GetNumber()+1; b++){
 	  h1_z_signal_p[i][j]->SetBinContent(b, signal_p[j][b][i]); 
+	  h1_z_signal_p[i][j]->SetBinError(b, err_p[j][b][i]); 
 	  h1_z_signal_k[i][j]->SetBinContent(b, signal_k[j][b][i]); 
+	  h1_z_signal_k[i][j]->SetBinError(b, err_k[j][b][i]); 
 	}
       }
     }
@@ -130,7 +171,9 @@ class SignalBackgroundFitter {
       for(int j=0; j<fBins->GetZBins()->GetNumber()+1; j++){
 	for(int b=1; b<fBins->GetPtBins()->GetNumber()+1; b++){
 	  h1_pt_signal_p[i][j]->SetBinContent(b, signal_p[i][j][b]); 
+	  h1_pt_signal_p[i][j]->SetBinError(b, err_p[i][j][b]); 
 	  h1_pt_signal_k[i][j]->SetBinContent(b, signal_k[i][j][b]); 
+	  h1_pt_signal_k[i][j]->SetBinError(b, err_k[i][j][b]); 
 	}
       }
     }
@@ -327,6 +370,8 @@ class SignalBackgroundFitter {
 	  // initialize the stuff to zero 
 	  signal_p[i][j][k]     = 0.0; 
 	  signal_k[i][j][k]     = 0.0; 
+	  err_p[i][j][k]        = 0.0; 
+	  err_k[i][j][k]        = 0.0; 
 	  background_p[i][j][k] = 0.0; 
 	  background_k[i][j][k] = 0.0; 
 	}

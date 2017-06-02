@@ -19,6 +19,7 @@
 // C++ headers
 #include <iostream>
 #include <sstream>
+#include <fstream>
 #include <string>
 #include <vector>
 #include <cmath>
@@ -27,6 +28,8 @@
 #include "TColor.h"
 #include "TStyle.h"
 #include "TRandom3.h"
+
+#include "h22Option.h"
 
 #define pi             3.14159265359
 #define to_degrees     57.2957795131
@@ -298,6 +301,34 @@ namespace Global {
       return path; 
     }
   };
+}
+
+inline std::vector<std::string> loadFilesFromList(std::string fileList, int numFiles){
+  std::vector<std::string> theseFiles;
+  
+  std::ifstream inputFile;
+  inputFile.open(fileList.c_str());
+
+  int ifile = 0; string line;
+  while (getline(inputFile, line) && ifile < numFiles){
+    theseFiles.push_back(line);
+    ifile++;
+  }
+
+  inputFile.close();
+  return theseFiles;
+}
+
+inline std::vector<std::string> loadFilesFromCommandLine(h22Options * theseOpts, int numFiles){
+  std::vector<std::string> theseFiles;
+
+  for(int ifile = 0; ifile < theseOpts->ifiles.size(); ifile++){
+    theseFiles.push_back(theseOpts->ifiles[ifile]);
+
+    if (ifile == numFiles){ break; }
+  }
+
+  return theseFiles;
 }
 
 #endif

@@ -13,6 +13,13 @@ namespace constants {
   const static int MAX_BINS_Z   = 8; 
   const static int MAX_BINS_PT  = 8; 
   const static float BEAM_POL   = 0.749;
+  const static float KAONPMAX   = 6.05; 
+  const static float DIS_WMIN   = 2.0;  
+  const static float DIS_Q2MIN  = 1.0; 
+  const static float DIS_ZMIN   = 0.3; 
+  const static float DIS_ZMAX   = 0.7; 
+  const static float DIS_MM2_PION_MIN = 1.1; 
+  const static float DIS_MM2_KAON_MIN = 1.5; 
 
   struct Names{
     const static std::string mesons[NMESON]; 

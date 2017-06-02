@@ -77,6 +77,7 @@ class KaonPositiveBins : public Bins {
     vx.push_back(0.600);
 
     std::vector<double> vz;
+    /*
     vz.push_back(0.100);
     vz.push_back(0.325);
     vz.push_back(0.355);
@@ -84,8 +85,8 @@ class KaonPositiveBins : public Bins {
     vz.push_back(0.445);
     vz.push_back(0.525);
     vz.push_back(0.700);
-
-    /*    
+    */
+      
     vz.push_back(0.300);
     vz.push_back(0.325);
     vz.push_back(0.365);
@@ -93,7 +94,6 @@ class KaonPositiveBins : public Bins {
     vz.push_back(0.465);
     vz.push_back(0.545);
     vz.push_back(0.700);
-    */
 
     std::vector<double> vpt;
     vpt.push_back(0.000);
@@ -123,18 +123,18 @@ class KaonNegativeBins : public Bins {
     vx.push_back(0.600);
 
     std::vector<double> vz;
-    /*
+
     vz.push_back(0.300);
     vz.push_back(0.365);
     vz.push_back(0.465);
     vz.push_back(0.700);
-    */
-
+    
+    /*
     vz.push_back(0.100);
     vz.push_back(0.385);
     vz.push_back(0.505);
     vz.push_back(0.700);
-
+    */
     std::vector<double> vpt;
     vpt.push_back(0.000);
     vpt.push_back(0.412);
@@ -162,7 +162,7 @@ class PionPositiveBins : public Bins {
     vx.push_back(0.365);
     vx.push_back(0.600);
 
-    /*
+    
     std::vector<double> vz;
     vz.push_back(0.300);
     vz.push_back(0.325);
@@ -171,8 +171,8 @@ class PionPositiveBins : public Bins {
     vz.push_back(0.465);
     vz.push_back(0.545);
     vz.push_back(0.700);
-    */
 
+    /*
     std::vector<double> vz;
     vz.push_back(0.100);
     vz.push_back(0.325);
@@ -181,6 +181,7 @@ class PionPositiveBins : public Bins {
     vz.push_back(0.445);
     vz.push_back(0.525);
     vz.push_back(0.700);
+    */
 
     std::vector<double> vpt;
     vpt.push_back(0.000);
@@ -211,17 +212,17 @@ class PionNegativeBins : public Bins {
     vx.push_back(0.600);
 
     std::vector<double> vz;
-    /*
+    
     vz.push_back(0.300);
     vz.push_back(0.365);
     vz.push_back(0.465);
     vz.push_back(0.700);
-    */
+    /*
     vz.push_back(0.100);
     vz.push_back(0.385);
     vz.push_back(0.505);
     vz.push_back(0.700);
-
+    */
     std::vector<double> vpt;
     vpt.push_back(0.000);
     vpt.push_back(0.412);

@@ -93,10 +93,10 @@ int main(int nargs, char *args[]){
   pidPlotter.PlotGridZPt(&km_pid, Meson::kKaonNegative); 
   pidPlotter.PlotGridZX(&km_pid, Meson::kKaonNegative); 
 
-  SignalBackgroundFitter signalFitter("test", Meson::kPionPositive);
-  signalFitter.Load(inputFile); 
+  //  SignalBackgroundFitter signalFitter("test", Meson::kPionPositive);
+  //  signalFitter.Load(inputFile); 
 
-  pidPlotter.PlotGridZXWithFits(&kp_pid, &signalFitter, Meson::kKaonPositive); 
+  //  pidPlotter.PlotGridZXWithFits(&kp_pid, &signalFitter, Meson::kKaonPositive); 
 
   return 0;
 }

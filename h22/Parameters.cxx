@@ -18,14 +18,26 @@ Parameters::Parameters(){
 Parameters::~Parameters(){
 }
 
-ParameterSet Parameters::getParameter(string name){
+ParameterSet& Parameters::getParameter(string name){
   if (parameters.find(name) != parameters.end()){
     return parameters[name];
   }
   else {
     cout << "[Parameters::getParameter] Returning null parameter set for not finding key " << name << " check your spelling/file. " << endl; 
   }
-  return ParameterSet();
+  
+  ParameterSet p; 
+  return p; 
+}
+
+std::vector<std::string> Parameters::getListOfParameters(){
+  std::vector<std::string> names; 
+  
+  for(std::pair<std::string, ParameterSet> p : parameters){
+    names.push_back(p.first); 
+  }
+
+  return names; 
 }
 
 void Parameters::loadParameters(string inputFilename){

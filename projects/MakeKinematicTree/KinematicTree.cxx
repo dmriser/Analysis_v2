@@ -135,7 +135,6 @@ void KinematicTree::ProcessEvent(){
 }
 
 void KinematicTree::Save(string outputFilename){
-
   TFile *outputFile = new TFile(outputFilename.c_str(), "recreate");
   kinematicTree->Write(); 
   outputFile   ->Close();

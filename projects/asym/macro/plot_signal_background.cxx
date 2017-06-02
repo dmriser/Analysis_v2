@@ -1,8 +1,8 @@
-{
+void plot_signal_background(std::string file){
   // --------------------------------------------
   //    user parameters 
   // --------------------------------------------
-  TFile *inputFile      = TFile::Open("/volatile/clas12/dmriser/rootFiles/asymmetry/pass12.root"); 
+  TFile *inputFile      = TFile::Open(file.c_str()); 
   std::string imagePath = "/volatile/clas12/dmriser/plots/asymmetry";
 
   const int numberXBins  = 6; 

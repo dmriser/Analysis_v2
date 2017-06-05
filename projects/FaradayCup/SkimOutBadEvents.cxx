@@ -33,8 +33,6 @@ using namespace std;
 
  */
 // ----------------------------------------------
-vector<string> loadFilesFromList(string fileList, int numFiles);
-
 class MyAnalysis : public GenericAnalysis {
 public:
   MyAnalysis(Parameters *pars, h22Options *opts) : GenericAnalysis(opts) { filter = new ParticleFilter(pars); } 
@@ -217,22 +215,3 @@ int main(int argc, char *argv[]){
   return 0;
 }
 
-// -----------------------------------------------------------------
-//          support functions 
-// -----------------------------------------------------------------
-
-vector<string> loadFilesFromList(string fileList, int numFiles){
-  vector<string> theseFiles;
-
-  std::ifstream inputFile;
-  inputFile.open(fileList.c_str());
-
-  int ifile = 0; string line;
-  while (getline(inputFile, line) && ifile < numFiles){
-    theseFiles.push_back(line);
-    ifile++;
-  }
-
-  inputFile.close();
-  return theseFiles;
-}

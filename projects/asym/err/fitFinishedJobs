@@ -1,5 +1,7 @@
 #!/bin/tcsh 
 
+source ~/.login
+
 set parFilePath = $1 
 set names       = `ls $parFilePath`
 
@@ -9,6 +11,5 @@ foreach f ($names)
     set name = `echo $f | cut -d'.' -f1`
     set p = `ls $parFilePath* | grep $f`
 
-    echo "$name $p"
-    ./Master $name $p > /dev/null 
+    ./../src/fit /volatile/clas12/dmriser/rootFiles/asymmetry/systematic/$name.root $p
 end

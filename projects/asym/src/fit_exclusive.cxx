@@ -63,13 +63,15 @@ int main(int nargs, char *args[]){
 
   // create and save integrated histograms 
   IntegratedHistos kp_integ(&kp_fit, "exclusive_base", Meson::kKaonPositive);  kp_integ.Save(inputFile, "update"); 
-  IntegratedHistos km_integ(&km_fit, "exclusive_base", Meson::kKaonNegative);  km_integ.Save(inputFile, "update"); 
+  //  IntegratedHistos km_integ(&km_fit, "exclusive_base", Meson::kKaonNegative);  km_integ.Save(inputFile, "update"); 
   IntegratedHistos pp_integ(&pp_fit, "exclusive_base", Meson::kPionPositive);  pp_integ.Save(inputFile, "update"); 
-  IntegratedHistos pm_integ(&pm_fit, "exclusive_base", Meson::kPionNegative);  pm_integ.Save(inputFile, "update"); 
+  //  IntegratedHistos pm_integ(&pm_fit, "exclusive_base", Meson::kPionNegative);  pm_integ.Save(inputFile, "update"); 
 
   PidHistos pp_pid("exclusive", Meson::kPionPositive);
   pp_pid.Load(inputFile);
 
+
+  /* 
   SignalBackgroundFitter sb_fitter(&pp_pid, "exclusive", Meson::kPionPositive); 
   sb_fitter.Fit(0.0, 0.4, 0.7); 
   sb_fitter.CorrectAsymmetry(&pp_fit, &kp_fit); 
@@ -79,6 +81,7 @@ int main(int nargs, char *args[]){
   IntegratedHistos *kp_corr_int = sb_fitter.GetKaonHistos(); 
   pp_corr_int->Save(inputFile, "update"); 
   kp_corr_int->Save(inputFile, "update"); 
+  */ 
 
   return 0;
 }

@@ -10,6 +10,7 @@ PhysicsEvent::PhysicsEvent(){
   x = 0.0;
   y = 0.0;
   z = 0.0;
+  t = 0.0;
   beamEnergy = 0.0; 
   finalEnergy = 0.0;
   nu = 0.0; 
@@ -33,6 +34,7 @@ void PhysicsEvent::ClearKinematics(){
   x = 0.0;
   y = 0.0;
   z = 0.0;
+  t = 0.0;
   finalEnergy = 0.0;
   nu = 0.0; 
   qq = 0.0; 

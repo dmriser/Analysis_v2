@@ -8,7 +8,7 @@ class PhysicsEvent {
   PhysicsEvent(); 
   ~PhysicsEvent(); 
   
-  double x, y, z;
+  double x, y, z, t;
   double beamEnergy, finalEnergy;
   double nu, qq, w, mm2;
   double phiHadron, pT; 

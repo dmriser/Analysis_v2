@@ -791,7 +791,7 @@ ParticleFilter::ParticleFilter(Parameters *params) : pars(params){
  
     positiveMesonCandidateSelector->AddCut(dcr1_meson_fid_cut); 
     positiveMesonCandidateSelector->AddCut(dvz_cut); 
-    positiveMesonCandidateSelector->AddCut(mesonCandidate_tofmass_cut); 
+    //    positiveMesonCandidateSelector->AddCut(mesonCandidate_tofmass_cut); 
     positiveMesonCandidateSelector->EnableAll(); 
 
 }

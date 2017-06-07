@@ -66,7 +66,7 @@ void MyAnalysis::Initialize(){
   filter->set_info(GetRunNumber(), GSIM);
   builder = new PhysicsEventBuilder(); 
 
-  outputFile  = new TFile(Form("/volatile/clas12/dmriser/data/kaon/root/%d.root",GetRunNumber()),"RECREATE");
+  outputFile  = new TFile(Form("/volatile/clas12/dmriser/data/meson/root/%d.root",GetRunNumber()),"RECREATE");
   clonedChain = (TChain*) fchain->CloneTree(0);
   clonedTree  = clonedChain->GetTree();
 
@@ -116,7 +116,8 @@ bool MyAnalysis::EventIsSelected(){
   
   if (!electronIndices.empty()){
     
-    TLorentzVector electron = event.GetTLorentzVector(electronIndices[0], 11); 
+    // we should use loose parameters 
+    TLorentzVector electron   = event.GetTLorentzVector(electronIndices[0], 11); 
     PhysicsEvent physicsEvent = builder->getPhysicsEvent(electron); 
     
     
@@ -128,9 +129,12 @@ bool MyAnalysis::EventIsSelected(){
 	if (ipart != electronIndices[0]){
 	  double tofMass = event.p[ipart]*sqrt((1-pow(event.b[ipart],2))/pow(event.b[ipart],2)); 
 	  
-	  // Very loose cuts around kaon mass, remember 
+	  // Very loose cuts around pi/k mass, remember 
 	  // that this is not corrected 
-	  if (tofMass > 0.3 && tofMass < 0.7){ return true; }
+	  if (tofMass > 0.0 && tofMass < 0.75){ 
+	    return true; 
+	  }
+
 	}
       }      
     } 

@@ -34,19 +34,23 @@ class Fits {
     fMesonIndex = f->GetMesonIndex(); 
     fHistos     = f->GetHistos(); 
 
-      for(int i=0; i<bins->GetXBins()->GetNumber()+1; i++){
-	for(int j=0; j<bins->GetZBins()->GetNumber()+1; j++){
-	  for(int k=0; k<bins->GetPtBins()->GetNumber()+1; k++){
-	    std::string current_name(Form("fit_asym_%s_x%d_z%d_pt%d_%s", constants::Names::mesons[fMesonIndex].c_str(), i, j, k, fName.c_str()));
- 
-	    fit_asym[i][j][k] = (TF1*) f->fit_asym[i][j][k]->Clone(); 
-	    fit_asym[i][j][k]->SetName(current_name.c_str()); 
-	    fit_asym[i][j][k]->SetTitle(current_name.c_str()); 
+    for(int i=0; i<bins->GetXBins()->GetNumber()+1; i++){
+      for(int j=0; j<bins->GetQ2Bins()->GetNumber()+1; j++){
+	for(int k=0; k<bins->GetZBins()->GetNumber()+1; k++){
+	  for(int l=0; l<bins->GetPtBins()->GetNumber()+1; l++){
+	    std::string current_name(Form("fit_asym_%s_x%d_q2%d_z%d_pt%d_%s", 
+					  constants::Names::mesons[fMesonIndex].c_str(), 
+					  i, j, k, l, fName.c_str()));
+	    
+	    fit_asym[i][j][k][l] = (TF1*) f->fit_asym[i][j][k][l]->Clone(); 
+	    fit_asym[i][j][k][l]->SetName(current_name.c_str()); 
+	    fit_asym[i][j][k][l]->SetTitle(current_name.c_str()); 
 	  }
 	}
       }
+    }
   }
-
+  
  Fits(std::string name, int index) : fName(name), fMesonIndex(index) {
     SetupBinning();
     inputFile = new TFile(); 
@@ -61,7 +65,7 @@ class Fits {
   }
 
   // the order is always x, z, pt, phi
-  TF1 *fit_asym[constants::MAX_BINS_X][constants::MAX_BINS_Z][constants::MAX_BINS_PT]; 
+  TF1 *fit_asym[constants::MAX_BINS_X][constants::MAX_BINS_Q2][constants::MAX_BINS_Z][constants::MAX_BINS_PT]; 
   
   void Save(std::string outfile, std::string saveOpts){
     TFile *out = new TFile(outfile.c_str(), saveOpts.c_str()); 
@@ -69,12 +73,13 @@ class Fits {
     out->mkdir(Form("fit/%s", constants::Names::mesons[fMesonIndex].c_str()));
     out->cd(Form("fit/%s/", constants::Names::mesons[fMesonIndex].c_str()));
     for(int i=0; i<bins->GetXBins()->GetNumber()+1; i++){
-      for(int j=0; j<bins->GetZBins()->GetNumber()+1; j++){
-	for(int k=0; k<bins->GetPtBins()->GetNumber()+1; k++){
-	  fit_asym[i][j][k]->Write(); 
-	  std::cout << "[Fits::Load] Loaded " << fit_asym[i][j][k]->GetName() << std::endl; 
+      for(int j=0; j<bins->GetQ2Bins()->GetNumber()+1; j++){
+	for(int k=0; k<bins->GetZBins()->GetNumber()+1; k++){
+	  for(int l=0; l<bins->GetPtBins()->GetNumber()+1; l++){
+	    fit_asym[i][j][k][l]->Write(); 
+	  }
 	}
-      }
+    }
     }
     out->cd("/");
     out->Close(); 
@@ -84,27 +89,38 @@ class Fits {
     inputFile = TFile::Open(file.c_str()); 
     
     for(int i=0; i<bins->GetXBins()->GetNumber()+1; i++){
-      for(int j=0; j<bins->GetZBins()->GetNumber()+1; j++){
-	for(int k=0; k<bins->GetPtBins()->GetNumber()+1; k++){
-	  fit_asym[i][j][k] = (TF1*) inputFile->Get(Form("fit/%s/fit_asym_%s_x%d_z%d_pt%d_%s", constants::Names::mesons[fMesonIndex].c_str(), 
-							    constants::Names::mesons[fMesonIndex].c_str(), i, j, k, fName.c_str()));
-	  std::cout << "[Fit::Load] Loaded " << fit_asym[i][j][k]->GetName() << std::endl;
+      for(int j=0; j<bins->GetQ2Bins()->GetNumber()+1; j++){
+	for(int k=0; k<bins->GetZBins()->GetNumber()+1; k++){
+	  for(int l=0; l<bins->GetPtBins()->GetNumber()+1; l++){
+	    fit_asym[i][j][k][l] = (TF1*) inputFile->Get(Form("fit/%s/fit_asym_%s_x%d_q2%d_z%d_pt%d_%s", 
+							      constants::Names::mesons[fMesonIndex].c_str(), 
+							      constants::Names::mesons[fMesonIndex].c_str(), 
+							      i, j, k, l, fName.c_str()));
+	    
+	    std::cout << "[Fit::Load] Loaded " << fit_asym[i][j][k][l]->GetName() << std::endl;
+	  }
 	}
       }
     }
   }
 
   void Fit(){    
-      for(int i=0; i<bins->GetXBins()->GetNumber()+1; i++){
-	for(int j=0; j<bins->GetZBins()->GetNumber()+1; j++){
-	  for(int k=0; k<bins->GetPtBins()->GetNumber()+1; k++){
-	    std::string current_name(Form("fit_asym_%s_x%d_z%d_pt%d_%s", constants::Names::mesons[fMesonIndex].c_str(), i, j, k, fName.c_str()));
- 
-	    fit_asym[i][j][k] = new TF1(current_name.c_str(),"[0]*sin((3.14159/180.0)*x)",bins->GetPhiBins()->GetMin(), bins->GetPhiBins()->GetMax());
-	    fHistos->h1_asym[i][j][k]->Fit(current_name.c_str(), "RQ");
+    for(int i=0; i<bins->GetXBins()->GetNumber()+1; i++){
+      for(int j=0; j<bins->GetQ2Bins()->GetNumber()+1; j++){
+	for(int k=0; k<bins->GetZBins()->GetNumber()+1; k++){
+	  for(int l=0; l<bins->GetPtBins()->GetNumber()+1; l++){
+	    std::string currentName(Form("fit_asym_%s_x%d_q2%d_z%d_pt%d_%s", 
+					 constants::Names::mesons[fMesonIndex].c_str(), 
+					 i, j, k, l, fName.c_str()));
+    
+	    fit_asym[i][j][k][l] = new TF1(currentName.c_str(),"[0]*sin((3.14159/180.0)*x)",
+					bins->GetPhiBins()->GetMin(), bins->GetPhiBins()->GetMax());
+
+	    fHistos->h1_asym[i][j][k][l]->Fit(currentName.c_str(), "RQ");
 	  }
 	}
       }
+}
   }
 
   Bins *GetBinning() const {

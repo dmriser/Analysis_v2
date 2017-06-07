@@ -53,6 +53,7 @@ public:
   Histos              *exclusiveHistos[constants::NMESON]; 
   MesonHistograms     *mesonHistos[constants::NMESON];
   StandardHistograms  *standardHistos[constants::NMESON]; 
+  StandardHistograms  *standardExHistos[constants::NMESON]; 
   PidHistos           *pidHistos[constants::NMESON]; 
   PidHistos           *exclusivePidHistos[constants::NMESON]; 
 
@@ -62,7 +63,6 @@ public:
   void InitHistos();
 
   bool IsInclusive(PhysicsEvent &ev, int mesonIndex){
-    
     if (mesonIndex == Meson::kPionPositive || mesonIndex == Meson::kPionNegative){
 
       // heavier than neutron 
@@ -79,12 +79,11 @@ public:
     return false; 
   }
 
-  bool IsExclusive(PhysicsEvent &ev, int mesonIndex){
-    
+  bool IsExclusive(PhysicsEvent &ev, int mesonIndex){    
     if (mesonIndex == Meson::kPionPositive || mesonIndex == Meson::kPionNegative){
 
-      // lighter than neutron 
-      return (ev.w > constants::DIS_WMIN && ev.qq > constants::DIS_Q2MIN && ev.mm2 < constants::DIS_MM2_PION_MIN && ev.z > constants::DIS_ZMIN); 
+      // lighter than neutron, above elastic  
+      return (ev.w > constants::DIS_WMIN && ev.qq > constants::DIS_Q2MIN && ev.mm2 < constants::DIS_MM2_PION_MIN && ev.z > constants::DIS_ZMIN);  
     } 
     else if (mesonIndex == Meson::kKaonPositive || mesonIndex == Meson::kKaonNegative){
 
@@ -126,7 +125,8 @@ public:
 
   void FillExclusive(PhysicsEvent &ev, int mesonIndex, int index, int helicity){
     exclusiveHistos[mesonIndex]        ->Fill(ev, helicity);
-    
+    standardExHistos[mesonIndex]->Fill(event, event.GetElectronIndex(), index, ev);     
+
     if (mesonIndex == Meson::kPionNegative || mesonIndex == Meson::kKaonNegative){
       exclusivePidHistos[Meson::kPionNegative]->Fill(event, ev, index);
       exclusivePidHistos[Meson::kKaonNegative]->Fill(event, ev, index);
@@ -160,8 +160,9 @@ void Analysis::InitHistos() {
   exclusivePidHistos[Meson::kKaonPositive] = new PidHistos("exclusive", Meson::kKaonPositive); 
 
   for (int m=0; m<constants::NMESON; m++){
-    mesonHistos[m]    = new MesonHistograms(constants::Names::mesons[m], constants::PID::pid[m]); 
-    standardHistos[m] = new StandardHistograms(constants::Names::mesons[m], 0);
+    mesonHistos[m]      = new MesonHistograms(constants::Names::mesons[m], constants::PID::pid[m]); 
+    standardHistos[m]   = new StandardHistograms(constants::Names::mesons[m], 0);
+    standardExHistos[m] = new StandardHistograms(Form("exclusive_%s",constants::Names::mesons[m].c_str()), 0);
   }
 }
 
@@ -228,8 +229,9 @@ void Analysis::Save(std::string outfile){
 
   TFile *out = new TFile(outfile.c_str(), "update"); 
   for(int m=0; m<constants::NMESON; m++) {
-    mesonHistos[m]   ->Save(out); 
-    standardHistos[m]->Save(out); 
+    mesonHistos[m]     ->Save(out); 
+    standardHistos[m]  ->Save(out); 
+    standardExHistos[m]->Save(out); 
   }
 
 }

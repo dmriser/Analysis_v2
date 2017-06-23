@@ -264,12 +264,12 @@ DLineBins::DLineBins(int numBins, vector<double> limits)
   
 }
 
-int DLineBins::FindBin(double val)
-{
-  for (int i=0; i<bins.size(); i++)
-    {
-      if ( val > bins[i].GetMin() && val < bins[i].GetMax() ) return i; 
+int DLineBins::FindBin(double val){
+
+  for (int i=0; i<bins.size(); i++){
+      if ( val >= bins[i].GetMin() && val <= bins[i].GetMax() ) return i; 
     }
+
 
   return -123;   
 }

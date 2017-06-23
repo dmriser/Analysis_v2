@@ -92,7 +92,7 @@ class SignalBackgroundFitter {
 	    TFitResultPtr resultOfFit = fHistos->h1_tof_mass[i][j][k][l]->Fit(Form("fit_tot_%s_x%d_q2%d_z%d_pt%d_%s", 
 										   constants::Names::mesons[fMesonIndex].c_str(),
 										   i, j, k, l, fName.c_str()), "RQS");
-	  
+	    /*	  
 	  TMatrixD covMatrix = resultOfFit->GetCovarianceMatrix(); 	  
 	  TMatrixD covMatrixPion(3,3); 
 	  TMatrixD covMatrixKaon(3,3); 
@@ -110,7 +110,7 @@ class SignalBackgroundFitter {
 	      covMatrixKaon[row][col] = covMatrix[row+3][col+3];
 	    }
 	  }
-
+	    */
 	  fit_p[i][j][k][l] ->SetRange(0.0, 1.0); 
 	  fit_k[i][j][k][l] ->SetRange(0.0, 1.0); 
 	  fit_bg[i][j][k][l]->SetRange(0.0, 1.0); 
@@ -131,17 +131,18 @@ class SignalBackgroundFitter {
 	  double p_above = fit_p[i][j][k][l]->Integral(cut, max); 
 	  double k_below = fit_k[i][j][k][l]->Integral(min, cut); 
 	  double k_above = fit_k[i][j][k][l]->Integral(cut, max); 
-
+	  /*
 	  double p_below_err = fit_p[i][j][k][l]->IntegralError(min, cut, fit_p[i][j][k][l]->GetParameters(), covMatrixPion.GetMatrixArray()); 
 	  double p_above_err = fit_p[i][j][k][l]->IntegralError(cut, max, fit_p[i][j][k][l]->GetParameters(), covMatrixPion.GetMatrixArray()); 
 	  double k_below_err = fit_k[i][j][k][l]->IntegralError(min, cut, fit_k[i][j][k][l]->GetParameters(), covMatrixKaon.GetMatrixArray()); 
 	  double k_above_err = fit_k[i][j][k][l]->IntegralError(cut, max, fit_k[i][j][k][l]->GetParameters(), covMatrixKaon.GetMatrixArray()); 
-
+	  */
 	  signal_p[i][j][k][l]  = p_below/(p_below+k_below); 
 	  signal_k[i][j][k][l]  = k_above/(p_above+k_above);
-
+	  /*
 	  err_p[i][j][k][l]        = sqrt(pow(p_below_err/(p_below+k_below),2) + pow(p_below*(p_below_err+k_below_err),2)/pow(p_below+k_below,4));
 	  err_k[i][j][k][l]        = sqrt(pow(k_above_err/(p_above+k_above),2) + pow(k_above*(p_above_err+k_above_err),2)/pow(p_above+k_above,4));
+	  */
 	  background_p[i][j][k][l] = 1.0 - signal_k[i][j][k][l]; 
 	  background_k[i][j][k][l] = 1.0 - signal_p[i][j][k][l]; 
 
@@ -157,9 +158,9 @@ class SignalBackgroundFitter {
 	  // iterate on x 
 	  for(int b=1; b<fBins->GetXBins()->GetNumber()+1; b++){
 	    h1_x_signal_p[i][j][k]->SetBinContent(b, signal_p[b][i][j][k]); 
-	    h1_x_signal_p[i][j][k]->SetBinError(b,   err_p[b][i][j][k]); 
+	    //	    h1_x_signal_p[i][j][k]->SetBinError(b,   err_p[b][i][j][k]); 
 	    h1_x_signal_k[i][j][k]->SetBinContent(b, signal_k[b][i][j][k]); 
-	    h1_x_signal_k[i][j][k]->SetBinError(b,   err_k[b][i][j][k]); 
+	    //	    h1_x_signal_k[i][j][k]->SetBinError(b,   err_k[b][i][j][k]); 
 	  }
 	}
       }
@@ -172,9 +173,9 @@ class SignalBackgroundFitter {
 	  // iterate on q2 
 	  for(int b=1; b<fBins->GetQ2Bins()->GetNumber()+1; b++){
 	    h1_q2_signal_p[i][j][k]->SetBinContent(b, signal_p[k][b][i][j]); 
-	    h1_q2_signal_p[i][j][k]->SetBinError(b,   err_p   [k][b][i][j]); 
+	    //	    h1_q2_signal_p[i][j][k]->SetBinError(b,   err_p   [k][b][i][j]); 
 	    h1_q2_signal_k[i][j][k]->SetBinContent(b, signal_k[k][b][i][j]); 
-	    h1_q2_signal_k[i][j][k]->SetBinError(b,   err_k   [k][b][i][j]); 
+	    //	    h1_q2_signal_k[i][j][k]->SetBinError(b,   err_k   [k][b][i][j]); 
 	  }
 	}
       }
@@ -189,9 +190,9 @@ class SignalBackgroundFitter {
 	  // iterate on z 
 	  for(int b=1; b<fBins->GetZBins()->GetNumber()+1; b++){
 	    h1_z_signal_p[i][j][k]->SetBinContent(b, signal_p[j][k][b][i]); 
-	    h1_z_signal_p[i][j][k]->SetBinError(b, err_p     [j][k][b][i]); 
+	    //	    h1_z_signal_p[i][j][k]->SetBinError(b, err_p     [j][k][b][i]); 
 	    h1_z_signal_k[i][j][k]->SetBinContent(b, signal_k[j][k][b][i]); 
-	    h1_z_signal_k[i][j][k]->SetBinError(b, err_k     [j][k][b][i]); 
+	    //	    h1_z_signal_k[i][j][k]->SetBinError(b, err_k     [j][k][b][i]); 
 	  }
 	}
       }
@@ -204,9 +205,9 @@ class SignalBackgroundFitter {
 	  // iterate on pt 
 	  for(int b=1; b<fBins->GetPtBins()->GetNumber()+1; b++){
 	    h1_pt_signal_p[i][j][k]->SetBinContent(b, signal_p[i][j][k][b]); 
-	    h1_pt_signal_p[i][j][k]->SetBinError(b, err_p     [i][j][k][b]); 
+	    //	    h1_pt_signal_p[i][j][k]->SetBinError(b, err_p     [i][j][k][b]); 
 	    h1_pt_signal_k[i][j][k]->SetBinContent(b, signal_k[i][j][k][b]); 
-	    h1_pt_signal_k[i][j][k]->SetBinError(b, err_k     [i][j][k][b]); 
+	    //	    h1_pt_signal_k[i][j][k]->SetBinError(b, err_k     [i][j][k][b]); 
 	  }
 	}
       }

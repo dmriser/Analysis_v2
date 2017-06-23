@@ -64,27 +64,27 @@ void plot_tofmass(std::string file){
   for(int i=0; i<numberXBins+1; i++){
     for(int j=0; j<numberZBins+1; j++){
       for(int k=0; k<numberPtBins+1; k++){
-	tofmass[i][j][k] = (TH1D*) inputFile->Get(Form("pid/kp/h1_tof_mass_kp_x%d_z%d_pt%d_test", i, j, k));
+	tofmass[i][j][k] = (TH1D*) inputFile->Get(Form("pid/kp/h1_tofmass_kp_x%d_q20_z%d_pt%d_test", i, j, k));
 	tofmass[i][j][k]->SetLineColor(kBlack); 
 	tofmass[i][j][k]->SetLineWidth(0.8); 
 	tofmass[i][j][k]->Draw(); 
 
-	totalFit[i][j][k] = (TF1*) inputFile->Get(Form("signal_fits/fit_tot_pp_x%d_z%d_pt%d_test", i, j, k)); 
+	totalFit[i][j][k] = (TF1*) inputFile->Get(Form("signal_fits/fit_tot_pp_x%d_q20_z%d_pt%d_test", i, j, k)); 
 	totalFit[i][j][k]->SetLineColor(99); 
 	totalFit[i][j][k]->SetLineWidth(0.5); 
 	totalFit[i][j][k]->Draw("same"); 
 
-	pionFit[i][j][k] = (TF1*) inputFile->Get(Form("signal_fits/fit_p_pp_x%d_z%d_pt%d_test", i, j, k)); 
-	pionFit[i][j][k]->SetLineColor(94); 
+	pionFit[i][j][k] = (TF1*) inputFile->Get(Form("signal_fits/fit_p_pp_x%d_q20_z%d_pt%d_test", i, j, k)); 
+	pionFit[i][j][k]->SetLineColor(6); 
 	pionFit[i][j][k]->SetLineWidth(0.5); 
 	pionFit[i][j][k]->Draw("same"); 
 
-	kaonFit[i][j][k] = (TF1*) inputFile->Get(Form("signal_fits/fit_k_pp_x%d_z%d_pt%d_test", i, j, k)); 
+	kaonFit[i][j][k] = (TF1*) inputFile->Get(Form("signal_fits/fit_k_pp_x%d_q20_z%d_pt%d_test", i, j, k)); 
 	kaonFit[i][j][k]->SetLineColor(66); 
 	kaonFit[i][j][k]->SetLineWidth(0.5); 
 	kaonFit[i][j][k]->Draw("fsame"); 
 
-	backgroundFit[i][j][k] = (TF1*) inputFile->Get(Form("signal_fits/fit_bg_pp_x%d_z%d_pt%d_test", i, j, k)); 
+	backgroundFit[i][j][k] = (TF1*) inputFile->Get(Form("signal_fits/fit_bg_pp_x%d_q20_z%d_pt%d_test", i, j, k)); 
 	backgroundFit[i][j][k]->SetLineColor(kBlack); 
 	backgroundFit[i][j][k]->SetLineStyle(9); 
 	backgroundFit[i][j][k]->SetLineWidth(0.5); 

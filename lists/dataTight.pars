@@ -123,3 +123,19 @@
       PIM_TOFMASS_MAX     6     e                   0                   0                   0                   0                   0                   0
       PIM_TOFMASS_MIN     6     v               0.00               0.00               0.00               0.00               0.00               0.0
       PIM_TOFMASS_MIN     6     e                   0                   0                   0                   0                   0                   0
+      KP_TOFMASS_MAX     6     v                0.63                0.63                0.63                0.63                0.63                0.63
+      KP_TOFMASS_MAX     6     e                   0                   0                   0                   0                   0                   0
+      KP_TOFMASS_MIN     6     v               0.400               0.400               0.400               0.400               0.400               0.400
+      KP_TOFMASS_MIN     6     e                   0                   0                   0                   0                   0                   0
+      PIP_TOFMASS_MAX     6     v                0.4                0.4                0.4                0.4                0.4                0.40
+      PIP_TOFMASS_MAX     6     e                   0                   0                   0                   0                   0                   0
+      PIP_TOFMASS_MIN     6     v               0.000               0.0               0.0               0.0               0.0               0.0
+      PIP_TOFMASS_MIN     6     e                   0                   0                   0                   0                   0                   0
+      KM_TOFMASS_MAX     6     v                0.75                0.75                0.75                0.75                0.75                0.75
+      KM_TOFMASS_MAX     6     e                   0                   0                   0                   0                   0                   0
+      KM_TOFMASS_MIN     6     v               0.380               0.380               0.380               0.380               0.380               0.380
+      KM_TOFMASS_MIN     6     e                   0                   0                   0                   0                   0                   0
+      PIM_TOFMASS_MAX     6     v                0.38                0.38                0.38                0.38                0.38                0.38
+      PIM_TOFMASS_MAX     6     e                   0                   0                   0                   0                   0                   0
+      PIM_TOFMASS_MIN     6     v               0.00               0.00               0.00               0.00               0.00               0.0
+      PIM_TOFMASS_MIN     6     e                   0                   0                   0                   0                   0                   0

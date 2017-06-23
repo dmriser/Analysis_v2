@@ -96,7 +96,6 @@ int main(int nargs, char *args[]){
     pars.loadParameters(path); 
   }
 
-  /* 
 
   SignalBackgroundFitter sb_fitter(&pp_pid, "test", Meson::kPionPositive); 
   sb_fitter.Fit(pars.getParameter("PIP_TOFMASS_MIN").getValue(0), 
@@ -110,8 +109,6 @@ int main(int nargs, char *args[]){
   
   pp_corr_int->Save(inputFile, "update"); 
   kp_corr_int->Save(inputFile, "update"); 
-
-  */
 
   return 0;
 }

@@ -17,7 +17,7 @@ class Parameters{
   std::map<std::string, ParameterSet> parameters; 
 
  public:
-  ParameterSet& getParameter(std::string name);
+  ParameterSet getParameter(std::string name);
   ParameterMetaData getMetaData(){ return metaData; }
   std::vector<std::string> parseLine(std::string);
 

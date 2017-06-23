@@ -24,3 +24,45 @@ void loadIntegratedHisto(TFile *f, TH1D *h, std::string particle,
     std::cout << "Loaded " << h->GetName() << " w/entries = "<< h->GetEntries() << std::endl; 
   }
 }
+
+bool padIsLeft(int pad, int width, int height){
+  return (pad%width == 1);
+}
+
+bool padIsRight(int pad, int width, int height){
+  return (pad%width == 0);
+}
+
+bool padIsTop(int pad, int width, int height){
+  return (pad <= width);
+}
+
+bool padIsBottom(int pad, int width, int height){
+  return (pad >= width*(height-1));
+}
+
+void setupPad(int pad, int width, int height, float innerSpace, float outerSpace){
+  
+  if (padIsLeft(pad, width, height)){
+    gPad->SetLeftMargin(outerSpace); 
+    gPad->SetRightMargin(innerSpace); 
+  } else if (padIsRight(pad, width, height)){
+    gPad->SetLeftMargin(innerSpace); 
+    gPad->SetRightMargin(outerSpace); 
+  } else {
+    gPad->SetLeftMargin(innerSpace); 
+    gPad->SetRightMargin(innerSpace);     
+  }
+
+  if (padIsTop(pad, width, height)){
+    gPad->SetTopMargin(outerSpace);
+    gPad->SetBottomMargin(innerSpace);
+  } else if (padIsBottom(pad, width, height)){
+    gPad->SetTopMargin(innerSpace);
+    gPad->SetBottomMargin(outerSpace);
+  } else {
+    gPad->SetTopMargin(innerSpace);
+    gPad->SetBottomMargin(innerSpace);
+  }
+
+}

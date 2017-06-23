@@ -24,14 +24,15 @@ int main(int nargs, char *args[]){
   kp.Load(inputFile);
 
   FindBins(kp.h1_xbj[0], 4, 0.1, 0.6, 0.05);
-  FindBins(kp.h1_z[0], 4, 0.1, 0.7, 0.05);
+  FindBins(kp.h1_z[0], 6, 0.0, 1.0, 0.05);
   FindBins(kp.h1_pt2[0], 4, 0.0, 1.0, 0.05);
+  FindBins(kp.h1_q2[0], 6, 1.0, 5.0, 0.05);
 
   StandardHistograms km("km", 1); 
   km.Load(inputFile);
 
   FindBins(km.h1_xbj[0], 3, 0.1, 0.6, 0.05);
-  FindBins(km.h1_z[0], 3, 0.1, 0.7, 0.05);
+  FindBins(km.h1_z[0], 3, 0.0, 0.7, 0.05);
   FindBins(km.h1_pt2[0], 3, 0.0, 1.0, 0.05);
 
   StandardHistograms pp("pp", 1); 

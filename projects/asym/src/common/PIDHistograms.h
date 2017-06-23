@@ -123,7 +123,7 @@ class PidHistos {
 								 constants::Names::mesons[fMesonIndex].c_str(), 
 								 i, j, k, l, fName.c_str()));
 		
-		h1_tof_mass[i][j][k][l] = (TH1D*) inputFile->Get(Form("pid/%s/h1_tof_mass_%s_x%d_q2%d_z%d_pt%d_%s", 
+		h1_tof_mass[i][j][k][l] = (TH1D*) inputFile->Get(Form("pid/%s/h1_tofmass_%s_x%d_q2%d_z%d_pt%d_%s", 
 								  constants::Names::mesons[fMesonIndex].c_str(),  
 								  constants::Names::mesons[fMesonIndex].c_str(), 
 								  i, j, k, l, fName.c_str()));
@@ -145,8 +145,8 @@ class PidHistos {
 
   void Init(){    
       for(int i=0; i<bins->GetXBins()->GetNumber()+1; i++){
-	for(int j=0; j<bins->GetZBins()->GetNumber()+1; j++){
-	  for(int k=0; k<bins->GetPtBins()->GetNumber()+1; k++){
+	for(int j=0; j<bins->GetQ2Bins()->GetNumber()+1; j++){
+	  for(int k=0; k<bins->GetZBins()->GetNumber()+1; k++){
 	    for(int l=0; l<bins->GetPtBins()->GetNumber()+1; l++){
 	      h2_p_b[i][j][k][l] = new TH2D(Form("h2_p_b_%s_x%d_q2%d_z%d_pt%d_%s", 
 						 constants::Names::mesons[fMesonIndex].c_str(), 

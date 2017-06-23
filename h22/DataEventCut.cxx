@@ -555,7 +555,9 @@ bool DataEventCut_TOFMassCut::CanBeApplied(h22Event &event, int index){
 }
 
 bool DataEventCut_TOFMassCut::IsPassed(h22Event &event, int hadronIndex){
-    double tofmass = sqrt(pow(event.p[hadronIndex],2)*(1-pow(event.corr_b[hadronIndex],2))/pow(event.corr_b[hadronIndex],2));
+    double tofmass = pow(event.p[hadronIndex],2)*(1-pow(event.corr_b[hadronIndex],2))/pow(event.corr_b[hadronIndex],2);
+    tofmass = fabs(tofmass);
+    tofmass = sqrt(tofmass); 
 
     if (tofmass > GetMin() && tofmass < GetMax()){
         n_pass++;

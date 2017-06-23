@@ -20,7 +20,7 @@ namespace constants {
   const static float DIS_ZMIN   = 0.1; 
   const static float DIS_ZMAX   = 0.7; 
   const static float DIS_MM2_PION_MIN = 1.1; 
-  const static float DIS_MM2_KAON_MIN = 1.5; 
+  const static float DIS_MM2_KAON_MIN = 2.55; 
   const static float LOWER_Z = 0.3; 
   const static float UPPER_Z = 0.7; 
 

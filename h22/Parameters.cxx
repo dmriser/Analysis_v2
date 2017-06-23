@@ -18,7 +18,7 @@ Parameters::Parameters(){
 Parameters::~Parameters(){
 }
 
-ParameterSet& Parameters::getParameter(string name){
+ParameterSet Parameters::getParameter(string name){
   if (parameters.find(name) != parameters.end()){
     return parameters[name];
   }
@@ -26,8 +26,7 @@ ParameterSet& Parameters::getParameter(string name){
     cout << "[Parameters::getParameter] Returning null parameter set for not finding key " << name << " check your spelling/file. " << endl; 
   }
   
-  ParameterSet p; 
-  return p; 
+  return ParameterSet(); 
 }
 
 std::vector<std::string> Parameters::getListOfParameters(){

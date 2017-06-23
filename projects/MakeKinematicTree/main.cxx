@@ -12,7 +12,7 @@ int main(int argc, char *argv[]){
   h22Options opts; 
 
   Parameters pars, parsloose, parstight; 
-  pars.loadParameters("/u/home/dmriser/Analysis_v2/lists/data.pars"); 
+  pars.loadParameters("/u/home/dmriser/Analysis_v2/lists/data_tofmass.pars"); 
   parsloose.loadParameters("/u/home/dmriser/Analysis_v2/lists/dataLoose.pars"); 
   parstight.loadParameters("/u/home/dmriser/Analysis_v2/lists/dataTight.pars"); 
   
@@ -24,7 +24,7 @@ int main(int argc, char *argv[]){
   for (int i=0; i<opts.ifiles.size(); ++i) { treeWriter.AddFile( opts.ifiles[i] ); }
   //  treeWriter.isMonteCarlo = true; 
   treeWriter.SetupTree();
-  treeWriter.RunAnalysis();
+  treeWriter.RunAnalysis();  
   treeWriter.Save(opts.args["OUT"].args); 
 
   return 0;

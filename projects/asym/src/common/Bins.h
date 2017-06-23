@@ -87,17 +87,21 @@ class KaonPositiveBins : public Bins {
 
     std::vector<double> vq2; 
     vq2.push_back(1.00); 
-    vq2.push_back(2.00); 
-    vq2.push_back(4.50); 
+    vq2.push_back(1.24); 
+    vq2.push_back(1.47); 
+    vq2.push_back(1.69); 
+    vq2.push_back(2.01); 
+    vq2.push_back(2.50); 
+    vq2.push_back(5.00); 
 
     std::vector<double> vz;    
-    vz.push_back(0.100);
-    vz.push_back(0.325);
-    vz.push_back(0.355);
-    vz.push_back(0.395);
-    vz.push_back(0.445);
-    vz.push_back(0.525);
-    vz.push_back(0.700);
+    vz.push_back(0.000);
+    vz.push_back(0.265);
+    vz.push_back(0.335);
+    vz.push_back(0.405);
+    vz.push_back(0.485);
+    vz.push_back(0.585);
+    vz.push_back(0.990);
     
     /*      
     vz.push_back(0.300);
@@ -119,7 +123,7 @@ class KaonPositiveBins : public Bins {
     vpt.push_back(1.000);
 
     xbins   = new DLineBins(6, vx);
-    q2bins   = new DLineBins(2, vq2);
+    q2bins   = new DLineBins(6, vq2);
     zbins   = new DLineBins(6, vz);
     ptbins  = new DLineBins(6, vpt);
     phibins = new DLineBins(18, -180.0, 180.0); 
@@ -142,18 +146,14 @@ class KaonNegativeBins : public Bins {
     vq2.push_back(2.00); 
     vq2.push_back(4.50); 
 
-    std::vector<double> vz;
-    /*
-    vz.push_back(0.300);
-    vz.push_back(0.365);
-    vz.push_back(0.465);
-    vz.push_back(0.700);
-    */
-    
-    vz.push_back(0.100);
-    vz.push_back(0.385);
-    vz.push_back(0.505);
-    vz.push_back(0.700);
+    std::vector<double> vz;    
+    vz.push_back(0.000);
+    vz.push_back(0.265);
+    vz.push_back(0.335);
+    vz.push_back(0.405);
+    vz.push_back(0.485);
+    vz.push_back(0.585);
+    vz.push_back(0.990);
     
     std::vector<double> vpt;
     vpt.push_back(0.000);
@@ -163,7 +163,7 @@ class KaonNegativeBins : public Bins {
     
     xbins   = new DLineBins(3, vx);
     q2bins   = new DLineBins(2, vq2);
-    zbins   = new DLineBins(3, vz);
+    zbins   = new DLineBins(6, vz);
     ptbins  = new DLineBins(3, vpt);
     phibins = new DLineBins(18, -180.0, 180.0); 
 
@@ -185,8 +185,12 @@ class PionPositiveBins : public Bins {
 
     std::vector<double> vq2; 
     vq2.push_back(1.00); 
-    vq2.push_back(2.00); 
-    vq2.push_back(4.50); 
+    vq2.push_back(1.24); 
+    vq2.push_back(1.47); 
+    vq2.push_back(1.69); 
+    vq2.push_back(2.01); 
+    vq2.push_back(2.50); 
+    vq2.push_back(5.00); 
 
     /*    
     std::vector<double> vz;
@@ -200,13 +204,13 @@ class PionPositiveBins : public Bins {
     */
     
     std::vector<double> vz;
-    vz.push_back(0.100);
-    vz.push_back(0.325);
-    vz.push_back(0.355);
-    vz.push_back(0.395);
-    vz.push_back(0.445);
-    vz.push_back(0.525);
-    vz.push_back(0.700);
+    vz.push_back(0.000);
+    vz.push_back(0.265);
+    vz.push_back(0.335);
+    vz.push_back(0.405);
+    vz.push_back(0.485);
+    vz.push_back(0.585);
+    vz.push_back(0.990);
 
 
     std::vector<double> vpt;
@@ -219,7 +223,7 @@ class PionPositiveBins : public Bins {
     vpt.push_back(1.000);
 
     xbins   = new DLineBins(6, vx);
-    q2bins  = new DLineBins(2, vq2);
+    q2bins  = new DLineBins(6, vq2);
     zbins   = new DLineBins(6, vz);
     ptbins  = new DLineBins(6, vpt);
     phibins = new DLineBins(18, -180.0, 180.0); 
@@ -243,18 +247,15 @@ class PionNegativeBins : public Bins {
     vq2.push_back(2.00); 
     vq2.push_back(4.50); 
 
-    std::vector<double> vz;
-    /*    
-    vz.push_back(0.300);
-    vz.push_back(0.365);
-    vz.push_back(0.465);
-    vz.push_back(0.700);
-    */
-    vz.push_back(0.100);
-    vz.push_back(0.385);
-    vz.push_back(0.505);
-    vz.push_back(0.700);
-    
+    std::vector<double> vz;    
+    vz.push_back(0.000);
+    vz.push_back(0.265);
+    vz.push_back(0.335);
+    vz.push_back(0.405);
+    vz.push_back(0.485);
+    vz.push_back(0.585);
+    vz.push_back(0.990);
+
     std::vector<double> vpt;
     vpt.push_back(0.000);
     vpt.push_back(0.412);
@@ -263,7 +264,7 @@ class PionNegativeBins : public Bins {
 
     xbins   = new DLineBins(3, vx);
     q2bins  = new DLineBins(2, vq2);
-    zbins   = new DLineBins(3, vz);
+    zbins   = new DLineBins(6, vz);
     ptbins  = new DLineBins(3, vpt);
     phibins = new DLineBins(18, -180.0, 180.0); 
 

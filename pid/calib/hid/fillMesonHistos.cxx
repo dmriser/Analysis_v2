@@ -187,30 +187,3 @@ int main(int argc, char * argv[]){
   return 0;
 }
 
-std::vector<std::string> loadFilesFromList(std::string fileList, int numFiles){
-  std::vector<std::string> theseFiles;
-  
-  std::ifstream inputFile;
-  inputFile.open(fileList.c_str());
-
-  int ifile = 0; string line;
-  while (getline(inputFile, line) && ifile < numFiles){
-    theseFiles.push_back(line);
-    ifile++;
-  }
-
-  inputFile.close();
-  return theseFiles;
-}
-
-std::vector<std::string> loadFilesFromCommandLine(h22Options * theseOpts, int numFiles){
-  std::vector<std::string> theseFiles;
-
-  for(int ifile = 0; ifile < theseOpts->ifiles.size(); ifile++){
-    theseFiles.push_back(theseOpts->ifiles[ifile]);
-
-    if (ifile == numFiles){ break; }
-  }
-
-  return theseFiles;
-}

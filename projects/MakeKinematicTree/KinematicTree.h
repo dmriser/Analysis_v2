@@ -7,6 +7,7 @@
 #include "Corrections.h"
 #include "h22Option.h"
 #include "GenericAnalysis.h"
+#include "MomCorr.h"
 #include "Parameters.h"
 #include "ParticleFilter.h"
 #include "PhysicsEventBuilder.h"
@@ -24,6 +25,7 @@ class KinematicTree : public GenericAnalysis {
   TTree   *kinematicTree;
   TBranch *b_qq;
   TBranch *b_x;
+  TBranch *b_mes_b;
   TBranch *b_y;
   TBranch *b_z;
   TBranch *b_w;
@@ -40,22 +42,31 @@ class KinematicTree : public GenericAnalysis {
   TBranch *b_pass_ec;
   TBranch *b_ele_vz;
   TBranch *b_mes_vz;
+  TBranch *b_ele_theta;
+  TBranch *b_ele_phi;
   TBranch *b_ele_p;
   TBranch *b_mes_p;
+  TBranch *b_mes_theta;
+  TBranch *b_mes_phi;
 
-  Double_t qq; 
-  Double_t x; 
-  Double_t w; 
-  Double_t y; 
-  Double_t mm2; 
-  Double_t z; 
-  Double_t pt; 
-  Double_t ele_p; 
-  Double_t mes_p; 
-  Double_t ele_vz; 
-  Double_t mes_vz; 
-  Double_t phiH;
-  Double_t tof_mass; 
+  Float_t qq; 
+  Float_t x; 
+  Float_t mes_b; 
+  Float_t w; 
+  Float_t y; 
+  Float_t mm2; 
+  Float_t z; 
+  Float_t pt; 
+  Float_t ele_p; 
+  Float_t mes_p; 
+  Float_t ele_phi; 
+  Float_t mes_phi; 
+  Float_t ele_theta; 
+  Float_t mes_theta; 
+  Float_t ele_vz; 
+  Float_t mes_vz; 
+  Float_t phiH;
+  Float_t tof_mass; 
   Int_t    meson_id; 
   Int_t    hel; 
   Int_t    pass_sf; 
@@ -73,6 +84,7 @@ class KinematicTree : public GenericAnalysis {
   void CheckForMesonAndFill(int index); 
 
  protected:
+  MomCorr_e1f    *fMomCorr; 
   Corrections     fCorr; 
   ParticleFilter *fFilter; 
   ParticleFilter *fFilterTight; 

@@ -10,6 +10,7 @@ using std::endl;
 
 #include "KinematicTree.h"
 
+#include "CommonTools.h"
 #include "Corrections.h"
 #include "PhysicsEvent.h"
 #include "PhysicsEventBuilder.h"
@@ -21,6 +22,10 @@ KinematicTree::KinematicTree(h22Options *opts, Parameters *p, Parameters *ptight
   fFilter      = new ParticleFilter(fPars); 
   fFilterLoose = new ParticleFilter(ploose); 
   fFilterTight = new ParticleFilter(ptight); 
+
+  std::string path        = Global::Environment::GetAnalysisPath();
+  std::string momCorrPath = Form("%s/momCorr/",path.c_str());
+  fMomCorr                = new MomCorr_e1f(momCorrPath); 
 }
 
 KinematicTree::~KinematicTree(){
@@ -35,6 +40,7 @@ void KinematicTree::SetupTree(){
 
   b_qq        = kinematicTree->Branch("qq",        &qq);
   b_x         = kinematicTree->Branch("x",         &x);
+  b_mes_b     = kinematicTree->Branch("mes_b",     &mes_b);
   b_x         = kinematicTree->Branch("w",         &w);
   b_y         = kinematicTree->Branch("y",         &y);
   b_z         = kinematicTree->Branch("z",         &z);
@@ -43,14 +49,17 @@ void KinematicTree::SetupTree(){
   b_pt        = kinematicTree->Branch("pt",        &pt);
   b_ele_vz    = kinematicTree->Branch("ele_vz",    &ele_vz);
   b_mes_vz    = kinematicTree->Branch("mes_vz",    &mes_vz);
-  b_ele_p     = kinematicTree->Branch("ele_p",    &ele_p);
-  b_mes_p     = kinematicTree->Branch("mes_p",    &mes_p);
+  b_ele_p     = kinematicTree->Branch("ele_p",     &ele_p);
+  b_mes_p     = kinematicTree->Branch("mes_p",     &mes_p);
+  b_ele_phi   = kinematicTree->Branch("ele_phi",   &ele_phi);
+  b_mes_phi   = kinematicTree->Branch("mes_phi",   &mes_phi);
+  b_ele_theta = kinematicTree->Branch("ele_theta", &ele_theta);
+  b_mes_theta = kinematicTree->Branch("mes_theta", &mes_theta);
   b_pass_sf   = kinematicTree->Branch("pass_sf",   &pass_sf);
   b_pass_dc1  = kinematicTree->Branch("pass_dc1",  &pass_dc1);
   b_pass_dc3  = kinematicTree->Branch("pass_dc3",  &pass_dc3);
   b_pass_vz   = kinematicTree->Branch("pass_vz",   &pass_vz);
   b_pass_ec   = kinematicTree->Branch("pass_ec",   &pass_ec);
-  b_pt        = kinematicTree->Branch("pt",        &pt);
   b_meson_id  = kinematicTree->Branch("meson_id",  &meson_id);
   b_tof_mass  = kinematicTree->Branch("tof_mass",  &tof_mass);
   b_phiH      = kinematicTree->Branch("phi_h",     &phiH);
@@ -66,16 +75,28 @@ void KinematicTree::CheckForMesonAndFill(int index){
 
       TLorentzVector electron = event.GetTLorentzVector(electronIndex, 11); 
       TLorentzVector meson    = event.GetTLorentzVector(mesonIndex,  index); 
+
+      electron = fMomCorr->PcorN(electron, -1, 11);
+
+      ele_theta = electron.Theta()*to_degrees; 
+      ele_phi = electron.Phi()*to_degrees; 
+
+      mes_theta = meson.Theta()*to_degrees; 
+      mes_phi = meson.Phi()*to_degrees; 
+
       PhysicsEvent ev         = builder.getPhysicsEvent(electron, meson);
 
-      hel = event.corr_hel;
+      hel      = event.corr_hel;
       meson_id = index; 
 
       ele_vz = event.corr_vz[electronIndex]; 
       mes_vz = event.corr_vz[mesonIndex]; 
+      mes_b  = event.corr_b[mesonIndex]; 
 
       // this needs to be replaced 
-      ele_p = event.p[electronIndex]; 
+      ele_p = electron.P(); 
+      
+      //      ele_p = event.p[electronIndex]; 
       mes_p = event.p[mesonIndex];
 
       x    = ev.x; 

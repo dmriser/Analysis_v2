@@ -3,7 +3,7 @@
   gROOT->LoadMacro("utils.C"); 
   gStyle->SetErrorX(0.0); 
 
-  TFile *inputFile = TFile::Open("/volatile/clas12/dmriser/rootFiles/asymmetry/asymmetry_pass24.root"); 
+  TFile *inputFile = TFile::Open("/volatile/clas12/dmriser/rootFiles/asymmetry/asymmetry_return_pass2.root"); 
 
   const int npart            = 4; 
   std::string name[npart]    = {"pm", "pp", "km", "kp"};
@@ -18,7 +18,7 @@
       x[p]->SetLineColor(color[p]); 
       x[p]->SetLineWidth(2); 
       x[p]->SetMarkerColor(color[p]); 
-      x[p]->SetMarkerStyle(8); 
+      x[p]->SetMarkerStyle(26); 
       x[p]->SetMinimum(-0.07); 
       x[p]->SetMaximum(0.07); 
       x[p]->GetXaxis()->SetNdivisions(505); 
@@ -28,7 +28,7 @@
       q2[p] = (TH1D*) inputFile->Get(Form("integrated/%s/h1_q2_z0_pt0_x0_base", name[p].c_str())); 
       q2[p]->SetLineColor(color[p]); 
       q2[p]->SetMarkerColor(color[p]); 
-      q2[p]->SetMarkerStyle(8); 
+      q2[p]->SetMarkerStyle(25); 
       q2[p]->SetMinimum(-0.07); 
       q2[p]->SetMaximum(0.07); 
       q2[p]->GetXaxis()->SetNdivisions(505); 
@@ -38,7 +38,7 @@
       z[p]  = (TH1D*) inputFile->Get(Form("integrated/%s/h1_z_pt0_x0_q20_base", name[p].c_str())); 
       z[p]->SetLineColor(color[p]); 
       z[p]->SetMarkerColor(color[p]); 
-      z[p]->SetMarkerStyle(8); 
+      z[p]->SetMarkerStyle(23); 
       z[p]->GetXaxis()->SetNdivisions(505); 
       z[p]->SetMinimum(-0.07); 
       z[p]->SetMaximum(0.07); 
@@ -51,7 +51,7 @@
       pt[p]->GetXaxis()->SetNdivisions(505); 
       pt[p]->SetMinimum(-0.07); 
       pt[p]->SetMaximum(0.07); 
-      pt[p]->SetMarkerStyle(8); 
+      pt[p]->SetMarkerStyle(24); 
       pt[p]->SetLabelSize(0.1, "x"); 
       pt[p]->SetLabelSize(0.1, "y"); 
     }
@@ -131,7 +131,7 @@
   }
 
 
-  can->Print("/volatile/clas12/dmriser/plots/asymmetry/integrated_all.png");
+  can->Print("/volatile/clas12/dmriser/plots/asymmetry/integrated_all.pdf");
   can->Clear();
   can->Divide(4, 1, -1, -1); 
 
@@ -160,6 +160,6 @@
 
   lab.DrawLatex(0.1, 0.98, "A_{LU}^{sin #phi_{h}}"); 
 
-  can->Print("/volatile/clas12/dmriser/plots/asymmetry/integrated_combined_all.png");
+  can->Print("/volatile/clas12/dmriser/plots/asymmetry/integrated_combined_all.pdf");
 
 }

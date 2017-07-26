@@ -5,9 +5,10 @@ void plot_integrated_asymmetries(std::string file){
   TFile *inputFile      = TFile::Open(file.c_str()); 
   std::string imagePath = "/volatile/clas12/dmriser/plots/asymmetry";
 
-  const int numberXBins  = 6; 
-  const int numberZBins  = 6; 
-  const int numberPtBins = 6; 
+  const int numberXBins   = 6; 
+  const int numberQ2Bins  = 2; 
+  const int numberZBins   = 6; 
+  const int numberPtBins  = 6; 
 
   // --------------------------------------------
   //    styling 
@@ -52,194 +53,163 @@ void plot_integrated_asymmetries(std::string file){
   ytit.SetTextSize(0.04); 
   ytit.SetTextAngle(90.0); 
 
-  TH1D *pion_x[numberZBins+1][numberPtBins+1];
-  TH1D *kaon_x[numberZBins+1][numberPtBins+1];
-  TH1D *pion_x_corr[numberZBins+1][numberPtBins+1];
-  TH1D *kaon_x_corr[numberZBins+1][numberPtBins+1];
+  TH1D *pion_x[numberQ2Bins+1][numberZBins+1][numberPtBins+1];
+  TH1D *kaon_x[numberQ2Bins+1][numberZBins+1][numberPtBins+1];
 
-  TH1D *pion_z[numberPtBins+1][numberXBins+1];
-  TH1D *kaon_z[numberPtBins+1][numberXBins+1];
-  TH1D *pion_z_corr[numberPtBins+1][numberXBins+1];
-  TH1D *kaon_z_corr[numberPtBins+1][numberXBins+1];
+  TH1D *pion_q2[numberZBins+1][numberPtBins+1][numberXBins+1];
+  TH1D *kaon_q2[numberZBins+1][numberPtBins+1][numberXBins+1];
 
-  TH1D *pion_pt[numberXBins+1][numberZBins+1];
-  TH1D *kaon_pt[numberXBins+1][numberZBins+1];
-  TH1D *pion_pt_corr[numberXBins+1][numberZBins+1];
-  TH1D *kaon_pt_corr[numberXBins+1][numberZBins+1];
+  TH1D *pion_z[numberPtBins+1][numberXBins+1][numberQ2Bins+1];
+  TH1D *kaon_z[numberPtBins+1][numberXBins+1][numberQ2Bins+1];
 
+  TH1D *pion_pt[numberXBins+1][numberQ2Bins+1][numberZBins+1];
+  TH1D *kaon_pt[numberXBins+1][numberQ2Bins+1][numberZBins+1];
 
+  for(int i=0; i<numberQ2Bins+1; i++){
     for(int j=0; j<numberZBins+1; j++){
       for(int k=0; k<numberPtBins+1; k++){
-	pion_x[j][k] = (TH1D*) inputFile->Get(Form("integrated/pp/h1_x_z%d_pt%d_base", j, k));
-	pion_x[j][k]->SetLineColor(99); 
-	pion_x[j][k]->SetFillColor(99); 
-	pion_x[j][k]->SetMarkerColor(99); 
-	pion_x[j][k]->SetMarkerStyle(8); 
-	pion_x[j][k]->SetMarkerSize(0.7); 
-	pion_x[j][k]->SetLineWidth(1.5); 
-	pion_x[j][k]->SetMaximum(0.08); 
-	pion_x[j][k]->SetMinimum(-0.08); 
-	pion_x[j][k]->Draw("pe"); 
+	pion_x[i][j][k] = (TH1D*) inputFile->Get(Form("integrated/pp/h1_x_q2%d_z%d_pt%d_base", i, j, k));
+	pion_x[i][j][k]->SetLineColor(99); 
+	pion_x[i][j][k]->SetFillColor(99); 
+	pion_x[i][j][k]->SetMarkerColor(99); 
+	pion_x[i][j][k]->SetMarkerStyle(8); 
+	pion_x[i][j][k]->SetMarkerSize(0.7); 
+	pion_x[i][j][k]->SetLineWidth(1.5); 
+	pion_x[i][j][k]->SetMaximum(0.08); 
+	pion_x[i][j][k]->SetMinimum(-0.08); 
+	pion_x[i][j][k]->Draw("pe"); 
 
-	pion_x_corr[j][k] = (TH1D*) inputFile->Get(Form("integrated/pp/h1_x_z%d_pt%d_corr", j, k));
-	pion_x_corr[j][k]->SetLineColor(99); 
-	pion_x_corr[j][k]->SetFillColor(99); 
-	pion_x_corr[j][k]->SetMarkerColor(99); 
-	pion_x_corr[j][k]->SetMarkerStyle(24); 
-	pion_x_corr[j][k]->SetMarkerSize(0.7); 
-	pion_x_corr[j][k]->SetLineWidth(1.5); 
-	pion_x_corr[j][k]->SetMaximum(0.06); 
-	pion_x_corr[j][k]->SetMinimum(-0.02); 
-	pion_x_corr[j][k]->Draw("pesame"); 
+	kaon_x[i][j][k] = (TH1D*) inputFile->Get(Form("integrated/kp/h1_x_q2%d_z%d_pt%d_base", i, j, k));
+	kaon_x[i][j][k]->SetLineColor(55); 
+	kaon_x[i][j][k]->SetFillColor(55); 
+	kaon_x[i][j][k]->SetMarkerColor(55); 
+	kaon_x[i][j][k]->SetMarkerStyle(8); 
+	kaon_x[i][j][k]->SetMarkerSize(0.7); 
+	kaon_x[i][j][k]->SetLineWidth(1.5); 
+	kaon_x[i][j][k]->SetMaximum(0.06); 
+	kaon_x[i][j][k]->SetMinimum(-0.02); 
+	kaon_x[i][j][k]->Draw("pesame"); 
 
-	kaon_x[j][k] = (TH1D*) inputFile->Get(Form("integrated/kp/h1_x_z%d_pt%d_base", j, k));
-	kaon_x[j][k]->SetLineColor(55); 
-	kaon_x[j][k]->SetFillColor(55); 
-	kaon_x[j][k]->SetMarkerColor(55); 
-	kaon_x[j][k]->SetMarkerStyle(8); 
-	kaon_x[j][k]->SetMarkerSize(0.7); 
-	kaon_x[j][k]->SetLineWidth(1.5); 
-	kaon_x[j][k]->SetMaximum(0.06); 
-	kaon_x[j][k]->SetMinimum(-0.02); 
-	kaon_x[j][k]->Draw("pesame"); 
-
-	kaon_x_corr[j][k] = (TH1D*) inputFile->Get(Form("integrated/kp/h1_x_z%d_pt%d_corr", j, k));
-	kaon_x_corr[j][k]->SetLineColor(55); 
-	kaon_x_corr[j][k]->SetFillColor(55); 
-	kaon_x_corr[j][k]->SetMarkerColor(55); 
-	kaon_x_corr[j][k]->SetMarkerStyle(24); 
-	kaon_x_corr[j][k]->SetMarkerSize(0.7); 
-	kaon_x_corr[j][k]->SetLineWidth(1.5); 
-	kaon_x_corr[j][k]->SetMaximum(0.06); 
-	kaon_x_corr[j][k]->SetMinimum(-0.02); 
-	kaon_x_corr[j][k]->Draw("pesame"); 
-
-	title.DrawLatex(0.15, 0.88, Form("Integrated Asymmetry for bin (%d, %d) #color[99]{#pi^{+}} and #color[55]{K^{+}}", j, k)); 
+	title.DrawLatex(0.15, 0.88, Form("Integrated Asymmetry for bin (%d, %d, %d) #color[99]{#pi^{+}} and #color[55]{K^{+}}", i, j, k)); 
 	xtit.DrawLatex(0.65, 0.07, "x_{Bjorken}"); 
 	ytit.DrawLatex(0.08, 0.45, "A_{LU}^{sin#phi}"); 
 
 
-	can->Print(Form("%s/asymmetry_z%d_pt%d_pos.png", imagePath.c_str(), j, k)); 
+	can->Print(Form("%s/asymmetry_q2%d_z%d_pt%d_pos.png", imagePath.c_str(), i, j, k)); 
 	can->Clear(); 
       }
     }
+  }
 
-
+  for(int i=0; i<numberZBins; i++){
     for(int j=0; j<numberPtBins+1; j++){
       for(int k=0; k<numberXBins+1; k++){
-	pion_z[j][k] = (TH1D*) inputFile->Get(Form("integrated/pp/h1_z_pt%d_x%d_base", j, k));
-	pion_z[j][k]->SetLineColor(99); 
-	pion_z[j][k]->SetFillColor(99); 
-	pion_z[j][k]->SetMarkerColor(99); 
-	pion_z[j][k]->SetMarkerStyle(8); 
-	pion_z[j][k]->SetMarkerSize(0.7); 
-	pion_z[j][k]->SetLineWidth(1.5); 
-	pion_z[j][k]->SetMaximum(0.06); 
-	pion_z[j][k]->SetMinimum(-0.02); 
-	pion_z[j][k]->Draw("pe"); 
+	pion_q2[i][j][k] = (TH1D*) inputFile->Get(Form("integrated/pp/h1_q2_z%d_pt%d_x%d_base", i, j, k));
+	pion_q2[i][j][k]->SetLineColor(99); 
+	pion_q2[i][j][k]->SetFillColor(99); 
+	pion_q2[i][j][k]->SetMarkerColor(99); 
+	pion_q2[i][j][k]->SetMarkerStyle(8); 
+	pion_q2[i][j][k]->SetMarkerSize(0.7); 
+	pion_q2[i][j][k]->SetLineWidth(1.5); 
+	pion_q2[i][j][k]->SetMaximum(0.06); 
+	pion_q2[i][j][k]->SetMinimum(-0.02); 
+	pion_q2[i][j][k]->Draw("pe"); 
+
+	kaon_q2[i][j][k] = (TH1D*) inputFile->Get(Form("integrated/kp/h1_q2_z%d_pt%d_x%d_base", i, j, k));
+	kaon_q2[i][j][k]->SetLineColor(55); 
+	kaon_q2[i][j][k]->SetFillColor(55); 
+	kaon_q2[i][j][k]->SetMarkerColor(55); 
+	kaon_q2[i][j][k]->SetMarkerStyle(8); 
+	kaon_q2[i][j][k]->SetMarkerSize(0.7); 
+	kaon_q2[i][j][k]->SetLineWidth(1.5); 
+	kaon_q2[i][j][k]->SetMaximum(0.06); 
+	kaon_q2[i][j][k]->SetMinimum(-0.02); 
+	kaon_q2[i][j][k]->Draw("pesame"); 
+
+	title.DrawLatex(0.3, 0.88, Form("Asymmetry for bin (%d, %d, %d) #color[99]{#pi^{+}} and #color[55]{K^{+}}", i, j, k)); 
+	xtit.DrawLatex(0.65, 0.07, "Q^{2}"); 
+	ytit.DrawLatex(0.08, 0.45, "A_{LU}^{sin#phi}"); 
+
+	can->Print(Form("%s/asymmetry_z%d_pt%d_x%d_pos.png", imagePath.c_str(), i, j, k)); 
+	can->Clear(); 
+      }
+    }
+  }
+
+
+  for(int i=0; i<numberPtBins; i++){
+    for(int j=0; j<numberXBins+1; j++){
+      for(int k=0; k<numberQ2Bins+1; k++){
+	pion_z[i][j][k] = (TH1D*) inputFile->Get(Form("integrated/pp/h1_z_pt%d_x%d_q2%d_base", i, j, k));
+	pion_z[i][j][k]->SetLineColor(99); 
+	pion_z[i][j][k]->SetFillColor(99); 
+	pion_z[i][j][k]->SetMarkerColor(99); 
+	pion_z[i][j][k]->SetMarkerStyle(8); 
+	pion_z[i][j][k]->SetMarkerSize(0.7); 
+	pion_z[i][j][k]->SetLineWidth(1.5); 
+	pion_z[i][j][k]->SetMaximum(0.06); 
+	pion_z[i][j][k]->SetMinimum(-0.02); 
+	pion_z[i][j][k]->Draw("pe"); 
  
-	pion_z_corr[j][k] = (TH1D*) inputFile->Get(Form("integrated/pp/h1_z_pt%d_x%d_corr", j, k));
-	pion_z_corr[j][k]->SetLineColor(99); 
-	pion_z_corr[j][k]->SetFillColor(99); 
-	pion_z_corr[j][k]->SetMarkerColor(99); 
-	pion_z_corr[j][k]->SetMarkerStyle(24); 
-	pion_z_corr[j][k]->SetMarkerSize(0.7); 
-	pion_z_corr[j][k]->SetLineWidth(1.5); 
-	pion_z_corr[j][k]->SetMaximum(0.06); 
-	pion_z_corr[j][k]->SetMinimum(-0.02); 
-	pion_z_corr[j][k]->Draw("pesame"); 
+	kaon_z[i][j][k] = (TH1D*) inputFile->Get(Form("integrated/kp/h1_z_pt%d_x%d_q2%d_base", i, j, k));
+	kaon_z[i][j][k]->SetLineColor(55); 
+	kaon_z[i][j][k]->SetFillColor(55); 
+	kaon_z[i][j][k]->SetMarkerColor(55); 
+	kaon_z[i][j][k]->SetMarkerStyle(8); 
+	kaon_z[i][j][k]->SetMarkerSize(0.7); 
+	kaon_z[i][j][k]->SetLineWidth(1.5); 
+	kaon_z[i][j][k]->SetMaximum(0.06); 
+	kaon_z[i][j][k]->SetMinimum(-0.02); 
+	kaon_z[i][j][k]->Draw("pesame"); 
 
-	kaon_z[j][k] = (TH1D*) inputFile->Get(Form("integrated/kp/h1_z_pt%d_x%d_base", j, k));
-	kaon_z[j][k]->SetLineColor(55); 
-	kaon_z[j][k]->SetFillColor(55); 
-	kaon_z[j][k]->SetMarkerColor(55); 
-	kaon_z[j][k]->SetMarkerStyle(8); 
-	kaon_z[j][k]->SetMarkerSize(0.7); 
-	kaon_z[j][k]->SetLineWidth(1.5); 
-	kaon_z[j][k]->SetMaximum(0.06); 
-	kaon_z[j][k]->SetMinimum(-0.02); 
-	kaon_z[j][k]->Draw("pesame"); 
-
-
-	kaon_z_corr[j][k] = (TH1D*) inputFile->Get(Form("integrated/kp/h1_z_pt%d_x%d_corr", j, k));
-	kaon_z_corr[j][k]->SetLineColor(55); 
-	kaon_z_corr[j][k]->SetFillColor(55); 
-	kaon_z_corr[j][k]->SetMarkerColor(55); 
-	kaon_z_corr[j][k]->SetMarkerStyle(24); 
-	kaon_z_corr[j][k]->SetMarkerSize(0.7); 
-	kaon_z_corr[j][k]->SetLineWidth(1.5); 
-	kaon_z_corr[j][k]->SetMaximum(0.06); 
-	kaon_z_corr[j][k]->SetMinimum(-0.02); 
-	kaon_z_corr[j][k]->Draw("pesame"); 
-
-	title.DrawLatex(0.3, 0.88, Form("Asymmetry for bin (%d, %d) #color[99]{#pi^{+}} and #color[55]{K^{+}}", j, k)); 
+	title.DrawLatex(0.3, 0.88, Form("Asymmetry for bin (%d, %d, %d) #color[99]{#pi^{+}} and #color[55]{K^{+}}", i, j, k)); 
 	xtit.DrawLatex(0.65, 0.07, "z"); 
 	ytit.DrawLatex(0.08, 0.45, "A_{LU}^{sin#phi}"); 
 
-
-	can->Print(Form("%s/asymmetry_pt%d_x%d_pos.png", imagePath.c_str(), j, k)); 
+	can->Print(Form("%s/asymmetry_pt%d_x%d_q2%d_pos.png", imagePath.c_str(), i, j, k)); 
 	can->Clear(); 
       }
     }
+  }
 
 
-    for(int j=0; j<numberXBins+1; j++){
+  for(int i=0; i<numberXBins+1; i++){
+    for(int j=0; j<numberQ2Bins+1; j++){
       for(int k=0; k<numberZBins+1; k++){
-	pion_pt[j][k] = (TH1D*) inputFile->Get(Form("integrated/pp/h1_pt_x%d_z%d_base", j, k));
-	pion_pt[j][k]->SetLineColor(99); 
-	pion_pt[j][k]->SetFillColor(99); 
-	pion_pt[j][k]->SetMarkerColor(99); 
-	pion_pt[j][k]->SetMarkerStyle(8); 
-	pion_pt[j][k]->SetMarkerSize(0.7); 
-	pion_pt[j][k]->SetLineWidth(1.5); 
-	pion_pt[j][k]->SetMaximum(0.06); 
-	pion_pt[j][k]->SetMinimum(-0.02); 
-	pion_pt[j][k]->Draw("pe"); 
+	pion_pt[i][j][k] = (TH1D*) inputFile->Get(Form("integrated/pp/h1_pt_x%d_q2%d_z%d_base", i, j, k));
+	pion_pt[i][j][k]->SetLineColor(99); 
+	pion_pt[i][j][k]->SetFillColor(99); 
+	pion_pt[i][j][k]->SetMarkerColor(99); 
+	pion_pt[i][j][k]->SetMarkerStyle(8); 
+	pion_pt[i][j][k]->SetMarkerSize(0.7); 
+	pion_pt[i][j][k]->SetLineWidth(1.5); 
+	pion_pt[i][j][k]->SetMaximum(0.06); 
+	pion_pt[i][j][k]->SetMinimum(-0.02); 
+	pion_pt[i][j][k]->Draw("pe"); 
 
-	pion_pt_corr[j][k] = (TH1D*) inputFile->Get(Form("integrated/pp/h1_pt_x%d_z%d_corr", j, k));
-	pion_pt_corr[j][k]->SetLineColor(99); 
-	pion_pt_corr[j][k]->SetFillColor(99); 
-	pion_pt_corr[j][k]->SetMarkerColor(99); 
-	pion_pt_corr[j][k]->SetMarkerStyle(24); 
-	pion_pt_corr[j][k]->SetMarkerSize(0.7); 
-	pion_pt_corr[j][k]->SetLineWidth(1.5); 
-	pion_pt_corr[j][k]->SetMaximum(0.06); 
-	pion_pt_corr[j][k]->SetMinimum(-0.02); 
-	pion_pt_corr[j][k]->Draw("pesame"); 
- 
-	kaon_pt[j][k] = (TH1D*) inputFile->Get(Form("integrated/kp/h1_pt_x%d_z%d_base", j, k));
-	kaon_pt[j][k]->SetLineColor(55); 
-	kaon_pt[j][k]->SetFillColor(55); 
-	kaon_pt[j][k]->SetMarkerColor(55); 
-	kaon_pt[j][k]->SetMarkerStyle(8); 
-	kaon_pt[j][k]->SetMarkerSize(0.7); 
-	kaon_pt[j][k]->SetLineWidth(1.5); 
-	kaon_pt[j][k]->SetMaximum(0.06); 
-	kaon_pt[j][k]->SetMinimum(-0.02); 
-	kaon_pt[j][k]->Draw("pesame"); 
+	kaon_pt[i][j][k] = (TH1D*) inputFile->Get(Form("integrated/kp/h1_pt_x%d_q2%d_z%d_base", i, j, k));
+	kaon_pt[i][j][k]->SetLineColor(55); 
+	kaon_pt[i][j][k]->SetFillColor(55); 
+	kaon_pt[i][j][k]->SetMarkerColor(55); 
+	kaon_pt[i][j][k]->SetMarkerStyle(8); 
+	kaon_pt[i][j][k]->SetMarkerSize(0.7); 
+	kaon_pt[i][j][k]->SetLineWidth(1.5); 
+	kaon_pt[i][j][k]->SetMaximum(0.06); 
+	kaon_pt[i][j][k]->SetMinimum(-0.02); 
+	kaon_pt[i][j][k]->Draw("pesame"); 
 
-	kaon_pt_corr[j][k] = (TH1D*) inputFile->Get(Form("integrated/kp/h1_pt_x%d_z%d_corr", j, k));
-	kaon_pt_corr[j][k]->SetLineColor(55); 
-	kaon_pt_corr[j][k]->SetFillColor(55); 
-	kaon_pt_corr[j][k]->SetMarkerColor(55); 
-	kaon_pt_corr[j][k]->SetMarkerStyle(24); 
-	kaon_pt_corr[j][k]->SetMarkerSize(0.7); 
-	kaon_pt_corr[j][k]->SetLineWidth(1.5); 
-	kaon_pt_corr[j][k]->SetMaximum(0.06); 
-	kaon_pt_corr[j][k]->SetMinimum(-0.02); 
-	kaon_pt_corr[j][k]->Draw("pesame"); 
-
-	title.DrawLatex(0.3, 0.88, Form("Asymmetry for bin (%d, %d) #color[99]{#pi^{+}} and #color[55]{K^{+}}", j, k)); 
+	title.DrawLatex(0.3, 0.88, Form("Asymmetry for bin (%d, %d, %d) #color[99]{#pi^{+}} and #color[55]{K^{+}}", i, j, k)); 
 	xtit.DrawLatex(0.65, 0.07, "P_{T} (GeV/c)"); 
 	ytit.DrawLatex(0.08, 0.45, "A_{LU}^{sin#phi}"); 
 
-
-	can->Print(Form("%s/asymmetry_x%d_z%d_pos.png", imagePath.c_str(), j, k)); 
+	can->Print(Form("%s/asymmetry_x%d_q2%d_z%d_pos.png", imagePath.c_str(), i, j, k)); 
 	can->Clear(); 
       }
     }
+  }
 
 
+  /* 
     TCanvas *can2 = new TCanvas("can2", "", 1200, 600); 
 
     can2->Divide(numberXBins,2);     
@@ -337,6 +307,6 @@ void plot_integrated_asymmetries(std::string file){
     xtit.SetTextSize(0.03); 
     xtit.DrawLatex(0.35, 0.965, "A_{LU}^{sin#phi} for #color[99]{#pi^{+}}, #color[55]{K^{+}}, open circles corrected"); 
     can2->Print(Form("%s/asymmetry_pt_pos.png", imagePath.c_str())); 
-
+  */
 
 }

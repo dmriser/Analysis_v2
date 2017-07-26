@@ -20,7 +20,7 @@ namespace constants {
   const static float DIS_ZMIN   = 0.1; 
   const static float DIS_ZMAX   = 0.7; 
   const static float DIS_MM2_PION_MIN = 1.1; 
-  const static float DIS_MM2_KAON_MIN = 2.55; 
+  const static float DIS_MM2_KAON_MIN = 2.65; 
   const static float LOWER_Z = 0.3; 
   const static float UPPER_Z = 0.7; 
 
@@ -32,10 +32,16 @@ namespace constants {
   struct PID {
     const static int pid[NMESON];
   };
+
+  struct cuts {
+    const static float MM2[NMESON];
+  };
+
 }
 
 const std::string constants::Names::mesons[NMESON] = {"pm","pp","km","kp"};
 const std::string constants::Names::latex[NMESON]  = {"#pi^{-}","#pi^{+}","K^{-}","K^{+}"};
 const int constants::PID::pid[NMESON] = {-211, 211, -321, 321};
+const float constants::cuts::MM2[NMESON] = {1.1, 1.1, 1.1, 2.65};
 
 #endif

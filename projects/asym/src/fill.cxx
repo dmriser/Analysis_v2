@@ -64,35 +64,17 @@ public:
   void InitHistos();
 
   bool IsInclusive(PhysicsEvent &ev, int mesonIndex){
-    if (mesonIndex == Meson::kPionPositive || mesonIndex == Meson::kPionNegative){
-
-      // heavier than neutron 
-      return (ev.w > constants::DIS_WMIN && ev.qq > constants::DIS_Q2MIN && ev.mm2 > constants::DIS_MM2_PION_MIN && 
+      return (ev.w > constants::DIS_WMIN && 
+	      ev.qq > constants::DIS_Q2MIN && 
+	      ev.mm2 > constants::cuts::MM2[mesonIndex] && 
 	      ev.z > constants::DIS_ZMIN); 
-    } 
-    else if (mesonIndex == Meson::kKaonPositive || mesonIndex == Meson::kKaonNegative){
-
-      // heavier than sigma 
-      return (ev.w > constants::DIS_WMIN && ev.qq > constants::DIS_Q2MIN && ev.mm2 > constants::DIS_MM2_KAON_MIN && 
-	      ev.z > constants::DIS_ZMIN);
-    }
-
-    return false; 
   }
 
   bool IsExclusive(PhysicsEvent &ev, int mesonIndex){    
-    if (mesonIndex == Meson::kPionPositive || mesonIndex == Meson::kPionNegative){
-
-      // lighter than neutron, above elastic  
-      return (ev.w > constants::DIS_WMIN && ev.qq > constants::DIS_Q2MIN && ev.mm2 < constants::DIS_MM2_PION_MIN && ev.z > constants::DIS_ZMIN);  
-    } 
-    else if (mesonIndex == Meson::kKaonPositive || mesonIndex == Meson::kKaonNegative){
-
-      // lighter than sigma 
-      return (ev.w > constants::DIS_WMIN && ev.qq > constants::DIS_Q2MIN && ev.mm2 < constants::DIS_MM2_KAON_MIN && ev.z > constants::DIS_ZMIN);
-    }
-
-    return false; 
+      return (ev.w   > constants::DIS_WMIN && 
+	      ev.qq  > constants::DIS_Q2MIN && 
+	      ev.mm2 < constants::cuts::MM2[mesonIndex] && 
+	      ev.z   > constants::DIS_ZMIN);  
   }
 
   void FillParticle(int index, int mesonIndex, int helicity, TLorentzVector electron){

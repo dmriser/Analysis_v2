@@ -85,6 +85,8 @@ int main(int nargs, char *args[]){
   PidHistos pp_pid("test", Meson::kPionPositive);
   pp_pid.Load(inputFile);
 
+  /* 
+
   // parameter file is here 
   Parameters pars; 
 
@@ -109,6 +111,8 @@ int main(int nargs, char *args[]){
   
   pp_corr_int->Save(inputFile, "update"); 
   kp_corr_int->Save(inputFile, "update"); 
+
+  */ 
 
   return 0;
 }

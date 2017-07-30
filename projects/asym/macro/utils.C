@@ -38,7 +38,7 @@ bool padIsTop(int pad, int width, int height){
 }
 
 bool padIsBottom(int pad, int width, int height){
-  return (pad >= width*(height-1));
+  return (pad > width*(height-1));
 }
 
 void setupPad(int pad, int width, int height, float innerSpace, float outerSpace){

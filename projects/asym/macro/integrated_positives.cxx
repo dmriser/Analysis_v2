@@ -3,12 +3,14 @@
   gROOT->LoadMacro("utils.C"); 
   gStyle->SetErrorX(0.0); 
 
-  TFile *inputFile = TFile::Open("/volatile/clas12/dmriser/rootFiles/asymmetry/asymmetry_return_pass2.root"); 
+  TFile *inputFile = TFile::Open("/volatile/clas12/dmriser/rootFiles/asymmetry/asymmetry_return_pass1.root"); 
 
   const int npart            = 4; 
   std::string name[npart]    = {"pm", "pp", "km", "kp"};
   std::string texName[npart] = {"#pi^{-}", "#pi^{+}", "K^{-}", "K^{+}"};
   int color[npart]           = {99, kBlack, 77, 55}; 
+  float labelSize = 0.045; 
+  std::string outputPath("/volatile/clas12/dmriser/plots/asymmetry");
 
   TH1D *x[npart], *q2[npart], *z[npart], *pt[npart]; 
 
@@ -18,32 +20,32 @@
       x[p]->SetLineColor(color[p]); 
       x[p]->SetLineWidth(2); 
       x[p]->SetMarkerColor(color[p]); 
-      x[p]->SetMarkerStyle(26); 
+      x[p]->SetMarkerStyle(8); 
       x[p]->SetMinimum(-0.07); 
       x[p]->SetMaximum(0.07); 
       x[p]->GetXaxis()->SetNdivisions(505); 
-      x[p]->SetLabelSize(0.1, "x"); 
-      x[p]->SetLabelSize(0.1, "y"); 
+      x[p]->SetLabelSize(labelSize, "x"); 
+      x[p]->SetLabelSize(labelSize, "y"); 
 
       q2[p] = (TH1D*) inputFile->Get(Form("integrated/%s/h1_q2_z0_pt0_x0_base", name[p].c_str())); 
       q2[p]->SetLineColor(color[p]); 
       q2[p]->SetMarkerColor(color[p]); 
-      q2[p]->SetMarkerStyle(25); 
+      q2[p]->SetMarkerStyle(8); 
       q2[p]->SetMinimum(-0.07); 
       q2[p]->SetMaximum(0.07); 
       q2[p]->GetXaxis()->SetNdivisions(505); 
-      q2[p]->SetLabelSize(0.1, "x"); 
-      q2[p]->SetLabelSize(0.1, "y"); 
+      q2[p]->SetLabelSize(labelSize, "x"); 
+      q2[p]->SetLabelSize(labelSize, "y"); 
 
       z[p]  = (TH1D*) inputFile->Get(Form("integrated/%s/h1_z_pt0_x0_q20_base", name[p].c_str())); 
       z[p]->SetLineColor(color[p]); 
       z[p]->SetMarkerColor(color[p]); 
-      z[p]->SetMarkerStyle(23); 
+      z[p]->SetMarkerStyle(8); 
       z[p]->GetXaxis()->SetNdivisions(505); 
       z[p]->SetMinimum(-0.07); 
       z[p]->SetMaximum(0.07); 
-      z[p]->SetLabelSize(0.1, "x"); 
-      z[p]->SetLabelSize(0.1, "y"); 
+      z[p]->SetLabelSize(labelSize, "x"); 
+      z[p]->SetLabelSize(labelSize, "y"); 
 
       pt[p] = (TH1D*) inputFile->Get(Form("integrated/%s/h1_pt_x0_q20_z0_base", name[p].c_str())); 
       pt[p]->SetLineColor(color[p]); 
@@ -51,9 +53,9 @@
       pt[p]->GetXaxis()->SetNdivisions(505); 
       pt[p]->SetMinimum(-0.07); 
       pt[p]->SetMaximum(0.07); 
-      pt[p]->SetMarkerStyle(24); 
-      pt[p]->SetLabelSize(0.1, "x"); 
-      pt[p]->SetLabelSize(0.1, "y"); 
+      pt[p]->SetMarkerStyle(8); 
+      pt[p]->SetLabelSize(labelSize, "x"); 
+      pt[p]->SetLabelSize(labelSize, "y"); 
     }
   }
 
@@ -84,13 +86,12 @@
 
   TLatex lab; 
   lab.SetNDC(); 
-  lab.SetTextSize(0.15); 
+  lab.SetTextSize(0.1); 
 
-  TCanvas *can = new TCanvas("can", "", 800, 500);
+  TCanvas *can = new TCanvas("can", "", 1600, 1600);
   can->cd(); 
   gPad->SetMargin(0.15, 0.15, 0.15, 0.15); 
   
-  //  can->Divide(4, 4, -1, -1); 
   can->Divide(4, 4); 
 
   float inner = 0.1; 
@@ -131,35 +132,6 @@
   }
 
 
-  can->Print("/volatile/clas12/dmriser/plots/asymmetry/integrated_all.pdf");
-  can->Clear();
-  can->Divide(4, 1, -1, -1); 
-
-  inner = 0.15; 
-  outer = 0.15;
- 
-  for (int p=0; p<npart; p++){
-    can->cd(1); 
-    x[p]->Draw("pesame"); 
-    xLine->Draw(); 
-
-    can->cd(2); 
-    q2[p]->Draw("pesame"); 
-    q2Line->Draw(); 
-
-    can->cd(3); 
-    z[p]->Draw("pesame"); 
-    zLine->Draw("same"); 
-    zLeft->Draw("same");
-    zRight->Draw("same");
-
-    can->cd(4); 
-    pt[p]->Draw("pesame");     
-    ptLine->Draw(); 
-  }
-
-  lab.DrawLatex(0.1, 0.98, "A_{LU}^{sin #phi_{h}}"); 
-
-  can->Print("/volatile/clas12/dmriser/plots/asymmetry/integrated_combined_all.pdf");
+  can->Print(Form("%s/integrated_all.pdf", outputPath.c_str()));
 
 }

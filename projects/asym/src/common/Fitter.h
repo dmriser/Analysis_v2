@@ -38,7 +38,7 @@ class BasicFitter : public Fitter {
 	    
 	    std::string current_name(Form("fit_asym_%s_x%d_q2%d_z%d_pt%d_%s", 
 					  constants::Names::mesons[h->GetMesonIndex()].c_str(), 
-					  i, j, k, l, h->GetName().c_str()));
+					  i, j, k, l, f->GetName().c_str()));
 	    
 	    f->fit_asym[i][j][k][l] = new TF1(current_name.c_str(),"[0]*sin((3.14159/180.0)*x)",
 					      f->GetBinning()->GetPhiBins()->GetMin(), 
@@ -63,7 +63,7 @@ class BasicAllMomentFitter : public Fitter {
 	  for(int l=0; l<f->GetBinning()->GetPtBins()->GetNumber()+1; l++){
 	    std::string current_name(Form("fit_asym_%s_x%d_q2%d_z%d_pt%d_%s", 
 					  constants::Names::mesons[h->GetMesonIndex()].c_str(), 
-					  i, j, k, l, h->GetName().c_str()));
+					  i, j, k, l, f->GetName().c_str()));
 	    
 	   TH1D *histo = (TH1D*) h->h1_asym[i][j][k][l]->Clone();
 	   

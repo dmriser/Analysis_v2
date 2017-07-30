@@ -135,6 +135,10 @@ class Fits {
     return fHistos; 
   }
 
+  std::string GetName() const {
+    return fName; 
+  }
+
  protected:
   std::string  fName; 
   int          fMesonIndex; 

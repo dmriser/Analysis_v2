@@ -5,6 +5,7 @@
 
 #include "TF1.h"
 #include "TH1.h"
+#include "TRandom3.h"
 
 class BootstrapEstimator {
 
@@ -14,17 +15,28 @@ class BootstrapEstimator {
   }
 
  BootstrapEstimator(int numberReplicas) : fNumberReplicas(numberReplicas) {
+    fRandom = new TRandom3(); 
 
+    fFitFunction = "gaus";
   }
 
   ~BootstrapEstimator();
 
+  void Fit(TH1F *sourceHisto);
+  void SetFitFunction(const std::string &fitFunction){
+    fFitFunction = fitFunction; 
+  } 
+
  protected:
   int fNumberReplicas; 
   
-  std::vector<float> fMean, fVariance; 
-  std::vector< std::vector<TH1F*> > fReplicas; 
+  std::vector< std::vector<float> > fMean; 
+  std::vector< std::vector<float> > fVariance; 
+  std::vector<TH1F*> fReplicas; 
+  std::vector<TF1*>  fFits; 
   
+  std::string fFitFunction; 
+  TRandom3 *fRandom; 
 
 };
 

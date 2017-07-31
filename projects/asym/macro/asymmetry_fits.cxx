@@ -4,9 +4,12 @@
 
   TFile *inputFile = TFile::Open("/volatile/clas12/dmriser/rootFiles/asymmetry/asymmetry_return_pass2.root");
 
-  const int NMESON = 4; 
+  const int NMESON    = 4; 
+  const int MAX_WIDTH = 6; 
 
   std::string name[NMESON] = {"pm","pp","km","kp"};
+  std::string latex[NMESON] = {"#pi^{-}","#pi^{+}","K^{-}","K^{+}"};
+
   const int nx[NMESON]     = {3, 6, 3, 6}; 
   const int nq2[NMESON]    = {2, 6, 2, 6};
   const int nz[NMESON]     = {6, 6, 6, 6};  
@@ -104,10 +107,17 @@
   TCanvas *can = new TCanvas("can","",1600,1600);
   can->Print("/volatile/clas12/dmriser/plots/asymmetry/asymmetry_fits.pdf[");
 
+  TLatex *lab = new TLatex(); 
+  lab->SetNDC(); 
+  lab->SetTextSize(0.02); 
+  
+
   for (int meson=0; meson < NMESON; meson++){
     can->cd();
-    can->Divide(nz[meson], 4);
-    
+    can->Divide(MAX_WIDTH, 4);
+  
+    lab->DrawLatex(0.03, 0.975, Form("particle - %s", latex[meson].c_str())); 
+  
     for (int bin = 0; bin < nx[meson]; bin++){
       can->cd(1 + bin);
       x[meson][bin]   ->Draw("pe");

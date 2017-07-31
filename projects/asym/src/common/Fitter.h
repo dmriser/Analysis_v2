@@ -6,6 +6,11 @@
 #include "Fits.h"
 #include "Histograms.h"
 
+// set limit for percentage error to be 
+// fit on the bins 
+#define NO_FIT_LIMIT 0.06
+
+
 class Fitter{
  public:
  Fitter() {
@@ -31,7 +36,7 @@ class BasicFitter : public Fitter {
 	    
 	    // stop large error points from being fit
 	    for(int b=1; b<=histo->GetXaxis()->GetNbins(); b++){
-	      if (fabs(histo->GetBinError(b)) > 0.04){
+	      if (fabs(histo->GetBinError(b)) > NO_FIT_LIMIT){
 		histo->SetBinError(b, 0); 
 	      }
 	    }
@@ -69,7 +74,7 @@ class BasicAllMomentFitter : public Fitter {
 	   
 	   // stop large error points from being fit
 	   for(int b=1; b<=histo->GetXaxis()->GetNbins(); b++){
-	     if (fabs(histo->GetBinError(b)) > 0.04){
+	     if (fabs(histo->GetBinError(b)) > NO_FIT_LIMIT){
 	       histo->SetBinError(b, 0); 
 	     }
 	   }

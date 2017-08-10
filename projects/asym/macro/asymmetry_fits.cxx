@@ -2,7 +2,7 @@
   
   std::string outputPath("/volatile/clas12/dmriser/plots/asymmetry");
 
-  TFile *inputFile = TFile::Open("/volatile/clas12/dmriser/rootFiles/asymmetry/asymmetry_return_pass2.root");
+  TFile *inputFile = TFile::Open("/volatile/clas12/dmriser/rootFiles/asymmetry/return_pass7.root");
 
   const int NMESON    = 4; 
   const int MAX_WIDTH = 6; 

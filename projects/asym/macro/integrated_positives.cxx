@@ -3,7 +3,7 @@
   gROOT->LoadMacro("utils.C"); 
   gStyle->SetErrorX(0.0); 
 
-  TFile *inputFile = TFile::Open("/volatile/clas12/dmriser/rootFiles/asymmetry/asymmetry_return_pass1.root"); 
+  TFile *inputFile = TFile::Open("/volatile/clas12/dmriser/rootFiles/asymmetry/return_pass7.root"); 
 
   const int npart            = 4; 
   std::string name[npart]    = {"pm", "pp", "km", "kp"};

@@ -158,16 +158,27 @@ double h22Event::GetRelativePhiMC(int ipart){
     rphi = rphi - 60*floor((rphi+30)/60);
     return rphi;
 }
-
+ 
 TLorentzVector h22Event::GetGeneratedParticle(int pid){
   for (int ipart=0; ipart<mcnentr; ipart++){
     if (mcid[ipart] == pid) {
-      return TLorentzVector(GetMCPx(ipart), GetMCPy(ipart), GetMCPz(ipart), pow(mcp[ipart],2) + pow(pid_to_mass(mcid[ipart]),2));
+      return TLorentzVector(GetMCPx(ipart), GetMCPy(ipart), GetMCPz(ipart), sqrt(pow(mcp[ipart],2) + pow(mcm[ipart],2)));
     }
   }
   
   //  cout << " WARNING: GEN PARTICLE NOT FOUND! " << endl;
   return TLorentzVector(0,0,1000,1000);
+}
+ 
+int h22Event::GetGeneratedParticleIndex(int pid){
+  for (int ipart=0; ipart<mcnentr; ipart++){
+    if (mcid[ipart] == pid) {
+      return ipart;
+    }
+  }
+  
+  //  cout << " WARNING: GEN PARTICLE NOT FOUND! " << endl;
+  return -1;
 }
 
 void h22Event::PrintEvent() const {
@@ -188,6 +199,59 @@ void h22Event::PrintEvent() const {
         cout.width(12); cout << vz[ipart] << endl;
         
     }
+}
+
+std::pair<bool,int> h22Event::GetGeneratedToReconstructedMapping(int genPID){
+
+  // important constants 
+
+  // percent difference in momentum 
+  // allowed between rec and gen 
+  float PDIFF   = 0.02; 
+  float ANGDIFF = 0.02; 
+
+  std::pair<bool,int> result; 
+  result.first  = false; 
+  result.second = -1; 
+
+  int index = GetGeneratedParticleIndex(genPID); 
+  
+  // found the generated particle 
+  if (index > -1){
+
+    // charge of generated particle 
+    int genCharge = 0; 
+    if      (genPID ==   11){ genCharge = -1; }
+    else if (genPID ==  211){ genCharge =  1; }
+    else if (genPID ==  321){ genCharge =  1; }
+    else if (genPID == -211){ genCharge = -1; }
+    else if (genPID == -321){ genCharge = -1; }
+    else if (genPID == 2212){ genCharge =  1; }
+    
+    // search through the reconstructed particles and try
+    // to match them to the generated stuff 
+    for(int ipart=0; ipart<gpart; ipart++){
+      if (q[ipart] == genCharge){
+
+	float deltaP     = 0.5*(p[ipart]-mcp[index])/(p[ipart]+mcp[index]); 
+	float deltaTheta = 0.5*(GetTheta(ipart)-mctheta[index])/(GetTheta(ipart)+mctheta[index]); 
+	float deltaPhi   = 0.5*(GetPhi(ipart)-mcphi[index])/(GetPhi(ipart)+mcphi[index]); 
+
+
+	
+	if (deltaP < PDIFF){
+	  if (deltaTheta < ANGDIFF){
+	    //	    if (eltaPhi < ANGDIFF){
+	      result.first  = true; 
+	      result.second = ipart; 
+	      //	    }
+	  }
+	}
+      }
+    }
+  }
+
+  return result; 
 }
 
 TVector3 h22Event::GetUVWVector(int ipart){

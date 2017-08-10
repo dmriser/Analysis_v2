@@ -20,11 +20,11 @@ if (`ls /volatile/clas12/dmriser/farm_out/$outputName/*.root | wc -l | awk '{pri
 	./src/fit $localFile 
 
 	# running plots 
-	cd macro/ 
-	root -b -q 'plot_tofmass.cxx("'$localFile'")'
-	root -b -q 'plot_integrated_asymmetries.cxx("'$localFile'")'
-	root -b -q 'plot_signal_background.cxx("'$localFile'")'
-	cd - 
+#	cd macro/ 
+#	root -b -q 'plot_tofmass.cxx("'$localFile'")'
+#	root -b -q 'plot_integrated_asymmetries.cxx("'$localFile'")'
+#	root -b -q 'plot_signal_background.cxx("'$localFile'")'
+#	cd - 
     endif 
 
 endif

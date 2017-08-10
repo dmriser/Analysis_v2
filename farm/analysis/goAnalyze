@@ -15,7 +15,7 @@ chmod +x $binName
 #cp Asymmetry.root $OUTPUT
 
 # Asymmetry Script 
-./$binName -N=$NFILES -LIST=list.dat -PARS=$ANALTOP/lists/data_tofmass.pars -OUT=$OUTPUT
+./$binName -N=$NFILES -LIST=list.dat -PARS=$ANALTOP/lists/data_tofmass_very_tight.pars -OUT=$OUTPUT
 
 # Elastic Script 
 #./$binName -N=$NFILES -TYPE=data -WMIN=0.1 -WMAX=1.1 -LIST=list.dat -PARS=/u/home/dmriser/mydoc/analysis/root_scripts/Analysis_v2/lists/data.pars -OUT=$OUTPUT

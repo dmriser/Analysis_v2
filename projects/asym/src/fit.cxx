@@ -37,6 +37,11 @@ int main(int nargs, char *args[]){
   pp_hist.CalculateAsymmetry(); 
   pp_hist.Save(inputFile, "update");
 
+  Histos pp_ex_hist("exclusive", Meson::kPionPositive); 
+  pp_hist.Load(inputFile);
+  pp_hist.CalculateAsymmetry(); 
+  pp_hist.Save(inputFile, "update");
+
   Histos pm_hist("test", Meson::kPionNegative); 
   pm_hist.Load(inputFile);
   pm_hist.CalculateAsymmetry(); 
@@ -45,6 +50,7 @@ int main(int nargs, char *args[]){
   Fits kp_fit(&kp_hist, "test", Meson::kKaonPositive); 
   Fits km_fit(&km_hist, "test", Meson::kKaonNegative); 
   Fits pp_fit(&pp_hist, "test", Meson::kPionPositive); 
+  Fits pp_ex_fit(&pp_ex_hist, "exclusive", Meson::kPionPositive); 
   Fits pm_fit(&pm_hist, "test", Meson::kPionNegative); 
 
   Fits kp_allfit(&kp_hist, "full", Meson::kKaonPositive); 
@@ -57,6 +63,7 @@ int main(int nargs, char *args[]){
   basicFitter.Fit(&kp_hist, &kp_fit); 
   basicFitter.Fit(&km_hist, &km_fit); 
   basicFitter.Fit(&pp_hist, &pp_fit); 
+  basicFitter.Fit(&pp_ex_hist, &pp_ex_fit); 
   basicFitter.Fit(&pm_hist, &pm_fit); 
 
   // Uses A sin(phi)/(1 + B cos(phi) + C cos(2phi))
@@ -69,6 +76,7 @@ int main(int nargs, char *args[]){
   kp_fit.Save(inputFile, "update"); 
   km_fit.Save(inputFile, "update");
   pp_fit.Save(inputFile, "update");
+  pp_ex_fit.Save(inputFile, "update");
   pm_fit.Save(inputFile, "update");
 
   kp_allfit.Save(inputFile, "update"); 
@@ -80,6 +88,7 @@ int main(int nargs, char *args[]){
   IntegratedHistos kp_integ(&kp_fit, "base", Meson::kKaonPositive);  kp_integ.Save(inputFile, "update"); 
   IntegratedHistos km_integ(&km_fit, "base", Meson::kKaonNegative);  km_integ.Save(inputFile, "update"); 
   IntegratedHistos pp_integ(&pp_fit, "base", Meson::kPionPositive);  pp_integ.Save(inputFile, "update"); 
+  IntegratedHistos pp_ex_integ(&pp_ex_fit, "exclusive", Meson::kPionPositive);  pp_ex_integ.Save(inputFile, "update"); 
   IntegratedHistos pm_integ(&pm_fit, "base", Meson::kPionNegative);  pm_integ.Save(inputFile, "update"); 
 
   PidHistos pp_pid("test", Meson::kPionPositive);

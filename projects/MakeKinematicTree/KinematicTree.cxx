@@ -9,6 +9,7 @@ using std::endl;
 
 
 #include "KinematicTree.h"
+#include "Tree.h"
 
 #include "CommonTools.h"
 #include "Corrections.h"
@@ -18,7 +19,9 @@ using std::endl;
 #include "TTree.h"
 #include "TBranch.h"
 
-KinematicTree::KinematicTree(h22Options *opts, Parameters *p, Parameters *ptight, Parameters *ploose) : GenericAnalysis(opts), fPars(p) {
+KinematicTree::KinematicTree(h22Options *opts, Parameters *p, Parameters *ptight, 
+			     Parameters *ploose, int type) : GenericAnalysis(opts), fPars(p) {
+
   fFilter      = new ParticleFilter(fPars); 
   fFilterLoose = new ParticleFilter(ploose); 
   fFilterTight = new ParticleFilter(ptight); 
@@ -26,43 +29,15 @@ KinematicTree::KinematicTree(h22Options *opts, Parameters *p, Parameters *ptight
   std::string path        = Global::Environment::GetAnalysisPath();
   std::string momCorrPath = Form("%s/momCorr/",path.c_str());
   fMomCorr                = new MomCorr_e1f(momCorrPath); 
+
+  kinematicTree = new FlatTree(type); 
+  kinematicTree->SetupTree(); 
+
+  localEventNumber = 0; 
 }
 
 KinematicTree::~KinematicTree(){
-}
 
-void KinematicTree::SetupTree(){
-
-  // Create the structure of our kinematic tree 
-  // and set the memory addresses of local vars.
-  kinematicTree = new TTree("miniTree","Mininal Tree");
-  kinematicTree->SetDirectory(0);
-
-  b_qq        = kinematicTree->Branch("qq",        &qq);
-  b_x         = kinematicTree->Branch("x",         &x);
-  b_mes_b     = kinematicTree->Branch("mes_b",     &mes_b);
-  b_x         = kinematicTree->Branch("w",         &w);
-  b_y         = kinematicTree->Branch("y",         &y);
-  b_z         = kinematicTree->Branch("z",         &z);
-  b_mm2       = kinematicTree->Branch("mm2",       &mm2);
-  b_hel       = kinematicTree->Branch("hel",       &hel);
-  b_pt        = kinematicTree->Branch("pt",        &pt);
-  b_ele_vz    = kinematicTree->Branch("ele_vz",    &ele_vz);
-  b_mes_vz    = kinematicTree->Branch("mes_vz",    &mes_vz);
-  b_ele_p     = kinematicTree->Branch("ele_p",     &ele_p);
-  b_mes_p     = kinematicTree->Branch("mes_p",     &mes_p);
-  b_ele_phi   = kinematicTree->Branch("ele_phi",   &ele_phi);
-  b_mes_phi   = kinematicTree->Branch("mes_phi",   &mes_phi);
-  b_ele_theta = kinematicTree->Branch("ele_theta", &ele_theta);
-  b_mes_theta = kinematicTree->Branch("mes_theta", &mes_theta);
-  b_pass_sf   = kinematicTree->Branch("pass_sf",   &pass_sf);
-  b_pass_dc1  = kinematicTree->Branch("pass_dc1",  &pass_dc1);
-  b_pass_dc3  = kinematicTree->Branch("pass_dc3",  &pass_dc3);
-  b_pass_vz   = kinematicTree->Branch("pass_vz",   &pass_vz);
-  b_pass_ec   = kinematicTree->Branch("pass_ec",   &pass_ec);
-  b_meson_id  = kinematicTree->Branch("meson_id",  &meson_id);
-  b_tof_mass  = kinematicTree->Branch("tof_mass",  &tof_mass);
-  b_phiH      = kinematicTree->Branch("phi_h",     &phiH);
 }
 
 void KinematicTree::CheckForMesonAndFill(int index){
@@ -70,46 +45,65 @@ void KinematicTree::CheckForMesonAndFill(int index){
   std::vector<int> mesons = fFilter->getVectorOfParticleIndices(event, index); 
 
   if (mesons.size() > 0){    
+
+    // something will be filled 
+    localEventNumber++; 
+    kinematicTree->eventNumber = localEventNumber; 
+
+
+    // we will be writing something to the tree
     int electronIndex = event.GetElectronIndex(); 
     int mesonIndex    = mesons[0];
 
       TLorentzVector electron = event.GetTLorentzVector(electronIndex, 11); 
       TLorentzVector meson    = event.GetTLorentzVector(mesonIndex,  index); 
 
+      // apply momentum corrections only 
+      // to our experimental data
       electron = fMomCorr->PcorN(electron, -1, 11);
 
-      ele_theta = electron.Theta()*to_degrees; 
-      ele_phi = electron.Phi()*to_degrees; 
+      kinematicTree->ele_theta = electron.Theta()*to_degrees; 
+      kinematicTree->ele_phi = electron.Phi()*to_degrees; 
 
-      mes_theta = meson.Theta()*to_degrees; 
-      mes_phi = meson.Phi()*to_degrees; 
+      kinematicTree->mes_theta = meson.Theta()*to_degrees; 
+      kinematicTree->mes_phi = meson.Phi()*to_degrees; 
 
-      PhysicsEvent ev         = builder.getPhysicsEvent(electron, meson);
+      // build all the physics that we want to know about
+      PhysicsEvent ev = builder.getPhysicsEvent(electron, meson);
 
-      hel      = event.corr_hel;
-      meson_id = index; 
+      // correct helicity with waveplate already fixed
+      kinematicTree->hel      = event.corr_hel;
+      kinematicTree->meson_id = index; 
 
-      ele_vz = event.corr_vz[electronIndex]; 
-      mes_vz = event.corr_vz[mesonIndex]; 
-      mes_b  = event.corr_b[mesonIndex]; 
+      // corrected vertex positions and betas 
+      kinematicTree->ele_vz = event.corr_vz[electronIndex]; 
+      kinematicTree->mes_vz = event.corr_vz[mesonIndex]; 
+      kinematicTree->mes_b  = event.corr_b[mesonIndex]; 
 
-      // this needs to be replaced 
-      ele_p = electron.P(); 
-      
+      // This needs to be replaced. 
+      // Not sure why, this comment is old 
+      // and I don't see the problem.
+      kinematicTree->ele_p = electron.P(); 
+
+      // this gives uncorrected values of p
       //      ele_p = event.p[electronIndex]; 
-      mes_p = event.p[mesonIndex];
+      kinematicTree->mes_p = event.p[mesonIndex];
+      kinematicTree->charge = event.q[mesonIndex]; 
 
-      x    = ev.x; 
-      w    = ev.w; 
-      y    = ev.y; 
-      z    = ev.z; 
-      qq   = ev.qq; 
-      mm2  = ev.mm2; 
-      phiH = ev.phiHadron; 
-      pt   = ev.pT; 
-      tof_mass = event.p[mesons[0]] * sqrt((1-pow(event.corr_b[mesons[0]],2))/pow(event.corr_b[mesons[0]],2)); 
+      kinematicTree->mes_nphe = event.nphe[mesonIndex]; 
+      kinematicTree->mes_etot = event.etot[mesonIndex]; 
 
-      kinematicTree->Fill(); 
+      kinematicTree->x = ev.x; 
+      kinematicTree->w = ev.w; 
+      kinematicTree->y = ev.y; 
+      kinematicTree->z = ev.z; 
+      kinematicTree->qq = ev.qq; 
+      kinematicTree->mm2 = ev.mm2; 
+      kinematicTree->phiH = ev.phiHadron; 
+      kinematicTree->pt   = ev.pT; 
+      kinematicTree->tof_mass = pow(event.p[mesons[0]],2) * (1-pow(event.corr_b[mesons[0]],2))/pow(event.corr_b[mesons[0]],2); 
+
+      kinematicTree->kinematicTree->Fill(); 
     }
 }
 
@@ -126,26 +120,26 @@ void KinematicTree::ProcessEvent(){
     std::map<std::string, bool> results_tight = fFilterTight->eid_map(event, electrons[0]); 
     
     // loose is always passed by this point 
-    pass_sf  = -1; 
-    pass_dc1 = -1; 
-    pass_dc3 = -1; 
-    pass_vz  = -1; 
-    pass_ec  = -1; 
+    kinematicTree->pass_sf  = -1; 
+    kinematicTree->pass_dc1 = -1; 
+    kinematicTree->pass_dc3 = -1; 
+    kinematicTree->pass_vz  = -1; 
+    kinematicTree->pass_ec  = -1; 
 
-    if (results_nom["EC_SAMPLING"])  { pass_sf = 0; }
-    if (results_tight["EC_SAMPLING"]){ pass_sf = 1; }
+    if (results_nom["EC_SAMPLING"])  { kinematicTree->pass_sf = 0; }
+    if (results_tight["EC_SAMPLING"]){ kinematicTree->pass_sf = 1; }
 
-    if (results_nom["DC_R1_FID"])  { pass_dc1 = 0; }
-    if (results_tight["DC_R1_FID"]){ pass_dc1 = 1; }
+    if (results_nom["DC_R1_FID"])  { kinematicTree->pass_dc1 = 0; }
+    if (results_tight["DC_R1_FID"]){ kinematicTree->pass_dc1 = 1; }
 
-    if (results_nom["DC_R3_FID"])  { pass_dc3 = 0; }
-    if (results_tight["DC_R3_FID"]){ pass_dc3 = 1; }
+    if (results_nom["DC_R3_FID"])  { kinematicTree->pass_dc3 = 0; }
+    if (results_tight["DC_R3_FID"]){ kinematicTree->pass_dc3 = 1; }
 
-    if (results_nom["EC_FID"])  { pass_ec = 0; }
-    if (results_tight["EC_FID"]){ pass_ec = 1; }
+    if (results_nom["EC_FID"])  { kinematicTree->pass_ec = 0; }
+    if (results_tight["EC_FID"]){ kinematicTree->pass_ec = 1; }
 
-    if (results_nom["Z_VERTEX"])  { pass_vz = 0; }
-    if (results_tight["Z_VERTEX"]){ pass_vz = 1; }
+    if (results_nom["Z_VERTEX"])  { kinematicTree->pass_vz = 0; }
+    if (results_tight["Z_VERTEX"]){ kinematicTree->pass_vz = 1; }
     
     CheckForMesonAndFill(211); 
     CheckForMesonAndFill(-211); 
@@ -155,10 +149,8 @@ void KinematicTree::ProcessEvent(){
 
 }
 
-void KinematicTree::Save(string outputFilename){
-  TFile *outputFile = new TFile(outputFilename.c_str(), "recreate");
-  kinematicTree->Write(); 
-  outputFile   ->Close();
+void KinematicTree::Save(std::string outputFilename){
+  kinematicTree->Save(outputFilename); 
 }
 
 #endif

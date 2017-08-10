@@ -48,7 +48,7 @@ class BasicFitter : public Fitter {
 	    f->fit_asym[i][j][k][l] = new TF1(current_name.c_str(),"[0]*sin((3.14159/180.0)*x)",
 					      f->GetBinning()->GetPhiBins()->GetMin(), 
 					      f->GetBinning()->GetPhiBins()->GetMax());
-	    histo->Fit(current_name.c_str(), "RQ"); 
+	    histo->Fit(current_name.c_str(), "RWL"); 
 	  }
 	}
       }
@@ -83,7 +83,7 @@ class BasicAllMomentFitter : public Fitter {
 	   f->fit_asym[i][j][k][l] = new TF1(current_name.c_str(),fitFunction.c_str(),
 					     f->GetBinning()->GetPhiBins()->GetMin(), 
 					     f->GetBinning()->GetPhiBins()->GetMax());
-	   histo->Fit(current_name.c_str(), "RQ");
+	   histo->Fit(current_name.c_str(), "RWL");
 	  }
 	}
       }

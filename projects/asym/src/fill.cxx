@@ -53,7 +53,7 @@ public:
   Histos              *histos[constants::NMESON]; 
   Histos              *exclusiveHistos[constants::NMESON]; 
   MesonHistograms     *mesonHistos[constants::NMESON];
-  StandardHistograms  *standardHistos[constants::NMESON]; 
+  StandardHistograms  *standardHistos[constants::NSTATUS][constants::NMESON]; 
   StandardHistograms  *standardExHistos[constants::NMESON]; 
   PidHistos           *pidHistos[constants::NMESON]; 
   PidHistos           *exclusivePidHistos[constants::NMESON]; 
@@ -64,31 +64,36 @@ public:
   void InitHistos();
 
   bool IsInclusive(PhysicsEvent &ev, int mesonIndex){
-      return (ev.w > constants::DIS_WMIN && 
-	      ev.qq > constants::DIS_Q2MIN && 
-	      ev.mm2 > constants::cuts::MM2[mesonIndex] && 
-	      ev.z > constants::DIS_ZMIN); 
+    return (ev.mm2 > constants::cuts::MM2[mesonIndex]);
+  }
+ 
+  bool IsExclusive(PhysicsEvent &ev, int mesonIndex){    
+    return (ev.mm2 < constants::cuts::MM2[mesonIndex]);
   }
 
-  bool IsExclusive(PhysicsEvent &ev, int mesonIndex){    
-      return (ev.w   > constants::DIS_WMIN && 
-	      ev.qq  > constants::DIS_Q2MIN && 
-	      ev.mm2 < constants::cuts::MM2[mesonIndex] && 
-	      ev.z   > constants::DIS_ZMIN);  
+  bool IsSIDIS(PhysicsEvent &ev, int mesonIndex){
+    return (ev.w   > constants::DIS_WMIN   && 
+	    ev.qq  > constants::DIS_Q2MIN  && 
+	    ev.z   > constants::DIS_ZMIN); 
   }
 
   void FillParticle(int index, int mesonIndex, int helicity, TLorentzVector electron){
     TLorentzVector meson = event.GetTLorentzVector(index, constants::PID::pid[mesonIndex]);
     PhysicsEvent ev      = builder->getPhysicsEvent(electron, meson);
-      
-    if (IsInclusive(ev, mesonIndex))      { FillInclusive(ev, mesonIndex, index, helicity); }
-    else if (IsExclusive(ev, mesonIndex)) { FillExclusive(ev, mesonIndex, index, helicity); }
+    standardHistos[EventStatus::kPID][mesonIndex]->Fill(event, event.GetElectronIndex(), index, ev); 
+
+    if (IsSIDIS(ev, mesonIndex)){
+      standardHistos[EventStatus::kSIDIS][mesonIndex]->Fill(event, event.GetElectronIndex(), index, ev); 
+
+      if (IsInclusive(ev, mesonIndex))      { FillInclusive(ev, mesonIndex, index, helicity); }
+      else if (IsExclusive(ev, mesonIndex)) { FillExclusive(ev, mesonIndex, index, helicity); }
+    }
   }
 
   void FillInclusive(PhysicsEvent &ev, int mesonIndex, int index, int helicity){
-	histos[mesonIndex]        ->Fill(ev, helicity);
-	mesonHistos[mesonIndex]   ->Fill(event, ev, index); 
-	standardHistos[mesonIndex]->Fill(event, event.GetElectronIndex(), index, ev); 
+	histos[mesonIndex]                             ->Fill(ev, helicity);
+	mesonHistos[mesonIndex]                        ->Fill(event, ev, index); 
+	standardHistos[EventStatus::kPass][mesonIndex]->Fill(event, event.GetElectronIndex(), index, ev); 
 
 	// This is more complicated and fills the charged pions together 
 	// for looking at contamination. 
@@ -98,7 +103,7 @@ public:
 	} else if (mesonIndex == Meson::kPionPositive || mesonIndex == Meson::kKaonPositive){
 	  pidHistos[Meson::kPionPositive]->Fill(event, ev, index);
 	  pidHistos[Meson::kKaonPositive]->Fill(event, ev, index);
-	}	
+	}
 
 	// This is a simple procedure that fills 
 	// each meson where it belongs
@@ -144,9 +149,12 @@ void Analysis::InitHistos() {
 
   for (int m=0; m<constants::NMESON; m++){
     mesonHistos[m]      = new MesonHistograms(constants::Names::mesons[m], constants::PID::pid[m]); 
-    standardHistos[m]   = new StandardHistograms(constants::Names::mesons[m], 0);
+    standardHistos[EventStatus::kPID][m]    = new StandardHistograms(Form("%s_%s",constants::Names::status[EventStatus::kPID].c_str(),constants::Names::mesons[m].c_str()), 0);
+    standardHistos[EventStatus::kSIDIS][m]  = new StandardHistograms(Form("%s_%s",constants::Names::status[EventStatus::kSIDIS].c_str(),constants::Names::mesons[m].c_str()), 0);
+    standardHistos[EventStatus::kPass][m]  = new StandardHistograms(Form("%s_%s",constants::Names::status[EventStatus::kPass].c_str(),constants::Names::mesons[m].c_str()), 0);
     standardExHistos[m] = new StandardHistograms(Form("exclusive_%s",constants::Names::mesons[m].c_str()), 0);
   }
+
 }
 
 void Analysis::Initialize(){
@@ -168,9 +176,9 @@ void Analysis::Initialize(){
 void Analysis::ProcessEvent(){
   std::vector<int> electronCandidates = filter->getVectorOfParticleIndices(event, 11);
 
-  if ( !electronCandidates.empty()){
+  if ( !electronCandidates.empty() ){
     
-    // Take the fastest one
+    // take the fastest one
     int electronIndex = electronCandidates[0];
     event.SetElectronIndex(electronIndex); 
     corr.correctEvent(&event, GetRunNumber(), GSIM); 
@@ -212,7 +220,9 @@ void Analysis::Save(std::string outfile){
   TFile *out = new TFile(outfile.c_str(), "update"); 
   for(int m=0; m<constants::NMESON; m++) {
     mesonHistos[m]     ->Save(out); 
-    standardHistos[m]  ->Save(out); 
+    standardHistos[EventStatus::kPID][m]  ->Save(out); 
+    standardHistos[EventStatus::kSIDIS][m]->Save(out); 
+    standardHistos[EventStatus::kPass][m]->Save(out); 
     standardExHistos[m]->Save(out); 
   }
 

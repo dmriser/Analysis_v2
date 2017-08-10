@@ -46,25 +46,30 @@ PhysicsEvent &PhysicsEventBuilder::getPhysicsEvent(TLorentzVector &electron, TLo
   // Adapted from DisFunctions.C
   // S. Pisanos
   //  physicsEvent.pT = particle.Vect().Perp((physicsEvent.virtualPhoton.Vect()));  
+
   physicsEvent.z  = particle.T()/physicsEvent.virtualPhoton.T();
 
-  TVector3 Boost = -(physicsEvent.virtualPhoton + physicsEvent.targetParticle).BoostVector();
+  TVector3 boost = -(physicsEvent.virtualPhoton + physicsEvent.targetParticle).BoostVector();
   Double_t c0, c1, c2, c3;
   TVector3 v0, v1;
 
+  // you must clone before boosting otherwise you destroy the lab
+  // frame vectors and you will get confused in your orig. code.
   TLorentzVector photon(physicsEvent.virtualPhoton);
-  photon  .Boost(Boost);
-  electron.Boost(Boost);
-  particle.Boost(Boost);
+  TLorentzVector electronClone(electron); 
+  TLorentzVector particleClone(particle); 
+  photon  .Boost(boost);
+  electronClone.Boost(boost);
+  particleClone.Boost(boost);
 
-  v0 = photon.Vect().Cross(electron.Vect());
-  v1 = photon.Vect().Cross(particle.Vect());
-  c0 = v0.Dot(particle.Vect());
+  v0 = photon.Vect().Cross(electronClone.Vect());
+  v1 = photon.Vect().Cross(particleClone.Vect());
+  c0 = v0.Dot(particleClone.Vect());
   c1 = v0.Dot(v1);
   c2 = v0.Mag();
   c3 = v1.Mag();
   physicsEvent.phiHadron = to_degrees*(c0/TMath::Abs(c0)) * TMath::ACos(c1 / (c2*c3) );
-  physicsEvent.pT        = particle.Perp();
+  physicsEvent.pT        = particleClone.Perp();
 
   return physicsEvent; 
 }

@@ -124,6 +124,7 @@ class h22Event {
    double GetPhi(int index) const; 
    TVector3 GetUVWVector(int);    //! EC Coordinates U, V, W returned as U = vector.X(), V = vector.Y(), W = vector.Z()
    TLorentzVector GetGeneratedParticle(int);
+   int GetGeneratedParticleIndex(int pid);
    int GetMCSectorByPID(int index);
    
    double GetRotatedDCR1PosX(int);
@@ -132,6 +133,10 @@ class h22Event {
    double GetThetaCC(int); //! Theta as reported at Cherenkov Counter
    
    bool HasParticle(int pid);
+
+   // returns the index of the reconstructed particle that 
+   // was generated with coded pid, and a status code 
+   std::pair<bool, int> GetGeneratedToReconstructedMapping(int pid); 
    
    // MC Momenta 
    double GetMCPx(int);

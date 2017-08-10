@@ -1,5 +1,5 @@
-#ifndef kinematic_tree_h
-#define kinematic_tree_h
+#ifndef fill_mc_h
+#define fill_mc_h
 
 #include <iostream>
 #include <fstream>
@@ -7,7 +7,6 @@
 #include "Corrections.h"
 #include "h22Option.h"
 #include "GenericAnalysis.h"
-#include "MomCorr.h"
 #include "Parameters.h"
 #include "ParticleFilter.h"
 #include "PhysicsEventBuilder.h"
@@ -18,34 +17,34 @@
 
 #include "Tree.h"
 
-class KinematicTree : public GenericAnalysis {
+class FillMonteCarlo : public GenericAnalysis {
  public:
-  KinematicTree(h22Options *opts, Parameters *p, Parameters *ptight, Parameters *ploose, int type);
-  ~KinematicTree();
+  FillMonteCarlo(h22Options *opts, Parameters *p, Parameters *ptight, Parameters *ploose);
+  ~FillMonteCarlo();
 
   PhysicsEventBuilder builder;
-  FlatTree *kinematicTree; 
+  FlatTree           *recTree; 
+  FlatTree           *genTree; 
 
  public:
   void ProcessEvent();
   void Save(std::string outputFilename);
   void CheckForMesonAndFill(int index); 
+  void FillGeneratedMeson(int index);
+  bool EventHasGeneratedParticle(int pid); 
 
   ParticleFilter *getFilter() {
     return fFilter;
   }
 
  protected:
-  int localEventNumber;
-
-  MomCorr_e1f    *fMomCorr; 
   Corrections     fCorr; 
   ParticleFilter *fFilter; 
   ParticleFilter *fFilterTight; 
   ParticleFilter *fFilterLoose;
  
   Parameters     *fPars; 
-
+  int localEventNumber; 
 };
 
 #endif

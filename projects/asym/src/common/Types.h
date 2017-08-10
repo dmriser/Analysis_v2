@@ -18,4 +18,12 @@ namespace Helicity {
   };
 }
 
+namespace EventStatus {
+  enum {
+    kPID, 
+    kSIDIS,
+    kPass
+  };
+}
+
 #endif

@@ -8,3 +8,4 @@ env.Append(CPPPATH = ['$h22libs/include/'], LIBPATH = ['$h22libs/lib/'],LIBS = [
 env.Append(CPPPATH = ['$ROOTSYS/include/'], LIBPATH = ['$ROOTSYS/lib/'],LIBS = ['TreePlayer'])
 
 env.Program('MakeTree','main.cxx')
+env.Program('MakeMCTree','fill_mc.cxx')

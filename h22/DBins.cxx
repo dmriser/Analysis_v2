@@ -249,7 +249,7 @@ DLineBins::DLineBins(int numBins, double binMin, double binMax)
   
 }
 
-DLineBins::DLineBins(int numBins, vector<double> limits)
+DLineBins::DLineBins(int numBins, const std::vector<double>& limits)
 {
   // Generates bins based on your input limits.
   if (numBins+1 != limits.size()){ cout << " Aborting DLineBins for bin number / limit mismatch! " << endl; return; }
@@ -262,6 +262,10 @@ DLineBins::DLineBins(int numBins, vector<double> limits)
     AddBin(this_bin);
   }
   
+}
+
+DLineBins::DLineBins(const std::vector<double>& limits){
+  DLineBins(limits.size()-1, limits);
 }
 
 int DLineBins::FindBin(double val){

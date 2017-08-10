@@ -4,7 +4,7 @@
 	"output":"/u/home/dmriser/Analysis_v2/projects/asym2/out/",
 	"config_name":"test",
 	"n_files":2,
-	"parameter_file":"/u/home/dmriser/Analysis_v2/lists/data_tofmass.pars"
+	"parameter_file":"/u/home/dmriser/Analysis_v2/lists/dataLoose.pars"
     },
 
     "cuts":{

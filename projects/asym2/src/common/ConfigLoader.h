@@ -14,7 +14,7 @@ using namespace nlohmann;
 class ConfigLoader {
 
  public:
-  static Config *getConfiguration(std::string jsonFile); 
+  static Config getConfiguration(std::string jsonFile); 
 
 };
 

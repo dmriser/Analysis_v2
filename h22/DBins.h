@@ -113,7 +113,10 @@ class DLineBins
   DLineBins(int, double, double); /** (kNumber, kMin, kMax) */
 
   // Option to pass in number of bins and their limits.
-  DLineBins(int, std::vector<double>);
+  DLineBins(int, const std::vector<double>& binLimits);
+
+  // Option to pass bins limits.
+  DLineBins(const std::vector<double>& binLimits);
   
   // Data Types
  private:

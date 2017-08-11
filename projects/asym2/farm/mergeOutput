@@ -1,0 +1,24 @@
+#!/bin/tcsh 
+
+# hadd 
+source /group/clas/builds/centos7/environment.csh
+
+# the folder name 
+set output = $1 
+
+# setup the directory tree of configs to merge 
+set sub_dirs = `ls -d /volatile/clas12/dmriser/farm_out/$output/*/`
+
+# get each config and add the files together 
+foreach dir ($sub_dirs)
+	cd $dir 
+	set config = `ls *.json | cut -d'.' -f1`
+	
+	echo "Configuration: $config in dir: $dir"
+
+	# create the big file 
+	hadd $config.root *.root 
+
+	# come back here 
+	cd -
+end

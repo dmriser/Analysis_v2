@@ -1,7 +1,7 @@
 {
     "system":{
-	"file_list":"/u/home/dmriser/Analysis_v2/lists/good_files.dat",
-	"output":"/u/home/dmriser/Analysis_v2/projects/asym2/out/",
+	"file_list":"list.dat",
+	"output":"./",
 	"config_name":"pi_n_basic",
 	"n_files":600,
 	"parameter_file":"/u/home/dmriser/Analysis_v2/lists/data_tofmass.pars"

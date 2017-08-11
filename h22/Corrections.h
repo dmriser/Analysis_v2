@@ -24,11 +24,11 @@ public:
     ~Corrections();
     
     // Member Functions
-    void correctEvent(h22Event *event, int runno, int GSIM);
-    double vz(h22Event &event,int,int,int);           //! event, ipart, runno, GSIM 
-    double electron_sct(h22Event &event,int,int,int);
-    double hadron_sct(h22Event &event,int,int,int);
-    bool good_sc_paddle(h22Event &event,int);         //! event, ipart
+    static void correctEvent(h22Event *event, int runno, int GSIM);
+    static double vz(h22Event &event,int,int,int);           //! event, ipart, runno, GSIM 
+    static double electron_sct(h22Event &event,int,int,int);
+    static double hadron_sct(h22Event &event,int,int,int);
+    static bool good_sc_paddle(h22Event &event,int);         //! event, ipart
 };
 
 #endif

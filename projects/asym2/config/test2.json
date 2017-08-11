@@ -2,18 +2,18 @@
     "system":{
 	"file_list":"/u/home/dmriser/Analysis_v2/lists/files.dat",
 	"output":"/u/home/dmriser/Analysis_v2/projects/asym2/out/",
-	"config_name":"test",
+	"config_name":"test2",
 	"n_files":1,
 	"parameter_file":"/u/home/dmriser/Analysis_v2/lists/data_tofmass.pars"
     },
 
     "cuts":{
 	"meson_id":{
-	    "value":321
+	    "value":211
 	},
 	"missing_mass":{
-	    "min":1.00,
-	    "max":1.80
+	    "min":0.00,
+	    "max":8.80
 	},
 	"q2":{
 	    "min":1.0,

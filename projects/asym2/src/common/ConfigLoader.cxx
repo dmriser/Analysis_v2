@@ -14,7 +14,7 @@ using namespace nlohmann;
 // this project 
 #include "Config.h"
 #include "ConfigLoader.h"
-
+#include "Types.h"
 
 // from h22 libs 
 #include "DBins.h"
@@ -37,16 +37,38 @@ Config ConfigLoader::getConfiguration(std::string jsonFile){
     conf.fileList       = jsonObject.at("system").at("file_list").get<std::string>();
     conf.parameterFile  = jsonObject.at("system").at("parameter_file").get<std::string>();
     conf.filesToProcess = jsonObject.at("system").at("n_files").get<int>(); 
+    conf.mesonIndex     = jsonObject.at("cuts").at("meson_id").at("value").get<int>();
     
     // more complicated objects 
     conf.cuts = jsonObject.at("cuts").get<std::map<std::string, std::map<std::string, double>>>();
     conf.bins = jsonObject.at("bins").get<std::map<std::string, std::vector<double>>>(); 
 
     // load the binned axes 
+    /* 
     for(std::pair<std::string, std::vector<double>> b : conf.bins){
       std::vector<double> limits = b.second; 
       conf.axes[b.first] = DLineBins(limits.size()-1, limits);
     }
+    */
+
+    // load the binned axes 
+    std::vector<double> limits; 
+
+    limits = conf.bins["x"]; 
+    conf.axes[axis::x] = DLineBins(limits.size()-1, limits);
+
+    limits = conf.bins["q2"];
+    conf.axes[axis::q2] = DLineBins(limits.size()-1, limits);
+
+    limits = conf.bins["z"];
+    conf.axes[axis::z] = DLineBins(limits.size()-1, limits);
+
+    limits = conf.bins["pt"];
+    conf.axes[axis::pt] = DLineBins(limits.size()-1, limits);
+
+    limits = conf.bins["phi"];
+    conf.axes[axis::phi] = DLineBins(limits.size()-1, limits);
+
 
     inputFile.close(); 
 

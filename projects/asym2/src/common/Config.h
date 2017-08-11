@@ -9,15 +9,18 @@
 // bins from h22
 #include "DBins.h"
 
+// this project 
+#include "Types.h"
+
 // configuration structure 
 struct Config {
   std::string name, outputPath, fileList, parameterFile; 
-  int filesToProcess; 
+  int filesToProcess, mesonIndex; 
 
   std::map<std::string, std::map<std::string, double>> cuts; 
   std::map<std::string, std::vector<double>>           bins; 
 
-  std::map<std::string, DLineBins>                     axes; 
+  std::map<int, DLineBins>                             axes; 
 };
 
 #endif 

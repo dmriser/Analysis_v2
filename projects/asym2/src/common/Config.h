@@ -15,7 +15,7 @@
 // configuration structure 
 struct Config {
   std::string name, outputPath, fileList, parameterFile; 
-  int filesToProcess, mesonIndex; 
+  int filesToProcess, mesonIndex, writeTree; 
 
   std::map<std::string, std::map<std::string, double>> cuts; 
   std::map<std::string, std::vector<double>>           bins; 

@@ -4,6 +4,7 @@
 #include "common/ConfigLoader.h"
 #include "common/ConfigLoader.cxx"
 #include "common/PhiHistograms.h"
+#include "common/TreeOutput.h"
 #include "common/Types.h"
 
 // h22 libs 
@@ -30,12 +31,18 @@ struct configPack{
   Parameters         *pars; 
   ParticleFilter     *filter;
   PhiHistos          *counts[2]; 
+
+  TreeOutput *tree; 
   std::map<int, StandardHistograms*> standardHistos; 
 };
 
 class Analysis : public h22Reader {
 public:  
   Analysis(std::vector<Config> confs) {
+
+    std::string path        = Global::Environment::GetAnalysisPath(); 
+    std::string momCorrPath = Form("%s/momCorr/",path.c_str());
+    momCorr                 = new MomCorr_e1f(momCorrPath);
 
     for(int iconf=0; iconf<confs.size(); iconf++){
       configPack currentPack; 
@@ -56,6 +63,9 @@ public:
 
       currentPack.counts[helicity::plus] = new PhiHistos(); 
       currentPack.counts[helicity::plus]->Init(currentPack.conf.axes, "countsPlus");
+
+      // output tree 
+      currentPack.tree = new TreeOutput(); 
 
       packs.push_back(currentPack);
     }
@@ -107,7 +117,10 @@ public:
 	    int mesonIndex = mesonIndices[0];
 	    TLorentzVector electron = event.GetTLorentzVector(electronIndex, 11);  
 	    TLorentzVector meson = event.GetTLorentzVector(mesonIndex, pack.conf.mesonIndex);
+
+	    electron = momCorr->PcorN(electron, -1, 11);
 	    PhysicsEvent ev = builder.getPhysicsEvent(electron,meson); 
+
 
 	    pack.standardHistos[pass::mesonID]->Fill(event, electronIndex, mesonIndex, ev);
 
@@ -136,6 +149,12 @@ public:
 		  pack.standardHistos[pass::all]->Fill(event, electronIndex, mesonIndex, ev);
 		  pack.counts[hel]->Fill(ev);
 
+		  // fill output tree 
+		  pack.tree->hel      = hel; 
+		  pack.tree->id       = pack.conf.mesonIndex; 
+		  pack.tree->electron = electron; 
+		  pack.tree->meson    = meson; 
+		  pack.tree->tree->Fill();
 		}
 	      }
 	    }
@@ -170,6 +189,8 @@ public:
 				  p.conf.name.c_str()), 
 				  "recreate");
       
+      out->SetCompressionLevel(3); 
+
       p.standardHistos[pass::mesonID]->Save(out);
       p.standardHistos[pass::SIDIS]  ->Save(out);
       p.standardHistos[pass::all]    ->Save(out);
@@ -177,6 +198,13 @@ public:
       // saving counts 
       p.counts[helicity::plus] ->Save(out);      
       p.counts[helicity::minus]->Save(out);
+
+      // save only if 
+      // asked 
+      if (p.conf.writeTree){
+	p.tree->Save(out);
+      }
+
 
       out->Write();
       out->Close();
@@ -186,6 +214,7 @@ public:
 
 protected:
   std::vector<configPack> packs; 
+  MomCorr_e1f            *momCorr; 
   PhysicsEventBuilder     builder; 
 
 };

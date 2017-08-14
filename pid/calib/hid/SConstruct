@@ -6,7 +6,7 @@ exeEnv.Append(CCFLAGS = ['-g'])
 exeEnv.Append(CPPPATH = ['$h22libs/include/'], LIBPATH = ['$h22libs/lib/'],LIBS = ['h22'])
 exeEnv.Append(LIBPATH = ['$ROOTSYS/lib/'],LIBS = ['TreePlayer'])
 
-sources = glob.glob('*.cxx')
+sources = glob.glob('src/*.cxx')
 
 for target in sources:
     exeEnv.Program(target)

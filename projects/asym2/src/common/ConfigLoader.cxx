@@ -38,6 +38,7 @@ Config ConfigLoader::getConfiguration(std::string jsonFile){
     conf.parameterFile  = jsonObject.at("system").at("parameter_file").get<std::string>();
     conf.filesToProcess = jsonObject.at("system").at("n_files").get<int>(); 
     conf.mesonIndex     = jsonObject.at("cuts").at("meson_id").at("value").get<int>();
+    conf.writeTree      = jsonObject.at("system").at("write_tree").get<int>();
     
     // more complicated objects 
     conf.cuts = jsonObject.at("cuts").get<std::map<std::string, std::map<std::string, double>>>();

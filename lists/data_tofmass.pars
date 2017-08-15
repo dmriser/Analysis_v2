@@ -166,3 +166,11 @@
      PIP_BVP_SIGMA_C     6     e         0.000491705          0.00033041         0.000304965         0.000285587          0.00034328         0.000424542
      PIP_BVP_SIGMA_D     6     v           0.0172237           0.0187388           0.0160808           0.0169781           0.0177833           0.0170206
      PIP_BVP_SIGMA_D     6     e         0.000223053         0.000157996         0.000145663         0.000137955         0.000163397         0.000195534
+     PIP_DBETA_MIN        1     v         -0.0300
+     PIP_DBETA_MIN        1     e          0.0000
+     PIP_DBETA_MAX        1     v          0.0300
+     PIP_DBETA_MAX        1     e          0.0000
+     KP_DBETA_MIN        1     v         -0.0200
+     KP_DBETA_MIN        1     e          0.0000
+     KP_DBETA_MAX        1     v          0.0200
+     KP_DBETA_MAX        1     e          0.0000

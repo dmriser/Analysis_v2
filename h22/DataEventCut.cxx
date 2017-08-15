@@ -478,7 +478,7 @@ bool DCR3FiducialCut::IsPassed(h22Event &event, int index)
 */
 ///////////////////////////////////////////////////////////////
 
-DataEventCut_DeltaBetaCut::DataEventCut_DeltaBetaCut(){
+DataEventCut_DeltaBetaCut::DataEventCut_DeltaBetaCut(int PID) : fPID(PID) {
     SetName("Delta Beta Cut");
 }
 
@@ -486,13 +486,12 @@ DataEventCut_DeltaBetaCut::~DataEventCut_DeltaBetaCut(){
 }
 
 
-bool DataEventCut_DeltaBetaCut::IsPassed(h22Event &event, int hadronIndex, int PID){
+bool DataEventCut_DeltaBetaCut::IsPassed(h22Event &event, int hadronIndex){
 
     // It is very important to note that this
     // routine expects CORRECTED variables.
-    double startTime  = event.sc_t[0]-event.sc_r[0]/speed_of_light;
-    double beta       = event.sc_r[hadronIndex]/(event.sc_t[hadronIndex]-startTime)/speed_of_light;
-    double betaCalc   = event.p[hadronIndex]/sqrt(pow(event.p[hadronIndex],2)+pow(pid_to_mass(PID),2));
+    double beta       = event.corr_b[hadronIndex]; 
+    double betaCalc   = event.p[hadronIndex]/sqrt(pow(event.p[hadronIndex],2)+pow(pid_to_mass(fPID),2));
     double deltaBeta  = betaCalc - beta;
 
     if (deltaBeta > GetMin() && deltaBeta < GetMax()){

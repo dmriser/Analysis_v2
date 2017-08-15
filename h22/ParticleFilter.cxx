@@ -128,6 +128,12 @@ ParticleFilter::ParticleFilter(Parameters *params) : pars(params){
     pm_betap_cut_s5 = new DataEventCut_BetaPCut(5); 
     pm_betap_cut_s6 = new DataEventCut_BetaPCut(6); 
 
+
+    // delta beta cuts 
+    kp_dbeta_cut = new DataEventCut_DeltaBetaCut(321); 
+    pp_dbeta_cut = new DataEventCut_DeltaBetaCut(211); 
+
+    // fiducial cuts on r1 triangle shape 
     dcr1_meson_fid_cut = new DCR1FiducialCut();
 
     // -1 just let's any sector be applied 
@@ -718,6 +724,13 @@ ParticleFilter::ParticleFilter(Parameters *params) : pars(params){
     dvz_cut->SetMin(-1 *params->getParameter("KP_DVZ").getValue(0) );
     dvz_cut->SetMax( params->getParameter("KP_DVZ").getValue(0) );
 
+    // setup dbeta cuts 
+    pp_dbeta_cut->SetMin(params->getParameter("PIP_DBETA_MIN").getValue(0));
+    pp_dbeta_cut->SetMax(params->getParameter("PIP_DBETA_MAX").getValue(0));
+    kp_dbeta_cut->SetMin(params->getParameter("KP_DBETA_MIN").getValue(0));
+    kp_dbeta_cut->SetMax(params->getParameter("KP_DBETA_MAX").getValue(0));
+
+
     // Setup pion selectors
     testCut = new TestCut(); 
 
@@ -728,13 +741,17 @@ ParticleFilter::ParticleFilter(Parameters *params) : pars(params){
     positivePionSelector->AddCut(pp_betap_cut_s4); 
     positivePionSelector->AddCut(pp_betap_cut_s5); 
     positivePionSelector->AddCut(pp_betap_cut_s6); 
-    */
+
+    
     positivePionSelector->AddCut(pip_tofmass_cut_s1); 
     positivePionSelector->AddCut(pip_tofmass_cut_s2); 
     positivePionSelector->AddCut(pip_tofmass_cut_s3); 
     positivePionSelector->AddCut(pip_tofmass_cut_s4); 
     positivePionSelector->AddCut(pip_tofmass_cut_s5); 
     positivePionSelector->AddCut(pip_tofmass_cut_s6); 
+    */
+
+    positivePionSelector->AddCut(pp_dbeta_cut);
     positivePionSelector->EnableAll();
 
     negativePionSelector->AddCut(dvz_cut);
@@ -754,14 +771,14 @@ ParticleFilter::ParticleFilter(Parameters *params) : pars(params){
     negativePionSelector->AddCut(pim_tofmass_cut_s5); 
     negativePionSelector->AddCut(pim_tofmass_cut_s6); 
     negativePionSelector->EnableAll();
-
+    /*
     positiveKaonSelector->AddCut(kp_tofmass_cut_s1);
     positiveKaonSelector->AddCut(kp_tofmass_cut_s2);
     positiveKaonSelector->AddCut(kp_tofmass_cut_s3);
     positiveKaonSelector->AddCut(kp_tofmass_cut_s4);
     positiveKaonSelector->AddCut(kp_tofmass_cut_s5);
     positiveKaonSelector->AddCut(kp_tofmass_cut_s6);
-    /*
+
     positiveKaonSelector->AddCut(kp_betap_cut_s1);
     positiveKaonSelector->AddCut(kp_betap_cut_s2);
     positiveKaonSelector->AddCut(kp_betap_cut_s3);
@@ -770,6 +787,7 @@ ParticleFilter::ParticleFilter(Parameters *params) : pars(params){
     positiveKaonSelector->AddCut(kp_betap_cut_s6);
     */
 
+    positiveKaonSelector->AddCut(kp_dbeta_cut);
     positiveKaonSelector->EnableAll();
  
     negativeKaonSelector->AddCut(dvz_cut);

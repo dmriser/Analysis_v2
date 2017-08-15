@@ -27,11 +27,11 @@ MesonHistograms::MesonHistograms(std::string name, int pid) : fName(name), fPid(
     
     h2_phi_theta[s] = new TH2D(Form("h2_phi_theta_%d_%s",s, fName.c_str()), Form("h2_phi_theta_%d_%s",s, fName.c_str()), 100, -30, 30, 100, 0.0, 60.0); 
     h2_dcx_dcy[s] = new TH2D(Form("h2_dcx_dcy_%d_%s",s, fName.c_str()), Form("h2_dcx_dcy_%d_%s",s, fName.c_str()), 100, 0, 60, 100, -60, 60); 
-    h2_p_beta[s] = new TH2D(Form("h2_p_beta_%d_%s",s, fName.c_str()), Form("h2_p_beta_%d_%s",s, fName.c_str()), 100, 0.0, 4.5, 100, 0.0, 1.2); 
-    h2_p_tofmass[s] = new TH2D(Form("h2_p_tofmass_%d_%s",s, fName.c_str()), Form("h2_p_tofmass_%d_%s",s, fName.c_str()), 100, 0.0, 4.5, 100, -0.6, 1.5); 
-    h2_nphe_tofmass[s] = new TH2D(Form("h2_nphe_tofmass_%d_%s",s, fName.c_str()), Form("h2_nphe_tofmass_%d_%s",s, fName.c_str()), 100, 0, 100, 100, -0.6, 1.5); 
-    h2_p_dbeta[s] = new TH2D(Form("h2_p_dbeta_%d_%s",s, fName.c_str()), Form("h2_p_dbeta_%d_%s",s, fName.c_str()), 100, 0.0, 4.5, 100, -0.5, 0.5);
-    h2_p_mm2[s] = new TH2D(Form("h2_p_mm2_%d_%s",s, fName.c_str()), Form("h2_p_mm2_%d_%s",s, fName.c_str()), 100, 0.0, 4.5, 100, -1.0, 2.5);  
+    h2_p_beta[s] = new TH2D(Form("h2_p_beta_%d_%s",s, fName.c_str()), Form("h2_p_beta_%d_%s",s, fName.c_str()), 200, 0.0, 4.5, 200, 0.0, 1.2); 
+    h2_p_tofmass[s] = new TH2D(Form("h2_p_tofmass_%d_%s",s, fName.c_str()), Form("h2_p_tofmass_%d_%s",s, fName.c_str()), 200, 0.0, 4.5, 200, -0.6, 1.5); 
+    h2_nphe_tofmass[s] = new TH2D(Form("h2_nphe_tofmass_%d_%s",s, fName.c_str()), Form("h2_nphe_tofmass_%d_%s",s, fName.c_str()), 200, 0, 100, 200, -0.6, 1.5); 
+    h2_p_dbeta[s] = new TH2D(Form("h2_p_dbeta_%d_%s",s, fName.c_str()), Form("h2_p_dbeta_%d_%s",s, fName.c_str()), 200, 0.0, 4.5, 200, -0.14, 0.14);
+    h2_p_mm2[s] = new TH2D(Form("h2_p_mm2_%d_%s",s, fName.c_str()), Form("h2_p_mm2_%d_%s",s, fName.c_str()), 200, 0.0, 4.5, 200, -1.0, 2.5);  
   }
 
 }

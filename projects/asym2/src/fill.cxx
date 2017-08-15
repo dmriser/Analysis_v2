@@ -3,6 +3,7 @@
 #include "common/Config.h"
 #include "common/ConfigLoader.h"
 #include "common/ConfigLoader.cxx"
+#include "common/MissingMassHistograms.h"
 #include "common/PhiHistograms.h"
 #include "common/TreeOutput.h"
 #include "common/Types.h"
@@ -34,6 +35,7 @@ struct configPack{
 
   TreeOutput *tree; 
   std::map<int, StandardHistograms*> standardHistos; 
+  std::map<int, MissingMassHistos*>  missingMassHistos; 
 };
 
 class Analysis : public h22Reader {
@@ -56,6 +58,11 @@ public:
       currentPack.standardHistos[pass::mesonID] = new StandardHistograms("PassMesonID",0);
       currentPack.standardHistos[pass::SIDIS]   = new StandardHistograms("PassSIDIS"  ,0);
       currentPack.standardHistos[pass::all]     = new StandardHistograms("PassAll"    ,0);
+
+      // setup missing mass histos 
+      currentPack.missingMassHistos[pass::mesonID] = new MissingMassHistos(currentPack.conf, "PassMesonID"); 
+      currentPack.missingMassHistos[pass::SIDIS] = new MissingMassHistos(currentPack.conf, "PassSIDIS"); 
+      currentPack.missingMassHistos[pass::all] = new MissingMassHistos(currentPack.conf, "PassALL"); 
 
       // counts in phi for different helicties 
       currentPack.counts[helicity::minus] = new PhiHistos(); 
@@ -122,7 +129,31 @@ public:
 	    PhysicsEvent ev = builder.getPhysicsEvent(electron,meson); 
 
 
+	    // Dan Carman method for rejecting some pi+ events in the 
+	    // kaon sample. 
+	    //
+	    // Classify an event and if it's a kaon you pretend 
+	    // it's a pion.  Then check the missing mass spectrum 
+	    // and if the event is near the neutron peak it must 
+	    // really be a pion, so reassign it to be.  
+	    //
+	    // Currently all it does it throw out the pion, 
+	    // if doesn't actually add it to the pion sample 
+	    // because the code never makes it that far in the 
+	    // pion case it would just return 0 pions and not enter.
+	    if (pack.conf.mesonIndex == 321){
+	      
+	      TLorentzVector pion = event.GetTLorentzVector(mesonIndex, 211); 
+	      PhysicsEvent pionEvent = builder.getPhysicsEvent(electron,pion); 
+	      
+	      // reject and dont process event 
+	      if (sqrt(pionEvent.mm2) < 1.07){
+		continue; 
+	      }
+	    }
+
 	    pack.standardHistos[pass::mesonID]->Fill(event, electronIndex, mesonIndex, ev);
+	    pack.missingMassHistos[pass::mesonID]->Fill(ev);
 
 	    // check that event is kinematically 
 	    // desirable
@@ -133,6 +164,7 @@ public:
 	      
 	      // do something 
 	      pack.standardHistos[pass::SIDIS]->Fill(event, electronIndex, mesonIndex, ev);
+	      pack.missingMassHistos[pass::SIDIS]->Fill(ev);
 
 	      if (sqrt(ev.mm2) > pack.conf.cuts["missing_mass"]["min"] && 
 		  sqrt(ev.mm2) < pack.conf.cuts["missing_mass"]["max"] ){
@@ -147,6 +179,7 @@ public:
 		if(hel != helicity::unknown){
 		  
 		  pack.standardHistos[pass::all]->Fill(event, electronIndex, mesonIndex, ev);
+		  pack.missingMassHistos[pass::all]->Fill(ev);
 		  pack.counts[hel]->Fill(ev);
 
 		  // fill output tree 
@@ -194,6 +227,10 @@ public:
       p.standardHistos[pass::mesonID]->Save(out);
       p.standardHistos[pass::SIDIS]  ->Save(out);
       p.standardHistos[pass::all]    ->Save(out);
+
+      p.missingMassHistos[pass::mesonID]->Save(out);
+      p.missingMassHistos[pass::SIDIS]->Save(out);      
+      p.missingMassHistos[pass::all]->Save(out);
 
       // saving counts 
       p.counts[helicity::plus] ->Save(out);      

@@ -353,10 +353,13 @@ class CCPhiMatchingCut : public DataEventCut
 
 class DataEventCut_DeltaBetaCut : public DataEventCut {
  public:
-  DataEventCut_DeltaBetaCut();
+  DataEventCut_DeltaBetaCut(int PID);
   ~DataEventCut_DeltaBetaCut();
 
-  bool IsPassed(h22Event &event, int hadronIndex, int PID);
+  bool IsPassed(h22Event &event, int hadronIndex);
+
+ protected:
+  int fPID; 
 };
 
 /////////////////////////////////////////////////////////////////////

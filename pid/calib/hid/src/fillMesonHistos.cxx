@@ -99,7 +99,8 @@ void HIDCalibration::ProcessEvent(){
     PhysicsEvent candidateEvent = builder->getPhysicsEvent(electron); 
     electron = momCorr->PcorN(electron, -1, 11);    
     
-    if (candidateEvent.w > 2.00 && candidateEvent.qq > 1.00 && candidateEvent.mm2 > 1.1) {
+    //    if (candidateEvent.w > 2.00 && candidateEvent.qq > 1.00 && candidateEvent.mm2 > 1.1) {
+    if (1) {
       for (int ipart=0; ipart<event.gpart; ipart++){
 	
 	// This important line stops other electrons from
@@ -115,7 +116,7 @@ void HIDCalibration::ProcessEvent(){
 	  PhysicsEvent physEv = builder->getPhysicsEvent(electron, candidate); 
 	  
 	  //	  if (dvz < 4.0  && event.etot[ipart] > 0.01){
-	    if (dvz < 2.5){
+	    if (dvz < 4.0){
 	      if (event.q[ipart] == 1){ 
 		pipHistos->Fill(event, physEv, ipart); 
 		kpHistos->Fill(event, physEv, ipart);

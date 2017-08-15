@@ -134,6 +134,9 @@ public:
     DataEventCut_BetaPCut        *pm_betap_cut_s5; 
     DataEventCut_BetaPCut        *pm_betap_cut_s6; 
 
+    DataEventCut_DeltaBetaCut    *pp_dbeta_cut; 
+    DataEventCut_DeltaBetaCut    *kp_dbeta_cut; 
+
     DataEventCut_DeltaZVertexCut *dvz_cut;
     DCR1FiducialCut    *dcr1_meson_fid_cut;
 

@@ -28,6 +28,7 @@ class PhiFits {
  public:
   PhiFits(){
    
+    fFile = new TFile(); 
   }
 
   ~PhiFits(){

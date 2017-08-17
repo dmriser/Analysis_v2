@@ -2,10 +2,17 @@
     "system":{
 	"file_list":"list.dat",
 	"output":"./",
+	"analysis_home":"/volatile/clas12/dmriser/analysis/asymmetry",
 	"config_name":"k_lambda_basic",
 	"n_files":600,
 	"write_tree":0,
 	"parameter_file":"/u/home/dmriser/Analysis_v2/lists/data_tofmass.pars"
+    },
+
+    "fitter":{
+        "options":"WLER",
+        "n_parameters":1,
+        "function":"[0]*sin((3.14159/180.0)*x)"
     },
 
     "cuts":{

@@ -14,12 +14,14 @@
 
 // configuration structure 
 struct Config {
-  std::string name, outputPath, fileList, parameterFile; 
-  int filesToProcess, mesonIndex, writeTree; 
+  std::string name, outputPath, fileList, parameterFile, analysisHome; 
+  int filesToProcess, mesonIndex, writeTree, numberFitPars; 
 
   std::map<std::string, std::map<std::string, double>> cuts; 
   std::map<std::string, std::vector<double>>           bins; 
+  std::map<std::string, std::string>                   fitter;   
 
+  // weird 
   std::map<int, DLineBins>                             axes; 
 };
 

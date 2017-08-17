@@ -10,7 +10,7 @@ set output = $1
 set sub_dirs = `ls -d /volatile/clas12/dmriser/farm_out/$output/*/`
 
 # all jobs will be moved to a new home
-set target = /volatile/clas12/dmriser/rootFiles/asymmetry2/
+set target = /volatile/clas12/dmriser/analysis/asymmetry/
 
 # get each config and add the files together 
 foreach dir ($sub_dirs)
@@ -26,8 +26,16 @@ foreach dir ($sub_dirs)
 	# doesn't exist, build him one
 	# make sure you include his config
 	mkdir -p $target/$config/
-	cp $config.root $target/$config
-	cp $config.json $target/$config
+	cp $config.root $target/$config/histos.root 
+	cp $config.json $target/$config/config.json 
+
+	# actually we want to build him
+	# some nice things to keep the place
+	# looking good 
+	mkdir -p $target/$config/plots/
+	mkdir -p $target/$config/plots/phi
+	mkdir -p $target/$config/plots/asymmetry
+	mkdir -p $target/$config/plots/missingMass
 
 	# come back here 
 	cd -

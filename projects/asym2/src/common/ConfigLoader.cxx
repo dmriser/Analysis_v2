@@ -39,10 +39,19 @@ Config ConfigLoader::getConfiguration(std::string jsonFile){
     conf.filesToProcess = jsonObject.at("system").at("n_files").get<int>(); 
     conf.mesonIndex     = jsonObject.at("cuts").at("meson_id").at("value").get<int>();
     conf.writeTree      = jsonObject.at("system").at("write_tree").get<int>();
+    conf.analysisHome   = jsonObject.at("system").at("analysis_home").get<std::string>();
+    conf.numberFitPars  = jsonObject.at("fitter").at("n_parameters").get<int>();
     
+    // this is kind of nasty 
+    // i need to have only strings
+    // after getting the number of pars 
+    jsonObject["fitter"].erase("n_parameters");
+
+
     // more complicated objects 
     conf.cuts = jsonObject.at("cuts").get<std::map<std::string, std::map<std::string, double>>>();
     conf.bins = jsonObject.at("bins").get<std::map<std::string, std::vector<double>>>(); 
+    conf.fitter = jsonObject.at("fitter").get<std::map<std::string, std::string>>(); 
 
     // load the binned axes 
     /* 

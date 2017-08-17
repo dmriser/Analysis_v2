@@ -46,6 +46,7 @@ public:
     DataEventSelector *positiveKaonSelector;
     DataEventSelector *negativeKaonSelector;
     DataEventSelector *positiveMesonCandidateSelector; 
+    DataEventSelector *protonSelector;
 
     // List of the cuts used for electrons.
     ChargeCut          *negativity_cut;
@@ -136,6 +137,7 @@ public:
 
     DataEventCut_DeltaBetaCut    *pp_dbeta_cut; 
     DataEventCut_DeltaBetaCut    *kp_dbeta_cut; 
+    DataEventCut_DeltaBetaCut    *proton_dbeta_cut; 
 
     DataEventCut_DeltaZVertexCut *dvz_cut;
     DCR1FiducialCut    *dcr1_meson_fid_cut;

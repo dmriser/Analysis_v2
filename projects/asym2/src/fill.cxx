@@ -56,13 +56,15 @@ public:
       // setting up histograms for different cut levels 
       // these types are defined in types.h
       currentPack.standardHistos[pass::mesonID] = new StandardHistograms("PassMesonID",0);
-      currentPack.standardHistos[pass::SIDIS]   = new StandardHistograms("PassSIDIS"  ,0);
+      currentPack.standardHistos[pass::kin]     = new StandardHistograms("PassKinematic"  ,0);
       currentPack.standardHistos[pass::all]     = new StandardHistograms("PassAll"    ,0);
 
       // setup missing mass histos 
-      currentPack.missingMassHistos[pass::mesonID] = new MissingMassHistos(currentPack.conf, "PassMesonID"); 
-      currentPack.missingMassHistos[pass::SIDIS] = new MissingMassHistos(currentPack.conf, "PassSIDIS"); 
-      currentPack.missingMassHistos[pass::all] = new MissingMassHistos(currentPack.conf, "PassALL"); 
+      currentPack.missingMassHistos[pass::mesonID] = new MissingMassHistos(); 
+      currentPack.missingMassHistos[pass::kin]     = new MissingMassHistos(); 
+
+      currentPack.missingMassHistos[pass::mesonID]->Init(currentPack.conf, "PassMesonID");
+      currentPack.missingMassHistos[pass::kin]    ->Init(currentPack.conf, "PassKinematic");
 
       // counts in phi for different helicties 
       currentPack.counts[helicity::minus] = new PhiHistos(); 
@@ -151,6 +153,17 @@ public:
 		continue; 
 	      }
 	    }
+	    
+	    // if a proton is required to continue 
+	    if (int(pack.conf.cuts["require_proton"]["value"]) == 1){
+	      std::vector<int> protonIndices = pack.filter->getVectorOfParticleIndices(event, 2212);
+
+	      // If there is no proton, we're breaking out of the
+	      // current loop iteration and discarding the event.
+	      if(protonIndices.empty()){
+		continue; 
+	      }
+	    }
 
 	    pack.standardHistos[pass::mesonID]->Fill(event, electronIndex, mesonIndex, ev);
 	    pack.missingMassHistos[pass::mesonID]->Fill(ev);
@@ -163,8 +176,8 @@ public:
 		ev.qq < pack.conf.cuts["q2"]["max"] ){ 
 	      
 	      // do something 
-	      pack.standardHistos[pass::SIDIS]->Fill(event, electronIndex, mesonIndex, ev);
-	      pack.missingMassHistos[pass::SIDIS]->Fill(ev);
+	      pack.standardHistos[pass::kin]->Fill(event, electronIndex, mesonIndex, ev);
+	      pack.missingMassHistos[pass::kin]->Fill(ev);
 
 	      if (sqrt(ev.mm2) > pack.conf.cuts["missing_mass"]["min"] && 
 		  sqrt(ev.mm2) < pack.conf.cuts["missing_mass"]["max"] ){
@@ -179,7 +192,6 @@ public:
 		if(hel != helicity::unknown){
 		  
 		  pack.standardHistos[pass::all]->Fill(event, electronIndex, mesonIndex, ev);
-		  pack.missingMassHistos[pass::all]->Fill(ev);
 		  pack.counts[hel]->Fill(ev);
 
 		  // fill output tree 
@@ -225,12 +237,11 @@ public:
       out->SetCompressionLevel(3); 
 
       p.standardHistos[pass::mesonID]->Save(out);
-      p.standardHistos[pass::SIDIS]  ->Save(out);
+      p.standardHistos[pass::kin]    ->Save(out);
       p.standardHistos[pass::all]    ->Save(out);
 
       p.missingMassHistos[pass::mesonID]->Save(out);
-      p.missingMassHistos[pass::SIDIS]->Save(out);      
-      p.missingMassHistos[pass::all]->Save(out);
+      p.missingMassHistos[pass::kin]    ->Save(out);      
 
       // saving counts 
       p.counts[helicity::plus] ->Save(out);      

@@ -52,9 +52,12 @@ int main(int argc, char *argv[]){
 
     // business can begin 
     std::map<int, MissingMassHistos*> histos; 
-    histos[pass::all] = new MissingMassHistos(inputFile, "PassALL");
-    histos[pass::mesonID] = new MissingMassHistos(inputFile, "PassMesonID");
-    histos[pass::SIDIS] = new MissingMassHistos(inputFile, "PassSIDIS");
+    histos[pass::mesonID] = new MissingMassHistos();
+    histos[pass::kin]     = new MissingMassHistos();
+    
+    // load them suckers up 
+    histos[pass::mesonID]->Load(config.axes, inputFile, "PassMesonID");
+    histos[pass::kin]    ->Load(config.axes, inputFile, "PassKinematic");
 
     // start plotting the missing mass 
     TCanvas *can = new TCanvas("can","",1200,900); 
@@ -73,7 +76,7 @@ int main(int argc, char *argv[]){
     title->SetTextSize(0.03); 
 
     // cut bounts 
-    float max = histos[pass::mesonID]->h1_zoom->GetMaximum(); 
+    float max = histos[pass::mesonID]->zoomHist->GetMaximum(); 
 
     TLine *leftCut = new TLine(config.cuts["missing_mass"]["min"], 0, 
 			       config.cuts["missing_mass"]["min"], max); 
@@ -86,25 +89,38 @@ int main(int argc, char *argv[]){
     rightCut->SetLineStyle(8); 
     rightCut->SetLineWidth(2); 
 
-    histos[pass::mesonID]->h1_zoom->SetLineColor(99); 
-    histos[pass::mesonID]->h1_zoom->Draw(); 
-    histos[pass::SIDIS]->h1_zoom->SetLineColor(55); 
-    histos[pass::SIDIS]->h1_zoom->Draw("same"); 
+    histos[pass::mesonID]->zoomHist->SetLineColor(99); 
+    histos[pass::mesonID]->zoomHist->Draw(); 
+    histos[pass::kin]    ->zoomHist->SetLineColor(55); 
+    histos[pass::kin]    ->zoomHist->Draw("same"); 
 
     leftCut ->Draw(); 
     rightCut->Draw(); 
 
     title->DrawLatex(0.48, 0.05, "M_{X} (GeV/c^{2})"); 
-    title->DrawLatex(0.2, 0.92, "Cuts applied: #color[99]{Meson ID}, #color[55]{Meson ID + SIDIS}"); 
+    title->DrawLatex(0.2, 0.92, "Cuts applied: #color[99]{Meson ID}, #color[55]{Meson ID + Kinematic Restrictions}"); 
+
+    title->SetTextSize(0.024);
+    title->DrawLatex(0.73, 0.82, Form("#splitline{kinematic restrictions:}{#splitline{W #epsilon [%.1f, %.1f]}{Q^{2} #epsilon [%.1f, %.1f]}}", 
+      config.cuts["w"]["min"], config.cuts["w"]["max"], 
+      config.cuts["q2"]["min"], config.cuts["q2"]["max"]));
+    title->SetTextSize(0.03);
+
     can->Print(Form("%s/missing_mass_zoom_%s.pdf",outputPath.c_str(),config.name.c_str()));
 
-    histos[pass::mesonID]->h1_wide->SetLineColor(99); 
-    histos[pass::mesonID]->h1_wide->Draw(); 
-    histos[pass::SIDIS]->h1_wide->SetLineColor(55); 
-    histos[pass::SIDIS]->h1_wide->Draw("same"); 
+    histos[pass::mesonID]->wideHist->SetLineColor(99); 
+    histos[pass::mesonID]->wideHist->Draw(); 
+    histos[pass::kin]->wideHist->SetLineColor(55); 
+    histos[pass::kin]->wideHist->Draw("same"); 
 
     title->DrawLatex(0.48, 0.05, "M_{X} (GeV/c^{2})"); 
-    title->DrawLatex(0.2, 0.92, "Cuts applied: #color[99]{Meson ID}, #color[55]{Meson ID + SIDIS}"); 
+    title->DrawLatex(0.2, 0.92, "Cuts applied: #color[99]{Meson ID}, #color[55]{Meson ID + Kinematic Restrictions}"); 
+
+    title->SetTextSize(0.024);
+    title->DrawLatex(0.73, 0.82, Form("#splitline{kinematic restrictions:}{#splitline{W #epsilon [%.1f, %.1f]}{Q^{2} #epsilon [%.1f, %.1f]}}", 
+      config.cuts["w"]["min"], config.cuts["w"]["max"], 
+      config.cuts["q2"]["min"], config.cuts["q2"]["max"]));
+    title->SetTextSize(0.03);
     can->Print(Form("%s/missing_mass_wide_%s.pdf",outputPath.c_str(),config.name.c_str()));
 
   } else {

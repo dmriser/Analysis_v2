@@ -23,6 +23,9 @@
 	"w":{
 	    "min":2.0,
 	    "max":10.0
+	},
+	"require_proton":{
+	    "value":0
 	}
     }, 
 

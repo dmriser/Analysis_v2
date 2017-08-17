@@ -14,13 +14,20 @@
 #include "Types.h"
 
 // external 
+#include "TDirectory.h"
 #include "TFile.h"
+#include "TKey.h"
+#include "TList.h"
+#include "TRegexp.h"
+#include "TString.h"
 
 class PhiHistos {
   
  public:
   PhiHistos(){
    
+
+    fFile = new TFile(); 
   }
 
   ~PhiHistos(){
@@ -71,11 +78,9 @@ class PhiHistos {
 					  fBins[axis::phi].GetNumber(),
 					  fBins[axis::phi].GetLimits().data()));      
     }
- 
-
   }
 
-  void Fill(PhysicsEvent ev){
+  void Fill(PhysicsEvent & ev){
     std::map<int,int> indices;
     
 
@@ -135,16 +140,124 @@ class PhiHistos {
     }
   }
 
-  void Load(){
+  // passing the bins means you have to have 
+  // the config file but its ok.  it makes life
+  // easier in the loading phase.
+  void Load(std::map<int, DLineBins> bins, 
+	    std::string inputFilenameWithExtension, 
+	    std::string title){
+    
+    // setup things first 
+    fBins = bins; 
+    
+    // setup file 
+    fFile = TFile::Open(inputFilenameWithExtension.c_str());
 
+    // load the business 
+    for(int b=0; b<fBins[axis::x] .GetNumber(); b++){ histos[axis::x] .push_back( (TH1F*) fFile->Get(Form("phi/phi_x%d_%s", b,title.c_str())) ); }
+    for(int b=0; b<fBins[axis::q2].GetNumber(); b++){ histos[axis::q2].push_back( (TH1F*) fFile->Get(Form("phi/phi_q2%d_%s",b,title.c_str())) ); }
+    for(int b=0; b<fBins[axis::z] .GetNumber(); b++){ histos[axis::z] .push_back( (TH1F*) fFile->Get(Form("phi/phi_z%d_%s", b,title.c_str())) ); }
+    for(int b=0; b<fBins[axis::pt].GetNumber(); b++){ histos[axis::pt].push_back( (TH1F*) fFile->Get(Form("phi/phi_pt%d_%s",b,title.c_str())) ); }
+
+    std::cout << "[PhiHistos::Load] Loaded histograms = " << histos[axis::x] .size() << std::endl; 
+    std::cout << "[PhiHistos::Load] Loaded histograms = " << histos[axis::q2].size() << std::endl; 
+    std::cout << "[PhiHistos::Load] Loaded histograms = " << histos[axis::z] .size() << std::endl; 
+    std::cout << "[PhiHistos::Load] Loaded histograms = " << histos[axis::pt].size() << std::endl; 
   }
   
+  void CreateAsymmetry(PhiHistos *plus, PhiHistos *minus){
+    
+    for(std::pair<int,std::vector<TH1F*> > axis : histos){
+      axis.second.clear();
+    }
+
+    // should be the same as minus or 
+    // it will break 
+    fBins = plus->GetBins();
+
+    // for each histogram in each axis do every bin 
+    for (int h=0; h<fBins[axis::x].GetNumber(); h++){
+      TH1F *currentHisto = new TH1F(Form("phi_x%d_asym",h),"",
+				     fBins[axis::phi].GetNumber(), 
+				     fBins[axis::phi].GetLimits().data()); 
+
+      MakeAsymmetryHisto(currentHisto, 
+			 plus->histos[axis::x][h], 
+			 minus->histos[axis::x][h]); 
+      
+      // histogram is done 
+      histos[axis::x].push_back(currentHisto);
+    }
+
+    // for each histogram in each axis do every bin 
+    for (int h=0; h<fBins[axis::q2].GetNumber(); h++){
+      TH1F *currentHisto = new TH1F(Form("phi_q2%d_asym",h),"",
+				     fBins[axis::phi].GetNumber(), 
+				     fBins[axis::phi].GetLimits().data()); 
+
+      MakeAsymmetryHisto(currentHisto, 
+			 plus->histos[axis::q2][h], 
+			 minus->histos[axis::q2][h]); 
+      
+      // histogram is done 
+      histos[axis::q2].push_back(currentHisto);
+    }
+
+    // for each histogram in each axis do every bin 
+    for (int h=0; h<fBins[axis::z].GetNumber(); h++){
+      TH1F *currentHisto = new TH1F(Form("phi_z%d_asym",h),"",
+				     fBins[axis::phi].GetNumber(), 
+				     fBins[axis::phi].GetLimits().data()); 
+
+      MakeAsymmetryHisto(currentHisto, 
+			 plus->histos[axis::z][h], 
+			 minus->histos[axis::z][h]); 
+      
+      // histogram is done 
+      histos[axis::z].push_back(currentHisto);
+    }
+
+    // for each histogram in each axis do every bin 
+    for (int h=0; h<fBins[axis::pt].GetNumber(); h++){
+      TH1F *currentHisto = new TH1F(Form("phi_pt%d_asym",h),"",
+				     fBins[axis::phi].GetNumber(), 
+				     fBins[axis::phi].GetLimits().data()); 
+
+      MakeAsymmetryHisto(currentHisto, 
+			 plus->histos[axis::pt][h], 
+			 minus->histos[axis::pt][h]); 
+      
+      // histogram is done 
+      histos[axis::pt].push_back(currentHisto);
+    }
+ 
+  }
+
+  std::map<int, DLineBins> GetBins() const {
+    return fBins; 
+  }
 
   // the histograms have index 
   // axis, heliciy 
   std::map<int, std::vector<TH1F*> > histos; 
 
  protected:
+
+  void MakeAsymmetryHisto(TH1F *asym, TH1F *plus, TH1F *minus){
+      for(int b=1; b<=plus->GetXaxis()->GetNbins(); b++){
+	double p  = plus ->GetBinContent(b);
+	double m = minus->GetBinContent(b);
+	double sum   = p+m;
+	double diff  = p-m;
+	double err   = sqrt((1-pow(diff/sum,2))/sum);
+
+	if(sum > 0.0){
+	  asym->SetBinContent(b, diff/sum); 
+	  asym->SetBinError(b, err); 
+	}
+      }
+  }
+
   std::string               fName; 
   std::map<int, DLineBins>  fBins; 
 

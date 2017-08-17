@@ -170,7 +170,7 @@
      PIP_DBETA_MIN        1     e          0.0000
      PIP_DBETA_MAX        1     v          0.0300
      PIP_DBETA_MAX        1     e          0.0000
-     KP_DBETA_MIN        1     v         -0.0200
+     KP_DBETA_MIN        1     v         -0.0400
      KP_DBETA_MIN        1     e          0.0000
-     KP_DBETA_MAX        1     v          0.0200
+     KP_DBETA_MAX        1     v          0.0400
      KP_DBETA_MAX        1     e          0.0000

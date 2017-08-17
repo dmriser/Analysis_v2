@@ -11,7 +11,7 @@ enum axis {
 
 enum pass {
   mesonID, 
-  SIDIS, 
+  kin, 
   all
 };
 

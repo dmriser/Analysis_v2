@@ -9,6 +9,9 @@ set output = $1
 # setup the directory tree of configs to merge 
 set sub_dirs = `ls -d /volatile/clas12/dmriser/farm_out/$output/*/`
 
+# all jobs will be moved to a new home
+set target = /volatile/clas12/dmriser/rootFiles/asymmetry2/
+
 # get each config and add the files together 
 foreach dir ($sub_dirs)
 	cd $dir 
@@ -18,6 +21,13 @@ foreach dir ($sub_dirs)
 
 	# create the big file 
 	hadd $config.root *.root 
+	
+	# move him to a new home, if one 
+	# doesn't exist, build him one
+	# make sure you include his config
+	mkdir -p $target/$config/
+	cp $config.root $target/$config
+	cp $config.json $target/$config
 
 	# come back here 
 	cd -

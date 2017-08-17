@@ -42,6 +42,7 @@ ParticleFilter::ParticleFilter(Parameters *params) : pars(params){
     negativePionSelector = new DataEventSelector();
     positiveKaonSelector = new DataEventSelector();
     negativeKaonSelector = new DataEventSelector();
+    protonSelector       = new DataEventSelector(); 
     positiveMesonCandidateSelector = new DataEventSelector(); 
 
     // Call cut constructors
@@ -130,8 +131,9 @@ ParticleFilter::ParticleFilter(Parameters *params) : pars(params){
 
 
     // delta beta cuts 
-    kp_dbeta_cut = new DataEventCut_DeltaBetaCut(321); 
-    pp_dbeta_cut = new DataEventCut_DeltaBetaCut(211); 
+    kp_dbeta_cut     = new DataEventCut_DeltaBetaCut(321); 
+    pp_dbeta_cut     = new DataEventCut_DeltaBetaCut(211); 
+    proton_dbeta_cut = new DataEventCut_DeltaBetaCut(2212); 
 
     // fiducial cuts on r1 triangle shape 
     dcr1_meson_fid_cut = new DCR1FiducialCut();
@@ -731,6 +733,10 @@ ParticleFilter::ParticleFilter(Parameters *params) : pars(params){
     kp_dbeta_cut->SetMax(params->getParameter("KP_DBETA_MAX").getValue(0));
 
 
+    // strict hard coded cuts on protons
+    proton_dbeta_cut->SetMin(-0.045); 
+    proton_dbeta_cut->SetMax( 0.045);
+
     // Setup pion selectors
     testCut = new TestCut(); 
 
@@ -812,6 +818,10 @@ ParticleFilter::ParticleFilter(Parameters *params) : pars(params){
     //    positiveMesonCandidateSelector->AddCut(mesonCandidate_tofmass_cut); 
     positiveMesonCandidateSelector->EnableAll(); 
 
+    protonSelector->AddCut(proton_dbeta_cut);
+    protonSelector->AddCut(dcr1_meson_fid_cut);
+    protonSelector->EnableAll(); 
+    
 }
 
 ParticleFilter::~ParticleFilter(){
@@ -839,6 +849,8 @@ DataEventSelector *ParticleFilter::GetSelector(int pid){
         return negativeKaonSelector;
     } else if (pid == 321){
         return positiveKaonSelector;
+    } else if (pid == 2212){
+        return protonSelector;
     } else {
         return new DataEventSelector();
     }
@@ -909,8 +921,8 @@ vector<int> ParticleFilter::getVectorOfParticleIndices(h22Event &event, int pid)
       std::vector<int> electrons = getVectorOfParticleIndices(event, 11);
       if (!electrons.empty()){
 	for(int ipart=0; ipart<event.gpart; ipart++){
-	  if(event.id[ipart] == 2212){
-	    if (dcr1_meson_fid_cut->IsPassed(event, ipart)){ particles.push_back(ipart); }
+	  if (event.q[ipart]>0){
+	    if(protonSelector->IsPassedFast(event, ipart)){ particles.push_back(ipart); }
 	  }
 	}
       }

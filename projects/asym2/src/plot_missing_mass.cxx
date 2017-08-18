@@ -31,7 +31,7 @@ int main(int argc, char *argv[]){
   opts.args["config"].name = "configuration file"; 
   opts.args["config"].type = 1;
 
-  opts.args["output_path"].args = "/volatile/clas12/dmriser/plots/asymmetry";   
+  opts.args["output_path"].args = "/volatile/clas12/dmriser/";   
   opts.args["ouptut_path"].name = "plot destination"; 
   opts.args["output_path"].type = 1;
 

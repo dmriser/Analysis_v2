@@ -1,18 +1,18 @@
 {
     "system":{
-	"file_list":"list.dat",
-	"output":"./",
-	"analysis_home":"/volatile/clas12/dmriser/analysis/asymmetry",
-	"config_name":"k_lambda_basic",
+	"file_list":"/u/home/dmriser/Analysis_v2/lists/kaon_files.dat",
+	"output":"/volatile/clas12/dmriser/analysis/asymmetry/test/",
+	"analysis_home":"/volatile/clas12/dmriser/analysis/asymmetry/",
+	"config_name":"test2",
 	"n_files":600,
-	"write_tree":0,
-	"parameter_file":"/u/home/dmriser/Analysis_v2/lists/data_tofmass.pars"
+	"parameter_file":"/u/home/dmriser/Analysis_v2/lists/data_tofmass.pars",
+	"write_tree":1
     },
 
     "fitter":{
-        "options":"WLER",
-        "n_parameters":1,
-        "function":"[0]*sin((3.14159/180.0)*x)"
+	"options":"WLER",
+	"n_parameters":1,
+	"function":"[0]*sin((3.14159/180.0)*x)"
     },
 
     "cuts":{
@@ -31,8 +31,12 @@
 	    "min":1.5,
 	    "max":2.6
 	},
+	"meson_p":{
+	    "min":0.30, 
+	    "max":10.0
+	},
 	"require_proton":{
-	    "value":0
+	    "value":1
 	}
     }, 
 

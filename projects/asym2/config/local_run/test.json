@@ -4,7 +4,7 @@
 	"output":"/volatile/clas12/dmriser/analysis/asymmetry/test/",
 	"analysis_home":"/volatile/clas12/dmriser/analysis/asymmetry/",
 	"config_name":"test",
-	"n_files":60,
+	"n_files":100,
 	"parameter_file":"/u/home/dmriser/Analysis_v2/lists/data_tofmass.pars",
 	"write_tree":1
     },
@@ -30,6 +30,10 @@
 	"w":{
 	    "min":2.0,
 	    "max":10.0
+	},
+	"meson_p":{
+	    "min":0.30, 
+	    "max":2.05
 	},
 	"require_proton":{
 	    "value":1

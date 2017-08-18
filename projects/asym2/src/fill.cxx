@@ -170,10 +170,12 @@ public:
 
 	    // check that event is kinematically 
 	    // desirable
-	    if (ev.w  > pack.conf.cuts["w"]["min"]  && 
-		ev.w  < pack.conf.cuts["w"]["max"]  && 
-		ev.qq > pack.conf.cuts["q2"]["min"] && 
-		ev.qq < pack.conf.cuts["q2"]["max"] ){ 
+	    if (ev.w  > pack.conf.cuts["w"]["min"]                     && 
+		ev.w  < pack.conf.cuts["w"]["max"]                     && 
+		ev.qq > pack.conf.cuts["q2"]["min"]                    && 
+		ev.qq < pack.conf.cuts["q2"]["max"]                    && 
+		event.p[mesonIndex] > pack.conf.cuts["meson_p"]["min"] && 
+		event.p[mesonIndex] < pack.conf.cuts["meson_p"]["max"]){ 
 	      
 	      // do something 
 	      pack.standardHistos[pass::kin]->Fill(event, electronIndex, mesonIndex, ev);

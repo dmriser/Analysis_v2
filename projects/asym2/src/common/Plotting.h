@@ -9,6 +9,7 @@
 #include "PhiFits.h"
 #include "PhiHistograms.h"
 #include "MissingMassHistograms.h"
+#include "KinematicHistograms.h"
 #include "Config.h"
 #include "ConfigLoader.h"
 #include "ConfigLoader.cxx"
@@ -37,15 +38,28 @@ public:
 
   static void ApplyStyle(TH1F *h, int style){
 
-    if (style == 0){
+    if (style == styles::marker_black){
       h->SetMarkerColor(kBlack);
       h->SetMarkerStyle(8);
       h->SetLineColor(kBlack); 
       h->SetLineWidth(1); 
     }
 
-    else if (style == 1){
+    if (style == styles::marker_red){
+      h->SetMarkerColor(99);
+      h->SetMarkerStyle(8);
+      h->SetLineColor(99); 
+      h->SetLineWidth(1); 
+    }
+
+    else if (style == styles::filled_red){
+      h->SetLineColor(99);
       h->SetFillColorAlpha(99, 0.3);
+    }
+
+    else if (style == styles::filled_blue){
+      h->SetLineColor(55);
+      h->SetFillColorAlpha(55, 0.3);
     }
 
   }
@@ -162,6 +176,114 @@ public:
 	  title->SetTextAngle(90.0);
 	  title->DrawLatex(0.01, 0.4, y.c_str());
 	  title->SetTextAngle(0.0);
+	  title->DrawLatex(0.14, 0.80, Form("%s #epsilon [%.2f,%.2f]", 
+					    axisNames[currentAxis].c_str(), 
+					    currentBins.GetBin(b).GetMin(), 
+					    currentBins.GetBin(b).GetMax()));
+	  
+	  // we need to print a page 
+	  if (index > 16){
+	    index = 1; 
+	    canvas->Print(pdf.c_str());
+	    canvas->Clear(); 
+	    canvas->Divide(4,4); 
+	  }
+
+	}
+      }
+    }
+
+    canvas->Print(pdf.c_str());
+    canvas->Print(Form("%s]",pdf.c_str()));
+  }
+
+
+  static void PlotOneKinematicHisto(KinematicHistos *h, 
+				    std::string name, 
+				    std::string y,
+				    std::string options, 
+				    int plotStyle,
+				    std::string pdf){
+
+    // retrieve binning from histograms 
+    std::map<int, DLineBins> bins = h->GetBins();
+    
+    // setup a reasonably sized canvas 
+    TCanvas *canvas = new TCanvas("canvas","",1600,500);
+    canvas->Divide(4,1);
+    canvas->Print(Form("%s[",pdf.c_str()));
+
+    // setup a printer 
+    TLatex *title = new TLatex();
+    title->SetNDC();
+    title->SetTextFont(42);
+    title->SetTextSize(0.05);
+
+    int index = 1; 
+    for(std::pair<int, DLineBins> p : bins){
+      int currentAxis       = p.first; 
+      
+      if (currentAxis != axis::phi){
+	canvas->cd(index);
+	canvas->SetMargin(0.2, 0.2, 0.2, 0.2);
+	
+	ApplyStyle(h->histos[currentAxis], plotStyle);
+	h->histos[currentAxis]->Draw(options.c_str());
+	index++; 	  
+	
+	title->DrawLatex(0.4, 0.01, axisNames[currentAxis].c_str());
+	title->SetTextAngle(90.0);
+	title->DrawLatex(0.01, 0.4, y.c_str());
+	title->SetTextAngle(0.0);
+	//	  title->DrawLatex(0.14, 0.80, Form("%s #epsilon [%.2f,%.2f]", 
+	//					    axisNames[currentAxis].c_str(), 
+	//					    currentBins.GetBin(b).GetMin(), 
+	//					    currentBins.GetBin(b).GetMax()));
+	
+      }
+    }
+ 
+    canvas->Print(pdf.c_str());
+    canvas->Print(Form("%s]",pdf.c_str()));
+  }
+
+  static void PlotOneMissingMassHisto(MissingMassHistos *h, 
+				      std::string name, 
+				      std::string options, 
+				      int plotStyle,
+				      std::string pdf){
+
+    // retrieve binning from histograms 
+    std::map<int, DLineBins> bins = h->GetBins();
+    
+    // setup a reasonably sized canvas 
+    TCanvas *canvas = new TCanvas("canvas","",1600,1200);
+    canvas->Divide(4,4);
+    canvas->Print(Form("%s[",pdf.c_str()));
+
+    // setup a printer 
+    TLatex *title = new TLatex();
+    title->SetNDC();
+    title->SetTextFont(42);
+    title->SetTextSize(0.05);
+
+    int index = 1;
+    for(std::pair<int, DLineBins> p : bins){
+      int currentAxis       = p.first; 
+      DLineBins currentBins = p.second; 
+
+
+      if (currentAxis != axis::phi){
+	for(int b=0; b<currentBins.GetNumber(); b++){
+	  canvas->cd(index);
+	  canvas->SetMargin(0.2, 0.2, 0.2, 0.2);
+
+	  ApplyStyle(h->wide[currentAxis][b], plotStyle);
+	  h->wide[currentAxis][b]->Draw(options.c_str());
+
+	  index++; 
+	  
+
 	  title->DrawLatex(0.14, 0.80, Form("%s #epsilon [%.2f,%.2f]", 
 					    axisNames[currentAxis].c_str(), 
 					    currentBins.GetBin(b).GetMin(), 

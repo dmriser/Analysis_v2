@@ -220,6 +220,9 @@ class MissingMassHistos {
       wide[axis::pt] .push_back( (TH1F*) fFile->Get(Form("missingMass/missingMass_wide_pt%d_%s", b,title.c_str())) ); 
       zoom[axis::pt] .push_back( (TH1F*) fFile->Get(Form("missingMass/missingMass_zoom_pt%d_%s", b,title.c_str())) ); 
     }
+
+    std::cout << "Missing mass loaded = " << wideHist->GetEntries() << std::endl;     
+    std::cout << "Missing mass loaded = " << zoomHist->GetEntries() << std::endl; 
   }
 
   std::map<int, DLineBins> GetBins() const {

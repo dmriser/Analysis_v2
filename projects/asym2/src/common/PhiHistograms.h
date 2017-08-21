@@ -183,7 +183,7 @@ class PhiHistos {
 
       MakeAsymmetryHisto(currentHisto, 
 			 plus->histos[axis::x][h], 
-			 minus->histos[axis::x][h]); 
+			 minus->histos[axis::x][h], 0.1); 
       
       // histogram is done 
       histos[axis::x].push_back(currentHisto);
@@ -197,7 +197,7 @@ class PhiHistos {
 
       MakeAsymmetryHisto(currentHisto, 
 			 plus->histos[axis::q2][h], 
-			 minus->histos[axis::q2][h]); 
+			 minus->histos[axis::q2][h], 0.1); 
       
       // histogram is done 
       histos[axis::q2].push_back(currentHisto);
@@ -211,7 +211,7 @@ class PhiHistos {
 
       MakeAsymmetryHisto(currentHisto, 
 			 plus->histos[axis::z][h], 
-			 minus->histos[axis::z][h]); 
+			 minus->histos[axis::z][h], 0.1); 
       
       // histogram is done 
       histos[axis::z].push_back(currentHisto);
@@ -225,7 +225,7 @@ class PhiHistos {
 
       MakeAsymmetryHisto(currentHisto, 
 			 plus->histos[axis::pt][h], 
-			 minus->histos[axis::pt][h]); 
+			 minus->histos[axis::pt][h], 0.1); 
       
       // histogram is done 
       histos[axis::pt].push_back(currentHisto);
@@ -243,7 +243,7 @@ class PhiHistos {
 
  protected:
 
-  void MakeAsymmetryHisto(TH1F *asym, TH1F *plus, TH1F *minus){
+  void MakeAsymmetryHisto(TH1F *asym, TH1F *plus, TH1F *minus, float pointErrorLimit){
       for(int b=1; b<=plus->GetXaxis()->GetNbins(); b++){
 	double p  = plus ->GetBinContent(b);
 	double m = minus->GetBinContent(b);
@@ -251,9 +251,13 @@ class PhiHistos {
 	double diff  = p-m;
 	double err   = sqrt((1-pow(diff/sum,2))/sum);
 
-	if(sum > 0.0){
+	// this should be handled as an input 
+	if(sum > 0.0 && err < pointErrorLimit){
 	  asym->SetBinContent(b, diff/sum); 
 	  asym->SetBinError(b, err); 
+	} else {
+	  asym->SetBinContent(b,0);
+	  asym->SetBinError(b,0);
 	}
       }
   }

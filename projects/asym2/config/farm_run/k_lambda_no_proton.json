@@ -3,7 +3,7 @@
 	"file_list":"list.dat",
 	"output":"./",
 	"analysis_home":"/volatile/clas12/dmriser/analysis/asymmetry",
-	"config_name":"k_lambda_basic",
+	"config_name":"k_lambda_no_proton",
 	"n_files":600,
 	"write_tree":0,
 	"parameter_file":"/u/home/dmriser/Analysis_v2/lists/data_tofmass.pars"
@@ -30,6 +30,10 @@
 	"w":{
 	    "min":1.5,
 	    "max":2.6
+	},
+	"meson_p":{
+	    "min":0.3,
+	    "max":5.7
 	},
 	"require_proton":{
 	    "value":0

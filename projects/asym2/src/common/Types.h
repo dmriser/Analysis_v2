@@ -24,10 +24,17 @@ enum helicity{
   unknown
 };
 
-std::map<int, std::string> axisNames = {{axis::x,    "x"}, 
-					{axis::q2,   "Q^{2}"},
-					{axis::z,    "z"},
-					{axis::pt,   "P_{T}"},
+enum styles {
+  marker_black, 
+  marker_red, 
+  filled_blue, 
+  filled_red
+};
+
+std::map<int, std::string> axisNames = {{axis::x,   "x"}, 
+					{axis::q2,  "Q^{2}"},
+					{axis::z,   "z"},
+					{axis::pt,  "P_{T}"},
 					{axis::phi, "#phi_{h}"}};
 
 #endif

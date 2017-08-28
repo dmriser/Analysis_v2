@@ -4,6 +4,7 @@
 #include "common/ConfigLoader.h"
 #include "common/ConfigLoader.cxx"
 #include "common/MissingMassHistograms.h"
+#include "common/Moments.h"
 #include "common/PhiHistograms.h"
 #include "common/TreeOutput.h"
 #include "common/Types.h"
@@ -11,9 +12,11 @@
 // h22 libs 
 #include "CommonTools.h"
 #include "Corrections.h"
+#include "CheckPoints.h"
 #include "DBins.h"
 #include "h22Event.h"
 #include "h22Reader.h"
+#include "MesonHistograms.h"
 #include "MomCorr.h"
 #include "ParticleFilter.h"
 #include "Parameters.h"
@@ -32,9 +35,12 @@ struct configPack{
   Parameters         *pars; 
   ParticleFilter     *filter;
   PhiHistos          *counts[2]; 
+  Moments            *moments; 
+  CheckPoints        *checkPoints; 
 
   TreeOutput *tree; 
   std::map<int, StandardHistograms*> standardHistos; 
+  std::map<int, MesonHistograms*>    mesonHistos; 
   std::map<int, MissingMassHistos*>  missingMassHistos; 
 };
 
@@ -59,6 +65,11 @@ public:
       currentPack.standardHistos[pass::kin]     = new StandardHistograms("PassKinematic"  ,0);
       currentPack.standardHistos[pass::all]     = new StandardHistograms("PassAll"    ,0);
 
+      // setup meson histograms 
+      currentPack.mesonHistos[pass::mesonID] = new MesonHistograms("PassMesonID", currentPack.conf.mesonIndex); 
+      currentPack.mesonHistos[pass::kin]     = new MesonHistograms("PassKinematic", currentPack.conf.mesonIndex); 
+      currentPack.mesonHistos[pass::all]     = new MesonHistograms("PassAll", currentPack.conf.mesonIndex); 
+
       // setup missing mass histos 
       currentPack.missingMassHistos[pass::mesonID] = new MissingMassHistos(); 
       currentPack.missingMassHistos[pass::kin]     = new MissingMassHistos(); 
@@ -76,6 +87,17 @@ public:
       // output tree 
       currentPack.tree = new TreeOutput(); 
 
+      // moments 
+      currentPack.moments = new Moments(); 
+      currentPack.moments->SetMaxMoment(200); 
+
+      // checkpoints 
+      currentPack.checkPoints = new CheckPoints(); 
+      currentPack.checkPoints->AddCheckPoint("Passing Electron ID"); 
+      currentPack.checkPoints->AddCheckPoint("Passing Meson ID"); 
+      currentPack.checkPoints->AddCheckPoint("Passing Kinematic Cuts");
+      currentPack.checkPoints->AddCheckPoint("Passing Everything"); 
+
       packs.push_back(currentPack);
     }
 
@@ -88,6 +110,10 @@ public:
       std::cout << p.conf.name << std::endl; 
       p.filter->GetSelector(11)->PrintSummary();
       p.filter->GetSelector(p.conf.mesonIndex)->PrintSummary();
+    }
+    for(configPack p : packs){
+      std::cout << p.conf.name << std::endl; 
+      p.checkPoints->PrintSummary(); 
     }
   }
 
@@ -114,6 +140,8 @@ public:
 
 	std::vector<int> electronIndices = pack.filter->getVectorOfParticleIndices(event, 11);
 	if(!electronIndices.empty()){
+
+	  pack.checkPoints->CheckIn(); 
 	  
 	  int electronIndex = electronIndices[0];
 	  event.SetElectronIndex(electronIndex);
@@ -122,6 +150,8 @@ public:
 	  std::vector<int> mesonIndices = pack.filter->getVectorOfParticleIndices(event, pack.conf.mesonIndex);
 	  if (!mesonIndices.empty()){
 
+	    pack.checkPoints->CheckIn(); 
+	  
 	    // build an event 
 	    int mesonIndex = mesonIndices[0];
 	    TLorentzVector electron = event.GetTLorentzVector(electronIndex, 11);  
@@ -166,6 +196,7 @@ public:
 	    }
 
 	    pack.standardHistos[pass::mesonID]->Fill(event, electronIndex, mesonIndex, ev);
+	    pack.mesonHistos[pass::mesonID]->Fill(event, ev, mesonIndex);
 	    pack.missingMassHistos[pass::mesonID]->Fill(ev);
 
 	    // check that event is kinematically 
@@ -177,8 +208,12 @@ public:
 		event.p[mesonIndex] > pack.conf.cuts["meson_p"]["min"] && 
 		event.p[mesonIndex] < pack.conf.cuts["meson_p"]["max"]){ 
 	      
+	    
+	      pack.checkPoints->CheckIn(); 
+
 	      // do something 
 	      pack.standardHistos[pass::kin]->Fill(event, electronIndex, mesonIndex, ev);
+	      pack.mesonHistos[pass::kin]->Fill(event, ev, mesonIndex);
 	      pack.missingMassHistos[pass::kin]->Fill(ev);
 
 	      if (sqrt(ev.mm2) > pack.conf.cuts["missing_mass"]["min"] && 
@@ -192,8 +227,10 @@ public:
 		if (event.corr_hel < 0){ hel = helicity::minus; }
 		
 		if(hel != helicity::unknown){
-		  
+		  pack.checkPoints->CheckIn(); 
+	  
 		  pack.standardHistos[pass::all]->Fill(event, electronIndex, mesonIndex, ev);
+		  pack.mesonHistos[pass::all]->Fill(event, ev, mesonIndex);
 		  pack.counts[hel]->Fill(ev);
 
 		  // fill output tree 
@@ -202,15 +239,17 @@ public:
 		  pack.tree->electron = electron; 
 		  pack.tree->meson    = meson; 
 		  pack.tree->tree->Fill();
+
+		  // fill moments 
+		  pack.moments->Fill(ev, hel); 
 		}
 	      }
 	    }
-
-
 	  }
-
 	}
 
+      
+	pack.checkPoints->Reset(); 
       }
       
 
@@ -242,6 +281,10 @@ public:
       p.standardHistos[pass::kin]    ->Save(out);
       p.standardHistos[pass::all]    ->Save(out);
 
+      p.mesonHistos[pass::mesonID]->Save(out); 
+      p.mesonHistos[pass::kin]    ->Save(out); 
+      p.mesonHistos[pass::all]    ->Save(out); 
+
       p.missingMassHistos[pass::mesonID]->Save(out);
       p.missingMassHistos[pass::kin]    ->Save(out);      
 
@@ -249,12 +292,17 @@ public:
       p.counts[helicity::plus] ->Save(out);      
       p.counts[helicity::minus]->Save(out);
 
+      // saving moments 
+      p.moments->Save(out); 
+
       // save only if 
       // asked 
       if (p.conf.writeTree){
 	p.tree->Save(out);
       }
-
+      
+      // save checkpoints 
+      p.checkPoints->Save(out); 
 
       out->Write();
       out->Close();

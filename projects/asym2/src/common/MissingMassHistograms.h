@@ -49,8 +49,8 @@ class MissingMassHistos {
     float leftLimit  = (1-fThreshold)*config.cuts["missing_mass"]["min"];
     float rightLimit = (1+fThreshold)*config.cuts["missing_mass"]["max"];
 
-    float wideLeft  = 0.65; 
-    float wideRight = 2.90; 
+    float wideLeft  = 0.60; 
+    float wideRight = 2.00; 
 
     wideHist = new TH1F(Form("missingMass_wide_%s",fName.c_str()),"",200,wideLeft,wideRight);
     zoomHist = new TH1F(Form("missingMass_zoom_%s",fName.c_str()),"",fNumBins,leftLimit,rightLimit);
@@ -76,7 +76,7 @@ class MissingMassHistos {
       wide[axis::q2].push_back(new TH1F(title.c_str(), 
 					title.c_str(),
 					100, wideLeft, wideRight));
-      title = Form("missingMass_zoom_x%d_%s", b, fName.c_str());
+      title = Form("missingMass_zoom_q2%d_%s", b, fName.c_str());
       zoom[axis::q2].push_back(new TH1F(title.c_str(), 
 					title.c_str(),
 					fNumBins, leftLimit, rightLimit));
@@ -88,7 +88,7 @@ class MissingMassHistos {
       wide[axis::z].push_back(new TH1F(title.c_str(), 
 				       title.c_str(),
 				       100, wideLeft, wideRight));
-      title = Form("missingMass_zoom_x%d_%s", b, fName.c_str());
+      title = Form("missingMass_zoom_z%d_%s", b, fName.c_str());
       zoom[axis::z].push_back(new TH1F(title.c_str(), 
 				       title.c_str(),
 				       fNumBins, leftLimit, rightLimit));
@@ -100,7 +100,7 @@ class MissingMassHistos {
       wide[axis::pt].push_back(new TH1F(title.c_str(), 
 					title.c_str(),
 					100, wideLeft, wideRight));
-      title = Form("missingMass_zoom_x%d_%s", b, fName.c_str());
+      title = Form("missingMass_zoom_pt%d_%s", b, fName.c_str());
       zoom[axis::pt].push_back(new TH1F(title.c_str(), 
 					title.c_str(),
 					fNumBins, leftLimit, rightLimit));

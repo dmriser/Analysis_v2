@@ -1,5 +1,6 @@
 #include <iostream>
 
+// this project 
 #include "common/Config.h"
 #include "common/ConfigLoader.h"
 #include "common/ConfigLoader.cxx"
@@ -7,6 +8,9 @@
 #include "common/Plotting.h"
 #include "common/KinematicHistograms.h"
 #include "common/MissingMassHistograms.h"
+
+// h22 libs
+#include "StandardHistograms.h"
 
 int main(int argc, char *argv[]){
 
@@ -42,6 +46,9 @@ int main(int argc, char *argv[]){
    MissingMassHistos *mass = new MissingMassHistos(); 
    mass->Load(c.axes, Form("%s/%s/histos.root", c.analysisHome.c_str(), c.name.c_str()), "PassKinematic"); 
    
+   StandardHistograms *standard = new StandardHistograms("PassAll",1);
+   standard->Load(Form("%s/%s/histos.root", c.analysisHome.c_str(), c.name.c_str()));
+
    Plotting::Setup();
    Plotting::PlotTwoPhiHistos(asym, err,
 			      "A_{LU}^{sin(#phi)}",
@@ -70,13 +77,20 @@ int main(int argc, char *argv[]){
 				   "histpe",
 				   styles::marker_black,
 				   Form("%s/%s/plots/asymmetry/integrated.pdf",c.analysisHome.c_str(),c.name.c_str())); 
+
    
    Plotting::PlotOneMissingMassHisto(mass,
-				     "Pass MesonID",
+				     c.cuts["missing_mass"]["min"],
+				     c.cuts["missing_mass"]["max"],
+				     "Pass Kinematic Cuts",
 				     "hist",
 				     styles::filled_red,
 				     Form("%s/%s/plots/missingMass/passKinematics.pdf",c.analysisHome.c_str(),c.name.c_str())); 
-   
+
+   Plotting::PlotPtVsZ(c,standard,"",Form("%s/%s/plots/z_pt2.pdf",c.analysisHome.c_str(),c.name.c_str())); 
+   Plotting::PlotPtVsZBinned(c,standard,"",Form("%s/%s/plots/z_pt2_binned.pdf",c.analysisHome.c_str(),c.name.c_str())); 
+   Plotting::PlotQ2VsX(c,standard,"",Form("%s/%s/plots/x_q2.pdf",c.analysisHome.c_str(),c.name.c_str())); 
+   Plotting::PlotQ2VsXBinned(c,standard,"",Form("%s/%s/plots/x_q2_binned.pdf",c.analysisHome.c_str(),c.name.c_str())); 
  }
  
  return 0;

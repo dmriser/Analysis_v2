@@ -16,7 +16,9 @@
 #include "Types.h"
 
 // h22 libraries 
+#include "CommonTools.h"
 #include "DBins.h"
+#include "StandardHistograms.h"
 
 // root 
 #include "TCanvas.h"
@@ -33,10 +35,25 @@ public:
   static void Setup(){
     gStyle->SetOptFit(0);
     gStyle->SetOptStat(0);
-    gStyle->SetOptTitle(0);
+    //    gStyle->SetOptTitle(0);
+    gStyle->SetLabelSize(0.03,"xyz");
+    gStyle->SetTitleSize(0.035,"xyz");
+    gStyle->SetTitleFont(22,"xyz");
+    gStyle->SetLabelFont(22,"xyz");
+    gStyle->SetTitleOffset(1.2,"y");
   }
 
   static void ApplyStyle(TH1F *h, int style){
+
+    // apply some common options 
+    //    h->SetLabelSize(0.1, "x");
+    //    h->SetLabelSize(0.1, "y");
+    //    h->SetLabelFont(42); 
+    //    h->GetXaxis()->SetNdivisions(502);
+    //    h->GetYaxis()->SetNdivisions(502);
+    h->GetXaxis()->SetTitleSize(0.05); 
+    h->GetYaxis()->SetTitleSize(0.05); 
+
 
     if (style == styles::marker_black){
       h->SetMarkerColor(kBlack);
@@ -45,7 +62,7 @@ public:
       h->SetLineWidth(1); 
     }
 
-    if (style == styles::marker_red){
+    else if (style == styles::marker_red){
       h->SetMarkerColor(99);
       h->SetMarkerStyle(8);
       h->SetLineColor(99); 
@@ -98,11 +115,13 @@ public:
 	  canvas->cd(index);
 	  canvas->SetMargin(0.2, 0.2, 0.2, 0.2);
 
+	  h->histos[currentAxis][b]->SetTitle(Form("%s;%s;%s",name.c_str(),x.c_str(),y.c_str())); 
+
 	  ApplyStyle(h->histos[currentAxis][b], plotStyle);
 	  h->histos[currentAxis][b]->Draw(options.c_str());
 	  index++; 
 	  
-
+	  
 	  title->DrawLatex(0.4, 0.01, x.c_str());
 	  title->SetTextAngle(90.0);
 	  title->DrawLatex(0.01, 0.4, y.c_str());
@@ -112,6 +131,7 @@ public:
 					    currentBins.GetBin(b).GetMin(), 
 					    currentBins.GetBin(b).GetMax()));
 	  
+
 	  // we need to print a page 
 	  if (index > 16){
 	    index = 1; 
@@ -165,6 +185,9 @@ public:
 	  canvas->cd(index);
 	  canvas->SetMargin(0.2, 0.2, 0.2, 0.2);
 
+	  h1->histos[currentAxis][b]->SetTitle(Form("%s;%s;%s",name.c_str(),x.c_str(),y.c_str())); 
+	  h2->histos[currentAxis][b]->SetTitle(Form("%s;%s;%s",name.c_str(),x.c_str(),y.c_str())); 
+
 	  ApplyStyle(h1->histos[currentAxis][b], plotStyle1);
 	  ApplyStyle(h2->histos[currentAxis][b], plotStyle2);
 	  h1->histos[currentAxis][b]->Draw(options1.c_str());
@@ -172,10 +195,10 @@ public:
 	  index++; 
 	  
 
-	  title->DrawLatex(0.4, 0.01, x.c_str());
-	  title->SetTextAngle(90.0);
-	  title->DrawLatex(0.01, 0.4, y.c_str());
-	  title->SetTextAngle(0.0);
+	  //	  title->DrawLatex(0.4, 0.01, x.c_str());
+	  //	  title->SetTextAngle(90.0);
+	  //	  title->DrawLatex(0.01, 0.4, y.c_str());
+	  //	  title->SetTextAngle(0.0);
 	  title->DrawLatex(0.14, 0.80, Form("%s #epsilon [%.2f,%.2f]", 
 					    axisNames[currentAxis].c_str(), 
 					    currentBins.GetBin(b).GetMin(), 
@@ -248,6 +271,8 @@ public:
   }
 
   static void PlotOneMissingMassHisto(MissingMassHistos *h, 
+				      float min, 
+				      float max,
 				      std::string name, 
 				      std::string options, 
 				      int plotStyle,
@@ -278,8 +303,8 @@ public:
 	  canvas->cd(index);
 	  canvas->SetMargin(0.2, 0.2, 0.2, 0.2);
 
-	  ApplyStyle(h->wide[currentAxis][b], plotStyle);
-	  h->wide[currentAxis][b]->Draw(options.c_str());
+	  ApplyStyle(h->zoom[currentAxis][b], plotStyle);
+	  h->zoom[currentAxis][b]->Draw(options.c_str());
 
 	  index++; 
 	  
@@ -288,7 +313,23 @@ public:
 					    axisNames[currentAxis].c_str(), 
 					    currentBins.GetBin(b).GetMin(), 
 					    currentBins.GetBin(b).GetMax()));
+
+	  // for drawing the cuts 
+	  TLine *minLine = new TLine(min, h->zoom[currentAxis][b]->GetMinimum(), 
+				     min, h->zoom[currentAxis][b]->GetMaximum()); 
+	  TLine *maxLine = new TLine(max, h->zoom[currentAxis][b]->GetMinimum(), 
+				     max, h->zoom[currentAxis][b]->GetMaximum()); 
 	  
+	  minLine->SetLineWidth(2);
+	  minLine->SetLineStyle(8);
+	  minLine->SetLineColor(kBlack); 
+	  minLine->Draw(); 
+	  
+	  maxLine->SetLineWidth(2);
+	  maxLine->SetLineStyle(8);
+	  maxLine->SetLineColor(kBlack); 
+	  maxLine->Draw(); 
+
 	  // we need to print a page 
 	  if (index > 16){
 	    index = 1; 
@@ -304,6 +345,240 @@ public:
     canvas->Print(pdf.c_str());
     canvas->Print(Form("%s]",pdf.c_str()));
   }
+
+  static void PlotPtVsZ(Config conf, 
+			StandardHistograms *histos, 
+			std::string title, 
+			std::string pdf){
+
+    Global::Visualization::SetCustomPalette(); 
+
+    gStyle->SetOptTitle(0); 
+
+    TCanvas *can = new TCanvas("can","",1200,800);
+    can->cd();
+    can->SetMargin(0.15, 0.15, 0.15, 0.15);
+
+    TLatex *tit = new TLatex(); 
+    tit->SetNDC(); 
+    //    tit->SetTextFont(122);
+    tit->SetTextSize(0.03);
+    
+    histos->h2_z_pt2[0]->Draw("colz");
+    gPad->SetLogz(); 
+    gPad->SetGrid(); 
+
+    tit->DrawLatex(0.48, 0.05, "z_{h}");
+    tit->SetTextAngle(90.0);
+    tit->DrawLatex(0.05, 0.48, "P_{T}^{2} [GeV^{2}/c^{2}]");
+    tit->SetTextAngle(0.0);
+    tit->DrawLatex(0.36, 0.865, Form("Event Sample for Configuration: %s", conf.name.c_str()));
+
+    can->Print(pdf.c_str());
+    
+    // return to our options 
+    Setup();
+    
+  }
+
+  static void PlotPtVsZBinned(Config conf, 
+			      StandardHistograms *histos, 
+			      std::string title, 
+			      std::string pdf){
+
+    Global::Visualization::SetCustomPalette(); 
+
+    gStyle->SetOptTitle(0); 
+
+    TCanvas *can = new TCanvas("can","",1200,800);
+    can->cd();
+    can->SetMargin(0.15, 0.15, 0.15, 0.15);
+
+    TLatex *tit = new TLatex(); 
+    tit->SetNDC(); 
+    //    tit->SetTextFont(122);
+    tit->SetTextSize(0.03);
+    
+    histos->h2_z_pt2[0]->Draw("colz");
+    gPad->SetLogz(); 
+    
+    for(int bin=0; bin<conf.axes[axis::z].GetNumber(); bin++){
+      TLine *leftEdge = new TLine(conf.axes[axis::z].GetBin(bin).GetMin(), 
+				  pow(conf.axes[axis::pt].GetMin(),2), 
+				  conf.axes[axis::z].GetBin(bin).GetMin(), 
+				  pow(conf.axes[axis::pt].GetMax(),2)); 
+
+      leftEdge->SetLineWidth(1); 
+      leftEdge->SetLineColor(kBlack);
+      leftEdge->SetLineStyle(2);
+      leftEdge->Draw();
+    }
+
+    // have to draw the last one 
+    TLine *rightEdge = new TLine(conf.axes[axis::z].GetMax(), 
+				 pow(conf.axes[axis::pt].GetMin(),2), 
+				 conf.axes[axis::z].GetMax(), 
+				 pow(conf.axes[axis::pt].GetMax(),2)); 
+    
+    rightEdge->SetLineWidth(1); 
+    rightEdge->SetLineColor(kBlack);
+    rightEdge->SetLineStyle(2);
+    rightEdge->Draw();
+
+    for(int bin=0; bin<conf.axes[axis::pt].GetNumber(); bin++){
+      TLine *bottomEdge = new TLine(conf.axes[axis::z].GetMin(), 
+				    pow(conf.axes[axis::pt].GetBin(bin).GetMin(),2), 
+				    conf.axes[axis::z].GetMax(), 
+				    pow(conf.axes[axis::pt].GetBin(bin).GetMin(),2));
+
+      bottomEdge->SetLineWidth(1); 
+      bottomEdge->SetLineColor(kBlack);
+      bottomEdge->SetLineStyle(2);
+      bottomEdge->Draw();
+    }
+    
+    // and the top 
+    TLine *topEdge = new TLine(conf.axes[axis::z].GetMin(), 
+			       pow(conf.axes[axis::pt].GetMax(),2), 
+			       conf.axes[axis::z].GetMax(),
+			       pow(conf.axes[axis::pt].GetMax(),2));
+    
+    topEdge->SetLineWidth(1); 
+    topEdge->SetLineColor(kBlack);
+    topEdge->SetLineStyle(2);
+    topEdge->Draw();
+    
+
+    tit->DrawLatex(0.48, 0.05, "z_{h}");
+    tit->SetTextAngle(90.0);
+    tit->DrawLatex(0.05, 0.48, "P_{T}^{2} [GeV^{2}/c^{2}]");
+    tit->SetTextAngle(0.0);
+    tit->DrawLatex(0.36, 0.865, Form("Event Sample for Configuration: %s", conf.name.c_str()));
+
+    can->Print(pdf.c_str());
+    can->Clear();
+    
+    // return to our options 
+    Setup();
+    
+  }
+
+  static void PlotQ2VsX(Config conf, 
+			StandardHistograms *histos, 
+			std::string title, 
+			std::string pdf){
+
+    Global::Visualization::SetCustomPalette(); 
+
+    gStyle->SetOptTitle(0); 
+
+    TCanvas *can = new TCanvas("can","",1200,800);
+    can->cd();
+    can->SetMargin(0.15, 0.15, 0.15, 0.15);
+
+    TLatex *tit = new TLatex(); 
+    tit->SetNDC(); 
+    //    tit->SetTextFont(122);
+    tit->SetTextSize(0.03);
+    
+    histos->h2_xbj_q2[0]->Draw("colz");
+    gPad->SetLogz(); 
+    gPad->SetGrid(); 
+
+    tit->DrawLatex(0.48, 0.05, "x");
+    tit->SetTextAngle(90.0);
+    tit->DrawLatex(0.05, 0.48, "Q^{2} [GeV^{2}/c^{2}]");
+    tit->SetTextAngle(0.0);
+    tit->DrawLatex(0.36, 0.865, Form("Event Sample for Configuration: %s", conf.name.c_str()));
+
+    can->Print(pdf.c_str());
+     
+    // return to our options 
+    Setup();    
+  }
+
+  static void PlotQ2VsXBinned(Config conf, 
+			      StandardHistograms *histos, 
+			      std::string title, 
+			      std::string pdf){
+
+    Global::Visualization::SetCustomPalette(); 
+
+    gStyle->SetOptTitle(0); 
+
+    TCanvas *can = new TCanvas("can","",1200,800);
+    can->cd();
+    can->SetMargin(0.15, 0.15, 0.15, 0.15);
+
+    TLatex *tit = new TLatex(); 
+    tit->SetNDC(); 
+    //    tit->SetTextFont(122);
+    tit->SetTextSize(0.03);
+    
+    histos->h2_xbj_q2[0]->Draw("colz");
+    gPad->SetLogz(); 
+    
+    for(int bin=0; bin<conf.axes[axis::x].GetNumber(); bin++){
+      TLine *leftEdge = new TLine(conf.axes[axis::x].GetBin(bin).GetMin(), 
+				  conf.axes[axis::q2].GetMin(), 
+				  conf.axes[axis::x].GetBin(bin).GetMin(), 
+				  conf.axes[axis::q2].GetMax()); 
+
+      leftEdge->SetLineWidth(1); 
+      leftEdge->SetLineColor(kBlack);
+      leftEdge->SetLineStyle(2);
+      leftEdge->Draw();
+    }
+
+    // have to draw the last one 
+    TLine *rightEdge = new TLine(conf.axes[axis::x].GetMax(), 
+				 conf.axes[axis::q2].GetMin(), 
+				 conf.axes[axis::x].GetMax(), 
+				 conf.axes[axis::q2].GetMax()); 
+    
+    rightEdge->SetLineWidth(1); 
+    rightEdge->SetLineColor(kBlack);
+    rightEdge->SetLineStyle(2);
+    rightEdge->Draw();
+
+    for(int bin=0; bin<conf.axes[axis::q2].GetNumber(); bin++){
+      TLine *bottomEdge = new TLine(conf.axes[axis::x].GetMin(), 
+				    conf.axes[axis::q2].GetBin(bin).GetMin(), 
+				    conf.axes[axis::x].GetMax(), 
+				    conf.axes[axis::q2].GetBin(bin).GetMin());
+
+      bottomEdge->SetLineWidth(1); 
+      bottomEdge->SetLineColor(kBlack);
+      bottomEdge->SetLineStyle(2);
+      bottomEdge->Draw();
+    }
+    
+    // and the top 
+    TLine *topEdge = new TLine(conf.axes[axis::x].GetMin(), 
+			       conf.axes[axis::q2].GetMax(), 
+			       conf.axes[axis::x].GetMax(),
+			       conf.axes[axis::q2].GetMax());
+    
+    topEdge->SetLineWidth(1); 
+    topEdge->SetLineColor(kBlack);
+    topEdge->SetLineStyle(2);
+    topEdge->Draw();
+    
+
+    tit->DrawLatex(0.48, 0.05, "x");
+    tit->SetTextAngle(90.0);
+    tit->DrawLatex(0.05, 0.48, "Q^{2} [GeV^{2}/c^{2}]");
+    tit->SetTextAngle(0.0);
+    tit->DrawLatex(0.36, 0.865, Form("Event Sample for Configuration: %s", conf.name.c_str()));
+
+    can->Print(pdf.c_str());
+    can->Clear();
+    
+    // return to our options 
+    Setup();
+    
+  }
+
 
 };
 

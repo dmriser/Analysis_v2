@@ -11,6 +11,7 @@
 
 // this project
 #include "Config.h"
+#include "Constants.h"
 #include "Types.h"
 
 // external 
@@ -253,7 +254,7 @@ class PhiHistos {
 
 	// this should be handled as an input 
 	if(sum > 0.0 && err < pointErrorLimit){
-	  asym->SetBinContent(b, diff/sum); 
+	  asym->SetBinContent(b, diff/sum/constants::beam_pol); 
 	  asym->SetBinError(b, err); 
 	} else {
 	  asym->SetBinContent(b,0);

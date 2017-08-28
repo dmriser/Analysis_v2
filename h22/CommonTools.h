@@ -26,6 +26,7 @@
 #include <cstdlib>
 
 #include "TColor.h"
+#include "TH1.h"
 #include "TStyle.h"
 #include "TRandom3.h"
 
@@ -301,6 +302,96 @@ namespace Global {
       return path; 
     }
   };
+
+  class BinningTools {
+
+  public:
+
+    // returns number of bins from 
+    // N^1/3
+    static int GetNumber(TH1F *h){
+      double nen = h->GetEntries(); 
+      return ceil(pow(nen, 0.333));
+    }
+ 
+    // returns the value to start with for quantile f 
+    // which f percent of the data is below. 
+    static float GetQuantile(TH1F *h, float f){
+      float total = h->GetEntries(); 
+
+      float events = 0.0; 
+      float x      = 0.0; 
+
+      for(int b=1; b<h->GetXaxis()->GetNbins(); b++){
+	events += h->GetBinContent(b);
+
+	if(events/total > f){
+	  x = h->GetBinCenter(b);
+	  break;
+	}
+      }
+
+      return x; 
+    }
+   
+    static std::vector<float> GetBins(TH1F *h, int nbins, float min, float max, float tolerance){
+      std::vector<float> binLimits;
+      std::vector<float> binContent;
+      binLimits.push_back(min);
+      
+      int startBin = h->GetXaxis()->FindBin(min);
+      int stopBin = h->GetXaxis()->FindBin(max);
+      
+      if (stopBin > startBin && (stopBin-startBin) > nbins){
+	
+	float total = 0.0;
+	for (int b=startBin; b<=stopBin; b++){
+	  total += h->GetBinContent(b);
+	}
+	
+	// setup target number of entries per bin
+	// and the stopping criteria target +/- target*tolerance
+	float target = total/nbins;
+	float targetTolerance = target*tolerance;
+	std::cout << "[FindBin] trying to get entries = " << target << " for each bin. " << std::endl;
+	 
+	float binTotal = 0.0;
+	for(int b=startBin; b<stopBin; b++){
+	  if (binLimits.size() == nbins){
+	    binLimits.push_back(max);
+	    
+	    
+	    float theRest = total;
+	    for (int b=0; b<binContent.size(); b++){
+	      theRest -= binContent[b];
+	    }
+	    
+	    binContent.push_back(theRest);
+	    break;
+	  }
+	  
+	  binTotal += h->GetBinContent(b);
+	  
+	  if (fabs(target-binTotal) < targetTolerance || binTotal > target){
+	    binLimits.push_back(h->GetBinCenter(b));
+	    binContent.push_back(binTotal);
+	    binTotal = 0.0;
+	  }
+	}
+	
+	if (binLimits.size() != nbins+1){
+	  std::cerr << "Something bad happened" << std::endl;
+	} else {
+	  std::cout << "Bins found." << std::endl; 
+	}
+      } else {
+	std::cerr << "[FindBins] Problem finding limits for the histogram axis " << std::endl;
+      }
+
+      return binLimits; 
+    }
+  };
+
 }
 
 inline std::vector<std::string> loadFilesFromList(std::string fileList, int numFiles){

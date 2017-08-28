@@ -134,6 +134,9 @@ class h22Event {
    
    bool HasParticle(int pid);
 
+   // returns user ana pid vector 
+   std::vector<int> GetVectorOfUserAnaParticleIndices(int pid);
+
    // returns the index of the reconstructed particle that 
    // was generated with coded pid, and a status code 
    std::pair<bool, int> GetGeneratedToReconstructedMapping(int pid); 

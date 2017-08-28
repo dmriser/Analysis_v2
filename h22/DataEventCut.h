@@ -400,6 +400,47 @@ class DataEventCut_TOFMassCut : public DataEventCut{
 /////////////////////////////////////////////////////////////////////
 /*
 
+  DBetaMinimizerCut 
+
+ */
+/////////////////////////////////////////////////////////////////////
+
+class DataEventCut_DBetaMinimizerCut : public DataEventCut {
+ public:
+  DataEventCut_DBetaMinimizerCut();
+  ~DataEventCut_DBetaMinimizerCut();
+
+  bool CanBeApplied(h22Event &event, int index);
+  bool IsPassed(h22Event &event, int index);
+
+  void AddPossibleParticle(int pid){
+    possibles.push_back(pid); 
+  } 
+
+  void SetTarget(int pid){
+    target = pid; 
+  } 
+
+  int GetMin(std::vector<float> x){
+    int index = 0; 
+
+    for(int i=1; i<x.size(); i++){
+      if (x[i] < x[index]){
+	index = i;
+      }
+    }
+
+    return index; 
+  }
+
+ protected:
+  int              target; 
+  std::vector<int> possibles; 
+};
+
+/////////////////////////////////////////////////////////////////////
+/*
+
   Beta Vs. P. Pol3 Cut 
 
  */

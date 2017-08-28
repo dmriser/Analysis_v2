@@ -181,6 +181,22 @@ int h22Event::GetGeneratedParticleIndex(int pid){
   return -1;
 }
 
+std::vector<int> h22Event::GetVectorOfUserAnaParticleIndices(int pid){
+  std::vector<int> particles; 
+
+  for(int ipart=0; ipart<gpart; ipart++){
+    if(id[ipart] == pid){
+      particles.push_back(ipart); 
+    }
+  }
+
+  if ( !particles.empty() ) { 
+    particles = SortByMomentum(particles); 
+  }
+
+  return particles; 
+}
+
 void h22Event::PrintEvent() const {
     for (int ipart=0; ipart<gpart; ipart++){
         cout.width(6); cout << ipart;

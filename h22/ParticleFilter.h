@@ -139,6 +139,11 @@ public:
     DataEventCut_DeltaBetaCut    *kp_dbeta_cut; 
     DataEventCut_DeltaBetaCut    *proton_dbeta_cut; 
 
+    // new cut from dan carman 
+    DataEventCut_DBetaMinimizerCut *dbeta_minimizer_211; 
+    DataEventCut_DBetaMinimizerCut *dbeta_minimizer_321; 
+    DataEventCut_DBetaMinimizerCut *dbeta_minimizer_2212; 
+
     DataEventCut_DeltaZVertexCut *dvz_cut;
     DCR1FiducialCut    *dcr1_meson_fid_cut;
 

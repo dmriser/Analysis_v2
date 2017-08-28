@@ -572,6 +572,48 @@ bool DataEventCut_TOFMassCut::IsPassed(h22Event &event, int hadronIndex){
 
 ///////////////////////////////////////////////////////////////
 /*
+  DataEventCut_DBetaMinimizerCut
+*/
+///////////////////////////////////////////////////////////////
+
+DataEventCut_DBetaMinimizerCut::DataEventCut_DBetaMinimizerCut(){
+  SetName("Delta Beta Minimizer Cut");
+}
+
+DataEventCut_DBetaMinimizerCut::~DataEventCut_DBetaMinimizerCut(){
+  
+}
+
+bool DataEventCut_DBetaMinimizerCut::CanBeApplied(h22Event &event, int index){
+  return true; 
+}
+
+bool DataEventCut_DBetaMinimizerCut::IsPassed(h22Event &event, int index){
+  
+  std::vector<float> diff; 
+  
+  for(int ipart=0; ipart<possibles.size(); ipart++){
+    float beta = event.p[index]/sqrt(pow(event.p[index],2)+pow(pid_to_mass(possibles[ipart]),2));
+    diff.push_back(fabs(event.corr_b[index]-beta)); 
+  }
+
+  int indexOfMin = GetMin(diff);  
+  int pidOfMin   = possibles[indexOfMin];
+
+  if (pidOfMin == target){
+    n_pass++;
+    return true;
+  } else {
+    n_fail++;
+    return false;
+  }
+  
+  return false;
+}
+
+
+///////////////////////////////////////////////////////////////
+/*
   DataEventCut_BetaPCut
 */
 ///////////////////////////////////////////////////////////////

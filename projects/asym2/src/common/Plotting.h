@@ -579,6 +579,30 @@ public:
     
   }
 
+  static void PlotCheckPoints(TH1I *hist, std::string title, std::string pdf){
+    
+    TCanvas *can = new TCanvas("can","",1200,800); 
+    can->cd();
+
+    hist->SetFillColorAlpha(99, 0.2); 
+    hist->SetLineColor(99); 
+    hist->Draw();
+    gPad->SetLogy();
+
+    TLatex *tit = new TLatex(); 
+    tit->SetNDC(); 
+    tit->SetTextFont(102);
+    tit->SetTextSize(0.04); 
+    tit->DrawLatex(0.38, 0.95, title.c_str()); 
+
+    tit->DrawLatex(0.12, 0.86, Form("#splitline{Electron ID}{%.3e}", hist->GetBinContent(1)));
+    tit->DrawLatex(0.32, 0.86, Form("#splitline{Meson ID}{%.3e}", hist->GetBinContent(2)));
+    tit->DrawLatex(0.52, 0.86, Form("#splitline{Kinematics}{%.3e}", hist->GetBinContent(3)));
+    tit->DrawLatex(0.72, 0.86, Form("#splitline{Missing Mass}{%.3e}", hist->GetBinContent(4)));
+
+
+    can->Print(pdf.c_str());
+  }
 
 };
 

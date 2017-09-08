@@ -140,9 +140,11 @@ ParticleFilter::ParticleFilter(Parameters *params) : pars(params){
 
 
     // new cut from Dan Carman 
-    dbeta_minimizer_211  = new DataEventCut_DBetaMinimizerCut(); 
-    dbeta_minimizer_321  = new DataEventCut_DBetaMinimizerCut(); 
-    dbeta_minimizer_2212 = new DataEventCut_DBetaMinimizerCut(); 
+    dbeta_minimizer_211      = new DataEventCut_DBetaMinimizerCut(); 
+    dbeta_minimizer_321      = new DataEventCut_DBetaMinimizerCut(); 
+    dbeta_minimizer_2212     = new DataEventCut_DBetaMinimizerCut(); 
+    dbeta_minimizer_neg_211  = new DataEventCut_DBetaMinimizerCut(); 
+    dbeta_minimizer_neg_321  = new DataEventCut_DBetaMinimizerCut(); 
 
     dbeta_minimizer_211->AddPossibleParticle(211); 
     dbeta_minimizer_211->AddPossibleParticle(321); 
@@ -153,6 +155,14 @@ ParticleFilter::ParticleFilter(Parameters *params) : pars(params){
     dbeta_minimizer_321->AddPossibleParticle(321); 
     dbeta_minimizer_321->AddPossibleParticle(2212); 
     dbeta_minimizer_321->SetTarget(321); 
+
+    dbeta_minimizer_neg_321->AddPossibleParticle(-211); 
+    dbeta_minimizer_neg_321->AddPossibleParticle(-321); 
+    dbeta_minimizer_neg_321->SetTarget(-321); 
+
+    dbeta_minimizer_neg_211->AddPossibleParticle(-211); 
+    dbeta_minimizer_neg_211->AddPossibleParticle(-321); 
+    dbeta_minimizer_neg_211->SetTarget(-211); 
 
     dbeta_minimizer_2212->AddPossibleParticle(211); 
     dbeta_minimizer_2212->AddPossibleParticle(321); 
@@ -782,7 +792,7 @@ ParticleFilter::ParticleFilter(Parameters *params) : pars(params){
     positivePionSelector->AddCut(dbeta_minimizer_211);
     positivePionSelector->EnableAll();
 
-    negativePionSelector->AddCut(dvz_cut);
+
     /*
     negativePionSelector->AddCut(pm_betap_cut_s1); 
     negativePionSelector->AddCut(pm_betap_cut_s2); 
@@ -791,13 +801,17 @@ ParticleFilter::ParticleFilter(Parameters *params) : pars(params){
     negativePionSelector->AddCut(pm_betap_cut_s5); 
     negativePionSelector->AddCut(pm_betap_cut_s6); 
     */
-
+    /* 
     negativePionSelector->AddCut(pim_tofmass_cut_s1); 
     negativePionSelector->AddCut(pim_tofmass_cut_s2); 
     negativePionSelector->AddCut(pim_tofmass_cut_s3); 
     negativePionSelector->AddCut(pim_tofmass_cut_s4); 
     negativePionSelector->AddCut(pim_tofmass_cut_s5); 
     negativePionSelector->AddCut(pim_tofmass_cut_s6); 
+    */
+
+    negativePionSelector->AddCut(dvz_cut);
+    negativePionSelector->AddCut(dbeta_minimizer_neg_211);
     negativePionSelector->EnableAll();
     /*
     positiveKaonSelector->AddCut(kp_tofmass_cut_s1);
@@ -819,14 +833,17 @@ ParticleFilter::ParticleFilter(Parameters *params) : pars(params){
     positiveKaonSelector->AddCut(dbeta_minimizer_321);
     positiveKaonSelector->EnableAll();
  
+
     negativeKaonSelector->AddCut(dvz_cut);
+    negativeKaonSelector->AddCut(dbeta_minimizer_neg_321);
+    negativeKaonSelector->EnableAll();
+    /* 
     negativeKaonSelector->AddCut(km_tofmass_cut_s1);
     negativeKaonSelector->AddCut(km_tofmass_cut_s2);
     negativeKaonSelector->AddCut(km_tofmass_cut_s3);
     negativeKaonSelector->AddCut(km_tofmass_cut_s4);
     negativeKaonSelector->AddCut(km_tofmass_cut_s5);
     negativeKaonSelector->AddCut(km_tofmass_cut_s6);
-    /*
     negativeKaonSelector->AddCut(km_betap_cut_s1);
     negativeKaonSelector->AddCut(km_betap_cut_s2);
     negativeKaonSelector->AddCut(km_betap_cut_s3);
@@ -834,7 +851,7 @@ ParticleFilter::ParticleFilter(Parameters *params) : pars(params){
     negativeKaonSelector->AddCut(km_betap_cut_s5);
     negativeKaonSelector->AddCut(km_betap_cut_s6);
     */
-    negativeKaonSelector->EnableAll();
+
  
     positiveMesonCandidateSelector->AddCut(dcr1_meson_fid_cut); 
     positiveMesonCandidateSelector->AddCut(dvz_cut); 

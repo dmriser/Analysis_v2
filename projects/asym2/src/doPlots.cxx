@@ -49,6 +49,11 @@ int main(int argc, char *argv[]){
    StandardHistograms *standard = new StandardHistograms("PassAll",1);
    standard->Load(Form("%s/%s/histos.root", c.analysisHome.c_str(), c.name.c_str()));
 
+   // I don't really like this here
+   // but idk.
+   TFile *input = TFile::Open(Form("%s/%s/histos.root", c.analysisHome.c_str(), c.name.c_str())); 
+   TH1I *checkPoint = (TH1I*) input->Get("checkPoints");;
+
    Plotting::Setup();
    Plotting::PlotTwoPhiHistos(asym, err,
 			      "A_{LU}^{sin(#phi)}",
@@ -91,6 +96,8 @@ int main(int argc, char *argv[]){
    Plotting::PlotPtVsZBinned(c,standard,"",Form("%s/%s/plots/z_pt2_binned.pdf",c.analysisHome.c_str(),c.name.c_str())); 
    Plotting::PlotQ2VsX(c,standard,"",Form("%s/%s/plots/x_q2.pdf",c.analysisHome.c_str(),c.name.c_str())); 
    Plotting::PlotQ2VsXBinned(c,standard,"",Form("%s/%s/plots/x_q2_binned.pdf",c.analysisHome.c_str(),c.name.c_str())); 
+
+   Plotting::PlotCheckPoints(checkPoint, Form("Config name: %s",c.name.c_str()), Form("%s/%s/plots/check_points.pdf",c.analysisHome.c_str(),c.name.c_str()));
  }
  
  return 0;

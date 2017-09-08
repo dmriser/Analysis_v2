@@ -41,9 +41,6 @@
 #include "TLorentzVector.h"
 
 
-vector<string> loadFilesFromList(string fileList, int numFiles);
-vector<string> loadFilesFromCommandLine(h22Options * theseOpts, int numFiles);
-
 class HIDCalibration : public GenericAnalysis {
 
 public:
@@ -297,31 +294,3 @@ int main(int argc, char * argv[]){
     return 0;
 }
 
-vector<string> loadFilesFromList(string fileList, int numFiles){
-  vector<string> theseFiles;
-
-  ifstream inputFile;
-  inputFile.open(fileList.c_str());
-
-  int ifile = 0; string line;
-  while (getline(inputFile, line) && ifile < numFiles){
-    theseFiles.push_back(line);
-    ifile++;
-  }
-
-  inputFile.close();
-  return theseFiles;
-}
-
-vector<string> loadFilesFromCommandLine(h22Options * theseOpts, int numFiles){
-  vector<string> theseFiles;
-
-  for(int ifile = 0; ifile < theseOpts->ifiles.size(); ifile++){
-    theseFiles.push_back(theseOpts->ifiles[ifile]);
-    ifile++;
-
-    if (ifile == numFiles){ break; }
-  }
-
-  return theseFiles;
-}

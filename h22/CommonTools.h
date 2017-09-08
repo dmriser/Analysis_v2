@@ -353,7 +353,7 @@ namespace Global {
 	// and the stopping criteria target +/- target*tolerance
 	float target = total/nbins;
 	float targetTolerance = target*tolerance;
-	std::cout << "[FindBin] trying to get entries = " << target << " for each bin. " << std::endl;
+	//	std::cout << "[FindBin] trying to get entries = " << target << " for each bin. " << std::endl;
 	 
 	float binTotal = 0.0;
 	for(int b=startBin; b<stopBin; b++){
@@ -382,7 +382,7 @@ namespace Global {
 	if (binLimits.size() != nbins+1){
 	  std::cerr << "Something bad happened" << std::endl;
 	} else {
-	  std::cout << "Bins found." << std::endl; 
+	  //	  std::cout << "Bins found." << std::endl; 
 	}
       } else {
 	std::cerr << "[FindBins] Problem finding limits for the histogram axis " << std::endl;

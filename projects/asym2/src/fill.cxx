@@ -4,7 +4,6 @@
 #include "common/ConfigLoader.h"
 #include "common/ConfigLoader.cxx"
 #include "common/MissingMassHistograms.h"
-#include "common/Moments.h"
 #include "common/PhiHistograms.h"
 #include "common/TreeOutput.h"
 #include "common/Types.h"
@@ -35,7 +34,6 @@ struct configPack{
   Parameters         *pars; 
   ParticleFilter     *filter;
   PhiHistos          *counts[2]; 
-  Moments            *moments; 
   CheckPoints        *checkPoints; 
 
   TreeOutput *tree; 
@@ -86,10 +84,6 @@ public:
 
       // output tree 
       currentPack.tree = new TreeOutput(); 
-
-      // moments 
-      currentPack.moments = new Moments(); 
-      currentPack.moments->SetMaxMoment(200); 
 
       // checkpoints 
       currentPack.checkPoints = new CheckPoints(); 
@@ -240,8 +234,6 @@ public:
 		  pack.tree->meson    = meson; 
 		  pack.tree->tree->Fill();
 
-		  // fill moments 
-		  pack.moments->Fill(ev, hel); 
 		}
 	      }
 	    }
@@ -292,9 +284,6 @@ public:
       p.counts[helicity::plus] ->Save(out);      
       p.counts[helicity::minus]->Save(out);
 
-      // saving moments 
-      p.moments->Save(out); 
-
       // save only if 
       // asked 
       if (p.conf.writeTree){
@@ -312,7 +301,7 @@ public:
 
 protected:
   std::vector<configPack> packs; 
-  MomCorr_e1f            *momCorr; 
+  MomCorr_e1f             *momCorr; 
   PhysicsEventBuilder     builder; 
 
 };

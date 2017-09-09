@@ -53,6 +53,8 @@ public:
     mm_ekpion[1] = new TH1I("mm_ekpion_minus","",100,0.9,1.6);
 
     mm_ekproton  = new TH1I("mm_ekproton","",100,0.0,0.9);
+    
+    theta = new TH1F("theta","",100,-180,180); 
   }
 
   ~Analysis(){
@@ -129,6 +131,7 @@ public:
 	    if(sqrt(protonEvent.mm2) > 0.45 && 
 	       sqrt(protonEvent.mm2) < 0.55){
 	      mm_ek[1]->Fill(sqrt(ev.mm2));
+	      theta->Fill(ev.thetaHadron);
 	    }
 	  }
 
@@ -184,6 +187,7 @@ public:
     mm_ekpion[0]->Write(); 
     mm_ekpion[1]->Write(); 
     mm_ekproton->Write(); 
+    theta->Write(); 
 
     out->Close();
   }
@@ -210,7 +214,10 @@ protected:
   // centered at kaon mass 
   // 0 - proton 
   TH1I *mm_ekproton;
-  
+
+  // plot theta angle for events 
+  TH1F *theta;
+
 };
 
 int main(int argc, char *argv[]){
@@ -226,7 +233,7 @@ int main(int argc, char *argv[]){
 
   // run analysis loop
   analysis.Loop();
-  analysis.Save("/u/home/dmriser/Analysis_v2/pid/calib/lambda_1520/out/out.root");
+  analysis.Save("out.root");
   
   } else {
     std::cerr << "No files found." << std::endl; 

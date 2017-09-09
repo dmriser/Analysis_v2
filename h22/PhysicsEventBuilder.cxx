@@ -70,6 +70,7 @@ PhysicsEvent &PhysicsEventBuilder::getPhysicsEvent(TLorentzVector &electron, TLo
   c3 = v1.Mag();
   physicsEvent.phiHadron = to_degrees*(c0/TMath::Abs(c0)) * TMath::ACos(c1 / (c2*c3) );
   physicsEvent.pT        = particleClone.Perp();
+  physicsEvent.thetaHadron = particleClone.Theta()*to_degrees; 
 
   return physicsEvent; 
 }

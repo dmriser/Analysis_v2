@@ -5,6 +5,7 @@
 #include "common/ConfigLoader.cxx"
 #include "common/MissingMassHistograms.h"
 #include "common/PhiHistograms.h"
+#include "common/PtAverager.h"
 #include "common/TreeOutput.h"
 #include "common/Types.h"
 
@@ -35,6 +36,7 @@ struct configPack{
   ParticleFilter     *filter;
   PhiHistos          *counts[2]; 
   CheckPoints        *checkPoints; 
+  PtAverager         *ptAverager; 
 
   TreeOutput *tree; 
   std::map<int, StandardHistograms*> standardHistos; 
@@ -84,6 +86,9 @@ public:
 
       // output tree 
       currentPack.tree = new TreeOutput(); 
+
+      // pt averaging 
+      currentPack.ptAverager = new PtAverager(currentPack.conf); 
 
       // checkpoints 
       currentPack.checkPoints = new CheckPoints(); 
@@ -227,6 +232,9 @@ public:
 		  pack.mesonHistos[pass::all]->Fill(event, ev, mesonIndex);
 		  pack.counts[hel]->Fill(ev);
 
+		  // fill averge pt 
+		  pack.ptAverager->Fill(ev);
+
 		  // fill output tree 
 		  pack.tree->hel      = hel; 
 		  pack.tree->id       = pack.conf.mesonIndex; 
@@ -284,6 +292,9 @@ public:
       p.counts[helicity::plus] ->Save(out);      
       p.counts[helicity::minus]->Save(out);
 
+      // save pt averager 
+      p.ptAverager->Save(out);
+      
       // save only if 
       // asked 
       if (p.conf.writeTree){

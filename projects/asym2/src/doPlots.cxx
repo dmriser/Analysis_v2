@@ -6,6 +6,7 @@
 #include "common/ConfigLoader.cxx"
 #include "common/PhiHistograms.h"
 #include "common/Plotting.h"
+#include "common/PtAverager.h"
 #include "common/KinematicHistograms.h"
 #include "common/MissingMassHistograms.h"
 
@@ -42,12 +43,19 @@ int main(int argc, char *argv[]){
    
    KinematicHistos *kin = new KinematicHistos(); 
    kin->Load(c.axes, Form("%s/%s/fits.root", c.analysisHome.c_str(), c.name.c_str()), "integratedAsymmetry"); 
+
+   KinematicHistos *kinPt = new KinematicHistos(); 
+   kinPt->Load(c.axes, Form("%s/%s/fits.root", c.analysisHome.c_str(), c.name.c_str()), "integratedAsymmetryPt"); 
    
    MissingMassHistos *mass = new MissingMassHistos(); 
    mass->Load(c.axes, Form("%s/%s/histos.root", c.analysisHome.c_str(), c.name.c_str()), "PassKinematic"); 
    
    StandardHistograms *standard = new StandardHistograms("PassAll",1);
    standard->Load(Form("%s/%s/histos.root", c.analysisHome.c_str(), c.name.c_str()));
+
+   PtAverager *ptAverager = new PtAverager(c);
+   ptAverager->Load(Form("%s/%s/histos.root", c.analysisHome.c_str(), c.name.c_str()));
+   ptAverager->CalculateAverage();
 
    // I don't really like this here
    // but idk.
@@ -76,12 +84,31 @@ int main(int argc, char *argv[]){
 			      Form("%s/%s/plots/phi/counts.pdf",c.analysisHome.c_str(),c.name.c_str())); 
    
    
+   Plotting::PlotAveragePt(ptAverager, 
+			   c, 
+			   Form("%s/%s/plots/average_pt.pdf",c.analysisHome.c_str(),c.name.c_str())); 
+
+   Plotting::PlotAsymmetryZ(kin, 
+			   c, 
+			   Form("%s/%s/plots/asymmetry/z.pdf",c.analysisHome.c_str(),c.name.c_str()));    
+
+   Plotting::PlotAsymmetryZ(kinPt, 
+			   c, 
+			   Form("%s/%s/plots/asymmetry/z_div_pt.pdf",c.analysisHome.c_str(),c.name.c_str()));    
+
    Plotting::PlotOneKinematicHisto(kin,
 				   "A_{LU}^{sin(#phi)}",
 				   "A_{LU}^{sin(#phi)}",
 				   "histpe",
 				   styles::marker_black,
 				   Form("%s/%s/plots/asymmetry/integrated.pdf",c.analysisHome.c_str(),c.name.c_str())); 
+
+   Plotting::PlotOneKinematicHisto(kinPt,
+				   "A_{LU}^{sin(#phi)}",
+				   "A_{LU}^{sin(#phi)}",
+				   "histpe",
+				   styles::marker_black,
+				   Form("%s/%s/plots/asymmetry/integrated_div_pt.pdf",c.analysisHome.c_str(),c.name.c_str())); 
 
    
    Plotting::PlotOneMissingMassHisto(mass,

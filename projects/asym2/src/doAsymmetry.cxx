@@ -6,6 +6,7 @@
 #include "common/ConfigLoader.cxx"
 #include "common/PhiHistograms.h"
 #include "common/PhiFits.h"
+#include "common/PtAverager.h"
 #include "common/Fitter.h"
 #include "common/KinematicHistograms.h"
 
@@ -49,12 +50,22 @@ int main(int argc, char *argv[]){
     KinematicHistos *kin = new KinematicHistos(); 
     kin->Init(config.axes, "integratedAsymmetry"); 
     kin->BuildFromFits(&fitPair.first);
-    
+
+    KinematicHistos *kinPt = new KinematicHistos(); 
+    kinPt->Init(config.axes, "integratedAsymmetryPt"); 
+    kinPt->BuildFromFits(&fitPair.first);
+
+    PtAverager *ptAverager = new PtAverager(config);
+    ptAverager->Load(file); 
+    ptAverager->CalculateAverage();
+    ptAverager->ScaleKinematicHistograms(kinPt);
+
     TFile *outFile = new TFile(Form("%s/%s/fits.root",config.analysisHome.c_str(),config.name.c_str()),"recreate");
     asym->Save(outFile);
     fitPair.first.Save(outFile);
     fitPair.second.Save(outFile);
     kin->Save(outFile);
+    kinPt->Save(outFile);
     outFile->Close();    
   }
 

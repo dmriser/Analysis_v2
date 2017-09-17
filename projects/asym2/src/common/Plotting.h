@@ -8,6 +8,7 @@
 // this project 
 #include "PhiFits.h"
 #include "PhiHistograms.h"
+#include "PtAverager.h"
 #include "MissingMassHistograms.h"
 #include "KinematicHistograms.h"
 #include "Config.h"
@@ -51,6 +52,7 @@ public:
     //    h->SetLabelFont(42); 
     //    h->GetXaxis()->SetNdivisions(502);
     //    h->GetYaxis()->SetNdivisions(502);
+
     h->GetXaxis()->SetTitleSize(0.05); 
     h->GetYaxis()->SetTitleSize(0.05); 
 
@@ -268,6 +270,62 @@ public:
  
     canvas->Print(pdf.c_str());
     canvas->Print(Form("%s]",pdf.c_str()));
+  }
+
+  static void PlotAveragePt(PtAverager *ptAverage, 
+			    Config config, 
+			    std::string pdf){
+    
+    TCanvas *canvas = new TCanvas("canvas", "", 1600, 1200); 
+    canvas->cd();
+
+    TLatex *label = new TLatex(); 
+    label->SetNDC();
+    label->SetTextFont(42);
+    label->SetTextSize(0.03);
+
+    ptAverage->average->SetLineColor(kBlack);
+    ptAverage->average->SetMarkerColor(kBlack);
+    ptAverage->average->SetMarkerStyle(8);
+    ptAverage->average->SetLineWidth(2);
+    ptAverage->average->Draw("pe");
+
+    label->DrawLatex(0.4, 0.95, Form("Configuration: %s",config.name.c_str()));
+    label->DrawLatex(0.49, 0.02, "z");
+
+    label->SetTextAngle(90.0);
+    label->DrawLatex(0.02, 0.7, "< P_{T} >");
+
+    canvas->Print(pdf.c_str());
+
+  }
+
+  static void PlotAsymmetryZ(KinematicHistos *h, 
+			     Config config, 
+			     std::string pdf){
+    
+    TCanvas *canvas = new TCanvas("canvas", "", 1600, 1200); 
+    canvas->cd();
+
+    TLatex *label = new TLatex(); 
+    label->SetNDC();
+    label->SetTextFont(42);
+    label->SetTextSize(0.03);
+
+    h->histos[axis::z]->SetLineColor(kBlack);
+    h->histos[axis::z]->SetMarkerColor(kBlack);
+    h->histos[axis::z]->SetMarkerStyle(8);
+    h->histos[axis::z]->SetLineWidth(2);
+    h->histos[axis::z]->Draw("pe");
+
+    label->DrawLatex(0.4, 0.95, Form("Configuration: %s",config.name.c_str()));
+    label->DrawLatex(0.49, 0.02, "z");
+
+    label->SetTextAngle(90.0);
+    label->DrawLatex(0.02, 0.7, "BSA");
+
+    canvas->Print(pdf.c_str());
+
   }
 
   static void PlotOneMissingMassHisto(MissingMassHistos *h, 

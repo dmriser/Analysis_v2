@@ -13,6 +13,7 @@ class PhysicsEvent {
   double nu, qq, w, mm2;
   double phiHadron, thetaHadron, pT; 
   double targetMass; 
+  double eta; 
 
   /* Add anything general about the event here, no sector, no paddle number just physics, 
    ex: angle between particle 1 and 2. */

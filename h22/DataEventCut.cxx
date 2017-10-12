@@ -521,9 +521,9 @@ DataEventCut_DeltaZVertexCut::~DataEventCut_DeltaZVertexCut(){
 
 bool DataEventCut_DeltaZVertexCut::IsPassed(h22Event &event, int hadronIndex){
 
-    // It is very important to note that this
-    // routine expects CORRECTED variables.
-  double dvz = event.corr_vz[event.GetElectronIndex()]-event.corr_vz[hadronIndex];
+  // using uncorrected position for now, something buggy 
+  // about using the corrected ones
+  double dvz = event.vz[event.GetElectronIndex()]-event.vz[hadronIndex];
   
   if (dvz > GetMin() && dvz < GetMax()){
     n_pass++;

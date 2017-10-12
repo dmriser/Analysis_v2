@@ -1,6 +1,6 @@
 #!/bin/tcsh 
 
-set pathToFiles = "/volatile/clas12/dmriser/data/all/root"
+set pathToFiles = "/volatile/clas12/dmriser/data/kaon/root"
 set outputPath  = "/volatile/clas12/dmriser/data/miniTree"
 set files = `ls $pathToFiles/*`
 

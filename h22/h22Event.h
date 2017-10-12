@@ -118,6 +118,7 @@ class h22Event {
    ~h22Event();
    // Member Functions 
    void PrintEvent() const;
+   int GetSector(int index);
    double GetRelativePhi(int);     //! Azym. angle relative to sector center.
    double GetRelativePhiMC(int);   //! MC version of above
    double GetTheta(int);    //! Polar angle of track

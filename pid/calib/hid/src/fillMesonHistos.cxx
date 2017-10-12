@@ -116,18 +116,18 @@ void HIDCalibration::ProcessEvent(){
 	  PhysicsEvent physEv = builder->getPhysicsEvent(electron, candidate); 
 	  
 	  //	  if (dvz < 4.0  && event.etot[ipart] > 0.01){
-	    if (dvz < 4.0){
+	    if (dvz < 1000.0){
 	      if (event.q[ipart] == 1){ 
 		pipHistos->Fill(event, physEv, ipart); 
 		kpHistos->Fill(event, physEv, ipart);
 	      }
+
 	      else if (event.q[ipart] == -1){
 		pimHistos->Fill(event, physEv, ipart); 
 		kmHistos->Fill(event, physEv, ipart);
 	      }
 	    }
-
-      }
+	}
       }
     }
   }

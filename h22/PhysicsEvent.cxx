@@ -11,6 +11,7 @@ PhysicsEvent::PhysicsEvent(){
   y = 0.0;
   z = 0.0;
   t = 0.0;
+  eta = 0.0; 
   beamEnergy = 0.0; 
   finalEnergy = 0.0;
   nu = 0.0; 
@@ -18,6 +19,7 @@ PhysicsEvent::PhysicsEvent(){
   w = 0.0; 
   mm2 = 0.0; 
   phiHadron = 0.0;
+  thetaHadron = 0.0;
   pT = 0.0;
   targetMass = 0.0; 
   

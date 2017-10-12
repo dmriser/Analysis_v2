@@ -301,6 +301,18 @@ namespace Global {
 
       return path; 
     }
+
+    static std::string GetNathanPath(){
+      std::string path = ""; 
+
+      if(char *p = std::getenv("NATHANLIB")){
+	path.append(p); 
+      } else {
+	std::cerr << "[Global::Environment::GetAnalysisPath] Environmental variable NATHANLIB not set!" << std::endl;
+      }
+
+      return path; 
+    }
   };
 
   class BinningTools {

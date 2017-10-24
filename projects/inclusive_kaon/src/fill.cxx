@@ -69,6 +69,7 @@ public:
 
     // setup structure of ntuple 
     tupleWriter.addInt("helicity");
+    tupleWriter.addInt("meson_id");
     tupleWriter.addFloat("missing_mass"); 
     tupleWriter.addFloat("x"); 
     tupleWriter.addFloat("q2"); 
@@ -79,11 +80,11 @@ public:
     tupleWriter.addFloat("phi_h"); 
     tupleWriter.addFloat("theta_h"); 
     tupleWriter.addFloat("p_ele"); 
-    tupleWriter.addFloat("p_pip"); 
+    tupleWriter.addFloat("p_mes"); 
     tupleWriter.addFloat("phi_ele"); 
-    tupleWriter.addFloat("phi_pip");
+    tupleWriter.addFloat("phi_mes");
     tupleWriter.addFloat("theta_ele"); 
-    tupleWriter.addFloat("theta_pip");
+    tupleWriter.addFloat("theta_mes");
     tupleWriter.addFloat("dvz");
 
     // for varying cut values
@@ -121,27 +122,46 @@ public:
 	event.SetElectronIndex(electronIndex);
 	Corrections::correctEvent(&event, GetRunNumber(), GSIM);
 	  
-	std::vector<int> pipIndices = filter->getVectorOfParticleIndices(event, 211); 
+	std::vector<int> kpIndices = filter->getVectorOfParticleIndices(event,  321); 
+	std::vector<int> kmIndices = filter->getVectorOfParticleIndices(event, -321); 
 	//	Nathan::HadronIDResult result = hid->getIDResult(event);
 
-	if(!pipIndices.empty()){
+	if(!kpIndices.empty()){
 		  //	if(result.hasPip()){
 
-	  int pipIndex = pipIndices[0];
-		  //	  int pipIndex = result.pipIndex; 
-	  TLorentzVector pip = event.GetTLorentzVector(pipIndex, 211); 
+	  int mesonIndex       = kpIndices[0];
+	  TLorentzVector meson = event.GetTLorentzVector(mesonIndex, 321); 
 
 	  // momentum correction done here 
 	  // because if we dont find proton it's useless 
 	  // to waste cpu doing it above 
 	  TLorentzVector electron = event.GetTLorentzVector(electronIndex, 11); 
-	  electron = momCorr->PcorN(electron, -1, 11);
+	  electron                = momCorr->PcorN(electron, -1, 11);
 	  
-	  // build event 
-	  PhysicsEvent ev = builder.getPhysicsEvent(electron, pip);
+	  // Dan Carman method for rejecting some pi+ events in the
+	  // kaon sample.
+	  //
+	  // Classify an event and if it's a kaon you pretend
+	  // it's a pion.  Then check the missing mass spectrum
+	  // and if the event is near the neutron peak it must
+	  // really be a pion, so reassign it to be.
+	  //
+	  // Currently all it does it throw out the pion,
+	  // if doesn't actually add it to the pion sample
+	  // because the code never makes it that far in the
+	  // pion case it would just return 0 pions and not enter.
+	    TLorentzVector pion = event.GetTLorentzVector(mesonIndex, 211);
+	    PhysicsEvent pionEvent = builder.getPhysicsEvent(electron,pion);
 
-	  if ( sqrt(ev.mm2) > 0.8 && sqrt(ev.mm2) < 1.08 
-	       && ev.w > 2.0 && ev.qq > 1.0) {
+	    // reject and dont process event
+	    if (sqrt(pionEvent.mm2) < 1.07){
+	      continue;
+	    }
+
+	  // build event 
+	  PhysicsEvent ev = builder.getPhysicsEvent(electron, meson);
+
+	  if (ev.w > 2.0 && ev.qq > 1.0) {
 	    
 	    std::map<std::string, bool> results_nom   = filter     ->eid_map(event, electronIndices[0]);
 	    std::map<std::string, bool> results_tight = filterTight->eid_map(event, electronIndices[0]);
@@ -168,6 +188,7 @@ public:
 	    if (results_tight["Z_VERTEX"])   { tupleWriter.setInt("strict_ele_vz", 1); }
 	
 	    tupleWriter.setInt("helicity",       event.corr_hel);
+	    tupleWriter.setInt("meson_id",       321);
 	    tupleWriter.setFloat("missing_mass", sqrt(ev.mm2));
 	    tupleWriter.setFloat("x",            ev.x);
 	    tupleWriter.setFloat("q2",           ev.qq);
@@ -178,15 +199,72 @@ public:
 	    tupleWriter.setFloat("theta_h",      ev.thetaHadron);
 	    tupleWriter.setFloat("phi_h",        ev.phiHadron);
 	    tupleWriter.setFloat("p_ele",        electron.P()); 
-	    tupleWriter.setFloat("p_pip",        pip.P()); 
+	    tupleWriter.setFloat("p_mes",        meson.P()); 
 	    tupleWriter.setFloat("theta_ele",    to_degrees*electron.Theta()); 
-	    tupleWriter.setFloat("theta_pip",    to_degrees*pip.Theta()); 
+	    tupleWriter.setFloat("theta_mes",    to_degrees*meson.Theta()); 
 	    tupleWriter.setFloat("phi_ele",      to_degrees*electron.Phi()); 
-	    tupleWriter.setFloat("phi_pip",      to_degrees*pip.Phi()); 
-	    tupleWriter.setFloat("dvz",          event.vz[electronIndex]-event.vz[pipIndex]); 
+	    tupleWriter.setFloat("phi_mes",      to_degrees*meson.Phi()); 
+	    tupleWriter.setFloat("dvz",          event.vz[electronIndex]-event.vz[mesonIndex]); 
 	    tupleWriter.writeEvent();
 	  }
 
+	}
+
+	if(!kmIndices.empty()){
+
+	  int mesonIndex          = kmIndices[0];
+	  TLorentzVector meson    = event.GetTLorentzVector(mesonIndex, -321); 
+	  TLorentzVector electron = event.GetTLorentzVector(electronIndex, 11); 
+	  electron                = momCorr->PcorN(electron, -1, 11);
+	  
+	  // build event 
+	  PhysicsEvent ev = builder.getPhysicsEvent(electron, meson);
+
+	  if (ev.w > 2.0 && ev.qq > 1.0) {	    
+	    std::map<std::string, bool> results_nom   = filter     ->eid_map(event, electronIndices[0]);
+	    std::map<std::string, bool> results_tight = filterTight->eid_map(event, electronIndices[0]);
+
+	    tupleWriter.setInt("strict_ele_r1fid", -1);
+	    tupleWriter.setInt("strict_ele_r3fid", -1);
+	    tupleWriter.setInt("strict_ele_ecsf",  -1);
+	    tupleWriter.setInt("strict_ele_vz",    -1);
+	    tupleWriter.setInt("strict_ele_ec",    -1);
+	    
+	    if (results_nom["EC_SAMPLING"])  { tupleWriter.setInt("strict_ele_ecsf", 0); }
+	    if (results_tight["EC_SAMPLING"]){ tupleWriter.setInt("strict_ele_ecsf", 1); }
+
+	    if (results_nom["DC_R1_FID"])    { tupleWriter.setInt("strict_ele_r1fid", 0); }
+	    if (results_tight["DC_R1_FID"])  { tupleWriter.setInt("strict_ele_r1fid", 1); }
+
+	    if (results_nom["DC_R3_FID"])    { tupleWriter.setInt("strict_ele_r3fid", 0); }
+	    if (results_tight["DC_R3_FID"])  { tupleWriter.setInt("strict_ele_r3fid", 1); }
+
+	    if (results_nom["EC_FID"])       { tupleWriter.setInt("strict_ele_ec", 0); }
+	    if (results_tight["EC_FID"])     { tupleWriter.setInt("strict_ele_ec", 1); }
+
+	    if (results_nom["Z_VERTEX"])     { tupleWriter.setInt("strict_ele_vz", 0); }
+	    if (results_tight["Z_VERTEX"])   { tupleWriter.setInt("strict_ele_vz", 1); }
+	
+	    tupleWriter.setInt("helicity",       event.corr_hel);
+	    tupleWriter.setInt("meson_id",       -321);
+	    tupleWriter.setFloat("missing_mass", sqrt(ev.mm2));
+	    tupleWriter.setFloat("x",            ev.x);
+	    tupleWriter.setFloat("q2",           ev.qq);
+	    tupleWriter.setFloat("z",            ev.z);
+	    tupleWriter.setFloat("pt",           ev.pT);
+	    tupleWriter.setFloat("w",            ev.w);
+	    tupleWriter.setFloat("eta",          ev.eta);
+	    tupleWriter.setFloat("theta_h",      ev.thetaHadron);
+	    tupleWriter.setFloat("phi_h",        ev.phiHadron);
+	    tupleWriter.setFloat("p_ele",        electron.P()); 
+	    tupleWriter.setFloat("p_mes",        meson.P()); 
+	    tupleWriter.setFloat("theta_ele",    to_degrees*electron.Theta()); 
+	    tupleWriter.setFloat("theta_mes",    to_degrees*meson.Theta()); 
+	    tupleWriter.setFloat("phi_ele",      to_degrees*electron.Phi()); 
+	    tupleWriter.setFloat("phi_mes",      to_degrees*meson.Phi()); 
+	    tupleWriter.setFloat("dvz",          event.vz[electronIndex]-event.vz[mesonIndex]); 
+	    tupleWriter.writeEvent();
+	  }
 	}
       }
       

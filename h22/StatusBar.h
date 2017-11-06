@@ -24,7 +24,7 @@ protected:
  char       fFiller; 
  char       fLeft; 
  char       fRight;
- int       fWidth; 
+ int        fWidth; 
 
 
 };

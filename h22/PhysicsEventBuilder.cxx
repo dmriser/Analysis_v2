@@ -68,9 +68,10 @@ PhysicsEvent &PhysicsEventBuilder::getPhysicsEvent(TLorentzVector &electron, TLo
   c1 = v0.Dot(v1);
   c2 = v0.Mag();
   c3 = v1.Mag();
-  physicsEvent.phiHadron = to_degrees*(c0/TMath::Abs(c0)) * TMath::ACos(c1 / (c2*c3) );
-  physicsEvent.pT        = particleClone.Perp();
+  physicsEvent.phiHadron   = to_degrees*(c0/TMath::Abs(c0)) * TMath::ACos(c1 / (c2*c3) );
+  physicsEvent.pT          = particleClone.Perp();
   physicsEvent.thetaHadron = particleClone.Theta()*to_degrees; 
+  physicsEvent.eta         = particleClone.Rapidity(); 
 
   return physicsEvent; 
 }
@@ -81,6 +82,16 @@ PhysicsEvent &PhysicsEventBuilder::getPhysicsEvent(TLorentzVector &electron, TLo
   physicsEvent.ClearKinematics(); 
   setVectors(electron);
   physicsEvent.finalState -= (particle1+particle2);
+  setKinematics();
+  return physicsEvent; 
+}
+
+PhysicsEvent &PhysicsEventBuilder::getPhysicsEvent(TLorentzVector &electron, TLorentzVector &particle1, TLorentzVector &particle2, TLorentzVector &particle3){
+  physicsEvent.particle1 = particle1; 
+  physicsEvent.particle2 = particle2; 
+  physicsEvent.ClearKinematics(); 
+  setVectors(electron);
+  physicsEvent.finalState -= (particle1+particle2+particle3);
   setKinematics();
   return physicsEvent; 
 }

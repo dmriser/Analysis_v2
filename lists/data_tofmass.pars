@@ -76,7 +76,7 @@
        KP_DCR1_ANGLE     6     e                   0                   0                   0                   0                   0                   0
       KP_DCR1_HEIGHT     6     v                  10                  10                  10                  10                  10                  10
       KP_DCR1_HEIGHT     6     e                   0                   0                   0                   0                   0                   0
-              KP_DVZ     6     v                   4                   4                   4                   4                   4                   4
+              KP_DVZ     6     v                   5                   5                   5                   5                   5                   5
               KP_DVZ     6     e                   0                   0                   0                   0                   0                   0
       KP_TOFMASS_MAX     6     v                0.63                0.63                0.63                0.63                0.63                0.63
       KP_TOFMASS_MAX     6     e                   0                   0                   0                   0                   0                   0

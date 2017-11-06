@@ -2,11 +2,11 @@
 
 # User Parameters 
 set numberOfJobs = 20
-set binDir       = "/u/home/dmriser/Analysis_v2/pid/calib/hid/src/"
-set binName      = "fillMesonHistos"
+set binDir       = "/u/home/dmriser/Analysis_v2/projects/inclusive_kaon/src"
+set binName      = "fill"
 set sourceDir    = "/u/home/dmriser/Analysis_v2/farm/analysis"
 set outDir       = "/volatile/clas12/dmriser/farm_out/"
-set outName      = "pid_return1"
+set outName      = "pi_n_tree_with_sys"
 set runScript    = "goAnalyze"
 set fileList     = "/u/home/dmriser/Analysis_v2/lists/good_files.dat"
 #set fileList     = "/u/home/dmriser/mydoc/analysis/root_scripts/Analysis_v2/projects/dis2/MonteCarlo.dat"

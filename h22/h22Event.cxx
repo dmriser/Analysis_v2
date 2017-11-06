@@ -169,7 +169,14 @@ TLorentzVector h22Event::GetGeneratedParticle(int pid){
   //  cout << " WARNING: GEN PARTICLE NOT FOUND! " << endl;
   return TLorentzVector(0,0,1000,1000);
 }
- 
+
+
+// if the particle is charged use the dc, 
+// otherwise use the ec 
+int h22Event::GetSector(int index){
+  return (q[index] != 0 ? dc_sect[index] : ec_sect[index]) - 1;
+}
+
 int h22Event::GetGeneratedParticleIndex(int pid){
   for (int ipart=0; ipart<mcnentr; ipart++){
     if (mcid[ipart] == pid) {

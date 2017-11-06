@@ -58,6 +58,11 @@ void showEvents(TH2D *histo[numberSector], const int numberSector){
 
 }
 
+std::string getBinString(TH1D *h, int index){
+  std::string binString(Form("%d,%.4e,%.4e,%.4e", index, h->GetBinCenter(index), h->GetBinContent(index), h->GetBinError(index))); 
+  return binString; 
+}
+
 void makeSlicesX(TH2D *histo, TH1D *slices[numberSlices], const int numberSlices, int histoType){
   
   string sliceTitle;

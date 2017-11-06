@@ -1,6 +1,6 @@
 {
 
-  TFile *input = TFile::Open("../out.root");
+  TFile *input = TFile::Open("/volatile/clas12/dmriser/farm_out/phi_1020_pass0/phi.root");
 
   TH1F *mm_epx[4];
   mm_epx[0] = (TH1F*) input->Get("mm_epx_no_cuts");

@@ -44,26 +44,14 @@ public:
 
     // ntuple 
     tupleWriter.addInt("helicity");
-    tupleWriter.addFloat("im_kk"); 
-    tupleWriter.addFloat("im_pk"); 
-    tupleWriter.addFloat("missing_mass_ekx_mk"); 
-    tupleWriter.addFloat("missing_mass_epkx_mk"); 
-    tupleWriter.addFloat("missing_mass_ekx_mpi"); 
-    tupleWriter.addFloat("missing_mass_epkx_mpi"); 
-    tupleWriter.addFloat("missing_mass_epx");
-
-    tupleWriter.addFloat("x");
-    tupleWriter.addFloat("w");
-    tupleWriter.addFloat("q2");
-    tupleWriter.addFloat("theta_h_p");
-    tupleWriter.addFloat("theta_kk_lab");
-    
-    tupleWriter.addFloat("p_kp"); 
-    tupleWriter.addFloat("p_km"); 
-    tupleWriter.addFloat("p_prot"); 
+    tupleWriter.addInt("topology");
+    tupleWriter.addTLorentzVector("electron"); 
+    tupleWriter.addTLorentzVector("proton"); 
+    tupleWriter.addTLorentzVector("kaon_pos"); 
+    tupleWriter.addTLorentzVector("kaon_neg"); 
   }
 
-  ~Analysis(){
+   ~Analysis(){
     // total destruction 
   }
 
@@ -89,77 +77,89 @@ public:
 	event.SetElectronIndex(electronIndex);
 	Corrections::correctEvent(&event, GetRunNumber(), GSIM);
 	
-	std::vector<int> kpIndices = filter->getVectorOfParticleIndices(event, 321);
+	// search mofo 
+	std::vector<int> kpIndices     = filter->getVectorOfParticleIndices(event, 321);
+	std::vector<int> kmIndices     = filter->getVectorOfParticleIndices(event, -321);
 	std::vector<int> protonIndices = filter->getVectorOfParticleIndices(event, 2212);
 
-	if (!protonIndices.empty()){
+	// something will be written 
+	if ( (kpIndices.size() > 0)&&(kmIndices.size() > 0) || (kpIndices.size() > 0) && (protonIndices.size() > 0) || (protonIndices.size() > 0) && (kmIndices.size() > 0) ) {
+	  int top = -1; 
 
-	  // building event 
-	  int protonIndex         = protonIndices[0]; 
-	  TLorentzVector electron = event.GetTLorentzVector(electronIndex, 11);  
-	  TLorentzVector proton   = event.GetTLorentzVector(protonIndex, 2212);
-	  
-	  // momentum correction done here 
-	  // because if we dont find proton it's useless 
-	  // to waste cpu doing it above 
+	  TLorentzVector electron = event.GetTLorentzVector(electronIndex, 11); 
 	  electron = momCorr->PcorN(electron, -1, 11);
+	  
+	  tupleWriter.setInt("helicity", event.corr_hel); 
 
-	  // build physics event with only proton 
-	  PhysicsEvent ev = builder.getPhysicsEvent(electron, proton); 	  
-
-	  //  now use kp if it exists 
-	  if (!kpIndices.empty()){
-	    int kaonIndex = kpIndices[0];
+	  if ( (kpIndices.size() > 0)&&(kmIndices.size() > 0) ){
+	    top = 2;
+	    tupleWriter.setInt("topology", top); 
 	    
-	    // stop doing things if its actually a pion 
-	    /* 
-	    if( IsMisidentifiedPion(electron, kaonIndex) ){
-	      continue; 
-	    }
-	    */
-
-	    // get four-vectors 
-	    TLorentzVector kp               = event.GetTLorentzVector(kaonIndex, 321);
-	    TLorentzVector kpWithMassOfPion = event.GetTLorentzVector(kaonIndex, 211);
+	    TLorentzVector kp = event.GetTLorentzVector(kpIndices[0], 321); 
+	    TLorentzVector km = event.GetTLorentzVector(kmIndices[0], -321); 
 	    
-	    PhysicsEvent epkEvent = builder.getPhysicsEvent(electron, proton, kp);
-	    PhysicsEvent epkEventWithMassOfPion = builder.getPhysicsEvent(electron, proton, kpWithMassOfPion);
-	    
-
-	    // event with proton left out 
-	    PhysicsEvent ekEvent =  builder.getPhysicsEvent(electron, kp);
-	    PhysicsEvent ekEventWithMassOfPion =  builder.getPhysicsEvent(electron, kpWithMassOfPion);
-
-	    
-	    // the final state could be a km 
-	    TLorentzVector km = epkEvent.finalState; 
-	    TLorentzVector phi = km+kp; 
-	    TLorentzVector lambda = km+proton; 
-
-	    //  write event 
-	    tupleWriter.setFloat("missing_mass_ekx_mk",   sqrt(ekEvent.mm2));  
-	    tupleWriter.setFloat("missing_mass_epkx_mk",  sqrt(epkEvent.mm2));  
-	    tupleWriter.setFloat("missing_mass_ekx_mpi",  sqrt(ekEventWithMassOfPion.mm2));  
-	    tupleWriter.setFloat("missing_mass_epkx_mpi", sqrt(epkEventWithMassOfPion.mm2));  
-	    tupleWriter.setFloat("missing_mass_epx", sqrt(ev.mm2));  
-	    tupleWriter.setFloat("im_kk", sqrt(phi.M2()));  
-	    tupleWriter.setFloat("im_pk", sqrt(lambda.M2()));  
-	    
-
-	    tupleWriter.setFloat("p_prot", proton.P()); 
-	    tupleWriter.setFloat("p_kp", kp.P()); 
-	    tupleWriter.setFloat("p_km", km.P()); 
-
-	    tupleWriter.setFloat("x", ev.x);  
-	    tupleWriter.setFloat("w", ev.w);  
-	    tupleWriter.setFloat("q2", ev.qq);  
-	    tupleWriter.setFloat("theta_h_p", ev.thetaHadron);  
-	    tupleWriter.setFloat("theta_kk_lab", to_degrees*kp.Angle(km.Vect()));  
+	    PhysicsEvent physicsEvent = builder.getPhysicsEvent(electron, kp, km); 
+	    TLorentzVector proton = physicsEvent.finalState; 
+	    tupleWriter.setTLorentzVector("electron", electron); 
+	    tupleWriter.setTLorentzVector("proton", proton); 
+	    tupleWriter.setTLorentzVector("kaon_pos", kp); 
+	    tupleWriter.setTLorentzVector("kaon_neg", km); 
 	    
 	    tupleWriter.writeEvent(); 
-	    
-	  }
 	}
+	  
+	  if ( (kmIndices.size() > 0)&&(protonIndices.size() > 0) ){
+	    top = 1;
+	    tupleWriter.setInt("topology", top); 
+	    
+	    TLorentzVector proton = event.GetTLorentzVector(protonIndices[0], 2212); 
+	    TLorentzVector km = event.GetTLorentzVector(kmIndices[0], -321); 
+	    
+	    PhysicsEvent physicsEvent = builder.getPhysicsEvent(electron, proton, km); 
+	    TLorentzVector kp = physicsEvent.finalState; 
+	    tupleWriter.setTLorentzVector("electron", electron); 
+	    tupleWriter.setTLorentzVector("proton", proton); 
+	    tupleWriter.setTLorentzVector("kaon_pos", kp); 
+	    tupleWriter.setTLorentzVector("kaon_neg", km); 
+	    
+	    tupleWriter.writeEvent(); 
+	}
+	  
+	  if ( (kpIndices.size() > 0)&&(protonIndices.size() > 0) ){
+	    top = 0;
+	    tupleWriter.setInt("topology", top); 
+	    
+	    TLorentzVector kp = event.GetTLorentzVector(kpIndices[0], 321); 
+	    TLorentzVector proton = event.GetTLorentzVector(protonIndices[0], 2212); 
+	    
+	    PhysicsEvent physicsEvent = builder.getPhysicsEvent(electron, kp, proton); 
+	    TLorentzVector km = physicsEvent.finalState; 
+	    tupleWriter.setTLorentzVector("electron", electron); 
+	    tupleWriter.setTLorentzVector("proton", proton); 
+	    tupleWriter.setTLorentzVector("kaon_pos", kp); 
+	    tupleWriter.setTLorentzVector("kaon_neg", km); 
+	    
+	    tupleWriter.writeEvent(); 
+	}
+	  
+	  if ( (kpIndices.size() > 0)&&(kmIndices.size() > 0)&&(protonIndices.size() > 0) ){
+	    top = 3;
+	    tupleWriter.setInt("topology", top); 
+	    
+	    TLorentzVector kp     = event.GetTLorentzVector(kpIndices[0], 321); 
+	    TLorentzVector km     = event.GetTLorentzVector(kmIndices[0], -321); 
+	    TLorentzVector proton = event.GetTLorentzVector(protonIndices[0], 2212); 
+
+	    tupleWriter.setTLorentzVector("electron", electron); 
+	    tupleWriter.setTLorentzVector("proton", proton); 
+	    tupleWriter.setTLorentzVector("kaon_pos", kp); 
+	    tupleWriter.setTLorentzVector("kaon_neg", km); 
+	    tupleWriter.writeEvent(); 
+	}
+	  
+	  
+
+	}	    
       }
 
       if (ientry%10000 == 0){

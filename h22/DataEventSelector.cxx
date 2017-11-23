@@ -84,6 +84,19 @@ map<string, double> DataEventSelector::cut_pass_fraction(){
   return results; 
 }
 
+std::vector<bool> DataEventSelector::GetPassStatus(h22Event &event, int index){
+  std::vector<bool> status; 
+
+  vector<DataEventCut*>::iterator it;
+  for (it = cuts.begin(); it!=cuts.end(); it++){
+    if ( (*it)->IsOn() && (*it)->CanBeApplied(event, index)) { 
+      status.push_back((*it)->IsPassed(event, index) ); 
+    }
+  }
+
+  return status; 
+}
+
 void DataEventSelector::EnableByRegex(string regex)
 {
   

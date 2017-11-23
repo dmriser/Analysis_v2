@@ -79,61 +79,7 @@ public:
     TestCut *testCut; 
 
     // List of cuts used for pions
-    DataEventCut_TOFMassCut      *pip_tofmass_cut_s1;
-    DataEventCut_TOFMassCut      *pip_tofmass_cut_s2;
-    DataEventCut_TOFMassCut      *pip_tofmass_cut_s3;
-    DataEventCut_TOFMassCut      *pip_tofmass_cut_s4;
-    DataEventCut_TOFMassCut      *pip_tofmass_cut_s5;
-    DataEventCut_TOFMassCut      *pip_tofmass_cut_s6;
-    DataEventCut_TOFMassCut      *pim_tofmass_cut_s1;
-    DataEventCut_TOFMassCut      *pim_tofmass_cut_s2;
-    DataEventCut_TOFMassCut      *pim_tofmass_cut_s3;
-    DataEventCut_TOFMassCut      *pim_tofmass_cut_s4;
-    DataEventCut_TOFMassCut      *pim_tofmass_cut_s5;
-    DataEventCut_TOFMassCut      *pim_tofmass_cut_s6;
-
-    DataEventCut_TOFMassCut      *kp_tofmass_cut_s1;
-    DataEventCut_TOFMassCut      *kp_tofmass_cut_s2;
-    DataEventCut_TOFMassCut      *kp_tofmass_cut_s3;
-    DataEventCut_TOFMassCut      *kp_tofmass_cut_s4;
-    DataEventCut_TOFMassCut      *kp_tofmass_cut_s5;
-    DataEventCut_TOFMassCut      *kp_tofmass_cut_s6;
-    DataEventCut_TOFMassCut      *km_tofmass_cut_s1;
-    DataEventCut_TOFMassCut      *km_tofmass_cut_s2;
-    DataEventCut_TOFMassCut      *km_tofmass_cut_s3;
-    DataEventCut_TOFMassCut      *km_tofmass_cut_s4;
-    DataEventCut_TOFMassCut      *km_tofmass_cut_s5;
-    DataEventCut_TOFMassCut      *km_tofmass_cut_s6;
-
-    DataEventCut_TOFMassCut      *mesonCandidate_tofmass_cut; 
-
-    DataEventCut_BetaPCut        *kp_betap_cut_s1; 
-    DataEventCut_BetaPCut        *kp_betap_cut_s2; 
-    DataEventCut_BetaPCut        *kp_betap_cut_s3; 
-    DataEventCut_BetaPCut        *kp_betap_cut_s4; 
-    DataEventCut_BetaPCut        *kp_betap_cut_s5; 
-    DataEventCut_BetaPCut        *kp_betap_cut_s6; 
-
-    DataEventCut_BetaPCut        *km_betap_cut_s1; 
-    DataEventCut_BetaPCut        *km_betap_cut_s2; 
-    DataEventCut_BetaPCut        *km_betap_cut_s3; 
-    DataEventCut_BetaPCut        *km_betap_cut_s4; 
-    DataEventCut_BetaPCut        *km_betap_cut_s5; 
-    DataEventCut_BetaPCut        *km_betap_cut_s6; 
-
-    DataEventCut_BetaPCut        *pp_betap_cut_s1; 
-    DataEventCut_BetaPCut        *pp_betap_cut_s2; 
-    DataEventCut_BetaPCut        *pp_betap_cut_s3; 
-    DataEventCut_BetaPCut        *pp_betap_cut_s4; 
-    DataEventCut_BetaPCut        *pp_betap_cut_s5; 
-    DataEventCut_BetaPCut        *pp_betap_cut_s6; 
-
-    DataEventCut_BetaPCut        *pm_betap_cut_s1; 
-    DataEventCut_BetaPCut        *pm_betap_cut_s2; 
-    DataEventCut_BetaPCut        *pm_betap_cut_s3; 
-    DataEventCut_BetaPCut        *pm_betap_cut_s4; 
-    DataEventCut_BetaPCut        *pm_betap_cut_s5; 
-    DataEventCut_BetaPCut        *pm_betap_cut_s6; 
+    DataEventCut_TOFMassCut      *pip_tofmass_cut, *pim_tofmass_cut, *kp_tofmass_cut, *km_tofmass_cut;
 
     DataEventCut_DeltaBetaCut    *pp_dbeta_cut; 
     DataEventCut_DeltaBetaCut    *kp_dbeta_cut; 
@@ -147,7 +93,7 @@ public:
     DataEventCut_DBetaMinimizerCut *dbeta_minimizer_neg_321; 
 
     DataEventCut_DeltaZVertexCut *dvz_cut;
-    DCR1FiducialCut    *dcr1_meson_fid_cut;
+    DCR1FiducialCut              *dcr1_meson_fid_cut;
 
     // Parameters for Pi-0 Invariant Mass
     // There should be a better way to do it. 
@@ -163,6 +109,7 @@ public:
     std::vector<int> getVectorOfParticleIndices(h22Event &event, int pid);
     std::map<std::string,bool> eid_map(h22Event&, int);
     std::map<std::string,bool> hid_map(h22Event, int);
+    std::map<std::string,float> eid_distance_map(h22Event &event, int index); 
     std::vector<TLorentzVector> getVectorOfTLorentzVectors(h22Event &event, int pid);
     std::map<int, TLorentzVector> getMapOfIndexAndTLorentzVector(h22Event, int pid); 
 

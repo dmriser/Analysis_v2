@@ -49,6 +49,9 @@ class DataEventSelector
   virtual bool IsPassed(h22Event &event, int); /** I am making this virtual in the event that we need to change something before asking if the events pass (vertex correction ect.) */
   virtual bool IsPassedFast(h22Event &event, int); /** I am making this virtual in the event that we need to change something before asking if the events pass (vertex correction ect.) */
   std::map<std::string, double> cut_pass_fraction(); 
+
+  // return a vector of pass/fail 
+  std::vector<bool> GetPassStatus(h22Event &event, int index);
   
 };
 

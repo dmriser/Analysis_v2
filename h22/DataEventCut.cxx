@@ -53,6 +53,10 @@ bool DataEventCut::CanBeApplied(h22Event &event, int index)
     return true;
 }
 
+float DataEventCut::GetFractionalDistance(h22Event &event, int index){
+  return -1.0; 
+}
+
 ///////////////////////////////////////////////////////////////
 /*
   ChargeCut
@@ -126,6 +130,10 @@ bool MomentumCut::IsPassed(h22Event &event, int index)
     else { n_fail++; }
 
     return false;
+}
+
+float MomentumCut::GetFractionalDistance(h22Event &event, int index){
+  return getFractionalDistance(event.p[index], GetMin(), GetMax()); 
 }
 
 
@@ -214,7 +222,6 @@ SampFracCut::~SampFracCut()
 bool SampFracCut::IsPassed(h22Event &event, int index)
 {
     double samp = event.etot[index]/event.p[index];
-
     GetMin = (am-nsigma*as)*pow(event.p[index],3) +  (bm-nsigma*bs)*pow(event.p[index],2) + (cm-nsigma*cs)*event.p[index] +  (dm-nsigma*ds);
     GetMax = (am+nsigma*as)*pow(event.p[index],3) +  (bm+nsigma*bs)*pow(event.p[index],2) + (cm+nsigma*cs)*event.p[index] +  (dm+nsigma*ds);
 
@@ -229,6 +236,13 @@ bool SampFracCut::CanBeApplied(h22Event &event, int index)
     return false;
 }
 
+float SampFracCut::GetFractionalDistance(h22Event &event, int index){
+    double samp = event.etot[index]/event.p[index];
+    GetMin = (am-nsigma*as)*pow(event.p[index],3) +  (bm-nsigma*bs)*pow(event.p[index],2) + (cm-nsigma*cs)*event.p[index] +  (dm-nsigma*ds);
+    GetMax = (am+nsigma*as)*pow(event.p[index],3) +  (bm+nsigma*bs)*pow(event.p[index],2) + (cm+nsigma*cs)*event.p[index] +  (dm+nsigma*ds);
+  
+    return (2*samp-GetMin-GetMax)/(GetMax-GetMin);
+}
 
 ///////////////////////////////////////////////////////////////
 /*
@@ -270,6 +284,18 @@ bool CCThetaMatchingCut::CanBeApplied(h22Event &event, int index)
     return false;
 }
 
+
+float CCThetaMatchingCut::GetFractionalDistance(h22Event &event, int index){
+    double thetaCC = event.GetThetaCC(index);
+    int segment    = (event.cc_segm[index]%1000/10);
+
+    GetMin = (am-nsigma*as)*pow(segment,3) +  (bm-nsigma*bs)*pow(segment,2) + (cm-nsigma*cs)*segment +  (dm-nsigma*ds);
+    GetMax = (am+nsigma*as)*pow(segment,3) +  (bm+nsigma*bs)*pow(segment,2) + (cm+nsigma*cs)*segment +  (dm+nsigma*ds);
+
+  return getFractionalDistance(thetaCC, GetMin, GetMax); 
+}
+
+
 ///////////////////////////////////////////////////////////////
 /*
   EC U, V, W Cuts
@@ -296,6 +322,11 @@ bool ECUCut::IsPassed(h22Event &event, int index)
     return false;
 }
 
+float ECUCut::GetFractionalDistance(h22Event &event, int index){
+  double u = event.GetUVWVector(index).X();
+  return getFractionalDistance(u, GetMin(), GetMax());
+}
+
 ECVCut::ECVCut()
 {
     SetName("EC-V Cut");
@@ -317,6 +348,11 @@ bool ECVCut::IsPassed(h22Event &event, int index)
     return false;
 }
 
+float ECVCut::GetFractionalDistance(h22Event &event, int index){
+  double v = event.GetUVWVector(index).Y();
+  return getFractionalDistance(v, GetMin(), GetMax());
+}
+
 ECWCut::ECWCut()
 {
     SetName("EC-W Cut");
@@ -336,6 +372,11 @@ bool ECWCut::IsPassed(h22Event &event, int index)
     else { n_fail++; }
 
     return false;
+}
+
+float ECWCut::GetFractionalDistance(h22Event &event, int index){
+  double w = event.GetUVWVector(index).Z();
+  return getFractionalDistance(w, GetMin(), GetMax());
 }
 
 ///////////////////////////////////////////////////////////////
@@ -361,6 +402,10 @@ bool ZVertexCut::IsPassed(h22Event &event, int index)
     else { n_fail++; }
 
     return false;
+}
+
+float ZVertexCut::GetFractionalDistance(h22Event &event, int index){
+  return getFractionalDistance(event.vz[index], GetMin(), GetMax());
 }
 
 ///////////////////////////////////////////////////////////////
@@ -413,6 +458,9 @@ bool ECEdepInnerCut::IsPassed(h22Event &event, int index)
     return false;
 }
 
+float ECEdepInnerCut::GetFractionalDistance(h22Event &event, int index){
+    return (2*event.ec_ei[index]-GetMin()-GetMax())/(GetMax()-GetMin()); 
+}
 
 ///////////////////////////////////////////////////////////////
 /*
@@ -523,7 +571,8 @@ bool DataEventCut_DeltaZVertexCut::IsPassed(h22Event &event, int hadronIndex){
 
   // using uncorrected position for now, something buggy 
   // about using the corrected ones
-  double dvz = event.vz[event.GetElectronIndex()]-event.vz[hadronIndex];
+  //  double dvz = event.vz[event.GetElectronIndex()]-event.vz[hadronIndex];
+  double dvz = event.corr_vz[event.GetElectronIndex()]-event.corr_vz[hadronIndex];
   
   if (dvz > GetMin() && dvz < GetMax()){
     n_pass++;
@@ -536,13 +585,18 @@ bool DataEventCut_DeltaZVertexCut::IsPassed(h22Event &event, int hadronIndex){
   return false;
 }
 
+float DataEventCut_DeltaZVertexCut::GetFractionalDistance(h22Event &event, int index){
+  double dvz = event.corr_vz[event.GetElectronIndex()]-event.corr_vz[index];
+  return getFractionalDistance(dvz, GetMin(), GetMax());
+}
+
 ///////////////////////////////////////////////////////////////
 /*
   DataEventCut_TOFMassCut
 */
 ///////////////////////////////////////////////////////////////
 
-DataEventCut_TOFMassCut::DataEventCut_TOFMassCut(int s) : sector(s){
+DataEventCut_TOFMassCut::DataEventCut_TOFMassCut() {
     SetName("TOF Mass Cut");
 }
 
@@ -550,13 +604,11 @@ DataEventCut_TOFMassCut::~DataEventCut_TOFMassCut(){
 }
 
 bool DataEventCut_TOFMassCut::CanBeApplied(h22Event &event, int index){
-    return (event.dc_sect[index] == sector || sector == -1);
+  return true;
 }
 
 bool DataEventCut_TOFMassCut::IsPassed(h22Event &event, int hadronIndex){
     double tofmass = pow(event.p[hadronIndex],2)*(1-pow(event.corr_b[hadronIndex],2))/pow(event.corr_b[hadronIndex],2);
-    //    tofmass = fabs(tofmass);
-    //    tofmass = sqrt(tofmass); 
 
     if (tofmass > pow(GetMin(),2) && tofmass < pow(GetMax(),2)){
         n_pass++;
@@ -652,6 +704,21 @@ bool DataEventCut_BetaPCut::IsPassed(h22Event &event, int hadronIndex){
     }
 
     return false;
+}
+
+float DataEventCut_BetaPCut::GetFractionalDistance(h22Event &event, int index){
+
+  double current_min = (am-nsigma*as)*pow(event.p[index],3) + 
+    (bm-nsigma*bs)*pow(event.p[index],2) + 
+    (cm-nsigma*cs)*event.p[index] + 
+    (dm-nsigma*ds);
+
+  double current_max = (am+nsigma*as)*pow(event.p[index],3) + 
+    (bm+nsigma*bs)*pow(event.p[index],2) + 
+    (cm+nsigma*cs)*event.p[index] + 
+    (dm+nsigma*ds);
+
+  return getFractionalDistance(event.corr_b[index], current_min, current_max);
 }
 
 

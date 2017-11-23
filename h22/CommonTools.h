@@ -151,6 +151,13 @@ inline double getRelativePhi(double phi){
   return rphi;
 }
 
+// This function maps from -1, to 1 the values between min
+// and max.  The distance = 0 means x = x_average = 0.5*(min+max).
+// The value -1 means x = min, 1 means x = max.  
+inline float getFractionalDistance(float x, float min, float max){
+  return (2*x - (min+max))/(max-min);
+}
+
 inline bool inRange(double x, double min, double max){
   return (x <= max && x >= min);
 }

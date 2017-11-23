@@ -27,6 +27,10 @@ class Parameters{
   void saveParameters(std::string outputFilename);
   void setNumberOfFiles(int numberOfFiles){ metaData.setNumberOfFilesUsed(numberOfFiles); } 
 
+  bool hasParameter(std::string name) const {
+    return parameters.count(name);
+  }
+
 };
 
 #endif

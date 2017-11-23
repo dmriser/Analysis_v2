@@ -55,7 +55,8 @@ void Corrections::correctEvent(h22Event *event, int runno, int GSIM){
       event->corr_vz[electronIndex]   = vz((*event), electronIndex, runno, GSIM);
       event->corr_sc_t[electronIndex] = electron_sct((*event),electronIndex,runno,GSIM);
 
-      double startTime = event->corr_sc_t[electronIndex] - event->sc_r[electronIndex]/speed_of_light; 
+      //      double startTime = event->corr_sc_t[electronIndex] - event->sc_r[electronIndex]/speed_of_light; 
+      double startTime = event->corr_sc_t[electronIndex] - event->sc_r[electronIndex]/(event->b[electronIndex]*speed_of_light);
       event->SetStartTime(startTime); 
 
       for(int ipart=0; ipart<event->gpart; ipart++){
@@ -82,7 +83,12 @@ void Corrections::correctEvent(h22Event *event, int runno, int GSIM){
 double Corrections::vz(h22Event &event, int ipart, int runno, int GSIM){
     // set sector need to build better protection here for case
     // of sector = -1
-    int s = event.ec_sect[ipart] -1; if (s<0) return 0.00;
+
+  // Nathan's method 
+  //    int s = event.ec_sect[ipart] -1; if (s<0) return 0.00;
+
+  // trying to use dc instead of ec
+    int s = event.dc_sect[ipart] -1; if (s<0) return 0.00;
     double px = event.cx[ipart]*event.p[ipart];
     double py = event.cy[ipart]*event.p[ipart];
     double pz = event.cz[ipart]*event.p[ipart];

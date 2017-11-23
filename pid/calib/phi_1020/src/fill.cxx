@@ -39,8 +39,10 @@ public:
 
     // needs parameters 
     params = new Parameters(); 
-    params->loadParameters(Form("%s/lists/data_tofmass.pars", path.c_str())); 
+    //    params->loadParameters(Form("%s/lists/data_tofmass.pars", path.c_str())); 
+    params->loadParameters(Form("%s/lists/data.pars", path.c_str())); 
     filter = new ParticleFilter(params);
+    filter->positiveKaonSelector->DisableByRegex("Fid"); 
 
     // ntuple 
     tupleWriter.addInt("helicity");

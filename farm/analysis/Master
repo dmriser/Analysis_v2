@@ -2,11 +2,11 @@
 
 # User Parameters 
 set numberOfJobs = 20
-set binDir       = "/u/home/dmriser/Analysis_v2/pid/calib/phi_1020/src/"
-set binName      = "clary"
+set binDir       = "/u/home/dmriser/Analysis_v2/projects/final_pid/src/"
+set binName      = "fill"
 set sourceDir    = "/u/home/dmriser/Analysis_v2/farm/analysis"
 set outDir       = "/volatile/clas12/dmriser/farm_out/"
-set outName      = "phi_1020_clary"
+set outName      = "final_pid_pass10"
 set runScript    = "goAnalyze"
 set fileList     = "/u/home/dmriser/Analysis_v2/lists/good_files.dat"
 #set fileList     = "/u/home/dmriser/mydoc/analysis/root_scripts/Analysis_v2/projects/dis2/MonteCarlo.dat"

@@ -43,13 +43,15 @@ public:
 
     // needs parameters 
     params = new Parameters(); 
-    params->loadParameters(Form("%s/lists/data_tofmass.pars", path.c_str())); 
+    params->loadParameters(Form("%s/lists/data.pars", path.c_str())); 
 
     paramsLoose = new Parameters(); 
-    paramsLoose->loadParameters(Form("%s/lists/dataLoose.pars", path.c_str())); 
+    //    paramsLoose->loadParameters(Form("%s/lists/dataLoose.pars", path.c_str())); 
+    paramsLoose->loadParameters(Form("%s/lists/data.pars", path.c_str())); 
 
     paramsTight = new Parameters(); 
-    paramsTight->loadParameters(Form("%s/lists/dataTight.pars", path.c_str())); 
+    //    paramsTight->loadParameters(Form("%s/lists/dataTight.pars", path.c_str())); 
+    paramsTight->loadParameters(Form("%s/lists/data.pars", path.c_str())); 
 
     filter      = new ParticleFilter(params);
     filterLoose = new ParticleFilter(paramsLoose);
@@ -85,6 +87,10 @@ public:
     tupleWriter.addFloat("theta_ele"); 
     tupleWriter.addFloat("theta_pip");
     tupleWriter.addFloat("dvz");
+    tupleWriter.addFloat("dist_ecsf");
+    tupleWriter.addFloat("dist_ec_edep");
+    tupleWriter.addFloat("dist_vz");
+    tupleWriter.addFloat("dist_cc_theta");
 
     // for varying cut values
     tupleWriter.addInt("strict_ele_r1fid");
@@ -145,6 +151,12 @@ public:
 	    
 	    std::map<std::string, bool> results_nom   = filter     ->eid_map(event, electronIndices[0]);
 	    std::map<std::string, bool> results_tight = filterTight->eid_map(event, electronIndices[0]);
+
+	    std::map<std::string, float> distances = filter->eid_distance_map(event, electronIndices[0]); 
+	    tupleWriter.setFloat("dist_ecsf",    distances["EC_SAMPLING"]); 
+	    tupleWriter.setFloat("dist_ec_edep", distances["EC_IN_OUT"]); 
+	    tupleWriter.setFloat("dist_vz",      distances["Z_VERTEX"]); 
+	    tupleWriter.setFloat("dist_cc_theta",distances["CC_THETA"]); 
 
 	    tupleWriter.setInt("strict_ele_r1fid", -1);
 	    tupleWriter.setInt("strict_ele_r3fid", -1);

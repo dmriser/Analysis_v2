@@ -106,11 +106,16 @@ void SliceFitter::Fit(TH2D *histo, std::string title){
 
     int firstBin = fSourceHisto->GetXaxis()->FindBin(fxMin);
     int lastBin = fSourceHisto->GetXaxis()->FindBin(fxMax);
-    int numberBinsInRange = firstBin-lastBin;
+    int numberBinsInRange = lastBin-firstBin;
 
     // Setting up the correct number of slices if the user range is not
     // suitable.  The if statement actually is not needed, but makes it
     // more obvious what's going on.
+    if (fNumberSlices > numberBinsInRange){
+      fNumberSlices = numberBinsInRange; 
+    }
+
+    /*
     if (numberBinsInRange%fNumberSlices != 0){
         fNumberSlices -= numberBinsInRange%fNumberSlices;
 
@@ -119,6 +124,9 @@ void SliceFitter::Fit(TH2D *histo, std::string title){
             return;
         }
     }
+    */
+
+    std::cout << "[SliceFitter::Fit] Using number of slices = " << fNumberSlices << std::endl; 
 
     // start doing slices
     for (int i=0; i<fNumberSlices; ++i){

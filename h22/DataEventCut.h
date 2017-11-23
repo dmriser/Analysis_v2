@@ -64,6 +64,7 @@ class DataEventCut{
   
   virtual bool CanBeApplied(h22Event &event, int); /** Pass in the event, and the particle index of interest */
   virtual bool IsPassed(h22Event &event, int); /** Pass in the event, and the particle index of interest */
+  virtual float GetFractionalDistance(h22Event &event, int index); /** Pass in the event and the index, get a number 0->1 which tells how far the event falls between min and max */
 
 };
 
@@ -118,7 +119,7 @@ class MomentumCut : public DataEventCut
   ~MomentumCut();
 
   bool IsPassed(h22Event &event, int);
-
+  float GetFractionalDistance(h22Event &event, int index);
 };
 
 
@@ -140,6 +141,7 @@ class SampFracCut : public DataEventCut
   double am, as, bm, bs, cm, cs, dm, ds, nsigma, GetMin, GetMax;
   bool CanBeApplied(h22Event &event, int);
   bool IsPassed(h22Event &event, int);
+  float GetFractionalDistance(h22Event &event, int index); 
 };
 
 /////////////////////////////////////////////////////////////////////
@@ -160,6 +162,7 @@ class CCThetaMatchingCut : public DataEventCut
   double am, as, bm, bs, cm, cs, dm, ds, nsigma, GetMin, GetMax;
   bool CanBeApplied(h22Event &event, int);
   bool IsPassed(h22Event &event, int);
+  float GetFractionalDistance(h22Event &event, int index);
 };
 
 /////////////////////////////////////////////////////////////////////
@@ -177,7 +180,7 @@ class ECUCut : public DataEventCut
   ~ECUCut();
 
   bool IsPassed(h22Event &event, int);
-
+  float GetFractionalDistance(h22Event &event, int index);
 };
 
 /////////////////////////////////////////////////////////////////////
@@ -194,7 +197,7 @@ class ECVCut : public DataEventCut
   ECVCut();
   ~ECVCut();
   bool IsPassed(h22Event &event, int);
-
+  float GetFractionalDistance(h22Event &event, int index);
 };
 
 /////////////////////////////////////////////////////////////////////
@@ -211,7 +214,7 @@ class ECWCut : public DataEventCut
   ECWCut();
   ~ECWCut();
   bool IsPassed(h22Event &event, int);
-
+  float GetFractionalDistance(h22Event &event, int index);
 };
 
 
@@ -229,7 +232,7 @@ class ZVertexCut : public DataEventCut
   ZVertexCut();
   ~ZVertexCut();
   bool IsPassed(h22Event &event, int);
-
+  float GetFractionalDistance(h22Event &event, int index); 
 };
 
 /////////////////////////////////////////////////////////////////////
@@ -248,7 +251,6 @@ class CCFiducialCut : public DataEventCut
 
   double a, b, c; 
   bool IsPassed(h22Event &event, int);
-
 };
 
 /////////////////////////////////////////////////////////////////////
@@ -265,7 +267,7 @@ class ECEdepInnerCut : public DataEventCut
   ECEdepInnerCut();
   ~ECEdepInnerCut();
   bool IsPassed(h22Event &event, int);
-
+  float GetFractionalDistance(h22Event &event, int index); 
 };
 
 /////////////////////////////////////////////////////////////////////
@@ -285,7 +287,6 @@ class DCR1FiducialCut : public DataEventCut
   double angle, height; 
 
   bool IsPassed(h22Event &event, int);
-
 };
 
 /////////////////////////////////////////////////////////////////////
@@ -376,6 +377,7 @@ class DataEventCut_DeltaZVertexCut : public DataEventCut {
   ~DataEventCut_DeltaZVertexCut();
 
   bool IsPassed(h22Event &event, int index);
+  float GetFractionalDistance(h22Event &event, int index);
 };
 
 /////////////////////////////////////////////////////////////////////
@@ -388,10 +390,8 @@ class DataEventCut_DeltaZVertexCut : public DataEventCut {
 
 class DataEventCut_TOFMassCut : public DataEventCut{
  public:
-  DataEventCut_TOFMassCut(int s);
+  DataEventCut_TOFMassCut();
   ~DataEventCut_TOFMassCut();
-
-  int sector; 
 
   bool CanBeApplied(h22Event &event, int index);
   bool IsPassed(h22Event &event, int index);
@@ -459,6 +459,7 @@ class DataEventCut_BetaPCut : public DataEventCut{
 
   bool CanBeApplied(h22Event &event, int index);
   bool IsPassed(h22Event &event, int index);
+  float GetFractionalDistance(h22Event &event, int index);
 };
 
 /////////////////////////////////////////////////////////////////////

@@ -78,66 +78,29 @@ ParticleFilter::ParticleFilter(Parameters *params) : pars(params){
 
     // pion cuts
     dvz_cut            = new DataEventCut_DeltaZVertexCut();
-    pim_tofmass_cut_s1 = new DataEventCut_TOFMassCut(1);
-    pim_tofmass_cut_s2 = new DataEventCut_TOFMassCut(2);
-    pim_tofmass_cut_s3 = new DataEventCut_TOFMassCut(3);
-    pim_tofmass_cut_s4 = new DataEventCut_TOFMassCut(4);
-    pim_tofmass_cut_s5 = new DataEventCut_TOFMassCut(5);
-    pim_tofmass_cut_s6 = new DataEventCut_TOFMassCut(6);
-    pip_tofmass_cut_s1 = new DataEventCut_TOFMassCut(1);
-    pip_tofmass_cut_s2 = new DataEventCut_TOFMassCut(2);
-    pip_tofmass_cut_s3 = new DataEventCut_TOFMassCut(3);
-    pip_tofmass_cut_s4 = new DataEventCut_TOFMassCut(4);
-    pip_tofmass_cut_s5 = new DataEventCut_TOFMassCut(5);
-    pip_tofmass_cut_s6 = new DataEventCut_TOFMassCut(6);
- 
-    km_tofmass_cut_s1 = new DataEventCut_TOFMassCut(1);
-    km_tofmass_cut_s2 = new DataEventCut_TOFMassCut(2);
-    km_tofmass_cut_s3 = new DataEventCut_TOFMassCut(3);
-    km_tofmass_cut_s4 = new DataEventCut_TOFMassCut(4);
-    km_tofmass_cut_s5 = new DataEventCut_TOFMassCut(5);
-    km_tofmass_cut_s6 = new DataEventCut_TOFMassCut(6);
-    kp_tofmass_cut_s1 = new DataEventCut_TOFMassCut(1);
-    kp_tofmass_cut_s2 = new DataEventCut_TOFMassCut(2);
-    kp_tofmass_cut_s3 = new DataEventCut_TOFMassCut(3);
-    kp_tofmass_cut_s4 = new DataEventCut_TOFMassCut(4);
-    kp_tofmass_cut_s5 = new DataEventCut_TOFMassCut(5);
-    kp_tofmass_cut_s6 = new DataEventCut_TOFMassCut(6);
 
-    kp_betap_cut_s1 = new DataEventCut_BetaPCut(1); 
-    kp_betap_cut_s2 = new DataEventCut_BetaPCut(2); 
-    kp_betap_cut_s3 = new DataEventCut_BetaPCut(3); 
-    kp_betap_cut_s4 = new DataEventCut_BetaPCut(4); 
-    kp_betap_cut_s5 = new DataEventCut_BetaPCut(5); 
-    kp_betap_cut_s6 = new DataEventCut_BetaPCut(6); 
-    km_betap_cut_s1 = new DataEventCut_BetaPCut(1); 
-    km_betap_cut_s2 = new DataEventCut_BetaPCut(2); 
-    km_betap_cut_s3 = new DataEventCut_BetaPCut(3); 
-    km_betap_cut_s4 = new DataEventCut_BetaPCut(4); 
-    km_betap_cut_s5 = new DataEventCut_BetaPCut(5); 
-    km_betap_cut_s6 = new DataEventCut_BetaPCut(6); 
-    pp_betap_cut_s1 = new DataEventCut_BetaPCut(1); 
-    pp_betap_cut_s2 = new DataEventCut_BetaPCut(2); 
-    pp_betap_cut_s3 = new DataEventCut_BetaPCut(3); 
-    pp_betap_cut_s4 = new DataEventCut_BetaPCut(4); 
-    pp_betap_cut_s5 = new DataEventCut_BetaPCut(5); 
-    pp_betap_cut_s6 = new DataEventCut_BetaPCut(6); 
-    pm_betap_cut_s1 = new DataEventCut_BetaPCut(1); 
-    pm_betap_cut_s2 = new DataEventCut_BetaPCut(2); 
-    pm_betap_cut_s3 = new DataEventCut_BetaPCut(3); 
-    pm_betap_cut_s4 = new DataEventCut_BetaPCut(4); 
-    pm_betap_cut_s5 = new DataEventCut_BetaPCut(5); 
-    pm_betap_cut_s6 = new DataEventCut_BetaPCut(6); 
-
+    // fiducial cuts on r1 triangle shape 
+    dcr1_meson_fid_cut = new DCR1FiducialCut();
 
     // delta beta cuts 
     kp_dbeta_cut     = new DataEventCut_DeltaBetaCut(321); 
     pp_dbeta_cut     = new DataEventCut_DeltaBetaCut(211); 
     proton_dbeta_cut = new DataEventCut_DeltaBetaCut(2212); 
 
-    // fiducial cuts on r1 triangle shape 
-    dcr1_meson_fid_cut = new DCR1FiducialCut();
+    // time of flight cuts 
+    pip_tofmass_cut = new DataEventCut_TOFMassCut(); 
+    pim_tofmass_cut = new DataEventCut_TOFMassCut(); 
+    kp_tofmass_cut  = new DataEventCut_TOFMassCut(); 
+    km_tofmass_cut  = new DataEventCut_TOFMassCut(); 
 
+    pip_tofmass_cut->SetMin(params->getParameter("PIP_TOFMASS_MIN").getValue(0));
+    pip_tofmass_cut->SetMax(params->getParameter("PIP_TOFMASS_MAX").getValue(0));
+    pim_tofmass_cut->SetMin(params->getParameter("PIM_TOFMASS_MIN").getValue(0));
+    pim_tofmass_cut->SetMax(params->getParameter("PIM_TOFMASS_MAX").getValue(0));
+    kp_tofmass_cut->SetMin(params->getParameter("KP_TOFMASS_MIN").getValue(0));
+    kp_tofmass_cut->SetMax(params->getParameter("KP_TOFMASS_MAX").getValue(0));
+    km_tofmass_cut->SetMin(params->getParameter("KM_TOFMASS_MIN").getValue(0));
+    km_tofmass_cut->SetMax(params->getParameter("KM_TOFMASS_MAX").getValue(0));
 
     // new cut from Dan Carman 
     dbeta_minimizer_211      = new DataEventCut_DBetaMinimizerCut(); 
@@ -170,9 +133,9 @@ ParticleFilter::ParticleFilter(Parameters *params) : pars(params){
     dbeta_minimizer_2212->SetTarget(2212); 
     
     // -1 just let's any sector be applied 
-    mesonCandidate_tofmass_cut = new DataEventCut_TOFMassCut(-1); 
-    mesonCandidate_tofmass_cut->SetMin(params->getParameter("PIP_TOFMASS_MIN").getValue(0)); 
-    mesonCandidate_tofmass_cut->SetMax(params->getParameter("KP_TOFMASS_MAX").getValue(0)); 
+    //    mesonCandidate_tofmass_cut = new DataEventCut_TOFMassCut(); 
+    //    mesonCandidate_tofmass_cut->SetMin(params->getParameter("PIP_TOFMASS_MIN").getValue(0)); 
+    //    mesonCandidate_tofmass_cut->SetMax(params->getParameter("KP_TOFMASS_MAX").getValue(0)); 
 
     // Set limits on cuts from parameters
     negativity_cut->SetMin(-1.1);
@@ -188,6 +151,8 @@ ParticleFilter::ParticleFilter(Parameters *params) : pars(params){
     dcr3_fid_cut->angle  = params->getParameter("EL_DCR3_FIDA").getValue(0);
 
     edep_cut->SetMin( params->getParameter("EL_EC_EDEP_MIN").getValue(0) );
+    edep_cut->SetMax(1.20); // estimated from looking at data max value
+
     ecu_cut->SetMin( params->getParameter("EL_ECU_MIN").getValue(0) );
     ecu_cut->SetMax( params->getParameter("EL_ECU_MAX").getValue(0) );
     ecv_cut->SetMin( params->getParameter("EL_ECV_MIN").getValue(0) );
@@ -322,7 +287,7 @@ ParticleFilter::ParticleFilter(Parameters *params) : pars(params){
     nphe_cut->SetMax(1000);
 
     p_cut->SetMin(0.5);
-    p_cut->SetMax(100.0);
+    p_cut->SetMax(6.0);
 
     // Push back the cuts
     electronSelector->AddCut( negativity_cut );
@@ -358,411 +323,12 @@ ParticleFilter::ParticleFilter(Parameters *params) : pars(params){
     electronSelector->EnableAll();
     electronSelector->DisableByName("NPhe Cut");
 
-    /*
-    // Neutral Pion
-    for(int s=0; s<6; s++){
-        pi0_invmass_mu[s]    = params->getParameter("PI0_INVMASS_MU")   .getValue(s);
-        pi0_invmass_sigma[s] = params->getParameter("PI0_INVMASS_SIGMA").getValue(s);
-    }
-    pi0_invmass_nsigma   = params->getParameter("PI0_INVMASS_NSIGMA").getValue(0);
-
-    // Setting cut values for positive pions from file
-    pip_tofmass_cut_s1->SetMin(params->getParameter("PIP_TOFMASS_MU").getValue(0) -
-                                params->getParameter("PIP_TOFMASS_NSIGMA").getValue(0)*
-                                params->getParameter("PIP_TOFMASS_SIGMA").getValue(0));
-    pip_tofmass_cut_s1->SetMax(params->getParameter("PIP_TOFMASS_MU").getValue(0) +
-                                params->getParameter("PIP_TOFMASS_NSIGMA").getValue(0)*
-                                params->getParameter("PIP_TOFMASS_SIGMA").getValue(0));
- 
-    pip_tofmass_cut_s2->SetMin(params->getParameter("PIP_TOFMASS_MU").getValue(1) -
-                                params->getParameter("PIP_TOFMASS_NSIGMA").getValue(0)*
-                                params->getParameter("PIP_TOFMASS_SIGMA").getValue(1));
-    pip_tofmass_cut_s2->SetMax(params->getParameter("PIP_TOFMASS_MU").getValue(1) +
-                                params->getParameter("PIP_TOFMASS_NSIGMA").getValue(0)*
-                                params->getParameter("PIP_TOFMASS_SIGMA").getValue(1));
-
-    pip_tofmass_cut_s3->SetMin(params->getParameter("PIP_TOFMASS_MU").getValue(2) -
-                                params->getParameter("PIP_TOFMASS_NSIGMA").getValue(0)*
-                                params->getParameter("PIP_TOFMASS_SIGMA").getValue(2));
-    pip_tofmass_cut_s3->SetMax(params->getParameter("PIP_TOFMASS_MU").getValue(2) +
-                                params->getParameter("PIP_TOFMASS_NSIGMA").getValue(0)*
-                                params->getParameter("PIP_TOFMASS_SIGMA").getValue(2));
-
-    pip_tofmass_cut_s4->SetMin(params->getParameter("PIP_TOFMASS_MU").getValue(3) -
-                                params->getParameter("PIP_TOFMASS_NSIGMA").getValue(0)*
-                                params->getParameter("PIP_TOFMASS_SIGMA").getValue(3));
-    pip_tofmass_cut_s4->SetMax(params->getParameter("PIP_TOFMASS_MU").getValue(3) +
-                                params->getParameter("PIP_TOFMASS_NSIGMA").getValue(0)*
-                                params->getParameter("PIP_TOFMASS_SIGMA").getValue(3));
-
-    pip_tofmass_cut_s5->SetMin(params->getParameter("PIP_TOFMASS_MU").getValue(4) -
-                                params->getParameter("PIP_TOFMASS_NSIGMA").getValue(0)*
-                                params->getParameter("PIP_TOFMASS_SIGMA").getValue(4));
-    pip_tofmass_cut_s5->SetMax(params->getParameter("PIP_TOFMASS_MU").getValue(4) +
-                                params->getParameter("PIP_TOFMASS_NSIGMA").getValue(0)*
-                                params->getParameter("PIP_TOFMASS_SIGMA").getValue(4));
-
-    pip_tofmass_cut_s6->SetMin(params->getParameter("PIP_TOFMASS_MU").getValue(5) -
-                                params->getParameter("PIP_TOFMASS_NSIGMA").getValue(0)*
-                                params->getParameter("PIP_TOFMASS_SIGMA").getValue(5));
-    pip_tofmass_cut_s6->SetMax(params->getParameter("PIP_TOFMASS_MU").getValue(5) +
-                                params->getParameter("PIP_TOFMASS_NSIGMA").getValue(0)*
-                                params->getParameter("PIP_TOFMASS_SIGMA").getValue(5));
-
-    // Now for negative pions, this is so ugly.
-    pim_tofmass_cut_s1->SetMin(params->getParameter("PIM_TOFMASS_MU").getValue(0) -
-                                params->getParameter("PIM_TOFMASS_NSIGMA").getValue(0)*
-                                params->getParameter("PIM_TOFMASS_SIGMA").getValue(0));
-    pim_tofmass_cut_s1->SetMax(params->getParameter("PIM_TOFMASS_MU").getValue(0) +
-                                params->getParameter("PIM_TOFMASS_NSIGMA").getValue(0)*
-                                params->getParameter("PIM_TOFMASS_SIGMA").getValue(0));
-
-    pim_tofmass_cut_s2->SetMin(params->getParameter("PIM_TOFMASS_MU").getValue(1) -
-                                params->getParameter("PIM_TOFMASS_NSIGMA").getValue(0)*
-                                params->getParameter("PIM_TOFMASS_SIGMA").getValue(1));
-    pim_tofmass_cut_s2->SetMax(params->getParameter("PIM_TOFMASS_MU").getValue(1) +
-                                params->getParameter("PIM_TOFMASS_NSIGMA").getValue(0)*
-                                params->getParameter("PIM_TOFMASS_SIGMA").getValue(1));
-
-    pim_tofmass_cut_s3->SetMin(params->getParameter("PIM_TOFMASS_MU").getValue(2) -
-                                params->getParameter("PIM_TOFMASS_NSIGMA").getValue(0)*
-                                params->getParameter("PIM_TOFMASS_SIGMA").getValue(2));
-    pim_tofmass_cut_s3->SetMax(params->getParameter("PIM_TOFMASS_MU").getValue(2) +
-                                params->getParameter("PIM_TOFMASS_NSIGMA").getValue(0)*
-                                params->getParameter("PIM_TOFMASS_SIGMA").getValue(2));
-
-    pim_tofmass_cut_s4->SetMin(params->getParameter("PIM_TOFMASS_MU").getValue(3) -
-                                params->getParameter("PIM_TOFMASS_NSIGMA").getValue(0)*
-                                params->getParameter("PIM_TOFMASS_SIGMA").getValue(3));
-    pim_tofmass_cut_s4->SetMax(params->getParameter("PIM_TOFMASS_MU").getValue(3) +
-                                params->getParameter("PIM_TOFMASS_NSIGMA").getValue(0)*
-                                params->getParameter("PIM_TOFMASS_SIGMA").getValue(3));
-
-    pim_tofmass_cut_s5->SetMin(params->getParameter("PIM_TOFMASS_MU").getValue(4) -
-                                params->getParameter("PIM_TOFMASS_NSIGMA").getValue(0)*
-                                params->getParameter("PIM_TOFMASS_SIGMA").getValue(4));
-    pim_tofmass_cut_s5->SetMax(params->getParameter("PIM_TOFMASS_MU").getValue(4) +
-                                params->getParameter("PIM_TOFMASS_NSIGMA").getValue(0)*
-                                params->getParameter("PIM_TOFMASS_SIGMA").getValue(4));
-
-    pim_tofmass_cut_s6->SetMin(params->getParameter("PIM_TOFMASS_MU").getValue(5) -
-                                params->getParameter("PIM_TOFMASS_NSIGMA").getValue(0)*
-                                params->getParameter("PIM_TOFMASS_SIGMA").getValue(5));
-    pim_tofmass_cut_s6->SetMax(params->getParameter("PIM_TOFMASS_MU").getValue(5) +
-                                params->getParameter("PIM_TOFMASS_NSIGMA").getValue(0)*
-                                params->getParameter("PIM_TOFMASS_SIGMA").getValue(5));
-
-    */
-
-    // kaon min and max 
-    kp_tofmass_cut_s1->SetMin(params->getParameter("KP_TOFMASS_MIN").getValue(0));
-    kp_tofmass_cut_s2->SetMin(params->getParameter("KP_TOFMASS_MIN").getValue(1));
-    kp_tofmass_cut_s3->SetMin(params->getParameter("KP_TOFMASS_MIN").getValue(2));
-    kp_tofmass_cut_s4->SetMin(params->getParameter("KP_TOFMASS_MIN").getValue(3));
-    kp_tofmass_cut_s5->SetMin(params->getParameter("KP_TOFMASS_MIN").getValue(4));
-    kp_tofmass_cut_s6->SetMin(params->getParameter("KP_TOFMASS_MIN").getValue(5));
-    kp_tofmass_cut_s1->SetMax(params->getParameter("KP_TOFMASS_MAX").getValue(0));
-    kp_tofmass_cut_s2->SetMax(params->getParameter("KP_TOFMASS_MAX").getValue(1));
-    kp_tofmass_cut_s3->SetMax(params->getParameter("KP_TOFMASS_MAX").getValue(2));
-    kp_tofmass_cut_s4->SetMax(params->getParameter("KP_TOFMASS_MAX").getValue(3));
-    kp_tofmass_cut_s5->SetMax(params->getParameter("KP_TOFMASS_MAX").getValue(4));
-    kp_tofmass_cut_s6->SetMax(params->getParameter("KP_TOFMASS_MAX").getValue(5));
- 
-    pip_tofmass_cut_s1->SetMin(params->getParameter("PIP_TOFMASS_MIN").getValue(0));
-    pip_tofmass_cut_s2->SetMin(params->getParameter("PIP_TOFMASS_MIN").getValue(1));
-    pip_tofmass_cut_s3->SetMin(params->getParameter("PIP_TOFMASS_MIN").getValue(2));
-    pip_tofmass_cut_s4->SetMin(params->getParameter("PIP_TOFMASS_MIN").getValue(3));
-    pip_tofmass_cut_s5->SetMin(params->getParameter("PIP_TOFMASS_MIN").getValue(4));
-    pip_tofmass_cut_s6->SetMin(params->getParameter("PIP_TOFMASS_MIN").getValue(5));
-    pip_tofmass_cut_s1->SetMax(params->getParameter("PIP_TOFMASS_MAX").getValue(0));
-    pip_tofmass_cut_s2->SetMax(params->getParameter("PIP_TOFMASS_MAX").getValue(1));
-    pip_tofmass_cut_s3->SetMax(params->getParameter("PIP_TOFMASS_MAX").getValue(2));
-    pip_tofmass_cut_s4->SetMax(params->getParameter("PIP_TOFMASS_MAX").getValue(3));
-    pip_tofmass_cut_s5->SetMax(params->getParameter("PIP_TOFMASS_MAX").getValue(4));
-    pip_tofmass_cut_s6->SetMax(params->getParameter("PIP_TOFMASS_MAX").getValue(5));
-
-    pim_tofmass_cut_s1->SetMin(params->getParameter("PIM_TOFMASS_MIN").getValue(0));
-    pim_tofmass_cut_s2->SetMin(params->getParameter("PIM_TOFMASS_MIN").getValue(1));
-    pim_tofmass_cut_s3->SetMin(params->getParameter("PIM_TOFMASS_MIN").getValue(2));
-    pim_tofmass_cut_s4->SetMin(params->getParameter("PIM_TOFMASS_MIN").getValue(3));
-    pim_tofmass_cut_s5->SetMin(params->getParameter("PIM_TOFMASS_MIN").getValue(4));
-    pim_tofmass_cut_s6->SetMin(params->getParameter("PIM_TOFMASS_MIN").getValue(5));
-    pim_tofmass_cut_s1->SetMax(params->getParameter("PIM_TOFMASS_MAX").getValue(0));
-    pim_tofmass_cut_s2->SetMax(params->getParameter("PIM_TOFMASS_MAX").getValue(1));
-    pim_tofmass_cut_s3->SetMax(params->getParameter("PIM_TOFMASS_MAX").getValue(2));
-    pim_tofmass_cut_s4->SetMax(params->getParameter("PIM_TOFMASS_MAX").getValue(3));
-    pim_tofmass_cut_s5->SetMax(params->getParameter("PIM_TOFMASS_MAX").getValue(4));
-    pim_tofmass_cut_s6->SetMax(params->getParameter("PIM_TOFMASS_MAX").getValue(5));
-
-    km_tofmass_cut_s1->SetMin(params->getParameter("KM_TOFMASS_MIN").getValue(0));
-    km_tofmass_cut_s2->SetMin(params->getParameter("KM_TOFMASS_MIN").getValue(1));
-    km_tofmass_cut_s3->SetMin(params->getParameter("KM_TOFMASS_MIN").getValue(2));
-    km_tofmass_cut_s4->SetMin(params->getParameter("KM_TOFMASS_MIN").getValue(3));
-    km_tofmass_cut_s5->SetMin(params->getParameter("KM_TOFMASS_MIN").getValue(4));
-    km_tofmass_cut_s6->SetMin(params->getParameter("KM_TOFMASS_MIN").getValue(5));
-    km_tofmass_cut_s1->SetMax(params->getParameter("KM_TOFMASS_MAX").getValue(0));
-    km_tofmass_cut_s2->SetMax(params->getParameter("KM_TOFMASS_MAX").getValue(1));
-    km_tofmass_cut_s3->SetMax(params->getParameter("KM_TOFMASS_MAX").getValue(2));
-    km_tofmass_cut_s4->SetMax(params->getParameter("KM_TOFMASS_MAX").getValue(3));
-    km_tofmass_cut_s5->SetMax(params->getParameter("KM_TOFMASS_MAX").getValue(4));
-    km_tofmass_cut_s6->SetMax(params->getParameter("KM_TOFMASS_MAX").getValue(5));
-
-    // kaon beta vs. p values 
-    kp_betap_cut_s1->am = params->getParameter("KP_BVP_MU_A").getValue(0);
-    kp_betap_cut_s1->bm = params->getParameter("KP_BVP_MU_B").getValue(0);
-    kp_betap_cut_s1->cm = params->getParameter("KP_BVP_MU_C").getValue(0);
-    kp_betap_cut_s1->dm = params->getParameter("KP_BVP_MU_D").getValue(0);
-    kp_betap_cut_s1->as = params->getParameter("KP_BVP_SIGMA_A").getValue(0);
-    kp_betap_cut_s1->bs = params->getParameter("KP_BVP_SIGMA_B").getValue(0);
-    kp_betap_cut_s1->cs = params->getParameter("KP_BVP_SIGMA_C").getValue(0);
-    kp_betap_cut_s1->ds = params->getParameter("KP_BVP_SIGMA_D").getValue(0);
-    kp_betap_cut_s1->nsigma = params->getParameter("KP_BVP_NSIGMA").getValue(0);
-
-    kp_betap_cut_s2->am = params->getParameter("KP_BVP_MU_A").getValue(1);
-    kp_betap_cut_s2->bm = params->getParameter("KP_BVP_MU_B").getValue(1);
-    kp_betap_cut_s2->cm = params->getParameter("KP_BVP_MU_C").getValue(1);
-    kp_betap_cut_s2->dm = params->getParameter("KP_BVP_MU_D").getValue(1);
-    kp_betap_cut_s2->as = params->getParameter("KP_BVP_SIGMA_A").getValue(1);
-    kp_betap_cut_s2->bs = params->getParameter("KP_BVP_SIGMA_B").getValue(1);
-    kp_betap_cut_s2->cs = params->getParameter("KP_BVP_SIGMA_C").getValue(1);
-    kp_betap_cut_s2->ds = params->getParameter("KP_BVP_SIGMA_D").getValue(1);
-    kp_betap_cut_s2->nsigma = params->getParameter("KP_BVP_NSIGMA").getValue(0);
-
-    kp_betap_cut_s3->am = params->getParameter("KP_BVP_MU_A").getValue(2);
-    kp_betap_cut_s3->bm = params->getParameter("KP_BVP_MU_B").getValue(2);
-    kp_betap_cut_s3->cm = params->getParameter("KP_BVP_MU_C").getValue(2);
-    kp_betap_cut_s3->dm = params->getParameter("KP_BVP_MU_D").getValue(2);
-    kp_betap_cut_s3->as = params->getParameter("KP_BVP_SIGMA_A").getValue(2);
-    kp_betap_cut_s3->bs = params->getParameter("KP_BVP_SIGMA_B").getValue(2);
-    kp_betap_cut_s3->cs = params->getParameter("KP_BVP_SIGMA_C").getValue(2);
-    kp_betap_cut_s3->ds = params->getParameter("KP_BVP_SIGMA_D").getValue(2);
-    kp_betap_cut_s3->nsigma = params->getParameter("KP_BVP_NSIGMA").getValue(0);
-
-    kp_betap_cut_s4->am = params->getParameter("KP_BVP_MU_A").getValue(3);
-    kp_betap_cut_s4->bm = params->getParameter("KP_BVP_MU_B").getValue(3);
-    kp_betap_cut_s4->cm = params->getParameter("KP_BVP_MU_C").getValue(3);
-    kp_betap_cut_s4->dm = params->getParameter("KP_BVP_MU_D").getValue(3);
-    kp_betap_cut_s4->as = params->getParameter("KP_BVP_SIGMA_A").getValue(3);
-    kp_betap_cut_s4->bs = params->getParameter("KP_BVP_SIGMA_B").getValue(3);
-    kp_betap_cut_s4->cs = params->getParameter("KP_BVP_SIGMA_C").getValue(3);
-    kp_betap_cut_s4->ds = params->getParameter("KP_BVP_SIGMA_D").getValue(3);
-    kp_betap_cut_s4->nsigma = params->getParameter("KP_BVP_NSIGMA").getValue(0);
-
-    kp_betap_cut_s5->am = params->getParameter("KP_BVP_MU_A").getValue(4);
-    kp_betap_cut_s5->bm = params->getParameter("KP_BVP_MU_B").getValue(4);
-    kp_betap_cut_s5->cm = params->getParameter("KP_BVP_MU_C").getValue(4);
-    kp_betap_cut_s5->dm = params->getParameter("KP_BVP_MU_D").getValue(4);
-    kp_betap_cut_s5->as = params->getParameter("KP_BVP_SIGMA_A").getValue(4);
-    kp_betap_cut_s5->bs = params->getParameter("KP_BVP_SIGMA_B").getValue(4);
-    kp_betap_cut_s5->cs = params->getParameter("KP_BVP_SIGMA_C").getValue(4);
-    kp_betap_cut_s5->ds = params->getParameter("KP_BVP_SIGMA_D").getValue(4);
-    kp_betap_cut_s5->nsigma = params->getParameter("KP_BVP_NSIGMA").getValue(0);
-
-    kp_betap_cut_s6->am = params->getParameter("KP_BVP_MU_A").getValue(5);
-    kp_betap_cut_s6->bm = params->getParameter("KP_BVP_MU_B").getValue(5);
-    kp_betap_cut_s6->cm = params->getParameter("KP_BVP_MU_C").getValue(5);
-    kp_betap_cut_s6->dm = params->getParameter("KP_BVP_MU_D").getValue(5);
-    kp_betap_cut_s6->as = params->getParameter("KP_BVP_SIGMA_A").getValue(5);
-    kp_betap_cut_s6->bs = params->getParameter("KP_BVP_SIGMA_B").getValue(5);
-    kp_betap_cut_s6->cs = params->getParameter("KP_BVP_SIGMA_C").getValue(5);
-    kp_betap_cut_s6->ds = params->getParameter("KP_BVP_SIGMA_D").getValue(5);
-    kp_betap_cut_s6->nsigma = params->getParameter("KP_BVP_NSIGMA").getValue(0);
-
-    // negative kaon
-    km_betap_cut_s1->am = params->getParameter("KM_BVP_MU_A").getValue(0);
-    km_betap_cut_s1->bm = params->getParameter("KM_BVP_MU_B").getValue(0);
-    km_betap_cut_s1->cm = params->getParameter("KM_BVP_MU_C").getValue(0);
-    km_betap_cut_s1->dm = params->getParameter("KM_BVP_MU_D").getValue(0);
-    km_betap_cut_s1->as = params->getParameter("KM_BVP_SIGMA_A").getValue(0);
-    km_betap_cut_s1->bs = params->getParameter("KM_BVP_SIGMA_B").getValue(0);
-    km_betap_cut_s1->cs = params->getParameter("KM_BVP_SIGMA_C").getValue(0);
-    km_betap_cut_s1->ds = params->getParameter("KM_BVP_SIGMA_D").getValue(0);
-    km_betap_cut_s1->nsigma = params->getParameter("KM_BVP_NSIGMA").getValue(0);
-
-    km_betap_cut_s2->am = params->getParameter("KM_BVP_MU_A").getValue(1);
-    km_betap_cut_s2->bm = params->getParameter("KM_BVP_MU_B").getValue(1);
-    km_betap_cut_s2->cm = params->getParameter("KM_BVP_MU_C").getValue(1);
-    km_betap_cut_s2->dm = params->getParameter("KM_BVP_MU_D").getValue(1);
-    km_betap_cut_s2->as = params->getParameter("KM_BVP_SIGMA_A").getValue(1);
-    km_betap_cut_s2->bs = params->getParameter("KM_BVP_SIGMA_B").getValue(1);
-    km_betap_cut_s2->cs = params->getParameter("KM_BVP_SIGMA_C").getValue(1);
-    km_betap_cut_s2->ds = params->getParameter("KM_BVP_SIGMA_D").getValue(1);
-    km_betap_cut_s2->nsigma = params->getParameter("KM_BVP_NSIGMA").getValue(0);
-
-    km_betap_cut_s3->am = params->getParameter("KM_BVP_MU_A").getValue(2);
-    km_betap_cut_s3->bm = params->getParameter("KM_BVP_MU_B").getValue(2);
-    km_betap_cut_s3->cm = params->getParameter("KM_BVP_MU_C").getValue(2);
-    km_betap_cut_s3->dm = params->getParameter("KM_BVP_MU_D").getValue(2);
-    km_betap_cut_s3->as = params->getParameter("KM_BVP_SIGMA_A").getValue(2);
-    km_betap_cut_s3->bs = params->getParameter("KM_BVP_SIGMA_B").getValue(2);
-    km_betap_cut_s3->cs = params->getParameter("KM_BVP_SIGMA_C").getValue(2);
-    km_betap_cut_s3->ds = params->getParameter("KM_BVP_SIGMA_D").getValue(2);
-    km_betap_cut_s3->nsigma = params->getParameter("KM_BVP_NSIGMA").getValue(0);
-
-    km_betap_cut_s4->am = params->getParameter("KM_BVP_MU_A").getValue(3);
-    km_betap_cut_s4->bm = params->getParameter("KM_BVP_MU_B").getValue(3);
-    km_betap_cut_s4->cm = params->getParameter("KM_BVP_MU_C").getValue(3);
-    km_betap_cut_s4->dm = params->getParameter("KM_BVP_MU_D").getValue(3);
-    km_betap_cut_s4->as = params->getParameter("KM_BVP_SIGMA_A").getValue(3);
-    km_betap_cut_s4->bs = params->getParameter("KM_BVP_SIGMA_B").getValue(3);
-    km_betap_cut_s4->cs = params->getParameter("KM_BVP_SIGMA_C").getValue(3);
-    km_betap_cut_s4->ds = params->getParameter("KM_BVP_SIGMA_D").getValue(3);
-    km_betap_cut_s4->nsigma = params->getParameter("KM_BVP_NSIGMA").getValue(0);
-
-    km_betap_cut_s5->am = params->getParameter("KM_BVP_MU_A").getValue(4);
-    km_betap_cut_s5->bm = params->getParameter("KM_BVP_MU_B").getValue(4);
-    km_betap_cut_s5->cm = params->getParameter("KM_BVP_MU_C").getValue(4);
-    km_betap_cut_s5->dm = params->getParameter("KM_BVP_MU_D").getValue(4);
-    km_betap_cut_s5->as = params->getParameter("KM_BVP_SIGMA_A").getValue(4);
-    km_betap_cut_s5->bs = params->getParameter("KM_BVP_SIGMA_B").getValue(4);
-    km_betap_cut_s5->cs = params->getParameter("KM_BVP_SIGMA_C").getValue(4);
-    km_betap_cut_s5->ds = params->getParameter("KM_BVP_SIGMA_D").getValue(4);
-    km_betap_cut_s5->nsigma = params->getParameter("KM_BVP_NSIGMA").getValue(0);
-
-    km_betap_cut_s6->am = params->getParameter("KM_BVP_MU_A").getValue(5);
-    km_betap_cut_s6->bm = params->getParameter("KM_BVP_MU_B").getValue(5);
-    km_betap_cut_s6->cm = params->getParameter("KM_BVP_MU_C").getValue(5);
-    km_betap_cut_s6->dm = params->getParameter("KM_BVP_MU_D").getValue(5);
-    km_betap_cut_s6->as = params->getParameter("KM_BVP_SIGMA_A").getValue(5);
-    km_betap_cut_s6->bs = params->getParameter("KM_BVP_SIGMA_B").getValue(5);
-    km_betap_cut_s6->cs = params->getParameter("KM_BVP_SIGMA_C").getValue(5);
-    km_betap_cut_s6->ds = params->getParameter("KM_BVP_SIGMA_D").getValue(5);
-    km_betap_cut_s6->nsigma = params->getParameter("KM_BVP_NSIGMA").getValue(0);
-   
-    // pion positive 
-    pp_betap_cut_s1->am = params->getParameter("PIP_BVP_MU_A").getValue(0);
-    pp_betap_cut_s1->bm = params->getParameter("PIP_BVP_MU_B").getValue(0);
-    pp_betap_cut_s1->cm = params->getParameter("PIP_BVP_MU_C").getValue(0);
-    pp_betap_cut_s1->dm = params->getParameter("PIP_BVP_MU_D").getValue(0);
-    pp_betap_cut_s1->as = params->getParameter("PIP_BVP_SIGMA_A").getValue(0);
-    pp_betap_cut_s1->bs = params->getParameter("PIP_BVP_SIGMA_B").getValue(0);
-    pp_betap_cut_s1->cs = params->getParameter("PIP_BVP_SIGMA_C").getValue(0);
-    pp_betap_cut_s1->ds = params->getParameter("PIP_BVP_SIGMA_D").getValue(0);
-    pp_betap_cut_s1->nsigma = params->getParameter("PIP_BVP_NSIGMA").getValue(0);
-
-    pp_betap_cut_s2->am = params->getParameter("PIP_BVP_MU_A").getValue(1);
-    pp_betap_cut_s2->bm = params->getParameter("PIP_BVP_MU_B").getValue(1);
-    pp_betap_cut_s2->cm = params->getParameter("PIP_BVP_MU_C").getValue(1);
-    pp_betap_cut_s2->dm = params->getParameter("PIP_BVP_MU_D").getValue(1);
-    pp_betap_cut_s2->as = params->getParameter("PIP_BVP_SIGMA_A").getValue(1);
-    pp_betap_cut_s2->bs = params->getParameter("PIP_BVP_SIGMA_B").getValue(1);
-    pp_betap_cut_s2->cs = params->getParameter("PIP_BVP_SIGMA_C").getValue(1);
-    pp_betap_cut_s2->ds = params->getParameter("PIP_BVP_SIGMA_D").getValue(1);
-    pp_betap_cut_s2->nsigma = params->getParameter("PIP_BVP_NSIGMA").getValue(0);
-
-    pp_betap_cut_s3->am = params->getParameter("PIP_BVP_MU_A").getValue(2);
-    pp_betap_cut_s3->bm = params->getParameter("PIP_BVP_MU_B").getValue(2);
-    pp_betap_cut_s3->cm = params->getParameter("PIP_BVP_MU_C").getValue(2);
-    pp_betap_cut_s3->dm = params->getParameter("PIP_BVP_MU_D").getValue(2);
-    pp_betap_cut_s3->as = params->getParameter("PIP_BVP_SIGMA_A").getValue(2);
-    pp_betap_cut_s3->bs = params->getParameter("PIP_BVP_SIGMA_B").getValue(2);
-    pp_betap_cut_s3->cs = params->getParameter("PIP_BVP_SIGMA_C").getValue(2);
-    pp_betap_cut_s3->ds = params->getParameter("PIP_BVP_SIGMA_D").getValue(2);
-    pp_betap_cut_s3->nsigma = params->getParameter("PIP_BVP_NSIGMA").getValue(0);
-
-    pp_betap_cut_s4->am = params->getParameter("PIP_BVP_MU_A").getValue(3);
-    pp_betap_cut_s4->bm = params->getParameter("PIP_BVP_MU_B").getValue(3);
-    pp_betap_cut_s4->cm = params->getParameter("PIP_BVP_MU_C").getValue(3);
-    pp_betap_cut_s4->dm = params->getParameter("PIP_BVP_MU_D").getValue(3);
-    pp_betap_cut_s4->as = params->getParameter("PIP_BVP_SIGMA_A").getValue(3);
-    pp_betap_cut_s4->bs = params->getParameter("PIP_BVP_SIGMA_B").getValue(3);
-    pp_betap_cut_s4->cs = params->getParameter("PIP_BVP_SIGMA_C").getValue(3);
-    pp_betap_cut_s4->ds = params->getParameter("PIP_BVP_SIGMA_D").getValue(3);
-    pp_betap_cut_s4->nsigma = params->getParameter("PIP_BVP_NSIGMA").getValue(0);
-
-    pp_betap_cut_s5->am = params->getParameter("PIP_BVP_MU_A").getValue(4);
-    pp_betap_cut_s5->bm = params->getParameter("PIP_BVP_MU_B").getValue(4);
-    pp_betap_cut_s5->cm = params->getParameter("PIP_BVP_MU_C").getValue(4);
-    pp_betap_cut_s5->dm = params->getParameter("PIP_BVP_MU_D").getValue(4);
-    pp_betap_cut_s5->as = params->getParameter("PIP_BVP_SIGMA_A").getValue(4);
-    pp_betap_cut_s5->bs = params->getParameter("PIP_BVP_SIGMA_B").getValue(4);
-    pp_betap_cut_s5->cs = params->getParameter("PIP_BVP_SIGMA_C").getValue(4);
-    pp_betap_cut_s5->ds = params->getParameter("PIP_BVP_SIGMA_D").getValue(4);
-    pp_betap_cut_s5->nsigma = params->getParameter("PIP_BVP_NSIGMA").getValue(0);
-
-    pp_betap_cut_s6->am = params->getParameter("PIP_BVP_MU_A").getValue(5);
-    pp_betap_cut_s6->bm = params->getParameter("PIP_BVP_MU_B").getValue(5);
-    pp_betap_cut_s6->cm = params->getParameter("PIP_BVP_MU_C").getValue(5);
-    pp_betap_cut_s6->dm = params->getParameter("PIP_BVP_MU_D").getValue(5);
-    pp_betap_cut_s6->as = params->getParameter("PIP_BVP_SIGMA_A").getValue(5);
-    pp_betap_cut_s6->bs = params->getParameter("PIP_BVP_SIGMA_B").getValue(5);
-    pp_betap_cut_s6->cs = params->getParameter("PIP_BVP_SIGMA_C").getValue(5);
-    pp_betap_cut_s6->ds = params->getParameter("PIP_BVP_SIGMA_D").getValue(5);
-    pp_betap_cut_s6->nsigma = params->getParameter("PIP_BVP_NSIGMA").getValue(0);
-
-    // negative pion
-    pm_betap_cut_s1->am = params->getParameter("PIM_BVP_MU_A").getValue(0);
-    pm_betap_cut_s1->bm = params->getParameter("PIM_BVP_MU_B").getValue(0);
-    pm_betap_cut_s1->cm = params->getParameter("PIM_BVP_MU_C").getValue(0);
-    pm_betap_cut_s1->dm = params->getParameter("PIM_BVP_MU_D").getValue(0);
-    pm_betap_cut_s1->as = params->getParameter("PIM_BVP_SIGMA_A").getValue(0);
-    pm_betap_cut_s1->bs = params->getParameter("PIM_BVP_SIGMA_B").getValue(0);
-    pm_betap_cut_s1->cs = params->getParameter("PIM_BVP_SIGMA_C").getValue(0);
-    pm_betap_cut_s1->ds = params->getParameter("PIM_BVP_SIGMA_D").getValue(0);
-    pm_betap_cut_s1->nsigma = params->getParameter("PIM_BVP_NSIGMA").getValue(0);
-
-    pm_betap_cut_s2->am = params->getParameter("PIM_BVP_MU_A").getValue(1);
-    pm_betap_cut_s2->bm = params->getParameter("PIM_BVP_MU_B").getValue(1);
-    pm_betap_cut_s2->cm = params->getParameter("PIM_BVP_MU_C").getValue(1);
-    pm_betap_cut_s2->dm = params->getParameter("PIM_BVP_MU_D").getValue(1);
-    pm_betap_cut_s2->as = params->getParameter("PIM_BVP_SIGMA_A").getValue(1);
-    pm_betap_cut_s2->bs = params->getParameter("PIM_BVP_SIGMA_B").getValue(1);
-    pm_betap_cut_s2->cs = params->getParameter("PIM_BVP_SIGMA_C").getValue(1);
-    pm_betap_cut_s2->ds = params->getParameter("PIM_BVP_SIGMA_D").getValue(1);
-    pm_betap_cut_s2->nsigma = params->getParameter("PIM_BVP_NSIGMA").getValue(0);
-
-    pm_betap_cut_s3->am = params->getParameter("PIM_BVP_MU_A").getValue(2);
-    pm_betap_cut_s3->bm = params->getParameter("PIM_BVP_MU_B").getValue(2);
-    pm_betap_cut_s3->cm = params->getParameter("PIM_BVP_MU_C").getValue(2);
-    pm_betap_cut_s3->dm = params->getParameter("PIM_BVP_MU_D").getValue(2);
-    pm_betap_cut_s3->as = params->getParameter("PIM_BVP_SIGMA_A").getValue(2);
-    pm_betap_cut_s3->bs = params->getParameter("PIM_BVP_SIGMA_B").getValue(2);
-    pm_betap_cut_s3->cs = params->getParameter("PIM_BVP_SIGMA_C").getValue(2);
-    pm_betap_cut_s3->ds = params->getParameter("PIM_BVP_SIGMA_D").getValue(2);
-    pm_betap_cut_s3->nsigma = params->getParameter("PIM_BVP_NSIGMA").getValue(0);
-
-    pm_betap_cut_s4->am = params->getParameter("PIM_BVP_MU_A").getValue(3);
-    pm_betap_cut_s4->bm = params->getParameter("PIM_BVP_MU_B").getValue(3);
-    pm_betap_cut_s4->cm = params->getParameter("PIM_BVP_MU_C").getValue(3);
-    pm_betap_cut_s4->dm = params->getParameter("PIM_BVP_MU_D").getValue(3);
-    pm_betap_cut_s4->as = params->getParameter("PIM_BVP_SIGMA_A").getValue(3);
-    pm_betap_cut_s4->bs = params->getParameter("PIM_BVP_SIGMA_B").getValue(3);
-    pm_betap_cut_s4->cs = params->getParameter("PIM_BVP_SIGMA_C").getValue(3);
-    pm_betap_cut_s4->ds = params->getParameter("PIM_BVP_SIGMA_D").getValue(3);
-    pm_betap_cut_s4->nsigma = params->getParameter("PIM_BVP_NSIGMA").getValue(0);
-
-    pm_betap_cut_s5->am = params->getParameter("PIM_BVP_MU_A").getValue(4);
-    pm_betap_cut_s5->bm = params->getParameter("PIM_BVP_MU_B").getValue(4);
-    pm_betap_cut_s5->cm = params->getParameter("PIM_BVP_MU_C").getValue(4);
-    pm_betap_cut_s5->dm = params->getParameter("PIM_BVP_MU_D").getValue(4);
-    pm_betap_cut_s5->as = params->getParameter("PIM_BVP_SIGMA_A").getValue(4);
-    pm_betap_cut_s5->bs = params->getParameter("PIM_BVP_SIGMA_B").getValue(4);
-    pm_betap_cut_s5->cs = params->getParameter("PIM_BVP_SIGMA_C").getValue(4);
-    pm_betap_cut_s5->ds = params->getParameter("PIM_BVP_SIGMA_D").getValue(4);
-    pm_betap_cut_s5->nsigma = params->getParameter("PIM_BVP_NSIGMA").getValue(0);
-
-    pm_betap_cut_s6->am = params->getParameter("PIM_BVP_MU_A").getValue(5);
-    pm_betap_cut_s6->bm = params->getParameter("PIM_BVP_MU_B").getValue(5);
-    pm_betap_cut_s6->cm = params->getParameter("PIM_BVP_MU_C").getValue(5);
-    pm_betap_cut_s6->dm = params->getParameter("PIM_BVP_MU_D").getValue(5);
-    pm_betap_cut_s6->as = params->getParameter("PIM_BVP_SIGMA_A").getValue(5);
-    pm_betap_cut_s6->bs = params->getParameter("PIM_BVP_SIGMA_B").getValue(5);
-    pm_betap_cut_s6->cs = params->getParameter("PIM_BVP_SIGMA_C").getValue(5);
-    pm_betap_cut_s6->ds = params->getParameter("PIM_BVP_SIGMA_D").getValue(5);
-    pm_betap_cut_s6->nsigma = params->getParameter("PIM_BVP_NSIGMA").getValue(0);
-
+    // fiducial cuts 
     dcr1_meson_fid_cut->height = params->getParameter("KP_DCR1_HEIGHT").getValue(0);
     dcr1_meson_fid_cut->angle  = params->getParameter("KP_DCR1_ANGLE").getValue(0);
 
     dvz_cut->SetMin(-1 *params->getParameter("KP_DVZ").getValue(0) );
     dvz_cut->SetMax( params->getParameter("KP_DVZ").getValue(0) );
-
-    // setup dbeta cuts 
-    pp_dbeta_cut->SetMin(params->getParameter("PIP_DBETA_MIN").getValue(0));
-    pp_dbeta_cut->SetMax(params->getParameter("PIP_DBETA_MAX").getValue(0));
-    kp_dbeta_cut->SetMin(params->getParameter("KP_DBETA_MIN").getValue(0));
-    kp_dbeta_cut->SetMax(params->getParameter("KP_DBETA_MAX").getValue(0));
-
 
     // strict hard coded cuts on protons
     proton_dbeta_cut->SetMin(-0.045); 
@@ -771,98 +337,31 @@ ParticleFilter::ParticleFilter(Parameters *params) : pars(params){
     // Setup pion selectors
     testCut = new TestCut(); 
 
-    /*
-    positivePionSelector->AddCut(pp_betap_cut_s1); 
-    positivePionSelector->AddCut(pp_betap_cut_s2); 
-    positivePionSelector->AddCut(pp_betap_cut_s3); 
-    positivePionSelector->AddCut(pp_betap_cut_s4); 
-    positivePionSelector->AddCut(pp_betap_cut_s5); 
-    positivePionSelector->AddCut(pp_betap_cut_s6); 
-
-    
-    positivePionSelector->AddCut(pip_tofmass_cut_s1); 
-    positivePionSelector->AddCut(pip_tofmass_cut_s2); 
-    positivePionSelector->AddCut(pip_tofmass_cut_s3); 
-    positivePionSelector->AddCut(pip_tofmass_cut_s4); 
-    positivePionSelector->AddCut(pip_tofmass_cut_s5); 
-    positivePionSelector->AddCut(pip_tofmass_cut_s6); 
-    */
-
-//    positivePionSelector->AddCut(pp_dbeta_cut);
     positivePionSelector->AddCut(dbeta_minimizer_211);
+    positivePionSelector->AddCut(pip_tofmass_cut); 
     positivePionSelector->EnableAll();
 
-
-    /*
-    negativePionSelector->AddCut(pm_betap_cut_s1); 
-    negativePionSelector->AddCut(pm_betap_cut_s2); 
-    negativePionSelector->AddCut(pm_betap_cut_s3); 
-    negativePionSelector->AddCut(pm_betap_cut_s4); 
-    negativePionSelector->AddCut(pm_betap_cut_s5); 
-    negativePionSelector->AddCut(pm_betap_cut_s6); 
-    */
-    /* 
-    negativePionSelector->AddCut(pim_tofmass_cut_s1); 
-    negativePionSelector->AddCut(pim_tofmass_cut_s2); 
-    negativePionSelector->AddCut(pim_tofmass_cut_s3); 
-    negativePionSelector->AddCut(pim_tofmass_cut_s4); 
-    negativePionSelector->AddCut(pim_tofmass_cut_s5); 
-    negativePionSelector->AddCut(pim_tofmass_cut_s6); 
-    */
-
     negativePionSelector->AddCut(dvz_cut);
+    negativePionSelector->AddCut(pim_tofmass_cut); 
     negativePionSelector->AddCut(dbeta_minimizer_neg_211);
     negativePionSelector->EnableAll();
-    /*
-    positiveKaonSelector->AddCut(kp_tofmass_cut_s1);
-    positiveKaonSelector->AddCut(kp_tofmass_cut_s2);
-    positiveKaonSelector->AddCut(kp_tofmass_cut_s3);
-    positiveKaonSelector->AddCut(kp_tofmass_cut_s4);
-    positiveKaonSelector->AddCut(kp_tofmass_cut_s5);
-    positiveKaonSelector->AddCut(kp_tofmass_cut_s6);
 
-    positiveKaonSelector->AddCut(kp_betap_cut_s1);
-    positiveKaonSelector->AddCut(kp_betap_cut_s2);
-    positiveKaonSelector->AddCut(kp_betap_cut_s3);
-    positiveKaonSelector->AddCut(kp_betap_cut_s4);
-    positiveKaonSelector->AddCut(kp_betap_cut_s5);
-    positiveKaonSelector->AddCut(kp_betap_cut_s6);
-    */
-
-//    positiveKaonSelector->AddCut(kp_dbeta_cut);
     positiveKaonSelector->AddCut(dbeta_minimizer_321);
+    positiveKaonSelector->AddCut(kp_tofmass_cut); 
     positiveKaonSelector->EnableAll();
  
-
     negativeKaonSelector->AddCut(dvz_cut);
+    negativeKaonSelector->AddCut(km_tofmass_cut);
     negativeKaonSelector->AddCut(dbeta_minimizer_neg_321);
     negativeKaonSelector->EnableAll();
-    /* 
-    negativeKaonSelector->AddCut(km_tofmass_cut_s1);
-    negativeKaonSelector->AddCut(km_tofmass_cut_s2);
-    negativeKaonSelector->AddCut(km_tofmass_cut_s3);
-    negativeKaonSelector->AddCut(km_tofmass_cut_s4);
-    negativeKaonSelector->AddCut(km_tofmass_cut_s5);
-    negativeKaonSelector->AddCut(km_tofmass_cut_s6);
-    negativeKaonSelector->AddCut(km_betap_cut_s1);
-    negativeKaonSelector->AddCut(km_betap_cut_s2);
-    negativeKaonSelector->AddCut(km_betap_cut_s3);
-    negativeKaonSelector->AddCut(km_betap_cut_s4);
-    negativeKaonSelector->AddCut(km_betap_cut_s5);
-    negativeKaonSelector->AddCut(km_betap_cut_s6);
-    */
-
  
     positiveMesonCandidateSelector->AddCut(dcr1_meson_fid_cut); 
     positiveMesonCandidateSelector->AddCut(dvz_cut); 
-    //    positiveMesonCandidateSelector->AddCut(mesonCandidate_tofmass_cut); 
     positiveMesonCandidateSelector->EnableAll(); 
 
-//    protonSelector->AddCut(proton_dbeta_cut);
     protonSelector->AddCut(dbeta_minimizer_2212);
     protonSelector->AddCut(dcr1_meson_fid_cut);
     protonSelector->EnableAll(); 
-    
 }
 
 ParticleFilter::~ParticleFilter(){
@@ -1042,6 +541,25 @@ std::map<int, TLorentzVector> ParticleFilter::getMapOfIndexAndTLorentzVector(h22
     }
 
     return results;
+}
+
+std::map<std::string, float> ParticleFilter::eid_distance_map(h22Event &event, int index){
+  int sector = event.dc_sect[index];
+  std::map<std::string, float> results; 
+
+  string title = Form("Samp Frac Cut %d", sector);
+  results["EC_SAMPLING"] = (electronSelector->GetCut(title.c_str())->GetFractionalDistance(event, index));
+
+  title = "Z-Vertex Cut";
+  results["Z_VERTEX"] = (electronSelector->GetCut(title.c_str())->GetFractionalDistance(event, index));
+
+  title = "EC Edep Inner Cut";
+  results["EC_IN_OUT"] = (electronSelector->GetCut(title.c_str())->GetFractionalDistance(event, index));
+
+  title = Form("CCTheta Cut %d", sector);
+  results["CC_THETA"] = (electronSelector->GetCut(title.c_str())->GetFractionalDistance(event, index));
+
+  return results; 
 }
 
 std::map<std::string, bool> ParticleFilter::eid_map(h22Event &event, int index){

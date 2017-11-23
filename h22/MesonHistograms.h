@@ -43,6 +43,7 @@ class MesonHistograms {
   TH2D *h2_p_tofmass[7];
   TH2D *h2_nphe_tofmass[7];
   TH2D *h2_p_mm2[7];
+  TH2D *h2_p_sct[7];
 
   void Fill(h22Event &event, int index);
   void Fill(PhysicsEvent &physicsEvent);

@@ -19,11 +19,13 @@ Parameters::~Parameters(){
 }
 
 ParameterSet Parameters::getParameter(string name){
+
   if (parameters.find(name) != parameters.end()){
     return parameters[name];
   }
   else {
-    cout << "[Parameters::getParameter] Returning null parameter set for not finding key " << name << " check your spelling/file. " << endl; 
+    cout << "[Parameters::getParameter] Exiting for not finding key " << name << " check your spelling/file. " << endl; 
+    exit(0);
   }
   
   return ParameterSet(); 

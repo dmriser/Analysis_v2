@@ -1,7 +1,7 @@
 {
 
-  TFile *inputFile = TFile::Open("/volatile/clas12/dmriser/farm_out/phi_1020_pass5/phi.root");
-  //  TFile *inputFile = TFile::Open("../test.root");
+  TFile *inputFile = TFile::Open("/volatile/clas12/dmriser/farm_out/phi_1020_pass0/phi.root");
+  //  TFile *inputFile = TFile::Open("../out/big_dingus.root");
   TTree *events    = (TTree*) inputFile->Get("events");
 
   TH1F *mm_epkx_nocut = new TH1F("mm_epkx_nocut", "", 200, 0.3, 0.7);
@@ -156,14 +156,19 @@
 
 
   can->cd(2); 
+
   im_kk_lambdacut->SetLineColor(kBlack); 
   im_kk_lambdacut->SetFillColor(kBlack); 
   im_kk_lambdacut->SetFillStyle(3004); 
+  im_kk_lambdacut->SetMinimum(0.0); 
   im_kk_lambdacut->Draw();   
-  //  im_kk_allcut->SetLineColor(kBlack); 
+
+  im_kk_allcut->SetLineColor(99); 
   //  im_kk_allcut->SetFillColor(kBlack); 
   //  im_kk_allcut->SetFillStyle(3004); 
-  //  im_kk_allcut->Draw();   
+  im_kk_allcut->SetMinimum(0.0); 
+  im_kk_allcut->Draw("same");   
+
   lab->DrawLatex(0.3, 0.05, "IM_{KK} all other cuts applied"); 
 
   can->Print("im_kk.pdf"); 

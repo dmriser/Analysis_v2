@@ -4,10 +4,9 @@
 #include "CommonTools.h"
 #include "Corrections.h"
 #include "CheckPoints.h"
-#include "DataEventCut.h"
 #include "DBins.h"
 #include "h22Event.h"
-#include "h22Reader.h"
+#include "h10Reader.h"
 #include "HadronID.h"
 #include "MesonHistograms.h"
 #include "MomCorr.h"
@@ -27,7 +26,7 @@
 #include "TStopwatch.h"
 #include "TVector3.h"
 
-class Analysis : public h22Reader {
+class Analysis : public h10Reader {
 public:  
   Analysis() {
 
@@ -35,40 +34,15 @@ public:
     std::string momCorrPath = Form("%s/momCorr/",path.c_str());
     momCorr                 = new MomCorr_e1f(momCorrPath);
 
-
-    std::string nathanPath = Global::Environment::GetNathanPath();
-
     // setup reader options 
     GSIM = false; 
     Init();
 
     // needs parameters 
     params = new Parameters(); 
-    params->loadParameters(Form("%s/lists/data.pars", path.c_str())); 
-
-    paramsLoose = new Parameters(); 
-    //    paramsLoose->loadParameters(Form("%s/lists/dataLoose.pars", path.c_str())); 
-    paramsLoose->loadParameters(Form("%s/lists/data.pars", path.c_str())); 
-
-    paramsTight = new Parameters(); 
-    //    paramsTight->loadParameters(Form("%s/lists/dataTight.pars", path.c_str())); 
-    paramsTight->loadParameters(Form("%s/lists/data.pars", path.c_str())); 
+    params->loadParameters(Form("%s/lists/data_tofmass.pars", path.c_str())); 
 
     filter      = new ParticleFilter(params);
-    filterLoose = new ParticleFilter(paramsLoose);
-    filterTight = new ParticleFilter(paramsTight);
-
-    //    filter->GetSelector(211)->DisableByName("Delta Z-Vertex Cut");
-    //    filter->GetSelector(211)->DisableByRegex("Fid");
-
-    // setup the hadron filter for nathan 
-    pipTable.setPath(nathanPath);
-    pipTable.loadValues();
-
-    pimTable.setPath(nathanPath);
-    pimTable.loadValues();
-
-    hid = new Nathan::HadronID(pipTable, pimTable);
 
     // setup structure of ntuple 
     tupleWriter.addInt("helicity");
@@ -88,18 +62,10 @@ public:
     tupleWriter.addFloat("theta_ele"); 
     tupleWriter.addFloat("theta_pip");
     tupleWriter.addFloat("dvz");
-    tupleWriter.addFloat("cl");
     tupleWriter.addFloat("dist_ecsf");
     tupleWriter.addFloat("dist_ec_edep");
     tupleWriter.addFloat("dist_vz");
     tupleWriter.addFloat("dist_cc_theta");
-
-    // for varying cut values
-    tupleWriter.addInt("strict_ele_r1fid");
-    tupleWriter.addInt("strict_ele_r3fid");
-    tupleWriter.addInt("strict_ele_ecsf");
-    tupleWriter.addInt("strict_ele_vz");
-    tupleWriter.addInt("strict_ele_ec");
   }
 
   ~Analysis(){
@@ -110,8 +76,6 @@ public:
     
     // setup particle filter 
     filter->set_info(GSIM, GetRunNumber());
-    hid->SetRunNumber( GetRunNumber() );
-    hid->SetGSIM(GSIM); 
 
     StatusBar  stat; 
     TStopwatch timer; 
@@ -122,7 +86,7 @@ public:
     for(int ientry=0; ientry<GetEntries(); ientry++){
       GetEntry(ientry);
 
-      std::vector<int> electronIndices = filterLoose->getVectorOfParticleIndices(event, 11);
+      std::vector<int> electronIndices = filter->getVectorOfParticleIndices(event, 11);
       if(!electronIndices.empty()){
 	
 	int electronIndex = electronIndices[0];
@@ -130,13 +94,10 @@ public:
 	Corrections::correctEvent(&event, GetRunNumber(), GSIM);
 	  
 	std::vector<int> pipIndices = filter->getVectorOfParticleIndices(event, 211); 
-	//	Nathan::HadronIDResult result = hid->getIDResult(event);
 
 	if(!pipIndices.empty()){
-		  //	if(result.hasPip()){
 
-	  int pipIndex = pipIndices[0];
-		  //	  int pipIndex = result.pipIndex; 
+	  int pipIndex       = pipIndices[0];
 	  TLorentzVector pip = event.GetTLorentzVector(pipIndex, 211); 
 
 	  // momentum correction done here 
@@ -150,39 +111,6 @@ public:
 
 	  if ( sqrt(ev.mm2) > 0.8 && sqrt(ev.mm2) < 1.08 
 	       && ev.w > 2.0 && ev.qq > 1.0) {
-	    
-	    std::map<std::string, bool> results_nom   = filter     ->eid_map(event, electronIndices[0]);
-	    std::map<std::string, bool> results_tight = filterTight->eid_map(event, electronIndices[0]);
-
-	    std::map<std::string, float> distances = filter->eid_distance_map(event, electronIndices[0]); 
-	    tupleWriter.setFloat("dist_ecsf",    distances["EC_SAMPLING"]); 
-	    tupleWriter.setFloat("dist_ec_edep", distances["EC_IN_OUT"]); 
-	    tupleWriter.setFloat("dist_vz",      distances["Z_VERTEX"]); 
-	    tupleWriter.setFloat("dist_cc_theta",distances["CC_THETA"]); 
-
-	    tupleWriter.setInt("strict_ele_r1fid", -1);
-	    tupleWriter.setInt("strict_ele_r3fid", -1);
-	    tupleWriter.setInt("strict_ele_ecsf",  -1);
-	    tupleWriter.setInt("strict_ele_vz",    -1);
-	    tupleWriter.setInt("strict_ele_ec",    -1);
-	    
-	    if (results_nom["EC_SAMPLING"])  { tupleWriter.setInt("strict_ele_ecsf", 0); }
-	    if (results_tight["EC_SAMPLING"]){ tupleWriter.setInt("strict_ele_ecsf", 1); }
-
-	    if (results_nom["DC_R1_FID"])    { tupleWriter.setInt("strict_ele_r1fid", 0); }
-	    if (results_tight["DC_R1_FID"])  { tupleWriter.setInt("strict_ele_r1fid", 1); }
-
-	    if (results_nom["DC_R3_FID"])    { tupleWriter.setInt("strict_ele_r3fid", 0); }
-	    if (results_tight["DC_R3_FID"])  { tupleWriter.setInt("strict_ele_r3fid", 1); }
-
-	    if (results_nom["EC_FID"])       { tupleWriter.setInt("strict_ele_ec", 0); }
-	    if (results_tight["EC_FID"])     { tupleWriter.setInt("strict_ele_ec", 1); }
-
-	    if (results_nom["Z_VERTEX"])     { tupleWriter.setInt("strict_ele_vz", 0); }
-	    if (results_tight["Z_VERTEX"])   { tupleWriter.setInt("strict_ele_vz", 1); }
-	
-	    DataEventCut_BetaPLikelihood *bpCut = (DataEventCut_BetaPLikelihood*) filter->GetSelector(211)->GetCut("Beta P Likelihood Cut 211"); 
-	    
 
 	    tupleWriter.setInt("helicity",       event.corr_hel);
 	    tupleWriter.setFloat("missing_mass", sqrt(ev.mm2));
@@ -201,10 +129,8 @@ public:
 	    tupleWriter.setFloat("phi_ele",      to_degrees*electron.Phi()); 
 	    tupleWriter.setFloat("phi_pip",      to_degrees*pip.Phi()); 
 	    tupleWriter.setFloat("dvz",          event.vz[electronIndex]-event.vz[pipIndex]); 
-	    tupleWriter.setFloat("cl",           bpCut->GetConfidence());
 	    tupleWriter.writeEvent();
 	  }
-
 	}
       }
       
@@ -234,16 +160,9 @@ protected:
 
   MomCorr_e1f             *momCorr; 
   PhysicsEventBuilder      builder; 
-  ParticleFilter          *filter, *filterLoose, *filterTight; 
-  Parameters              *params, *paramsLoose, *paramsTight; 
-
-  SimpleNTupleWriter      tupleWriter; 
-
-  // Nathan's hadron identification 
-  Nathan::PipBetaPTable pipTable; 
-  Nathan::PimBetaPTable pimTable; 
-  Nathan::HadronID      *hid; 
-
+  ParticleFilter          *filter;
+  Parameters              *params;
+  SimpleNTupleWriter       tupleWriter; 
 };
 
 int main(int argc, char *argv[]){

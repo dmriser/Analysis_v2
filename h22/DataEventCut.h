@@ -23,9 +23,11 @@
 
 // c++ includes
 #include <iostream>
+#include <map>
 
 // my includes
 #include "h22Event.h"
+#include "Parameters.h"
 
 class DataEventCut{
 
@@ -65,6 +67,7 @@ class DataEventCut{
   virtual bool CanBeApplied(h22Event &event, int); /** Pass in the event, and the particle index of interest */
   virtual bool IsPassed(h22Event &event, int); /** Pass in the event, and the particle index of interest */
   virtual float GetFractionalDistance(h22Event &event, int index); /** Pass in the event and the index, get a number 0->1 which tells how far the event falls between min and max */
+  virtual void Configure(Parameters *params);
 
 };
 
@@ -446,7 +449,7 @@ class DataEventCut_DBetaMinimizerCut : public DataEventCut {
  */
 /////////////////////////////////////////////////////////////////////
 
-class DataEventCut_BetaPCut : public DataEventCut{
+class DataEventCut_BetaPCut : public DataEventCut {
  public:
   DataEventCut_BetaPCut(int s);
   ~DataEventCut_BetaPCut();
@@ -460,6 +463,37 @@ class DataEventCut_BetaPCut : public DataEventCut{
   bool CanBeApplied(h22Event &event, int index);
   bool IsPassed(h22Event &event, int index);
   float GetFractionalDistance(h22Event &event, int index);
+};
+
+/////////////////////////////////////////////////////////////////////
+/*
+
+  Beta Vs. P. Likelihood Cut for positives 
+
+ */
+/////////////////////////////////////////////////////////////////////
+
+class DataEventCut_BetaPLikelihood : public DataEventCut {
+ public:
+  DataEventCut_BetaPLikelihood(int pid);
+  ~DataEventCut_BetaPLikelihood();
+
+  bool CanBeApplied(h22Event &event, int index);
+  bool IsPassed(h22Event &event, int index);
+  float GetFractionalDistance(h22Event &event, int index);
+  float GetConfidence(); 
+  void Configure(Parameters *params); 
+
+ protected:
+  int   fPid; 
+  float fMass; 
+  float fConfidenceMin, fConfidence; 
+
+  //    particle,  sector, param 
+  // [211, 321, 2212][1-6][0-2]
+  double fMu[3][6][3], fSigma[3][6][3];
+  std::map<int, int> fPidMap; 
+
 };
 
 /////////////////////////////////////////////////////////////////////

@@ -1,4 +1,4 @@
-////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////
 /*
   David Riser, University of Connecticut
   August 14, 2016
@@ -11,6 +11,7 @@
 
 // c++ includes 
 #include <iostream>
+#include <map>
 #include <cmath>
 using std::cout;
 using std::endl;
@@ -20,6 +21,8 @@ using std::string;
 #include "CommonTools.h"
 #include "DataEventCut.h"
 #include "h22Event.h"
+
+#include "TMath.h"
 
 DataEventCut::DataEventCut(){
     // Setup procedure.
@@ -55,6 +58,9 @@ bool DataEventCut::CanBeApplied(h22Event &event, int index)
 
 float DataEventCut::GetFractionalDistance(h22Event &event, int index){
   return -1.0; 
+}
+
+void DataEventCut::Configure(Parameters *params){
 }
 
 ///////////////////////////////////////////////////////////////
@@ -719,6 +725,131 @@ float DataEventCut_BetaPCut::GetFractionalDistance(h22Event &event, int index){
     (dm+nsigma*ds);
 
   return getFractionalDistance(event.corr_b[index], current_min, current_max);
+}
+
+///////////////////////////////////////////////////////////////
+/*
+  DataEventCut_BetaPLikelihood 
+*/
+///////////////////////////////////////////////////////////////
+
+DataEventCut_BetaPLikelihood::DataEventCut_BetaPLikelihood(int pid) : fPid(pid) {
+  fMass = pid_to_mass(fPid); 
+  SetName(Form("Beta P Likelihood Cut %d", fPid));
+
+  fPidMap[211]  = 0; 
+  fPidMap[321]  = 1;  
+  fPidMap[2212] = 2; 
+
+  // by default any track that maximizes the likelihood ratio 
+  // will be returned as true 
+  fConfidenceMin = 0.0; 
+  fConfidence    = 0.0; 
+}
+
+DataEventCut_BetaPLikelihood::~DataEventCut_BetaPLikelihood(){
+}
+
+bool DataEventCut_BetaPLikelihood::CanBeApplied(h22Event &event, int index){
+    return (event.q[index] > 0 && event.dc_sect[index] > 0);
+}
+
+void DataEventCut_BetaPLikelihood::Configure(Parameters *params){
+  for(int isect=0; isect<6; isect++){
+    fMu[0][isect][0] = params->getParameter("PIP_DBETA_MU_C") .getValue(isect); 
+    fMu[0][isect][1] = params->getParameter("PIP_DBETA_MU_B") .getValue(isect); 
+    fMu[0][isect][2] = params->getParameter("PIP_DBETA_MU_A") .getValue(isect); 
+    fMu[1][isect][0] = params->getParameter("KP_DBETA_MU_C")  .getValue(isect); 
+    fMu[1][isect][1] = params->getParameter("KP_DBETA_MU_B")  .getValue(isect); 
+    fMu[1][isect][2] = params->getParameter("KP_DBETA_MU_A")  .getValue(isect); 
+    fMu[2][isect][0] = params->getParameter("PROT_DBETA_MU_C").getValue(isect); 
+    fMu[2][isect][1] = params->getParameter("PROT_DBETA_MU_B").getValue(isect); 
+    fMu[2][isect][2] = params->getParameter("PROT_DBETA_MU_A").getValue(isect); 
+
+    fSigma[0][isect][0] = params->getParameter("PIP_DBETA_SIGMA_C") .getValue(isect); 
+    fSigma[0][isect][1] = params->getParameter("PIP_DBETA_SIGMA_B") .getValue(isect); 
+    fSigma[0][isect][2] = params->getParameter("PIP_DBETA_SIGMA_A") .getValue(isect); 
+    fSigma[1][isect][0] = params->getParameter("KP_DBETA_SIGMA_C")  .getValue(isect); 
+    fSigma[1][isect][1] = params->getParameter("KP_DBETA_SIGMA_B")  .getValue(isect); 
+    fSigma[1][isect][2] = params->getParameter("KP_DBETA_SIGMA_A")  .getValue(isect); 
+    fSigma[2][isect][0] = params->getParameter("PROT_DBETA_SIGMA_C").getValue(isect); 
+    fSigma[2][isect][1] = params->getParameter("PROT_DBETA_SIGMA_B").getValue(isect); 
+    fSigma[2][isect][2] = params->getParameter("PROT_DBETA_SIGMA_A").getValue(isect); 
+  }  
+
+  // try to set confidence level if user supplies 
+  if (fPid == 211 && params->hasParameter("PIP_CONFIDENCE_LEVEL")){
+    fConfidenceMin = params->getParameter("PIP_CONFIDENCE_LEVEL").getValue(0); 
+  }
+  else if (fPid == 321 && params->hasParameter("KP_CONFIDENCE_LEVEL")){
+    fConfidenceMin = params->getParameter("KP_CONFIDENCE_LEVEL").getValue(0); 
+  }
+  else if (fPid == 2212 && params->hasParameter("PROT_CONFIDENCE_LEVEL")){
+    fConfidenceMin = params->getParameter("PROT_CONFIDENCE_LEVEL").getValue(0); 
+  }
+}
+
+bool DataEventCut_BetaPLikelihood::IsPassed(h22Event &event, int index){
+
+  int sector = event.dc_sect[index]-1;
+
+  double theory[3];
+  theory[0] = 1/sqrt(1+pow(0.13957018/event.p[index],2)); 
+  theory[1] = 1/sqrt(1+pow(0.49367/event.p[index],2)); 
+  theory[2] = 1/sqrt(1+pow(0.93827203/event.p[index],2)); 
+
+  double mean[3]; 
+  mean[0] = theory[0] + fMu[0][sector][2]*pow(event.p[index],2) + fMu[0][sector][1]*event.p[index] + fMu[0][sector][0];
+  mean[1] = theory[1] + fMu[1][sector][2]*pow(event.p[index],2) + fMu[1][sector][1]*event.p[index] + fMu[1][sector][0];
+  mean[2] = theory[2] + fMu[2][sector][2]*pow(event.p[index],2) + fMu[2][sector][1]*event.p[index] + fMu[2][sector][0];
+
+  double reso[3]; 
+  reso[0] = fSigma[0][sector][2]*pow(event.p[index],2) + fSigma[0][sector][1]*event.p[index] + fSigma[0][sector][0];
+  reso[1] = fSigma[1][sector][2]*pow(event.p[index],2) + fSigma[1][sector][1]*event.p[index] + fSigma[1][sector][0];
+  reso[2] = fSigma[2][sector][2]*pow(event.p[index],2) + fSigma[2][sector][1]*event.p[index] + fSigma[2][sector][0];
+
+  double residual[3]; 
+  residual[0] = event.corr_b[index]-mean[0]; 
+  residual[1] = event.corr_b[index]-mean[1]; 
+  residual[2] = event.corr_b[index]-mean[2]; 
+  
+  double likelihood[3]; 
+  likelihood[0] = exp(-0.5 * pow(residual[0]/reso[0], 2));
+  likelihood[1] = exp(-0.5 * pow(residual[1]/reso[1], 2));
+  likelihood[2] = exp(-0.5 * pow(residual[2]/reso[2], 2));
+
+  double total = likelihood[0] + likelihood[1] + likelihood[2]; 
+  likelihood[0] /= total; 
+  likelihood[1] /= total; 
+  likelihood[2] /= total; 
+
+  int max_index = 0; 
+  for(int i=1; i<3; i++){
+    if (likelihood[i] > likelihood[max_index]){
+      max_index = i; 
+    }
+  }
+
+  int pid_index = fPidMap[fPid];
+  fConfidence = 1.0 - TMath::Erf(fabs(residual[pid_index])/reso[pid_index]/sqrt(2.0));  
+
+  if (fPidMap[fPid] == max_index && fConfidence > fConfidenceMin){
+        n_pass++;
+        return true;
+    } else {
+        n_fail++;
+        return false;
+    }
+
+    return false;
+}
+
+float DataEventCut_BetaPLikelihood::GetConfidence(){
+  return fConfidence; 
+}
+
+float DataEventCut_BetaPLikelihood::GetFractionalDistance(h22Event &event, int index){
+  return getFractionalDistance(event.corr_b[index], 0, 1);
 }
 
 

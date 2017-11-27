@@ -92,6 +92,10 @@ public:
     DataEventCut_DBetaMinimizerCut *dbeta_minimizer_neg_211; 
     DataEventCut_DBetaMinimizerCut *dbeta_minimizer_neg_321; 
 
+    DataEventCut_BetaPLikelihood *betap_likelihood_211; 
+    DataEventCut_BetaPLikelihood *betap_likelihood_321; 
+    DataEventCut_BetaPLikelihood *betap_likelihood_2212; 
+
     DataEventCut_DeltaZVertexCut *dvz_cut;
     DCR1FiducialCut              *dcr1_meson_fid_cut;
 

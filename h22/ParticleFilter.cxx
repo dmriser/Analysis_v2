@@ -109,6 +109,14 @@ ParticleFilter::ParticleFilter(Parameters *params) : pars(params){
     dbeta_minimizer_neg_211  = new DataEventCut_DBetaMinimizerCut(); 
     dbeta_minimizer_neg_321  = new DataEventCut_DBetaMinimizerCut(); 
 
+    betap_likelihood_211  = new DataEventCut_BetaPLikelihood(211); 
+    betap_likelihood_321  = new DataEventCut_BetaPLikelihood(321); 
+    betap_likelihood_2212 = new DataEventCut_BetaPLikelihood(2212); 
+
+    betap_likelihood_211 ->Configure(params); 
+    betap_likelihood_321 ->Configure(params);     
+    betap_likelihood_2212->Configure(params); 
+
     dbeta_minimizer_211->AddPossibleParticle(211); 
     dbeta_minimizer_211->AddPossibleParticle(321); 
     dbeta_minimizer_211->AddPossibleParticle(2212); 
@@ -337,8 +345,9 @@ ParticleFilter::ParticleFilter(Parameters *params) : pars(params){
     // Setup pion selectors
     testCut = new TestCut(); 
 
-    positivePionSelector->AddCut(dbeta_minimizer_211);
-    positivePionSelector->AddCut(pip_tofmass_cut); 
+    //    positivePionSelector->AddCut(dbeta_minimizer_211);
+    positivePionSelector->AddCut(betap_likelihood_211); 
+    //    positivePionSelector->AddCut(pip_tofmass_cut); 
     positivePionSelector->EnableAll();
 
     negativePionSelector->AddCut(dvz_cut);
@@ -346,8 +355,9 @@ ParticleFilter::ParticleFilter(Parameters *params) : pars(params){
     negativePionSelector->AddCut(dbeta_minimizer_neg_211);
     negativePionSelector->EnableAll();
 
-    positiveKaonSelector->AddCut(dbeta_minimizer_321);
-    positiveKaonSelector->AddCut(kp_tofmass_cut); 
+    //    positiveKaonSelector->AddCut(dbeta_minimizer_321);
+    positiveKaonSelector->AddCut(betap_likelihood_321);
+    //    positiveKaonSelector->AddCut(kp_tofmass_cut); 
     positiveKaonSelector->EnableAll();
  
     negativeKaonSelector->AddCut(dvz_cut);
@@ -359,7 +369,8 @@ ParticleFilter::ParticleFilter(Parameters *params) : pars(params){
     positiveMesonCandidateSelector->AddCut(dvz_cut); 
     positiveMesonCandidateSelector->EnableAll(); 
 
-    protonSelector->AddCut(dbeta_minimizer_2212);
+    //    protonSelector->AddCut(dbeta_minimizer_2212);
+    protonSelector->AddCut(betap_likelihood_2212); 
     protonSelector->AddCut(dcr1_meson_fid_cut);
     protonSelector->EnableAll(); 
 }

@@ -794,9 +794,9 @@ bool DataEventCut_BetaPLikelihood::IsPassed(h22Event &event, int index){
   int sector = event.dc_sect[index]-1;
 
   double theory[3];
-  theory[0] = 1/sqrt(1+pow(0.13957018/event.p[index],2)); 
-  theory[1] = 1/sqrt(1+pow(0.49367/event.p[index],2)); 
-  theory[2] = 1/sqrt(1+pow(0.93827203/event.p[index],2)); 
+  theory[0] = 1/sqrt(1+pow(pi_mass    /event.p[index],2)); 
+  theory[1] = 1/sqrt(1+pow(kaon_mass  /event.p[index],2)); 
+  theory[2] = 1/sqrt(1+pow(proton_mass/event.p[index],2)); 
 
   double mean[3]; 
   mean[0] = theory[0] + fMu[0][sector][2]*pow(event.p[index],2) + fMu[0][sector][1]*event.p[index] + fMu[0][sector][0];

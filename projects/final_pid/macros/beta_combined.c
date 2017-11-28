@@ -21,7 +21,7 @@
 
   for(int ipart=0; ipart<NPART; ipart++){
     for(int isect=1; isect<NSECT; isect++){
-      p_beta[ipart][isect] = (TH2D*) histFile->Get(Form("MesonHistograms/h2_p_beta_%d_%d_physics_enhanced", isect, part[ipart]));
+      p_beta[ipart][isect] = (TH2D*) histFile->Get(Form("MesonHistograms/h2_p_beta_%d_%d_no_cut", isect, part[ipart]));
 
       fit_mu[ipart][isect] = (TF1*) fitFile->Get(Form("p_dbeta_mu_%d_sector%d_slicesMuFit", part[ipart], isect));
       fit_sigma[ipart][isect] = (TF1*) fitFile->Get(Form("p_dbeta_sigma_%d_sector%d_slicesSigmaFit", part[ipart], isect));
@@ -55,47 +55,46 @@
   TLatex *latex = new TLatex();
   latex->SetNDC();
   latex->SetTextSize(0.05);
-  //  latex->SetTextFont(42); 
+  latex->SetTextFont(42); 
 
-  TCanvas *can = new TCanvas("can", "", 1200, 3000);
-  can->Divide(3,6); 
+  TCanvas *can = new TCanvas("can", "", 1200, 1200);
 
-  can->cd(1);
-  latex->DrawLatex(0.5, 0.99, "#pi^+"); 
+  can->cd(); 
+  p_beta[0][1]->Draw("colz"); 
+  gPad->SetLogz(); 
+  up[0][1]->Draw("same"); 
+  low[0][1]->Draw("same"); 
 
-  can->cd(2);
-  latex->DrawLatex(0.5, 0.99, "#K^+"); 
+  latex->DrawLatex(0.45, 0.95, "#pi^{+}"); 
+  latex->DrawLatex(0.45, 0.05, "p (GeV/c)"); 
+  latex->SetTextAngle(90.0); 
+  latex->DrawLatex(0.05, 0.45, "#beta"); 
+  latex->SetTextAngle(0.0); 
+  can->Print("beautiful_pbeta_pip.pdf");
+  
+  can->Clear(); 
+  p_beta[0][1]->Draw("colz"); 
+  gPad->SetLogz(); 
+  up[1][1]->Draw("same"); 
+  low[1][1]->Draw("same"); 
+  latex->DrawLatex(0.45, 0.95, "K^{+}"); 
+  latex->DrawLatex(0.45, 0.05, "p (GeV/c)"); 
+  latex->SetTextAngle(90.0); 
+  latex->DrawLatex(0.05, 0.45, "#beta"); 
+  latex->SetTextAngle(0.0); 
+  can->Print("beautiful_pbeta_kp.pdf");
 
-  can->cd(3);
-  latex->DrawLatex(0.5, 0.99, "#p^+"); 
+  can->Clear(); 
+  p_beta[0][1]->Draw("colz"); 
+  gPad->SetLogz(); 
+  up[2][1]->Draw("same"); 
+  low[2][1]->Draw("same"); 
+  latex->DrawLatex(0.45, 0.95, "p^{+}"); 
+  latex->DrawLatex(0.45, 0.05, "p (GeV/c)"); 
+  latex->SetTextAngle(90.0); 
+  latex->DrawLatex(0.05, 0.45, "#beta"); 
+  latex->SetTextAngle(0.0); 
+  can->Print("beautiful_pbeta_prot.pdf");
 
 
-  for(int s=1; s<7; s++){
-    can->cd(1+3*(s-1)); 
-    p_beta[0][s]->Draw("colz"); 
-    gPad->SetLogz(); 
-    //    fit_mu[0][s]->Draw("same"); 
-    //    fit_sigma[0][s]->Draw("same"); 
-    up[0][s]->Draw("same"); 
-    low[0][s]->Draw("same"); 
-
-    can->cd(2+3*(s-1)); 
-    p_beta[1][s]->Draw("colz"); 
-    gPad->SetLogz(); 
-    //    fit_mu[1][s]->Draw("same"); 
-    //    fit_sigma[1][s]->Draw("same"); 
-    up[1][s]->Draw("same"); 
-    low[1][s]->Draw("same"); 
-    
-    can->cd(3+3*(s-1)); 
-    p_beta[2][s]->Draw("colz"); 
-    gPad->SetLogz(); 
-    //    fit_mu[2][s]->Draw("same"); 
-    //    fit_sigma[2][s]->Draw("same"); 
-    up[2][s]->Draw("same"); 
-    low[2][s]->Draw("same"); 
-
-  }
-
-  can->Print("beautiful_pbeta.pdf");
 }

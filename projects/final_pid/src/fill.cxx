@@ -52,7 +52,7 @@ public:
 
     // needs parameters 
     params = new Parameters(); 
-    params->loadParameters(Form("%s/lists/data_tofmass.pars", path.c_str())); 
+    params->loadParameters(Form("%s/lists/parameters/data/data_tofmass.pars", path.c_str())); 
     filter      = new ParticleFilter(params);
 
     counts[211]  = 0; 

@@ -43,7 +43,7 @@ StandardHistograms::~StandardHistograms(){
 
 void StandardHistograms::Initialize(){
  
- for(int s=0; s<numberSector; s++){
+ for(int s=0; s<NSECT; s++){
    // Kinematic in 1-Dimension
    h1_ele_p[s]          = new TH1D(Form("h1_ele_p_sect%d_%s",s,name.c_str()),          Form("h1_ele_p_sect%d",s),         100,0.5,5.5); 
    h1_ele_phi[s]        = new TH1D(Form("h1_ele_phi_sect%d_%s",s,name.c_str()),        Form("h1_ele_phi_sect%d",s),       100,-180.0,180.0); 
@@ -105,7 +105,7 @@ void StandardHistograms::Initialize(){
 void StandardHistograms::Load(std::string inputFilename){
   inputFile = TFile::Open(inputFilename.c_str()); 
 
-  for(int s=0; s<numberSector; s++){
+  for(int s=0; s<NSECT; s++){
     // Kinematic in 1-Dimension
     h1_ele_p[s]          = (TH1D*) inputFile->Get(Form("StandardHistograms/h1_ele_p_sect%d_%s",s,name.c_str()));
     h1_ele_phi[s]        = (TH1D*) inputFile->Get(Form("StandardHistograms/h1_ele_phi_sect%d_%s",s,name.c_str()));
@@ -297,7 +297,7 @@ void StandardHistograms::Save(TFile *outputFile){
     outputFile->mkdir("StandardHistograms"); 
     outputFile->cd("StandardHistograms"); 
  
-    for(int s=0; s<numberSector; s++){
+    for(int s=0; s<NSECT; s++){
       h1_ele_p[s]                 ->Write(); 
       h1_ele_phi[s]               ->Write(); 
       h1_ele_relPhi[s]            ->Write(); 

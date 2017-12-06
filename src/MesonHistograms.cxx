@@ -33,6 +33,7 @@ MesonHistograms::MesonHistograms(std::string name, int pid) : fName(name), fPid(
     h2_p_dbeta[s] = new TH2D(Form("h2_p_dbeta_%d_%s",s, fName.c_str()), Form("h2_p_dbeta_%d_%s",s, fName.c_str()), 200, 0.0, 4.5, 200, -0.14, 0.14);
     h2_p_mm2[s] = new TH2D(Form("h2_p_mm2_%d_%s",s, fName.c_str()), Form("h2_p_mm2_%d_%s",s, fName.c_str()), 200, 0.0, 4.5, 200, -1.0, 2.5);  
     h2_p_sct[s] = new TH2D(Form("h2_p_sct_%d_%s",s, fName.c_str()), Form("h2_p_sct_%d_%s",s, fName.c_str()), 200, 0.0, 4.5, 200, -1.0, 200.0);  
+    h2_p_dvz[s] = new TH2D(Form("h2_p_dvz_%d_%s",s, fName.c_str()), Form("h2_p_dvz_%d_%s",s, fName.c_str()), 200, 0.0, 4.5, 200, -10.0, 10.0);  
   }
 
 }
@@ -48,7 +49,7 @@ void MesonHistograms::Fill(h22Event &event, int index) {
   
   h2_phi_theta[0]->Fill(event.GetRelativePhi(index), event.GetTheta(index));
   h2_dcx_dcy[0]->Fill(event.GetRotatedDCR1PosX(index), event.GetRotatedDCR1PosY(index));
- 
+
   int s = event.dc_sect[index];
   h1_p[s]->Fill(event.p[index]);
   h1_dcx[s]->Fill(event.GetRotatedDCR1PosX(index));
@@ -72,6 +73,7 @@ void MesonHistograms::Fill(h22Event &event, int index) {
     h2_p_beta[0]->Fill(event.p[index], event.corr_b[index]);
     h2_p_dbeta[0]->Fill(event.p[index], beta-event.corr_b[index]);
     h2_p_sct[0]->Fill(event.p[index], event.corr_sc_t[index]); 
+    h2_p_dvz[0]->Fill(event.p[index], event.corr_vz[event.GetElectronIndex()]-event.corr_vz[index]); 
 
     h1_vz[s] ->Fill(event.corr_vz[index]);
     h1_dvz[s]->Fill(event.corr_vz[event.GetElectronIndex()]-event.corr_vz[index]);
@@ -89,6 +91,7 @@ void MesonHistograms::Fill(h22Event &event, int index) {
     h2_p_tofmass[s]->Fill(event.p[index], tofmass);
     h2_nphe_tofmass[s]->Fill(event.nphe[index], tofmass);
     h2_p_sct[s]->Fill(event.p[index], event.corr_sc_t[index]); 
+    h2_p_dvz[s]->Fill(event.p[index], event.corr_vz[event.GetElectronIndex()]-event.corr_vz[index]); 
   }
 
 }
@@ -131,6 +134,7 @@ void MesonHistograms::Load(std::string filename) {
       h2_p_tofmass[s] = (TH2D*) fInputFile->Get(Form("MesonHistograms/h2_p_tofmass_%d_%s",s, fName.c_str()));
       h2_nphe_tofmass[s] = (TH2D*) fInputFile->Get(Form("MesonHistograms/h2_nphe_tofmass_%d_%s",s, fName.c_str()));
       h2_p_dbeta[s] = (TH2D*) fInputFile->Get(Form("MesonHistograms/h2_p_dbeta_%d_%s",s, fName.c_str()));
+      h2_p_dvz[s] = (TH2D*) fInputFile->Get(Form("MesonHistograms/h2_p_dvz_%d_%s",s, fName.c_str()));
     }    
   }
 
@@ -165,6 +169,7 @@ void MesonHistograms::Save(TFile *outputFile) {
     h2_p_tofmass[s]->Write(); 
     h2_nphe_tofmass[s]->Write(); 
     h2_p_dbeta[s]->Write(); 
+    h2_p_dvz[s]->Write(); 
   }
 
   outputFile->cd(); 

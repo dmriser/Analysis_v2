@@ -2,10 +2,10 @@
 
   gROOT->LoadMacro("utils.C");
   
-  TFile *inputFile = TFile::Open("MCInelastic.root");
+  TFile *inputFile = TFile::Open("../out.root");
 
   const int numberSectors = 6; 
-  const int numberSlices  = 25;
+  const int numberSlices  = 16;
 
   TH1D *slices[numberSectors][numberSlices];
   

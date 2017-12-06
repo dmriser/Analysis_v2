@@ -28,16 +28,16 @@ class TreeOutput {
 
     b_phi_kp = tree->Branch("phi_kp", &phi_kp);
     
-    b_angle_kp_km     = tree->Branch("angle_kp_km",   &angle_kp_km);
-    b_angle_kp_prot   = tree->Branch("angle_kp_prot", &angle_kp_prot);
-    b_angle_km_prot   = tree->Branch("angle_km_prot",  &angle_km_prot);
-    b_angle_kp_lambda = tree->Branch("angle_kp_lambda", &angle_kp_lambda);
-    b_angle_km_lambda = tree->Branch("angle_km_lambda", &angle_km_lambda);
-    b_angle_prot_lambda = tree->Branch("angle_prot_lambda", &angle_prot_lambda);
+    b_angle_kp_km        = tree->Branch("angle_kp_km",   &angle_kp_km);
+    b_angle_kp_prot      = tree->Branch("angle_kp_prot", &angle_kp_prot);
+    b_angle_km_prot      = tree->Branch("angle_km_prot",  &angle_km_prot);
+    b_angle_kp_lambda    = tree->Branch("angle_kp_lambda", &angle_kp_lambda);
+    b_angle_km_lambda    = tree->Branch("angle_km_lambda", &angle_km_lambda);
+    b_angle_prot_lambda  = tree->Branch("angle_prot_lambda", &angle_prot_lambda);
     b_angle_kp_lambda_cm = tree->Branch("angle_kp_lambda_cm", &angle_kp_lambda_cm);
 
     b_im_km_prot = tree->Branch("im_km_prot", &im_km_prot);
-    b_im_km_kp = tree->Branch("im_km_kp", &im_km_kp);
+    b_im_km_kp   = tree->Branch("im_km_kp", &im_km_kp);
 
     b_x = tree->Branch("x", &x);
     b_w = tree->Branch("w", &w);
@@ -60,6 +60,7 @@ class TreeOutput {
   float theta_kp; 
   float theta_km; 
   float phi_kp; 
+  float sig_kp, sig_prot; 
 
   float im_km_prot; 
   float im_km_kp; 

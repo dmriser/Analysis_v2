@@ -44,15 +44,15 @@ public:
 
     // needs parameters 
     params = new Parameters(); 
-    params->loadParameters(Form("%s/lists/data.pars", path.c_str())); 
+    params->loadParameters(Form("%s/lists/final.pars", path.c_str())); 
 
     paramsLoose = new Parameters(); 
-    //    paramsLoose->loadParameters(Form("%s/lists/dataLoose.pars", path.c_str())); 
-    paramsLoose->loadParameters(Form("%s/lists/data.pars", path.c_str())); 
+    paramsLoose->loadParameters(Form("%s/lists/dataLoose.pars", path.c_str())); 
+    //    paramsLoose->loadParameters(Form("%s/lists/data.pars", path.c_str())); 
 
     paramsTight = new Parameters(); 
-    //    paramsTight->loadParameters(Form("%s/lists/dataTight.pars", path.c_str())); 
-    paramsTight->loadParameters(Form("%s/lists/data.pars", path.c_str())); 
+    paramsTight->loadParameters(Form("%s/lists/dataTight.pars", path.c_str())); 
+    //    paramsTight->loadParameters(Form("%s/lists/data.pars", path.c_str())); 
 
     filter      = new ParticleFilter(params);
     filterLoose = new ParticleFilter(paramsLoose);
@@ -88,7 +88,7 @@ public:
     tupleWriter.addFloat("theta_ele"); 
     tupleWriter.addFloat("theta_pip");
     tupleWriter.addFloat("dvz");
-    tupleWriter.addFloat("cl");
+    tupleWriter.addFloat("alpha");
     tupleWriter.addFloat("dist_ecsf");
     tupleWriter.addFloat("dist_ec_edep");
     tupleWriter.addFloat("dist_vz");
@@ -201,7 +201,7 @@ public:
 	    tupleWriter.setFloat("phi_ele",      to_degrees*electron.Phi()); 
 	    tupleWriter.setFloat("phi_pip",      to_degrees*pip.Phi()); 
 	    tupleWriter.setFloat("dvz",          event.vz[electronIndex]-event.vz[pipIndex]); 
-	    tupleWriter.setFloat("cl",           bpCut->GetConfidence());
+	    tupleWriter.setFloat("alpha",        bpCut->GetConfidence());
 	    tupleWriter.writeEvent();
 	  }
 

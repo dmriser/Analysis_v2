@@ -1,6 +1,6 @@
 {
 
-  TFile *histFile = TFile::Open("/volatile/clas12/dmriser/farm_out/final_pid_pass10/pid.root"); 
+  TFile *histFile = TFile::Open("/volatile/clas12/dmriser/farm_out/final_pid_pass11/pid.root"); 
   TFile *fitFile  = TFile::Open("../out/fits.root"); 
 
   const int NSECT  = 7; 
@@ -57,7 +57,7 @@
   latex->SetTextSize(0.05);
   //  latex->SetTextFont(42); 
 
-  TCanvas *can = new TCanvas("can", "", 1200, 3000);
+  TCanvas *can = new TCanvas("can", "", 600, 1800);
   can->Divide(3,6); 
 
   can->cd(1);
@@ -88,7 +88,7 @@
     low[1][s]->Draw("same"); 
     
     can->cd(3+3*(s-1)); 
-    p_beta[2][s]->Draw("colz"); 
+    p_beta[0][s]->Draw("colz"); 
     gPad->SetLogz(); 
     //    fit_mu[2][s]->Draw("same"); 
     //    fit_sigma[2][s]->Draw("same"); 

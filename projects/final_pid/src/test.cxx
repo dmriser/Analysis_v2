@@ -89,6 +89,7 @@ public:
     writer.addFloat("beta"); 
     writer.addFloat("p"); 
     writer.addFloat("cl"); 
+    writer.addInt("pid");
   }
 
   ~Analysis(){
@@ -172,19 +173,30 @@ public:
 	  if (betaPLikelihood[211] ->CanBeApplied(event, ipart) && betaPLikelihood[211] ->IsPassed(event, ipart)){ 
 	    mesonHistos[211][cutTypes::all] ->Fill(event,ipart); 
 
-	    writer.setFloat("cl", betaPLikelihood[211]->GetConfidence(event, ipart));
+	    writer.setFloat("cl",   betaPLikelihood[211]->GetConfidence());
 	    writer.setFloat("beta", event.corr_b[ipart]);
-	    writer.setFloat("p", event.p[ipart]); 
+	    writer.setFloat("p",    event.p[ipart]); 
+	    writer.setInt("pid",    211);
 	    writer.writeEvent(); 
 	  }
 	  if (betaPLikelihood[321] ->CanBeApplied(event, ipart) && betaPLikelihood[321] ->IsPassed(event, ipart)){ 
 	    mesonHistos[321][cutTypes::all] ->Fill(event,ipart); 
-	    cl->Fill(betaPLikelihood[321]->GetConfidence(event, ipart)); 	    
+	    cl->Fill(betaPLikelihood[321]->GetConfidence()); 	    
+	    writer.setFloat("cl",   betaPLikelihood[321]->GetConfidence());
+	    writer.setFloat("beta", event.corr_b[ipart]);
+	    writer.setFloat("p",    event.p[ipart]); 
+	    writer.setInt("pid",    321);
+	    writer.writeEvent(); 
 
 	  }
 	  //  why does this break?
 	  if (betaPLikelihood[2212]->CanBeApplied(event, ipart) && betaPLikelihood[2212]->IsPassed(event, ipart)){ 
 	    mesonHistos[2212][cutTypes::all]->Fill(event,ipart); 
+	    writer.setFloat("cl",   betaPLikelihood[2212]->GetConfidence());
+	    writer.setFloat("beta", event.corr_b[ipart]);
+	    writer.setFloat("p",    event.p[ipart]); 
+	    writer.setInt("pid",    2212);
+	    writer.writeEvent(); 
 	  }
 
 	}

@@ -1,9 +1,11 @@
 #include <iostream>
+#include <map>
 
 // h22 libs 
 #include "CommonTools.h"
 #include "Corrections.h"
 #include "CheckPoints.h"
+#include "DataEventCut.h"
 #include "DBins.h"
 #include "h22Event.h"
 #include "h22Reader.h"
@@ -40,9 +42,9 @@ public:
     // needs parameters 
     params = new Parameters(); 
     //    params->loadParameters(Form("%s/lists/data_tofmass.pars", path.c_str())); 
-    params->loadParameters(Form("%s/lists/data.pars", path.c_str())); 
+    params->loadParameters(Form("%s/lists/dataLoose.pars", path.c_str())); 
     filter = new ParticleFilter(params);
-    filter->positiveKaonSelector->DisableByRegex("Fid"); 
+    //    filter->positiveKaonSelector->DisableByRegex("Fid"); 
 
     // ntuple 
     tupleWriter.addInt("helicity");
@@ -63,6 +65,9 @@ public:
     tupleWriter.addFloat("p_kp"); 
     tupleWriter.addFloat("p_km"); 
     tupleWriter.addFloat("p_prot"); 
+
+    tupleWriter.addFloat("alpha_kp");
+    tupleWriter.addFloat("alpha_prot");
   }
 
   ~Analysis(){
@@ -119,7 +124,7 @@ public:
 	      continue; 
 	    }
 	    */
-
+	    
 	    // get four-vectors 
 	    TLorentzVector kp               = event.GetTLorentzVector(kaonIndex, 321);
 	    TLorentzVector kpWithMassOfPion = event.GetTLorentzVector(kaonIndex, 211);
@@ -137,6 +142,11 @@ public:
 	    TLorentzVector km = epkEvent.finalState; 
 	    TLorentzVector phi = km+kp; 
 	    TLorentzVector lambda = km+proton; 
+
+	    // get info on our hadron pid 
+	    DataEventCut_BetaPLikelihood *betaPLike_2212 = (DataEventCut_BetaPLikelihood*) filter->protonSelector->GetCut("Beta P Likelihood Cut 2212");
+	    DataEventCut_BetaPLikelihood *betaPLike_321  = (DataEventCut_BetaPLikelihood*) filter->positiveKaonSelector->GetCut("Beta P Likelihood Cut 321");
+
 
 	    //  write event 
 	    tupleWriter.setFloat("missing_mass_ekx_mk",   sqrt(ekEvent.mm2));  
@@ -158,6 +168,17 @@ public:
 	    tupleWriter.setFloat("theta_h_p", ev.thetaHadron);  
 	    tupleWriter.setFloat("theta_kk_lab", to_degrees*kp.Angle(km.Vect()));  
 	    
+
+	    // these have to be called again because they are setup in a bad way that 
+	    // the local variable (protected) inside is set fConfidnce based on the last 
+	    // call. 
+	    
+	    if(betaPLike_321->IsPassed(event,kpIndices[0])){
+	      tupleWriter.setFloat("alpha_kp", betaPLike_321 ->GetConfidence());
+	    }
+	    if(betaPLike_2212->IsPassed(event,protonIndices[0])){
+	      tupleWriter.setFloat("alpha_prot", betaPLike_2212->GetConfidence());
+	    }
 	    tupleWriter.writeEvent(); 
 	    
 	  }

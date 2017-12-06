@@ -30,7 +30,7 @@ class findElectronIDParameters : public h22Reader {
   TH2I *ecSamplingFraction[6];
   TH2I *ccThetaCorrelation[6];
 
-  const static int numberSlices = 100;
+  const static int numberSlices = 16;
   TH1D *ecSlices[6][numberSlices];
   TH1D *ccSlices[6][18];
 

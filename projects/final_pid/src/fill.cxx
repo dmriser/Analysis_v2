@@ -30,6 +30,8 @@
 enum cutTypes {
   none,
   physicsEnhanced,
+  dvz, 
+  fid,
   all
 };
 
@@ -58,15 +60,18 @@ public:
     counts[321]  = 0; 
     counts[-321] = 0; 
 
-
+    // nothing 
     mesonHistos[211][cutTypes::none]  = new MesonHistograms("211_no_cut",   211); 
-    mesonHistos[321][cutTypes::none]  = new MesonHistograms("321_no_cut",   321);     
     
     // I am trying to use 'standard' reactions to get really nice clean 
     // particle traces without applying cuts.  
     mesonHistos[211][cutTypes::physicsEnhanced]  = new MesonHistograms("211_physics_enhanced",   211); 
     mesonHistos[321][cutTypes::physicsEnhanced]  = new MesonHistograms("321_physics_enhanced",   321);     
     mesonHistos[2212][cutTypes::physicsEnhanced]  = new MesonHistograms("2212_physics_enhanced",   2212);     
+
+    // this will be the same for each particle type let's just save once
+    mesonHistos[211][cutTypes::dvz]  = new MesonHistograms("211_dvz_cut",   211); 
+    mesonHistos[211][cutTypes::fid]  = new MesonHistograms("211_fid_cut",   211); 
 
     // wahtever passes the current pid 
     mesonHistos[211][cutTypes::all]  = new MesonHistograms("211_all_cut",   211); 
@@ -116,7 +121,18 @@ public:
 	    
 	    if (event.q[ipart] > 0){
 	      mesonHistos[211][cutTypes::none]->Fill(event, ipart); 
-	      mesonHistos[321][cutTypes::none]->Fill(event, ipart); 
+
+	      // ------------------------------------------
+	      // check for passing the basic cleaning cuts 
+	      // ------------------------------------------
+	      if (filter->positiveMesonCandidateSelector->GetCut("Delta Z-Vertex Cut")->IsPassed(event, ipart)){
+		mesonHistos[211][cutTypes::dvz]->Fill(event, ipart); 
+	      }
+	      if (filter->positiveMesonCandidateSelector->GetCut("DC Region 1 Fid Cut")->IsPassed(event, ipart)){
+		mesonHistos[211][cutTypes::fid]->Fill(event, ipart); 
+	      }
+	      
+
 
 	      // ------------------------------------------
 	      // start checking for some standard reactions 
@@ -210,11 +226,13 @@ public:
     TFile *out = new TFile(outFile.c_str(), "recreate");
 
     mesonHistos[211][cutTypes::none]->Save(out); 
-    mesonHistos[321][cutTypes::none]->Save(out); 
 
     mesonHistos[211][cutTypes::physicsEnhanced] ->Save(out); 
     mesonHistos[321][cutTypes::physicsEnhanced] ->Save(out); 
     mesonHistos[2212][cutTypes::physicsEnhanced] ->Save(out); 
+
+    mesonHistos[211][cutTypes::dvz]->Save(out); 
+    mesonHistos[211][cutTypes::fid]->Save(out); 
 
     mesonHistos[211][cutTypes::all]->Save(out); 
     mesonHistos[321][cutTypes::all]->Save(out); 

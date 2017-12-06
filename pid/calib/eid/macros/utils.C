@@ -66,8 +66,8 @@ void printSlices(TH1D *slices[numberSectors][numberSlices], const int numberSect
       xTitle.DrawLatex(xTitleXPos, xTitleYPos, xTitleString.c_str());
       yTitle.DrawLatex(yTitleXPos, yTitleYPos, yTitleString.c_str());
 
-      if (histoType == 0){ sliceCanvas->SaveAs(Form("img/ecSamplingSlice%dSector%d.png",slice,sector)); }
-      if (histoType == 1){ sliceCanvas->SaveAs(Form("img/ccThetaCorrelationSlice%dSector%d.png",slice,sector)); }
+      if (histoType == 0){ sliceCanvas->SaveAs(Form("../img/ecSamplingSlice%dSector%d.png",slice,sector)); }
+      if (histoType == 1){ sliceCanvas->SaveAs(Form("../img/ccThetaCorrelationSlice%dSector%d.png",slice,sector)); }
     }
   }
 

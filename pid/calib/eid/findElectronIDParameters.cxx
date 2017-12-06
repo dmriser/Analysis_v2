@@ -161,7 +161,7 @@ void findElectronIDParameters::CalculateSamplingFractionCut(){
   double pMin      = ecSamplingFraction[0]->GetXaxis()->GetBinLowEdge(0);
 
   // For data use 0.25-0.45
-  double yMin = 0.15;
+  double yMin = 0.25;
   double yMax = 0.45;
 
   //  TF1 *fitGauss = new TF1("fitGauss","gaus",0.1,0.45);  
@@ -261,7 +261,7 @@ void findElectronIDParameters::WriteHardCodedParameters(){
   NPheMax.addValueAndError(999.0, 0.0);
 
   ecNSigma.setName("EL_EC_NSIGMA");
-  ecNSigma.addValue(3.00);
+  ecNSigma.addValue(1.00);
   ecNSigma.addError(0.00);
 
   dcr1FidH.setName("EL_DCR1_FIDH");

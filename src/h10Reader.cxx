@@ -90,6 +90,23 @@ void h10Reader::AddList(string _file, int nfiles, int startfile){
 
 }
 
+void h10Reader::SetHelicity(){
+  event.corr_hel = 0;
+
+  if (event.ihel > 0){
+    event.ihel     = 1; 
+    event.corr_hel = 1; 
+  } 
+  else if (event.ihel < 0){
+    event.ihel     = -1; 
+    event.corr_hel = -1; 
+  }
+  else {
+    event.ihel = 0; 
+  }
+
+}
+
 void h10Reader::AddFile(TString _fname){
   fchain->AddFile(_fname);
   return;
@@ -114,8 +131,8 @@ void h10Reader::Init(){
   
   // Set branch addresses and branch pointers
    fchain->SetBranchAddress("evntid", &event.evntid, &b_evntid);
-   fchain->SetBranchAddress("ihel", &event.ihel, &b_ihel);
-   fchain->SetBranchAddress("corr_hel", &event.corr_hel, &b_corr_hel);
+   fchain->SetBranchAddress("evntclas", &event.ihel, &b_ihel);
+   fchain->SetBranchAddress("evntclas", &event.corr_hel, &b_corr_hel);
    fchain->SetBranchAddress("q_l", &event.q_l, &b_q_l);
    fchain->SetBranchAddress("gpart", &event.gpart, &b_gpart);
    fchain->SetBranchAddress("q", event.q, &b_q);
@@ -152,12 +169,12 @@ void h10Reader::Init(){
    fchain->SetBranchAddress("tl1_x", event.tl1_x, &b_tl1_x);
    fchain->SetBranchAddress("tl1_y", event.tl1_y, &b_tl1_y);
    fchain->SetBranchAddress("tl1_z", event.tl1_z, &b_tl1_z);
-   fchain->SetBranchAddress("tl3_x", event.tl3_x, &b_tl3_x);
-   fchain->SetBranchAddress("tl3_y", event.tl3_y, &b_tl3_y);
-   fchain->SetBranchAddress("tl3_z", event.tl3_z, &b_tl3_z);
-   fchain->SetBranchAddress("tl3_cx", event.tl3_cx, &b_tl3_cx);
-   fchain->SetBranchAddress("tl3_cy", event.tl3_cy, &b_tl3_cy);
-   fchain->SetBranchAddress("tl3_cz", event.tl3_cz, &b_tl3_cz);
+   fchain->SetBranchAddress("dc_xsc", event.tl3_x, &b_tl3_x);
+   fchain->SetBranchAddress("dc_ysc", event.tl3_y, &b_tl3_y);
+   fchain->SetBranchAddress("dc_zsc", event.tl3_z, &b_tl3_z);
+   fchain->SetBranchAddress("dc_cxsc", event.tl3_cx, &b_tl3_cx);
+   fchain->SetBranchAddress("dc_cysc", event.tl3_cy, &b_tl3_cy);
+   fchain->SetBranchAddress("dc_czsc", event.tl3_cz, &b_tl3_cz);
    fchain->SetBranchAddress("vx", event.vx, &b_vx);
    fchain->SetBranchAddress("vy", event.vy, &b_vy);
     

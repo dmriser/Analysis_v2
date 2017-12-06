@@ -755,27 +755,59 @@ bool DataEventCut_BetaPLikelihood::CanBeApplied(h22Event &event, int index){
 }
 
 void DataEventCut_BetaPLikelihood::Configure(Parameters *params){
-  for(int isect=0; isect<6; isect++){
-    fMu[0][isect][0] = params->getParameter("PIP_DBETA_MU_C") .getValue(isect); 
-    fMu[0][isect][1] = params->getParameter("PIP_DBETA_MU_B") .getValue(isect); 
-    fMu[0][isect][2] = params->getParameter("PIP_DBETA_MU_A") .getValue(isect); 
-    fMu[1][isect][0] = params->getParameter("KP_DBETA_MU_C")  .getValue(isect); 
-    fMu[1][isect][1] = params->getParameter("KP_DBETA_MU_B")  .getValue(isect); 
-    fMu[1][isect][2] = params->getParameter("KP_DBETA_MU_A")  .getValue(isect); 
-    fMu[2][isect][0] = params->getParameter("PROT_DBETA_MU_C").getValue(isect); 
-    fMu[2][isect][1] = params->getParameter("PROT_DBETA_MU_B").getValue(isect); 
-    fMu[2][isect][2] = params->getParameter("PROT_DBETA_MU_A").getValue(isect); 
+  
+  // doing this so that code doesnt die 
+  std::vector<std::string> parsNeeded; 
+  parsNeeded.push_back("PIP_DBETA_MU_A"); 
+  parsNeeded.push_back("PIP_DBETA_MU_B"); 
+  parsNeeded.push_back("PIP_DBETA_MU_C"); 
+  parsNeeded.push_back("PIP_DBETA_SIGMA_A"); 
+  parsNeeded.push_back("PIP_DBETA_SIGMA_B"); 
+  parsNeeded.push_back("PIP_DBETA_SIGMA_C"); 
+  parsNeeded.push_back("KP_DBETA_MU_A"); 
+  parsNeeded.push_back("KP_DBETA_MU_B"); 
+  parsNeeded.push_back("KP_DBETA_MU_C"); 
+  parsNeeded.push_back("KP_DBETA_SIGMA_A"); 
+  parsNeeded.push_back("KP_DBETA_SIGMA_B"); 
+  parsNeeded.push_back("KP_DBETA_SIGMA_C"); 
+  parsNeeded.push_back("PROT_DBETA_MU_A"); 
+  parsNeeded.push_back("PROT_DBETA_MU_B"); 
+  parsNeeded.push_back("PROT_DBETA_MU_C"); 
+  parsNeeded.push_back("PROT_DBETA_SIGMA_A"); 
+  parsNeeded.push_back("PROT_DBETA_SIGMA_B"); 
+  parsNeeded.push_back("PROT_DBETA_SIGMA_C"); 
 
-    fSigma[0][isect][0] = params->getParameter("PIP_DBETA_SIGMA_C") .getValue(isect); 
-    fSigma[0][isect][1] = params->getParameter("PIP_DBETA_SIGMA_B") .getValue(isect); 
-    fSigma[0][isect][2] = params->getParameter("PIP_DBETA_SIGMA_A") .getValue(isect); 
-    fSigma[1][isect][0] = params->getParameter("KP_DBETA_SIGMA_C")  .getValue(isect); 
-    fSigma[1][isect][1] = params->getParameter("KP_DBETA_SIGMA_B")  .getValue(isect); 
-    fSigma[1][isect][2] = params->getParameter("KP_DBETA_SIGMA_A")  .getValue(isect); 
-    fSigma[2][isect][0] = params->getParameter("PROT_DBETA_SIGMA_C").getValue(isect); 
-    fSigma[2][isect][1] = params->getParameter("PROT_DBETA_SIGMA_B").getValue(isect); 
-    fSigma[2][isect][2] = params->getParameter("PROT_DBETA_SIGMA_A").getValue(isect); 
-  }  
+  bool hasAllPars = true; 
+  for(std::string par : parsNeeded){
+    if(!params->hasParameter(par)){
+      std::cout << "[DataEventCut_BetaPLikelihood::Configure] Parameter missing " << par << std::endl;
+      hasAllPars = false; 
+    }
+  }
+
+  if(hasAllPars){
+    for(int isect=0; isect<6; isect++){
+      fMu[0][isect][0] = params->getParameter("PIP_DBETA_MU_C") .getValue(isect); 
+      fMu[0][isect][1] = params->getParameter("PIP_DBETA_MU_B") .getValue(isect); 
+      fMu[0][isect][2] = params->getParameter("PIP_DBETA_MU_A") .getValue(isect); 
+      fMu[1][isect][0] = params->getParameter("KP_DBETA_MU_C")  .getValue(isect); 
+      fMu[1][isect][1] = params->getParameter("KP_DBETA_MU_B")  .getValue(isect); 
+      fMu[1][isect][2] = params->getParameter("KP_DBETA_MU_A")  .getValue(isect); 
+      fMu[2][isect][0] = params->getParameter("PROT_DBETA_MU_C").getValue(isect); 
+      fMu[2][isect][1] = params->getParameter("PROT_DBETA_MU_B").getValue(isect); 
+      fMu[2][isect][2] = params->getParameter("PROT_DBETA_MU_A").getValue(isect); 
+      
+      fSigma[0][isect][0] = params->getParameter("PIP_DBETA_SIGMA_C") .getValue(isect); 
+      fSigma[0][isect][1] = params->getParameter("PIP_DBETA_SIGMA_B") .getValue(isect); 
+      fSigma[0][isect][2] = params->getParameter("PIP_DBETA_SIGMA_A") .getValue(isect); 
+      fSigma[1][isect][0] = params->getParameter("KP_DBETA_SIGMA_C")  .getValue(isect); 
+      fSigma[1][isect][1] = params->getParameter("KP_DBETA_SIGMA_B")  .getValue(isect); 
+      fSigma[1][isect][2] = params->getParameter("KP_DBETA_SIGMA_A")  .getValue(isect); 
+      fSigma[2][isect][0] = params->getParameter("PROT_DBETA_SIGMA_C").getValue(isect); 
+      fSigma[2][isect][1] = params->getParameter("PROT_DBETA_SIGMA_B").getValue(isect); 
+      fSigma[2][isect][2] = params->getParameter("PROT_DBETA_SIGMA_A").getValue(isect); 
+    }  
+  }
 
   // try to set confidence level if user supplies 
   if (fPid == 211 && params->hasParameter("PIP_CONFIDENCE_LEVEL")){
@@ -813,10 +845,12 @@ bool DataEventCut_BetaPLikelihood::IsPassed(h22Event &event, int index){
   residual[1] = event.corr_b[index]-mean[1]; 
   residual[2] = event.corr_b[index]-mean[2]; 
   
+  double norm = sqrt(1/2.0/3.14159); 
+
   double likelihood[3]; 
-  likelihood[0] = exp(-0.5 * pow(residual[0]/reso[0], 2));
-  likelihood[1] = exp(-0.5 * pow(residual[1]/reso[1], 2));
-  likelihood[2] = exp(-0.5 * pow(residual[2]/reso[2], 2));
+  likelihood[0] = norm/reso[0] * exp(-0.5 * pow(residual[0]/reso[0], 2));
+  likelihood[1] = norm/reso[1] * exp(-0.5 * pow(residual[1]/reso[1], 2));
+  likelihood[2] = norm/reso[2] * exp(-0.5 * pow(residual[2]/reso[2], 2));
 
   double total = likelihood[0] + likelihood[1] + likelihood[2]; 
   likelihood[0] /= total; 

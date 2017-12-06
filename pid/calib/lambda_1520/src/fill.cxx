@@ -134,7 +134,7 @@ public:
 	  // because the code never makes it that far in the 
 	  // pion case it would just return 0 pions and not enter.
 	  TLorentzVector pion = event.GetTLorentzVector(mesonIndex, 211); 
-	  PhysicsEvent pionEvent = builder.getPhysicsEvent(electron,pion); 
+	  PhysicsEvent pionEvent = builder.getPhysicsEvent(electron, pion); 
 	  
 	  // reject and dont process event 
 	  if (sqrt(pionEvent.mm2) < 1.07){

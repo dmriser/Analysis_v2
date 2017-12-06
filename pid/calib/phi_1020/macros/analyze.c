@@ -1,6 +1,6 @@
 {
 
-  TFile *inputFile = TFile::Open("/volatile/clas12/dmriser/farm_out/phi_1020_pass0/phi.root");
+  TFile *inputFile = TFile::Open("/volatile/clas12/dmriser/farm_out/phi_1020_pass8/pid.root");
   //  TFile *inputFile = TFile::Open("../out/big_dingus.root");
   TTree *events    = (TTree*) inputFile->Get("events");
 
@@ -28,6 +28,8 @@
   TH2F *mm_epx_theta_kk = new TH2F("mm_epx_theta_kk", "",200, 0.50, 1.6, 200, 0.0, 75.0); 
   TH2F *im_kk_im_pk = new TH2F("im_kk_im_pk", "", 200, 0.9, 1.3, 200, 0.9, 2.0); 
   
+  // real right 
+  std::string pidcut("alpha_kp > 0.32 && alpha_prot > 0.32");
   std::string boxcut("missing_mass_epkx_mpi > 0.4 && missing_mass_epkx_mk > 0.2");
   std::string epkxcut("missing_mass_epkx_mk > 0.475 && missing_mass_epkx_mk < 0.518");
   std::string epxcut("missing_mass_epx > 0.980 && missing_mass_epx < 1.060");
@@ -35,33 +37,33 @@
   std::string lambdacut("im_pk < 1.48 || im_pk > 1.56");  
 
   // do projections 
-  events->Draw("missing_mass_epkx_mk >> mm_epkx_nocut", "", "");
-  events->Draw("missing_mass_epkx_mk >> mm_epkx_boxcut", boxcut.c_str(), "");
-  events->Draw("missing_mass_epkx_mk >> mm_epkx_allcut", Form("%s && %s && %s", boxcut.c_str(), epkxcut.c_str(), epxcut.c_str()), "");
+  events->Draw("missing_mass_epkx_mk >> mm_epkx_nocut", pidcut.c_str(), "");
+  events->Draw("missing_mass_epkx_mk >> mm_epkx_boxcut", Form("%s && %s", boxcut.c_str(), pidcut.c_str()), "");
+  events->Draw("missing_mass_epkx_mk >> mm_epkx_allcut", Form("%s && %s && %s && %s", pidcut.c_str(), boxcut.c_str(), epkxcut.c_str(), epxcut.c_str()), "");
 
-  events->Draw("missing_mass_ekx_mk >> mm_ekx_nocut", "", "");
-  events->Draw("missing_mass_ekx_mk >> mm_ekx_boxcut", boxcut.c_str(), "");
+  events->Draw("missing_mass_ekx_mk >> mm_ekx_nocut", pidcut.c_str(), "");
+  events->Draw("missing_mass_ekx_mk >> mm_ekx_boxcut", Form("%s && %s", pidcut.c_str(), boxcut.c_str()), "");
 
-  events->Draw("missing_mass_epx >> mm_epx_nocut", "", "");
-  events->Draw("missing_mass_epx >> mm_epx_allcut", Form("%s && %s", boxcut.c_str(), epkxcut.c_str()) , "");
-  events->Draw("missing_mass_epx >> mm_epx_anglecut", Form("%s && %s && %s", anglecut.c_str(), boxcut.c_str(), epkxcut.c_str()) , "");
+  events->Draw("missing_mass_epx >> mm_epx_nocut", pidcut.c_str(), "");
+  events->Draw("missing_mass_epx >> mm_epx_allcut", Form("%s && %s && %s", pidcut.c_str(), boxcut.c_str(), epkxcut.c_str()) , "");
+  events->Draw("missing_mass_epx >> mm_epx_anglecut", Form("%s && %s && %s && %s", pidcut.c_str(), anglecut.c_str(), boxcut.c_str(), epkxcut.c_str()) , "");
 
-  events->Draw("im_kk >> im_kk_nocut", "", ""); 
-  events->Draw("im_kk >> im_kk_allcut", Form("%s && %s", boxcut.c_str(), epkxcut.c_str()), "");
-  events->Draw("im_kk >> im_kk_lambdacut", Form("%s && %s && %d", lambdacut.c_str(), boxcut.c_str(), epkxcut.c_str()), "");
+  events->Draw("im_kk >> im_kk_nocut", pidcut.c_str(), ""); 
+  events->Draw("im_kk >> im_kk_allcut", Form("%s && %s && %s", pidcut.c_str(), boxcut.c_str(), epkxcut.c_str()), "");
+  events->Draw("im_kk >> im_kk_lambdacut", Form("%s && %s && %s && %s", pidcut.c_str(), lambdacut.c_str(), boxcut.c_str(), epkxcut.c_str()), "");
   //  events->Draw("im_kk >> im_kk_allcut", Form("%s && %s && %s", boxcut.c_str(), epkxcut.c_str(), epxcut.c_str()), "");
-  events->Draw("im_kk >> im_kk_epkxcut", epkxcut.c_str(), "");
+  events->Draw("im_kk >> im_kk_epkxcut", Form("%s && %s", pidcut.c_str(), epkxcut.c_str()), "");
 
-  events->Draw("missing_mass_epkx_mpi:missing_mass_epkx_mk >> mm_compare_mass", "", "colz");
-  events->Draw("missing_mass_epkx_mk:missing_mass_epx >> mm_epx_epkx", boxcut.c_str(), "colz");
+  events->Draw("missing_mass_epkx_mpi:missing_mass_epkx_mk >> mm_compare_mass", pidcut.c_str(), "colz");
+  events->Draw("missing_mass_epkx_mk:missing_mass_epx >> mm_epx_epkx", Form("%s && %s", pidcut.c_str(), boxcut.c_str()), "colz");
 
   //  events->Draw("missing_mass_epkx_mk:im_kk >> mm_epkx_im_kk", Form("%s && %s", boxcut.c_str(), epxcut.c_str()), "colz"); 
   events->Draw("missing_mass_epkx_mk:im_kk >> mm_epkx_im_kk", boxcut.c_str(), "colz"); 
 
   events->Draw("theta_kk_lab:im_kk >> im_kk_theta_kk", Form("%s && %s && %s", lambdacut.c_str(), boxcut.c_str(), epkxcut.c_str()));
   //  events->Draw("theta_kk_lab:missing_mass_epx >> mm_epx_theta_kk", Form("%s && %s", boxcut.c_str(), epkxcut.c_str()));
-  events->Draw("theta_kk_lab:missing_mass_epx >> mm_epx_theta_kk", boxcut.c_str());
-  events->Draw("im_pk:im_kk >> im_kk_im_pk", Form("%s && %s", boxcut.c_str(), epkxcut.c_str()), "colz");
+  events->Draw("theta_kk_lab:missing_mass_epx >> mm_epx_theta_kk", Form("%s && %s", pidcut.c_str(),boxcut.c_str()));
+  events->Draw("im_pk:im_kk >> im_kk_im_pk", Form("%s && %s && %s", pidcut.c_str(), boxcut.c_str(), epkxcut.c_str()), "colz");
 
 
   //drawing shits 

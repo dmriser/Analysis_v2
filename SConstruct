@@ -11,11 +11,12 @@ import os, glob
 env = Environment(ENV = {'PATH':os.environ['PATH']})
 env.ParseConfig("root-config --glibs --cflags")
 env.Append(CCFLAGS = ['-g','-std=c++11'])
+env.Append(CPPPATH = ['include/'])
 #env.Append(CPPPATH = ['models/pbmodel/'], LIBPATH = ['models/pbmodel/'],LIBS = ['CPP_F1F209']) # Get FORTRAN model 
 #env.Append(CPPPATH = ['models/Brasse/'], LIBPATH = ['models/Brasse/'],LIBS = ['CPP_BRASSE']) # Get FORTRAN model 
 
 # Build the h22 library 
-h22_sources  = glob.glob('h22/*.cxx')
+h22_sources  = glob.glob('src/*.cxx')
 h22_sources += glob.glob('momCorr/*.cxx')	
 #h22_sources += glob.glob('models/pbmodel/*.cc')
 #h22_sources += glob.glob('models/Brasse/*.cxx')

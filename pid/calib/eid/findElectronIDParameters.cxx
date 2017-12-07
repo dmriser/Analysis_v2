@@ -49,7 +49,7 @@ void findElectronIDParameters::Loop(int numberEvents){
 void findElectronIDParameters::ProcessEvent(){
   
   for (int ipart =0; ipart<event.gpart; ipart++){
-    if (event.q[ipart]<0 && event.ec_ei[ipart]>0.05 && event.nphe[ipart]>20 && fabs(event.sc_t[ipart]-event.cc_t[ipart])<25.0 ) {
+    if (event.q[ipart]<0 && event.ec_ei[ipart]>0.05 && event.nphe[ipart]>20) {
       int sectorIndex = event.dc_sect[ipart] -1;
       
       if(sectorIndex > -1 && sectorIndex < 6){

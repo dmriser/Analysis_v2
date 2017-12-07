@@ -46,10 +46,6 @@ public:
 
     std::string nathanPath = Global::Environment::GetNathanPath();
 
-    // setup reader options 
-    GSIM = false; 
-    Init();
-
     // needs parameters 
     params = new Parameters(); 
     params->loadParameters(Form("%s/lists/parameters/data/data_tofmass.pars", path.c_str())); 
@@ -92,6 +88,10 @@ public:
   }
 
   void Loop(){
+
+    // setup reader options 
+    GSIM = false; 
+    Init();
     
     // setup particle filter 
     filter->set_info(GSIM, GetRunNumber());

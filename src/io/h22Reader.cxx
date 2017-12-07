@@ -24,6 +24,7 @@ using namespace std;
 
 // root includes 
 #include <TROOT.h>
+#include <TList.h>
 #include <TString.h>
 #include <TChain.h>
 #include <TFile.h>
@@ -31,12 +32,14 @@ using namespace std;
 
 h22Reader::h22Reader(){
   GSIM   = -1;
-  fchain = new TChain("h22");
+  //  fchain = new TChain("h22");
+  fchain = NULL; 
 }
 
 h22Reader::h22Reader(int mc) {
   GSIM   = mc;
-  fchain = new TChain("h22");
+  //  fchain = new TChain("h22");
+  fchain = NULL;
 }
 
 h22Reader::~h22Reader(){
@@ -91,13 +94,56 @@ void h22Reader::AddList(string _file, int nfiles, int startfile){
 }
 
 void h22Reader::AddFile(TString _fname){
-  fchain->AddFile(_fname);
-  return;
+  if(fchain){
+    fchain->AddFile(_fname);
+  } else {
+    
+    // we're trying to figure out if the file has 
+    // a tree called h10 or h22 or neither 
+    TFile *testFile = TFile::Open(_fname); 
+    TList *keys     = testFile->GetListOfKeys(); 
+    TObject *obj    = keys->First(); 
+
+    if(obj->GetName() == "h10"){
+      fTreeType = "h10"; 
+    } else if (obj->GetName() == "h22"){
+      fTreeType = "h22"; 
+    } else {
+      std::cerr << "[h22Reader::AddFile] Trouble getting the tree structure from file, dying on " << _fname << std::endl; 
+    }
+
+    testFile->Close(); 
+    fchain = new TChain(fTreeType.c_str()); 
+  }
 }
 
 void h22Reader::AddFile(std::string _fname){
-  fchain->AddFile(_fname.c_str());
-  return;
+  if(fchain){
+    fchain->AddFile(_fname.c_str());
+  } else {
+    
+    // we're trying to figure out if the file has 
+    // a tree called h10 or h22 or neither 
+    TFile *testFile = TFile::Open(_fname.c_str()); 
+    TList *keys     = testFile->GetListOfKeys(); 
+    TObject *obj    = keys->First(); 
+
+    std::string name(obj->GetName()); 
+
+    if(name == "h10"){
+      fTreeType = "h10"; 
+    } else if (name == "h22"){
+      fTreeType = "h22"; 
+    } else {
+      std::cerr << "[h22Reader::AddFile] Trouble getting the tree structure from file, dying on " << _fname << std::endl; 
+      exit(0); 
+    }
+    
+    testFile->Close(); 
+    fchain = new TChain(fTreeType.c_str()); 
+
+    std::cout << "[h22Reader::AddFile] Setting up for first file, type is " << fTreeType << std::endl; 
+  }
 }
 
 
@@ -114,8 +160,6 @@ void h22Reader::Init(){
   
   // Set branch addresses and branch pointers
    fchain->SetBranchAddress("evntid", &event.evntid, &b_evntid);
-   fchain->SetBranchAddress("ihel", &event.ihel, &b_ihel);
-   fchain->SetBranchAddress("corr_hel", &event.corr_hel, &b_corr_hel);
    fchain->SetBranchAddress("q_l", &event.q_l, &b_q_l);
    fchain->SetBranchAddress("gpart", &event.gpart, &b_gpart);
    fchain->SetBranchAddress("q", event.q, &b_q);
@@ -152,15 +196,39 @@ void h22Reader::Init(){
    fchain->SetBranchAddress("tl1_x", event.tl1_x, &b_tl1_x);
    fchain->SetBranchAddress("tl1_y", event.tl1_y, &b_tl1_y);
    fchain->SetBranchAddress("tl1_z", event.tl1_z, &b_tl1_z);
-   fchain->SetBranchAddress("tl3_x", event.tl3_x, &b_tl3_x);
-   fchain->SetBranchAddress("tl3_y", event.tl3_y, &b_tl3_y);
-   fchain->SetBranchAddress("tl3_z", event.tl3_z, &b_tl3_z);
-   fchain->SetBranchAddress("tl3_cx", event.tl3_cx, &b_tl3_cx);
-   fchain->SetBranchAddress("tl3_cy", event.tl3_cy, &b_tl3_cy);
-   fchain->SetBranchAddress("tl3_cz", event.tl3_cz, &b_tl3_cz);
+
+   if(fTreeType == "h22"){
+     fchain->SetBranchAddress("ihel",      &event.ihel,     &b_ihel); 
+     fchain->SetBranchAddress("corr_hel",  &event.corr_hel, &b_corr_hel); 
+     fchain->SetBranchAddress("tl3_x", event.tl3_x, &b_tl3_x);
+     fchain->SetBranchAddress("tl3_y", event.tl3_y, &b_tl3_y);
+     fchain->SetBranchAddress("tl3_z", event.tl3_z, &b_tl3_z);
+     fchain->SetBranchAddress("tl3_cx", event.tl3_cx, &b_tl3_cx);
+     fchain->SetBranchAddress("tl3_cy", event.tl3_cy, &b_tl3_cy);
+     fchain->SetBranchAddress("tl3_cz", event.tl3_cz, &b_tl3_cz);
+   }
+   else if(fTreeType == "h10"){
+     fchain->SetBranchAddress("evntclas", &event.ihel,     &b_ihel); 
+     fchain->SetBranchAddress("evntclas", &event.corr_hel, &b_corr_hel); 
+     fchain->SetBranchAddress("dc_xsc", event.tl3_x, &b_tl3_x);
+     fchain->SetBranchAddress("dc_ysc", event.tl3_y, &b_tl3_y);
+     fchain->SetBranchAddress("dc_zsc", event.tl3_z, &b_tl3_z);
+     fchain->SetBranchAddress("dc_cxsc", event.tl3_cx, &b_tl3_cx);
+     fchain->SetBranchAddress("dc_cysc", event.tl3_cy, &b_tl3_cy);
+     fchain->SetBranchAddress("dc_czsc", event.tl3_cz, &b_tl3_cz);
+   }
+
    fchain->SetBranchAddress("vx", event.vx, &b_vx);
    fchain->SetBranchAddress("vy", event.vy, &b_vy);
-    
+
+   TList *keys  = fchain->GetCurrentFile()->GetListOfKeys();
+   TObject *obj = keys->FindObject("mcnentr");
+   if(obj != 0){
+     GSIM = true; 
+   } else {
+     GSIM = false; 
+   }
+
    if (GSIM){
        fchain->SetBranchAddress("mcnentr", &event.mcnentr, &b_mcnentr);
        fchain->SetBranchAddress("mcnpart", &event.mcnpart, &b_mcnpart);
@@ -179,8 +247,7 @@ void h22Reader::Init(){
 
 }
 
-string h22Reader::GetFilenameChunk(int stringStart, int stringLen)
-{
+string h22Reader::GetFilenameChunk(int stringStart, int stringLen){
   if (fchain->GetEntries() == 0){ cerr << "trying to get chunk when fchain empty" << endl; }
   string fname = fchain->GetCurrentFile()->GetName();
   return fname.substr(stringStart,stringLen); ;

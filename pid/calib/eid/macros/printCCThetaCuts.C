@@ -1,6 +1,6 @@
 {
 
-  TFile *inputFile = TFile::Open("out.root");
+  TFile *inputFile = TFile::Open("../e16.root");
 
   TH2I         *cc[6];
   TGraphErrors *mu[6];
@@ -17,6 +17,7 @@
     sigma[sector] = (TGraphErrors*) inputFile->Get(Form("ccSigmaGraph%d",sector));
 
     compareCanvas->cd(sector+1);
+    gPad->SetLogz();
     cc[sector]   ->Draw("colz"); 
     mu[sector]   ->Draw("same");
   }

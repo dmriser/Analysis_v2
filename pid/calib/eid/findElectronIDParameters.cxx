@@ -7,8 +7,6 @@
 #include <vector>
 
 // Put your includes here 
-#include "DCut.h" 
-#include "DSelection.h" 
 #include "h22Event.h" 
 #include "h22Reader.h" 
 #include "Parameters.h"
@@ -25,7 +23,7 @@
 findElectronIDParameters::findElectronIDParameters(){   
   for (int sect=0; sect<6; sect++){
     ecSamplingFraction[sect] = new TH2I(Form("ecSamplingFraction_%d",sect),"",100,0.5,4.5,100,0.01,0.5);
-    ccThetaCorrelation[sect] = new TH2I(Form("ccThetaCorrelation_%d",sect),"",18,0,17,100,5,47);
+    ccThetaCorrelation[sect] = new TH2I(Form("ccThetaCorrelation_%d",sect),"",18,0,17,100,0,80);
   }
 }
 
@@ -51,12 +49,13 @@ void findElectronIDParameters::Loop(int numberEvents){
 void findElectronIDParameters::ProcessEvent(){
   
   for (int ipart =0; ipart<event.gpart; ipart++){
-    // Perhaps this is cheating...
-    if (event.q[ipart]<0 && event.ec_ei[ipart]>0.05 && event.nphe[ipart]>20) {
+    if (event.q[ipart]<0 && event.ec_ei[ipart]>0.05 && event.nphe[ipart]>20 && fabs(event.sc_t[ipart]-event.cc_t[ipart])<25.0 ) {
       int sectorIndex = event.dc_sect[ipart] -1;
       
-      ecSamplingFraction[sectorIndex]->Fill(event.p[ipart], event.etot[ipart]/event.p[ipart]);
-      ccThetaCorrelation[sectorIndex]->Fill((event.cc_segm[ipart]%1000)/10, event.GetThetaCC(ipart));
+      if(sectorIndex > -1 && sectorIndex < 6){
+	ecSamplingFraction[sectorIndex]->Fill(event.p[ipart], event.etot[ipart]/event.p[ipart]);
+	ccThetaCorrelation[sectorIndex]->Fill((event.cc_segm[ipart]%1000)/10, event.GetThetaCC(ipart));
+      }
     }
   }
 
@@ -70,7 +69,7 @@ void findElectronIDParameters::CalculateCCThetaCut(){
   int binsPerSlice = 1;
 
   TF1 *fitGauss = new TF1("fitGauss","gaus");  
-  TF1 *fitPol3  = new TF1("fitPol3","pol3", 1.0,16.0);
+  TF1 *fitPol2  = new TF1("fitPol2","pol2", 4.0,12.0);
 
   // Used for TGraphErrors constructor
   double dummyAxis[numberSlices];
@@ -100,8 +99,11 @@ void findElectronIDParameters::CalculateCCThetaCut(){
   for (int sector=0; sector<6; sector++){
     for(int slice=0; slice<18; slice++){
       std::string name = Form("ccSlices_%d_sector_%d",slice,sector);
+      
+      fitGauss->SetRange(-2.0 + 2.5*slice, 2.0 + 2.5*slice); 
+
       ccSlices[sector][slice] = ccThetaCorrelation[sector]->ProjectionY(name.c_str(),slice,slice+1);
-      ccSlices[sector][slice]->Fit("fitGauss","Q");
+      ccSlices[sector][slice]->Fit("fitGauss","RQ");
  
       mu[slice]         = fitGauss->GetParameter(1);
       sigma[slice]      = fitGauss->GetParameter(2);
@@ -115,29 +117,34 @@ void findElectronIDParameters::CalculateCCThetaCut(){
     ccMuGraph[sector]   ->SetName(Form("ccMuGraph%d",sector));
     ccSigmaGraph[sector]->SetName(Form("ccSigmaGraph%d",sector));
 
-    ccMuGraph[sector]->Fit("fitPol3","RQ");
-    muParA.addValue(fitPol3->GetParameter(3));
-    muParA.addError(fitPol3->GetParError(3));
-    muParB.addValue(fitPol3->GetParameter(2));
-    muParB.addError(fitPol3->GetParError(2));    
-    muParC.addValue(fitPol3->GetParameter(1));
-    muParC.addError(fitPol3->GetParError(1));    
-    muParD.addValue(fitPol3->GetParameter(0));
-    muParD.addError(fitPol3->GetParError(0));
+    ccMuGraph[sector]->Fit("fitPol2","RQ");
+    muParA.addValue(0.0);
+    muParA.addError(0.0);
+    //    muParA.addValue(fitPol3->GetParameter(3));
+    //    muParA.addError(fitPol3->GetParError(3));
+    muParB.addValue(fitPol2->GetParameter(2));
+    muParB.addError(fitPol2->GetParError(2));    
+    muParC.addValue(fitPol2->GetParameter(1));
+    muParC.addError(fitPol2->GetParError(1));    
+    muParD.addValue(fitPol2->GetParameter(0));
+    muParD.addError(fitPol2->GetParError(0));
 
-    ccSigmaGraph[sector]->Fit("fitPol3","RQ");
-    sigmaParA.addValue(fitPol3->GetParameter(3));
-    sigmaParA.addError(fitPol3->GetParError(3));
-    sigmaParB.addValue(fitPol3->GetParameter(2));
-    sigmaParB.addError(fitPol3->GetParError(2));    
-    sigmaParC.addValue(fitPol3->GetParameter(1));
-    sigmaParC.addError(fitPol3->GetParError(1));    
-    sigmaParD.addValue(fitPol3->GetParameter(0));
-    sigmaParD.addError(fitPol3->GetParError(0));
+    //    ccSigmaGraph[sector]->Fit("fitPol3","RQ");
+    ccSigmaGraph[sector]->Fit("fitPol2","RQ");
+    //    sigmaParA.addValue(fitPol3->GetParameter(3));
+    //    sigmaParA.addError(fitPol3->GetParError(3));
+    sigmaParA.addValue(0.0);
+    sigmaParA.addError(0.0);
+    sigmaParB.addValue(fitPol2->GetParameter(2));
+    sigmaParB.addError(fitPol2->GetParError(2));    
+    sigmaParC.addValue(fitPol2->GetParameter(1));
+    sigmaParC.addError(fitPol2->GetParError(1));    
+    sigmaParD.addValue(fitPol2->GetParameter(0));
+    sigmaParD.addError(fitPol2->GetParError(0));
   }
 
 
-  nSigma.addValueAndError(4.00, 0.00);
+  nSigma.addValueAndError(2.00, 0.00);
 
   // Save those values
   eidParameters.addParameterSet(nSigma);

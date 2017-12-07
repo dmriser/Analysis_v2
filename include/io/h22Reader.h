@@ -35,6 +35,8 @@ public :
    Int_t           fCurrent; // current number in chain
    Int_t           GSIM; // -1 (uninitialized) 0 (data) 1 (gsim)
 
+   std::string fTreeType; 
+
    //   const h22Event &event;
    h22Event event;
 

@@ -34,14 +34,11 @@ public:
     std::string momCorrPath = Form("%s/momCorr/",path.c_str());
     momCorr                 = new MomCorr_e1f(momCorrPath);
 
-    // setup reader options 
-    GSIM = false; 
-    Init();
-
     // needs parameters 
     params = new Parameters(); 
-    params->loadParameters(Form("%s/lists/parameters/data/data_tofmass.pars", path.c_str())); 
+    params->loadParameters(Form("%s/lists/parameters/data/final.pars", path.c_str())); 
 
+    // particle filter for doing pid
     filter      = new ParticleFilter(params);
 
     // setup structure of ntuple 
@@ -69,10 +66,13 @@ public:
   }
 
   ~Analysis(){
-    // total destruction 
   }
 
   void Loop(){
+
+    // setup reader options 
+    GSIM = false; 
+    Init();
     
     // setup particle filter 
     filter->set_info(GSIM, GetRunNumber());

@@ -2,11 +2,11 @@
 
 # User Parameters 
 set numberOfJobs = 20
-set binDir       = "/u/home/dmriser/Analysis_v2/pid/calib/phi_1020/src/"
-set binName      = "fill"
+set binDir       = "/u/home/dmriser/Analysis_v2/pid/validation/eid/"
+set binName      = "PIDHistograms"
 set sourceDir    = "/u/home/dmriser/Analysis_v2/farm/analysis"
 set outDir       = "/volatile/clas12/dmriser/farm_out/"
-set outName      = "phi_1020_pass8"
+set outName      = "eid_pass0"
 set runScript    = "goAnalyze"
 set fileList     = "/u/home/dmriser/Analysis_v2/lists/files/data/good_files.dat"
 

@@ -25,6 +25,7 @@ using namespace std;
 // root includes 
 #include <TROOT.h>
 #include <TList.h>
+#include <TObjArray.h>
 #include <TString.h>
 #include <TChain.h>
 #include <TFile.h>
@@ -55,7 +56,7 @@ void h22Reader::AddList(string _file, int nfiles){
   string line = "";
   int ifile   = 0;
 
-  while ( !file.eof() && (ifile < nfiles) ){
+  while ( !file.eof() && (ifile < nfiles) ) {
       file >> line;
       fchain->AddFile( line.c_str() );
       cout << "[h22Reader::AddList] Added " << line.c_str() << " to the TChain as type " << type[GSIM] << endl;
@@ -147,6 +148,17 @@ void h22Reader::AddFile(std::string _fname){
 }
 
 
+void h22Reader::SetupMC(){
+  TObjArray *branches = fchain->GetListOfBranches(); 
+  for(int i=0; i<branches->GetEntries(); i++){
+    if (branches->At(i)->GetName() == "mcnentr"){
+      GSIM = true; 
+    }
+  }
+
+    std::cout << "[h22Reader::SetupMC] GSIM status = " << GSIM << std::endl;
+}
+
 /**< Init() must be run once to link the branches of the TChain to the h22Event class members*/
 void h22Reader::Init(){
 
@@ -155,7 +167,6 @@ void h22Reader::Init(){
     else if ( GetRunNumber() > 50000 && GetRunNumber() < 60000 ) GSIM = 0;
     else                                           GSIM = 1;
   } 
-
   else { cout << "[h22Reader::Init] Defaulting to GSIM = 0, Entries =" << GetEntries() << endl; }
   
   // Set branch addresses and branch pointers
@@ -197,9 +208,18 @@ void h22Reader::Init(){
    fchain->SetBranchAddress("tl1_y", event.tl1_y, &b_tl1_y);
    fchain->SetBranchAddress("tl1_z", event.tl1_z, &b_tl1_z);
 
-   if(fTreeType == "h22"){
+   if(fTreeType == "h22" && GSIM == false){
      fchain->SetBranchAddress("ihel",      &event.ihel,     &b_ihel); 
      fchain->SetBranchAddress("corr_hel",  &event.corr_hel, &b_corr_hel); 
+     fchain->SetBranchAddress("tl3_x", event.tl3_x, &b_tl3_x);
+     fchain->SetBranchAddress("tl3_y", event.tl3_y, &b_tl3_y);
+     fchain->SetBranchAddress("tl3_z", event.tl3_z, &b_tl3_z);
+     fchain->SetBranchAddress("tl3_cx", event.tl3_cx, &b_tl3_cx);
+     fchain->SetBranchAddress("tl3_cy", event.tl3_cy, &b_tl3_cy);
+     fchain->SetBranchAddress("tl3_cz", event.tl3_cz, &b_tl3_cz);
+   }
+   else if(fTreeType == "h22" && GSIM == true){
+     fchain->SetBranchAddress("ihel",      &event.ihel,     &b_ihel); 
      fchain->SetBranchAddress("tl3_x", event.tl3_x, &b_tl3_x);
      fchain->SetBranchAddress("tl3_y", event.tl3_y, &b_tl3_y);
      fchain->SetBranchAddress("tl3_z", event.tl3_z, &b_tl3_z);
@@ -220,14 +240,6 @@ void h22Reader::Init(){
 
    fchain->SetBranchAddress("vx", event.vx, &b_vx);
    fchain->SetBranchAddress("vy", event.vy, &b_vy);
-
-   TList *keys  = fchain->GetCurrentFile()->GetListOfKeys();
-   TObject *obj = keys->FindObject("mcnentr");
-   if(obj != 0){
-     GSIM = true; 
-   } else {
-     GSIM = false; 
-   }
 
    if (GSIM){
        fchain->SetBranchAddress("mcnentr", &event.mcnentr, &b_mcnentr);

@@ -121,6 +121,7 @@ public :
    h22Reader();
    ~h22Reader();
    h22Reader(int);
+   void SetupMC();
    void Init();
    void AddFile(TString);
    void AddFile(std::string);

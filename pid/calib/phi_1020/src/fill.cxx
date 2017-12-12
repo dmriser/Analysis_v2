@@ -35,14 +35,10 @@ public:
     std::string momCorrPath = Form("%s/momCorr/",path.c_str());
     momCorr                 = new MomCorr_e1f(momCorrPath);
 
-    // setup reader options 
-    GSIM = false; 
-    Init();
-
     // needs parameters 
     params = new Parameters(); 
     //    params->loadParameters(Form("%s/lists/data_tofmass.pars", path.c_str())); 
-    params->loadParameters(Form("%s/lists/dataLoose.pars", path.c_str())); 
+    params->loadParameters(Form("%s/lists/parameters/data/dataLoose.pars", path.c_str())); 
     filter = new ParticleFilter(params);
     //    filter->positiveKaonSelector->DisableByRegex("Fid"); 
 
@@ -55,19 +51,18 @@ public:
     tupleWriter.addFloat("missing_mass_ekx_mpi"); 
     tupleWriter.addFloat("missing_mass_epkx_mpi"); 
     tupleWriter.addFloat("missing_mass_epx");
-
     tupleWriter.addFloat("x");
     tupleWriter.addFloat("w");
     tupleWriter.addFloat("q2");
     tupleWriter.addFloat("theta_h_p");
     tupleWriter.addFloat("theta_kk_lab");
-    
     tupleWriter.addFloat("p_kp"); 
     tupleWriter.addFloat("p_km"); 
     tupleWriter.addFloat("p_prot"); 
-
     tupleWriter.addFloat("alpha_kp");
     tupleWriter.addFloat("alpha_prot");
+    tupleWriter.addFloat("theta_h_lambda");
+    tupleWriter.addFloat("phi_h_lambda"); 
   }
 
   ~Analysis(){
@@ -75,6 +70,10 @@ public:
   }
 
   void Loop(){
+
+    // setup reader options 
+    GSIM = false; 
+    Init();
     
     // setup particle filter 
     filter->set_info(GSIM, GetRunNumber());
@@ -168,6 +167,9 @@ public:
 	    tupleWriter.setFloat("theta_h_p", ev.thetaHadron);  
 	    tupleWriter.setFloat("theta_kk_lab", to_degrees*kp.Angle(km.Vect()));  
 	    
+
+	    tupleWriter.setFloat("theta_h_lambda", ekEvent.thetaHadron); 
+	    tupleWriter.setFloat("phi_h_lambda", ekEvent.phiHadron); 
 
 	    // these have to be called again because they are setup in a bad way that 
 	    // the local variable (protected) inside is set fConfidnce based on the last 

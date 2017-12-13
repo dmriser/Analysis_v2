@@ -149,9 +149,11 @@ void h22Reader::AddFile(std::string _fname){
 
 
 void h22Reader::SetupMC(){
+  GSIM = false; 
+
   TObjArray *branches = fchain->GetListOfBranches(); 
   for(int i=0; i<branches->GetEntries(); i++){
-    if (branches->At(i)->GetName() == "mcnentr"){
+    if (branches->At(i)->GetName() == "mcid"){
       GSIM = true; 
     }
   }
@@ -163,11 +165,14 @@ void h22Reader::SetupMC(){
 void h22Reader::Init(){
 
   if ( GetEntries() > 0 ) {
-    if ( GetRunNumber() > 37000 && GetRunNumber() < 39000 )      GSIM = 0;
+    if ( GetRunNumber() > 10000 && GetRunNumber() < 39000 )      GSIM = 0;
     else if ( GetRunNumber() > 50000 && GetRunNumber() < 60000 ) GSIM = 0;
     else                                           GSIM = 1;
   } 
+
   else { cout << "[h22Reader::Init] Defaulting to GSIM = 0, Entries =" << GetEntries() << endl; }
+
+  SetupMC(); 
   
   // Set branch addresses and branch pointers
    fchain->SetBranchAddress("evntid", &event.evntid, &b_evntid);

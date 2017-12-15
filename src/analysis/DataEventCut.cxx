@@ -578,16 +578,23 @@ bool DataEventCut_DeltaZVertexCut::IsPassed(h22Event &event, int hadronIndex){
   // using uncorrected position for now, something buggy 
   // about using the corrected ones
   //  double dvz = event.vz[event.GetElectronIndex()]-event.vz[hadronIndex];
-  double dvz = event.corr_vz[event.GetElectronIndex()]-event.corr_vz[hadronIndex];
-  
-  if (dvz > GetMin() && dvz < GetMax()){
-    n_pass++;
-    return true;
-  } else {
-    n_fail++;
-    return false;
+
+  if(event.GetElectronIndex() > -1 && event.GetElectronIndex() < event.gpart
+     && hadronIndex > -1 && hadronIndex < event.gpart){
+    double dvz = event.corr_vz[event.GetElectronIndex()]-event.corr_vz[hadronIndex];
+    
+    if (dvz > GetMin() && dvz < GetMax()){
+      n_pass++;
+      return true;
+    } else {
+      n_fail++;
+      return false;
+    }
+    
+  } else{
+    printf("[DataEventCut_DeltaZVertexCut::IsPassed] Indices out of bounds electron (%d/%d), hadron (%d/%d)", event.GetElectronIndex(), event.gpart, hadronIndex, event.gpart);
   }
-  
+
   return false;
 }
 

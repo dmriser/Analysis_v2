@@ -24,20 +24,34 @@
 #include <TFile.h>
 #include "TString.h"
 
+enum init_stages {
+  fUninitialized, 
+  fHasChain,
+  fHasMCStatus,
+  fReady
+};
+
+enum file_types {
+  h22,
+  h10
+};
+
 /**
  * h22Reader is a class which relies on the h22Event class, it constructs a chain of events from file.
  * h22Reader can be initialized for data or gsim, which contains extra mc banks.
  */
 
-class h22Reader{
+class h22Reader {
+
 public :
    TChain         *fchain;   //!pointer to the analyzed TTree or TChain
    Int_t           fCurrent; // current number in chain
    Int_t           GSIM; // -1 (uninitialized) 0 (data) 1 (gsim)
 
-   std::string fTreeType; 
+   int fInitStage; 
 
-   //   const h22Event &event;
+   int fTreeType;
+
    h22Event event;
 
    // List of branches
@@ -121,17 +135,15 @@ public :
    h22Reader();
    ~h22Reader();
    h22Reader(int);
+
    void SetupMC();
    void Init();
-   void AddFile(TString);
    void AddFile(std::string);
    int GetEntries(){return fchain->GetEntries(); }
    h22Event& GetEvent(){return event;}
    std::string GetFilename(){return fchain->GetCurrentFile()->GetName();}
    std::string GetFilenameChunk(int,int);
-   void AddList(std::string, int);
-   void AddList(std::string, int, int);
-   void GetEntry(int ien){fchain->GetEntry(ien);}
+   void GetEntry(int ien); 
    int GetRunNumber();
 };
 #endif

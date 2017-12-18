@@ -123,6 +123,7 @@ class MomentumCut : public DataEventCut
 
   bool IsPassed(h22Event &event, int);
   float GetFractionalDistance(h22Event &event, int index);
+  void Configure(Parameters *params);
 };
 
 
@@ -145,6 +146,7 @@ class SampFracCut : public DataEventCut
   bool CanBeApplied(h22Event &event, int);
   bool IsPassed(h22Event &event, int);
   float GetFractionalDistance(h22Event &event, int index); 
+  void Configure(Parameters *params);
 };
 
 /////////////////////////////////////////////////////////////////////
@@ -166,6 +168,7 @@ class CCThetaMatchingCut : public DataEventCut
   bool CanBeApplied(h22Event &event, int);
   bool IsPassed(h22Event &event, int);
   float GetFractionalDistance(h22Event &event, int index);
+  void Configure(Parameters *params);
 };
 
 /////////////////////////////////////////////////////////////////////
@@ -184,6 +187,7 @@ class ECUCut : public DataEventCut
 
   bool IsPassed(h22Event &event, int);
   float GetFractionalDistance(h22Event &event, int index);
+  void Configure(Parameters *params);
 };
 
 /////////////////////////////////////////////////////////////////////
@@ -201,6 +205,7 @@ class ECVCut : public DataEventCut
   ~ECVCut();
   bool IsPassed(h22Event &event, int);
   float GetFractionalDistance(h22Event &event, int index);
+  void Configure(Parameters *params);
 };
 
 /////////////////////////////////////////////////////////////////////
@@ -218,6 +223,7 @@ class ECWCut : public DataEventCut
   ~ECWCut();
   bool IsPassed(h22Event &event, int);
   float GetFractionalDistance(h22Event &event, int index);
+  void Configure(Parameters *params);
 };
 
 
@@ -236,6 +242,7 @@ class ZVertexCut : public DataEventCut
   ~ZVertexCut();
   bool IsPassed(h22Event &event, int);
   float GetFractionalDistance(h22Event &event, int index); 
+  void Configure(Parameters *params);
 };
 
 /////////////////////////////////////////////////////////////////////
@@ -254,6 +261,7 @@ class CCFiducialCut : public DataEventCut
 
   double a, b, c; 
   bool IsPassed(h22Event &event, int);
+  void Configure(Parameters *params);
 };
 
 /////////////////////////////////////////////////////////////////////
@@ -271,6 +279,7 @@ class ECEdepInnerCut : public DataEventCut
   ~ECEdepInnerCut();
   bool IsPassed(h22Event &event, int);
   float GetFractionalDistance(h22Event &event, int index); 
+  void Configure(Parameters *params);
 };
 
 /////////////////////////////////////////////////////////////////////
@@ -309,7 +318,7 @@ class DCR3FiducialCut : public DataEventCut
   double angle, height; 
   
   bool IsPassed(h22Event &event, int);
-
+  void Configure(Parameters *params);
 };
 
 /////////////////////////////////////////////////////////////////////

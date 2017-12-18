@@ -142,6 +142,9 @@ float MomentumCut::GetFractionalDistance(h22Event &event, int index){
   return getFractionalDistance(event.p[index], GetMin(), GetMax()); 
 }
 
+void MomentumCut::Configure(Parameters *params){
+
+}
 
 ///////////////////////////////////////////////////////////////
 /*
@@ -225,6 +228,43 @@ SampFracCut::~SampFracCut()
 
 }
 
+
+void SampFracCut::Configure(Parameters *params){
+
+  std::vector<std::string> requiredParameters;
+  requiredParameters.push_back("EL_SF_MU_A"); 
+  requiredParameters.push_back("EL_SF_MU_B"); 
+  requiredParameters.push_back("EL_SF_MU_C"); 
+  requiredParameters.push_back("EL_SF_MU_D"); 
+  requiredParameters.push_back("EL_SF_SIGMA_A"); 
+  requiredParameters.push_back("EL_SF_SIGMA_B"); 
+  requiredParameters.push_back("EL_SF_SIGMA_C"); 
+  requiredParameters.push_back("EL_SF_SIGMA_D"); 
+  requiredParameters.push_back("EL_EC_NSIGMA"); 
+
+  bool hasParams = true; 
+  for(std::string param : requiredParameters){
+    if (!params->hasParameter(param)){
+      std::cerr << "[MomentumCut::Configure] Error searching for parameters in configuration " << param << std::endl; 
+      hasParams = false; 
+    }
+  }
+
+  // we're ok to set them 
+  if (hasParams){
+    am = params->getParameter("EL_SF_MU_A").getValue(sector-1); 
+    bm = params->getParameter("EL_SF_MU_B").getValue(sector-1); 
+    cm = params->getParameter("EL_SF_MU_C").getValue(sector-1); 
+    dm = params->getParameter("EL_SF_MU_D").getValue(sector-1); 
+    as = params->getParameter("EL_SF_SIGMA_A").getValue(sector-1); 
+    bs = params->getParameter("EL_SF_SIGMA_B").getValue(sector-1); 
+    cs = params->getParameter("EL_SF_SIGMA_C").getValue(sector-1); 
+    ds = params->getParameter("EL_SF_SIGMA_D").getValue(sector-1); 
+    nsigma = params->getParameter("EL_EC_NSIGMA").getValue(0); 
+  }
+
+}
+
 bool SampFracCut::IsPassed(h22Event &event, int index)
 {
     double samp = event.etot[index]/event.p[index];
@@ -270,6 +310,43 @@ CCThetaMatchingCut::CCThetaMatchingCut(int s){
 }
 
 CCThetaMatchingCut::~CCThetaMatchingCut(){
+}
+
+
+void CCThetaMatchingCut::Configure(Parameters *params){
+
+  std::vector<std::string> requiredParameters;
+  requiredParameters.push_back("EL_CCT_MU_A"); 
+  requiredParameters.push_back("EL_CCT_MU_B"); 
+  requiredParameters.push_back("EL_CCT_MU_C"); 
+  requiredParameters.push_back("EL_CCT_MU_D"); 
+  requiredParameters.push_back("EL_CCT_SIGMA_A"); 
+  requiredParameters.push_back("EL_CCT_SIGMA_B"); 
+  requiredParameters.push_back("EL_CCT_SIGMA_C"); 
+  requiredParameters.push_back("EL_CCT_SIGMA_D"); 
+  requiredParameters.push_back("EL_CCT_NSIGMA"); 
+
+  bool hasParams = true; 
+  for(std::string param : requiredParameters){
+    if (!params->hasParameter(param)){
+      std::cerr << "[CCThetaMatchingCut::Configure] Error searching for parameters in configuration " << param << std::endl; 
+      hasParams = false; 
+    }
+  }
+
+  // we're ok to set them 
+  if (hasParams){
+    am = params->getParameter("EL_CCT_MU_A").getValue(sector-1); 
+    bm = params->getParameter("EL_CCT_MU_B").getValue(sector-1); 
+    cm = params->getParameter("EL_CCT_MU_C").getValue(sector-1); 
+    dm = params->getParameter("EL_CCT_MU_D").getValue(sector-1); 
+    as = params->getParameter("EL_CCT_SIGMA_A").getValue(sector-1); 
+    bs = params->getParameter("EL_CCT_SIGMA_B").getValue(sector-1); 
+    cs = params->getParameter("EL_CCT_SIGMA_C").getValue(sector-1); 
+    ds = params->getParameter("EL_CCT_SIGMA_D").getValue(sector-1); 
+    nsigma = params->getParameter("EL_CCT_NSIGMA").getValue(0); 
+  }
+
 }
 
 bool CCThetaMatchingCut::IsPassed(h22Event &event, int index){
@@ -333,6 +410,18 @@ float ECUCut::GetFractionalDistance(h22Event &event, int index){
   return getFractionalDistance(u, GetMin(), GetMax());
 }
 
+void ECUCut::Configure(Parameters *params){
+  if (params->hasParameter("EL_ECU_MIN") && 
+      params->hasParameter("EL_ECU_MAX")){
+
+    SetMin(params->getParameter("EL_ECU_MIN").getValue(0)); 
+    SetMax(params->getParameter("EL_ECU_MAX").getValue(0)); 
+  } else {
+    std::cerr << "[ECUCut::Configure] Error finding parameters. " << std::endl; 
+  }
+}
+
+
 ECVCut::ECVCut()
 {
     SetName("EC-V Cut");
@@ -359,6 +448,17 @@ float ECVCut::GetFractionalDistance(h22Event &event, int index){
   return getFractionalDistance(v, GetMin(), GetMax());
 }
 
+void ECVCut::Configure(Parameters *params){
+  if (params->hasParameter("EL_ECV_MIN") && 
+      params->hasParameter("EL_ECV_MAX")){
+
+    SetMin(params->getParameter("EL_ECV_MIN").getValue(0)); 
+    SetMax(params->getParameter("EL_ECV_MAX").getValue(0)); 
+  } else {
+    std::cerr << "[ECUCut::Configure] Error finding parameters. " << std::endl; 
+  }
+}
+
 ECWCut::ECWCut()
 {
     SetName("EC-W Cut");
@@ -380,6 +480,17 @@ bool ECWCut::IsPassed(h22Event &event, int index)
     return false;
 }
 
+void ECWCut::Configure(Parameters *params){
+  if (params->hasParameter("EL_ECW_MIN") && 
+      params->hasParameter("EL_ECW_MAX")){
+
+    SetMin(params->getParameter("EL_ECW_MIN").getValue(0)); 
+    SetMax(params->getParameter("EL_ECW_MAX").getValue(0)); 
+  } else {
+    std::cerr << "[ECWCut::Configure] Error finding parameters. " << std::endl; 
+  }
+}
+
 float ECWCut::GetFractionalDistance(h22Event &event, int index){
   double w = event.GetUVWVector(index).Z();
   return getFractionalDistance(w, GetMin(), GetMax());
@@ -399,6 +510,15 @@ ZVertexCut::ZVertexCut()
 ZVertexCut::~ZVertexCut()
 {
 
+}
+
+void ZVertexCut::Configure(Parameters *params){
+  if(params->hasParameter("EL_VZ_MIN") && params->hasParameter("EL_VZ_MAX")){
+    SetMin(params->getParameter("EL_VZ_MIN").getValue(0));
+    SetMax(params->getParameter("EL_VZ_MAX").getValue(0));
+  } else {
+    std::cerr << "[ZVertexCut::Configure] Error finding parameters. " << std::endl; 
+  }
 }
 
 bool ZVertexCut::IsPassed(h22Event &event, int index)
@@ -431,6 +551,19 @@ CCFiducialCut::~CCFiducialCut()
 
 }
 
+void CCFiducialCut::Configure(Parameters *params){
+  if(params->hasParameter("EL_CC_FIDA") && 
+     params->hasParameter("EL_CC_FIDB") && 
+     params->hasParameter("EL_CC_FIDC")){
+
+    a = params->getParameter("EL_CC_FIDA").getValue(0);
+    b = params->getParameter("EL_CC_FIDB").getValue(0);
+    c = params->getParameter("EL_CC_FIDC").getValue(0);
+  } else {
+    std::cerr << "[CCFiducialCut::Configure] Problem finidng parameters. " << std::endl; 
+  }  
+}
+
 bool CCFiducialCut::IsPassed(h22Event &event, int index)
 {
     SetMin(a - b*sqrt(1 - pow(event.GetRelativePhi(index),2)/c));
@@ -445,18 +578,22 @@ bool CCFiducialCut::IsPassed(h22Event &event, int index)
 */
 ///////////////////////////////////////////////////////////////
 
-ECEdepInnerCut::ECEdepInnerCut()
-{
+ECEdepInnerCut::ECEdepInnerCut(){
     SetName("EC Edep Inner Cut");
 }
 
-ECEdepInnerCut::~ECEdepInnerCut()
-{
-
+ECEdepInnerCut::~ECEdepInnerCut(){
 }
 
-bool ECEdepInnerCut::IsPassed(h22Event &event, int index)
-{
+void ECEdepInnerCut::Configure(Parameters *params){
+  if(params->hasParameter("EL_EC_EDEP_MIN")){
+    SetMin(params->getParameter("EL_EC_EDEP_MIN").getValue(0));
+  } else {
+    std::cerr << "[ECEdepInnerCut::Configure] Problem finding parameters. " << std::endl; 
+  }
+}
+
+bool ECEdepInnerCut::IsPassed(h22Event &event, int index){
 
     if ( event.ec_ei[index] > GetMin() ) { n_pass++; return true; }
     else { n_fail++; }
@@ -503,16 +640,23 @@ bool DCR1FiducialCut::IsPassed(h22Event &event, int index) {
 */
 ///////////////////////////////////////////////////////////////
 
-DCR3FiducialCut::DCR3FiducialCut()
-{
+DCR3FiducialCut::DCR3FiducialCut(){
     angle = 0; height = 0;
     SetName("DC Region 3 Fid Cut");
 }
 
 
-DCR3FiducialCut::~DCR3FiducialCut()
-{
+DCR3FiducialCut::~DCR3FiducialCut(){
 
+}
+
+void DCR3FiducialCut::Configure(Parameters *params){
+  if(params->hasParameter("EL_DCR3_FIDA") && params->hasParameter("EL_DCR3_FIDH")){
+    angle  = params->getParameter("EL_DCR3_FIDA").getValue(0);
+    height = params->getParameter("EL_DCR3_FIDH").getValue(0);
+  } else {
+    std::cerr << "[DCR3FiducialCut::Configure] Problem finding parameters. " << std::endl; 
+  }
 }
 
 bool DCR3FiducialCut::IsPassed(h22Event &event, int index)

@@ -29,7 +29,7 @@
 class h22Event {
  public :
  
-  const static int BUFFER_SIZE = 16; 
+  const static int BUFFER_SIZE = 24; 
 
   // Declaration of leaf types
    UInt_t          evntid;

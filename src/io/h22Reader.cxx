@@ -230,6 +230,12 @@ int h22Reader::GetRunNumber(){
 
 void h22Reader::GetEntry(int ientry){
   fchain->GetEntry(ientry);
+
+  for(int ipart=0; ipart<event.gpart; ipart++){
+    event.corr_b[ipart]    = event.b[ipart]; 
+    event.corr_sc_t[ipart] = event.sc_t[ipart]; 
+    event.corr_vz[ipart]   = event.vz[ipart];     
+  }
   
   if(fTreeType == file_types::h10){
     event.corr_hel = 0;

@@ -174,7 +174,7 @@ void StandardHistograms::Fill(h22Event &event, int index){
   h2_ele_samplingFraction_nphe[0]->Fill(event.etot[index]/event.p[index], event.nphe[index]); 
   h2_ele_vz_phi[0]->Fill(event.vz[index], event.GetPhi(index));
 
-  int s = event.dc_sect[index]; 
+  int s = event.GetSector(index)+1;
   h1_ele_nphe[s]            ->Fill(event.nphe[index]);
   h1_ele_ecInner[s]         ->Fill(event.ec_ei[index]/event.p[index]);
   h1_ele_ecOuter[s]         ->Fill(event.ec_eo[index]/event.p[index]);
@@ -200,7 +200,7 @@ void StandardHistograms::Fill(h22Event &event, int index1, int index2){
   h2_part1_samplingFraction_nphe[0]->Fill(event.etot[index2]/event.p[index2], event.nphe[index2]); 
   h2_ele_vz_phi[0]->Fill(event.vz[index2], event.GetPhi(index2));
 
-  int s1 = event.dc_sect[index2]; 
+  int s1 = event.GetSector(index2)+1; 
   h1_part1_nphe[s1]            ->Fill(event.nphe[index2]);
   h1_part1_ecInner[s1]         ->Fill(event.ec_ei[index2]/event.p[index2]);
   h1_part1_ecOuter[s1]         ->Fill(event.ec_eo[index2]/event.p[index2]);

@@ -47,11 +47,8 @@ h22Reader::~h22Reader(){
 }
 
 void h22Reader::AddFile(std::string _fname){
-
-  if(fchain){
-    fchain->AddFile(_fname.c_str());
-  } else {
     
+  if(!fchain){
     // we're trying to figure out if the file has 
     // a tree called h10 or h22 or neither 
     TFile *testFile = TFile::Open(_fname.c_str()); 
@@ -79,6 +76,11 @@ void h22Reader::AddFile(std::string _fname){
 
     fInitStage = init_stages::fHasChain; 
   }
+
+  if(fchain){
+    fchain->AddFile(_fname.c_str());
+  } 
+
 }
 
 

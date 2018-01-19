@@ -885,79 +885,104 @@ float DataEventCut_BetaPCut::GetFractionalDistance(h22Event &event, int index){
 ///////////////////////////////////////////////////////////////
 
 DataEventCut_BetaPLikelihood::DataEventCut_BetaPLikelihood(int pid) : fPid(pid) {
-  fMass = pid_to_mass(fPid); 
   SetName(Form("Beta P Likelihood Cut %d", fPid));
 
-  fPidMap[211]  = 0; 
-  fPidMap[321]  = 1;  
-  fPidMap[2212] = 2; 
+  // add possible particle
+  AddPossibleParticle(fPid); 
 
   // by default any track that maximizes the likelihood ratio 
   // will be returned as true 
   fConfidenceMin = 0.0; 
-  fConfidence    = 0.0; 
 }
 
 DataEventCut_BetaPLikelihood::~DataEventCut_BetaPLikelihood(){
 }
 
 bool DataEventCut_BetaPLikelihood::CanBeApplied(h22Event &event, int index){
-    return (event.q[index] > 0 && event.dc_sect[index] > 0);
+    return (event.q[index] != 0 && event.dc_sect[index] > 0);
+}
+
+void DataEventCut_BetaPLikelihood::AddPossibleParticle(int pid){
+  
+  // the current particle is not already being considered
+  // so we should add it 
+  if (fData.count(pid) == 0){
+    beta_p_likelihood_data thisData;
+    thisData.mass       = pid_to_mass(pid); 
+    thisData.confidence = 0.0;
+
+    for(int i=0; i<6; i++){
+      for(int j=0; j<3; j++){
+	thisData.mu[i][j]    = 0.0; 
+	thisData.sigma[i][j] = 0.0; 
+      }
+    }
+
+    fData[pid] = thisData; 
+  } 
+
+  // the current particle is already in consideration 
+  else {
+    std::cout << "[DataEventCut_BetaPLikelihood::AddPossibleParticle] Trying to add pid = " << pid 
+	      << ".  That is already a possible particle (doing nothing). " << std::endl; 
+  }
+
 }
 
 void DataEventCut_BetaPLikelihood::Configure(Parameters *params){
-  
+
+  std::map<int, std::string> pidToName; 
+  pidToName[211]  = "PIP";
+  pidToName[321]  = "KP";
+  pidToName[2212] = "PROT";
+  pidToName[-211] = "PIM";
+  pidToName[-321] = "KM";
+
+  std::vector<std::string> parNames; 
+  parNames.push_back("_DBETA_MU_A"); 
+  parNames.push_back("_DBETA_MU_B"); 
+  parNames.push_back("_DBETA_MU_C"); 
+  parNames.push_back("_DBETA_SIGMA_A"); 
+  parNames.push_back("_DBETA_SIGMA_B"); 
+  parNames.push_back("_DBETA_SIGMA_C"); 
+
   // doing this so that code doesnt die 
   std::vector<std::string> parsNeeded; 
-  parsNeeded.push_back("PIP_DBETA_MU_A"); 
-  parsNeeded.push_back("PIP_DBETA_MU_B"); 
-  parsNeeded.push_back("PIP_DBETA_MU_C"); 
-  parsNeeded.push_back("PIP_DBETA_SIGMA_A"); 
-  parsNeeded.push_back("PIP_DBETA_SIGMA_B"); 
-  parsNeeded.push_back("PIP_DBETA_SIGMA_C"); 
-  parsNeeded.push_back("KP_DBETA_MU_A"); 
-  parsNeeded.push_back("KP_DBETA_MU_B"); 
-  parsNeeded.push_back("KP_DBETA_MU_C"); 
-  parsNeeded.push_back("KP_DBETA_SIGMA_A"); 
-  parsNeeded.push_back("KP_DBETA_SIGMA_B"); 
-  parsNeeded.push_back("KP_DBETA_SIGMA_C"); 
-  parsNeeded.push_back("PROT_DBETA_MU_A"); 
-  parsNeeded.push_back("PROT_DBETA_MU_B"); 
-  parsNeeded.push_back("PROT_DBETA_MU_C"); 
-  parsNeeded.push_back("PROT_DBETA_SIGMA_A"); 
-  parsNeeded.push_back("PROT_DBETA_SIGMA_B"); 
-  parsNeeded.push_back("PROT_DBETA_SIGMA_C"); 
+
+  for(std::pair<int, beta_p_likelihood_data> particleData : fData){
+    int pid = particleData.first; 
+
+    for(std::string parName : parNames){
+      std::string currentParameter(Form("%s%s", pidToName[pid].c_str(), parName.c_str()));
+      parsNeeded.push_back(currentParameter);
+    }
+  }
 
   bool hasAllPars = true; 
   for(std::string par : parsNeeded){
     if(!params->hasParameter(par)){
       std::cout << "[DataEventCut_BetaPLikelihood::Configure] Parameter missing " << par << std::endl;
       hasAllPars = false; 
+    } else {
+      std::cout << "[DataEventCut_BetaPLikelihood::Configure] Parameter found " << par << std::endl;
     }
   }
 
   if(hasAllPars){
-    for(int isect=0; isect<6; isect++){
-      fMu[0][isect][0] = params->getParameter("PIP_DBETA_MU_C") .getValue(isect); 
-      fMu[0][isect][1] = params->getParameter("PIP_DBETA_MU_B") .getValue(isect); 
-      fMu[0][isect][2] = params->getParameter("PIP_DBETA_MU_A") .getValue(isect); 
-      fMu[1][isect][0] = params->getParameter("KP_DBETA_MU_C")  .getValue(isect); 
-      fMu[1][isect][1] = params->getParameter("KP_DBETA_MU_B")  .getValue(isect); 
-      fMu[1][isect][2] = params->getParameter("KP_DBETA_MU_A")  .getValue(isect); 
-      fMu[2][isect][0] = params->getParameter("PROT_DBETA_MU_C").getValue(isect); 
-      fMu[2][isect][1] = params->getParameter("PROT_DBETA_MU_B").getValue(isect); 
-      fMu[2][isect][2] = params->getParameter("PROT_DBETA_MU_A").getValue(isect); 
+
+    for(std::pair<int, beta_p_likelihood_data> particleData : fData){
+      int pid = particleData.first; 
       
-      fSigma[0][isect][0] = params->getParameter("PIP_DBETA_SIGMA_C") .getValue(isect); 
-      fSigma[0][isect][1] = params->getParameter("PIP_DBETA_SIGMA_B") .getValue(isect); 
-      fSigma[0][isect][2] = params->getParameter("PIP_DBETA_SIGMA_A") .getValue(isect); 
-      fSigma[1][isect][0] = params->getParameter("KP_DBETA_SIGMA_C")  .getValue(isect); 
-      fSigma[1][isect][1] = params->getParameter("KP_DBETA_SIGMA_B")  .getValue(isect); 
-      fSigma[1][isect][2] = params->getParameter("KP_DBETA_SIGMA_A")  .getValue(isect); 
-      fSigma[2][isect][0] = params->getParameter("PROT_DBETA_SIGMA_C").getValue(isect); 
-      fSigma[2][isect][1] = params->getParameter("PROT_DBETA_SIGMA_B").getValue(isect); 
-      fSigma[2][isect][2] = params->getParameter("PROT_DBETA_SIGMA_A").getValue(isect); 
-    }  
+      for(int isect=0; isect<6; isect++){
+	fData[pid].mu[isect][0] = params->getParameter(pidToName[pid]+"_DBETA_MU_C").getValue(isect);
+	fData[pid].mu[isect][1] = params->getParameter(pidToName[pid]+"_DBETA_MU_B").getValue(isect);
+	fData[pid].mu[isect][2] = params->getParameter(pidToName[pid]+"_DBETA_MU_A").getValue(isect);
+
+	fData[pid].sigma[isect][0] = params->getParameter(pidToName[pid]+"_DBETA_SIGMA_C").getValue(isect);
+	fData[pid].sigma[isect][1] = params->getParameter(pidToName[pid]+"_DBETA_SIGMA_B").getValue(isect);
+	fData[pid].sigma[isect][2] = params->getParameter(pidToName[pid]+"_DBETA_SIGMA_A").getValue(isect);
+      }
+    }
   }
 
   // try to set confidence level if user supplies 
@@ -967,58 +992,76 @@ void DataEventCut_BetaPLikelihood::Configure(Parameters *params){
   else if (fPid == 321 && params->hasParameter("KP_CONFIDENCE_LEVEL")){
     fConfidenceMin = params->getParameter("KP_CONFIDENCE_LEVEL").getValue(0); 
   }
+  else if (fPid == -321 && params->hasParameter("KM_CONFIDENCE_LEVEL")){
+    fConfidenceMin = params->getParameter("KM_CONFIDENCE_LEVEL").getValue(0); 
+  }
+  else if (fPid == -211 && params->hasParameter("PIM_CONFIDENCE_LEVEL")){
+    fConfidenceMin = params->getParameter("PIM_CONFIDENCE_LEVEL").getValue(0); 
+  }
   else if (fPid == 2212 && params->hasParameter("PROT_CONFIDENCE_LEVEL")){
     fConfidenceMin = params->getParameter("PROT_CONFIDENCE_LEVEL").getValue(0); 
   }
+
 }
 
 bool DataEventCut_BetaPLikelihood::IsPassed(h22Event &event, int index){
 
-  int sector = event.dc_sect[index]-1;
-
-  double theory[3];
-  theory[0] = 1/sqrt(1+pow(pi_mass    /event.p[index],2)); 
-  theory[1] = 1/sqrt(1+pow(kaon_mass  /event.p[index],2)); 
-  theory[2] = 1/sqrt(1+pow(proton_mass/event.p[index],2)); 
-
-  double mean[3]; 
-  mean[0] = theory[0] + fMu[0][sector][2]*pow(event.p[index],2) + fMu[0][sector][1]*event.p[index] + fMu[0][sector][0];
-  mean[1] = theory[1] + fMu[1][sector][2]*pow(event.p[index],2) + fMu[1][sector][1]*event.p[index] + fMu[1][sector][0];
-  mean[2] = theory[2] + fMu[2][sector][2]*pow(event.p[index],2) + fMu[2][sector][1]*event.p[index] + fMu[2][sector][0];
-
-  double reso[3]; 
-  reso[0] = fSigma[0][sector][2]*pow(event.p[index],2) + fSigma[0][sector][1]*event.p[index] + fSigma[0][sector][0];
-  reso[1] = fSigma[1][sector][2]*pow(event.p[index],2) + fSigma[1][sector][1]*event.p[index] + fSigma[1][sector][0];
-  reso[2] = fSigma[2][sector][2]*pow(event.p[index],2) + fSigma[2][sector][1]*event.p[index] + fSigma[2][sector][0];
-
-  double residual[3]; 
-  residual[0] = event.corr_b[index]-mean[0]; 
-  residual[1] = event.corr_b[index]-mean[1]; 
-  residual[2] = event.corr_b[index]-mean[2]; 
-  
+  // normalize the pdf 
   double norm = sqrt(1/2.0/3.14159); 
 
-  double likelihood[3]; 
-  likelihood[0] = norm/reso[0] * exp(-0.5 * pow(residual[0]/reso[0], 2));
-  likelihood[1] = norm/reso[1] * exp(-0.5 * pow(residual[1]/reso[1], 2));
-  likelihood[2] = norm/reso[2] * exp(-0.5 * pow(residual[2]/reso[2], 2));
+  // This is used to calculate the total likelihood and 
+  // normalize.
+  double total = 0.0; 
 
-  double total = likelihood[0] + likelihood[1] + likelihood[2]; 
-  likelihood[0] /= total; 
-  likelihood[1] /= total; 
-  likelihood[2] /= total; 
+  // get sector for the correct params 
+  int sector = event.dc_sect[index]-1;
 
-  int max_index = 0; 
-  for(int i=1; i<3; i++){
-    if (likelihood[i] > likelihood[max_index]){
-      max_index = i; 
+  std::map<int, beta_p_likelihood_data> updatedParticleData;
+  for(std::pair<int, beta_p_likelihood_data> particleData : fData){
+    int currentPid                     = particleData.first; 
+    beta_p_likelihood_data currentData = particleData.second; 
+
+    currentData.theory = 1/sqrt(1+pow(currentData.mass/event.p[index],2)); 
+    currentData.mean   = currentData.theory 
+      + currentData.mu[sector][2]*pow(event.p[index],2) 
+      + currentData.mu[sector][1]*event.p[index] 
+      + currentData.mu[sector][0];
+
+    currentData.reso = currentData.sigma[sector][2]*pow(event.p[index],2) 
+      + currentData.sigma[sector][1]*event.p[index] 
+      + currentData.sigma[sector][0];
+    
+    currentData.residual   = event.corr_b[index]-currentData.mean; 
+    currentData.likelihood = norm/currentData.reso * exp(-0.5 * pow(currentData.residual/currentData.reso, 2));
+    currentData.confidence = 1.0 - TMath::Erf(fabs(currentData.residual)/currentData.reso/sqrt(2.0));  
+
+    // add to total likelihood 
+    total += currentData.likelihood; 
+
+    // save calculations 
+    updatedParticleData[currentPid] = currentData; 
+  }  
+
+  // normalize and choose max
+  //
+  for(std::pair<int, beta_p_likelihood_data> particleData : updatedParticleData){
+    updatedParticleData[particleData.first].likelihood /= total; 
+  }
+
+  int max_index   = updatedParticleData.begin()->first; 
+  double max_like = updatedParticleData.begin()->second.likelihood;
+ 
+  for(std::pair<int, beta_p_likelihood_data> particleData : updatedParticleData){
+    if (particleData.second.likelihood > max_like){
+      max_like  = particleData.second.likelihood;
+      max_index = particleData.first;
     }
   }
 
-  int pid_index = fPidMap[fPid];
-  fConfidence = 1.0 - TMath::Erf(fabs(residual[pid_index])/reso[pid_index]/sqrt(2.0));  
+  // update with all information 
+  fData = updatedParticleData; 
 
-  if (fPidMap[fPid] == max_index && fConfidence > fConfidenceMin){
+  if (fPid == max_index && fData[max_index].confidence > fConfidenceMin){
         n_pass++;
         return true;
     } else {
@@ -1030,7 +1073,7 @@ bool DataEventCut_BetaPLikelihood::IsPassed(h22Event &event, int index){
 }
 
 float DataEventCut_BetaPLikelihood::GetConfidence(){
-  return fConfidence; 
+  return fData[fPid].confidence; 
 }
 
 float DataEventCut_BetaPLikelihood::GetFractionalDistance(h22Event &event, int index){

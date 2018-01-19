@@ -482,11 +482,21 @@ class DataEventCut_BetaPCut : public DataEventCut {
  */
 /////////////////////////////////////////////////////////////////////
 
+// [sector][parameter]
+struct beta_p_likelihood_data { 
+  double mu[6][3];
+  double sigma[6][3];
+  double mass; 
+  double confidence;
+  double theory, mean, reso, residual, likelihood; 
+};
+
 class DataEventCut_BetaPLikelihood : public DataEventCut {
  public:
   DataEventCut_BetaPLikelihood(int pid);
   ~DataEventCut_BetaPLikelihood();
 
+  void AddPossibleParticle(int pid);
   bool CanBeApplied(h22Event &event, int index);
   bool IsPassed(h22Event &event, int index);
   float GetFractionalDistance(h22Event &event, int index);
@@ -495,13 +505,10 @@ class DataEventCut_BetaPLikelihood : public DataEventCut {
 
  protected:
   int   fPid; 
-  float fMass; 
-  float fConfidenceMin, fConfidence; 
+  float fConfidenceMin;
 
-  //    particle,  sector, param 
-  // [211, 321, 2212][1-6][0-2]
-  double fMu[3][6][3], fSigma[3][6][3];
-  std::map<int, int> fPidMap; 
+  // this data structure will hopefully be better 
+  std::map<int, beta_p_likelihood_data> fData;
 
 };
 

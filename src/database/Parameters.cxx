@@ -74,6 +74,10 @@ void Parameters::loadParameters(string inputFilename){
 void Parameters::saveParameters(string outputFilename){
   ofstream file(outputFilename.c_str(), std::ios::trunc);
 
+  // testing this out 
+  file.precision(8); 
+  file << std::scientific; 
+
   metaData.setNameOfFile(outputFilename);
   metaData.updateTimeOfLastEdit(); 
 

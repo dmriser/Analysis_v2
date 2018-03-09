@@ -109,13 +109,26 @@ ParticleFilter::ParticleFilter(Parameters *params) : pars(params){
     dbeta_minimizer_neg_211  = new DataEventCut_DBetaMinimizerCut(); 
     dbeta_minimizer_neg_321  = new DataEventCut_DBetaMinimizerCut(); 
 
-    betap_likelihood_211  = new DataEventCut_BetaPLikelihood(211); 
-    betap_likelihood_321  = new DataEventCut_BetaPLikelihood(321); 
-    betap_likelihood_2212 = new DataEventCut_BetaPLikelihood(2212); 
+    betap_likelihood_211     = new DataEventCut_BetaPLikelihood(211); 
+    betap_likelihood_321     = new DataEventCut_BetaPLikelihood(321); 
+    betap_likelihood_2212    = new DataEventCut_BetaPLikelihood(2212); 
+    betap_likelihood_neg211  = new DataEventCut_BetaPLikelihood(-211); 
+    betap_likelihood_neg321  = new DataEventCut_BetaPLikelihood(-321); 
 
-    betap_likelihood_211 ->Configure(params); 
-    betap_likelihood_321 ->Configure(params);     
-    betap_likelihood_2212->Configure(params); 
+    betap_likelihood_211   ->AddPossibleParticle(321); 
+    betap_likelihood_211   ->AddPossibleParticle(2212); 
+    betap_likelihood_321   ->AddPossibleParticle(2212); 
+    betap_likelihood_321   ->AddPossibleParticle(211); 
+    betap_likelihood_2212  ->AddPossibleParticle(211); 
+    betap_likelihood_2212  ->AddPossibleParticle(321); 
+    betap_likelihood_neg211->AddPossibleParticle(-321); 
+    betap_likelihood_neg321->AddPossibleParticle(-211); 
+
+    betap_likelihood_211    ->Configure(params); 
+    betap_likelihood_321    ->Configure(params);     
+    betap_likelihood_2212   ->Configure(params); 
+    betap_likelihood_neg211 ->Configure(params); 
+    betap_likelihood_neg321 ->Configure(params);     
 
     dbeta_minimizer_211->AddPossibleParticle(211); 
     dbeta_minimizer_211->AddPossibleParticle(321); 
@@ -235,8 +248,9 @@ ParticleFilter::ParticleFilter(Parameters *params) : pars(params){
     positivePionSelector->EnableAll();
 
     negativePionSelector->AddCut(dvz_cut);
-    negativePionSelector->AddCut(pim_tofmass_cut); 
-    negativePionSelector->AddCut(dbeta_minimizer_neg_211);
+    negativePionSelector->AddCut(betap_likelihood_neg211);
+    //    negativePionSelector->AddCut(pim_tofmass_cut); 
+    //    negativePionSelector->AddCut(dbeta_minimizer_neg_211);
     negativePionSelector->EnableAll();
 
     //    positiveKaonSelector->AddCut(dbeta_minimizer_321);
@@ -245,8 +259,9 @@ ParticleFilter::ParticleFilter(Parameters *params) : pars(params){
     positiveKaonSelector->EnableAll();
  
     negativeKaonSelector->AddCut(dvz_cut);
-    negativeKaonSelector->AddCut(km_tofmass_cut);
-    negativeKaonSelector->AddCut(dbeta_minimizer_neg_321);
+    //    negativeKaonSelector->AddCut(km_tofmass_cut);
+    //    negativeKaonSelector->AddCut(dbeta_minimizer_neg_321);
+    negativeKaonSelector->AddCut(betap_likelihood_neg321); 
     negativeKaonSelector->EnableAll();
  
     positiveMesonCandidateSelector->AddCut(dcr1_meson_fid_cut); 
@@ -455,6 +470,22 @@ std::map<std::string, float> ParticleFilter::eid_distance_map(h22Event &event, i
 
   title = Form("CCTheta Cut %d", sector);
   results["CC_THETA"] = (electronSelector->GetCut(title.c_str())->GetFractionalDistance(event, index));
+      
+  title = "DC Region 1 Fid Cut";
+  results["DC_R1_FID"] = (electronSelector->GetCut(title.c_str())->GetFractionalDistance(event, index));
+  
+  title = "DC Region 3 Fid Cut";
+  results["DC_R3_FID"] = (electronSelector->GetCut(title.c_str())->GetFractionalDistance(event, index));
+  
+  title = "CC Fid Cut";
+  results["CC_FID"] = (electronSelector->GetCut(title.c_str())->GetFractionalDistance(event, index));
+  
+  title = "CCPhiPMT Match Cut";
+  results["CC_PHI"] = (electronSelector->GetCut(title.c_str())->GetFractionalDistance(event, index));
+  
+  results["EC_FID_U"] = (electronSelector->GetCut("EC-U Cut")->GetFractionalDistance(event, index));
+  results["EC_FID_V"] = (electronSelector->GetCut("EC-V Cut")->GetFractionalDistance(event, index));
+  results["EC_FID_W"] = (electronSelector->GetCut("EC-W Cut")->GetFractionalDistance(event, index));
 
   return results; 
 }

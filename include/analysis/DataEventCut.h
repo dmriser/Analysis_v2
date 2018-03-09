@@ -262,6 +262,7 @@ class CCFiducialCut : public DataEventCut
   double a, b, c; 
   bool IsPassed(h22Event &event, int);
   void Configure(Parameters *params);
+  float GetFractionalDistance(h22Event &event, int index); 
 };
 
 /////////////////////////////////////////////////////////////////////
@@ -299,6 +300,7 @@ class DCR1FiducialCut : public DataEventCut
   double angle, height; 
 
   bool IsPassed(h22Event &event, int);
+  float GetFractionalDistance(h22Event &event, int index); 
 };
 
 /////////////////////////////////////////////////////////////////////
@@ -318,6 +320,7 @@ class DCR3FiducialCut : public DataEventCut
   double angle, height; 
   
   bool IsPassed(h22Event &event, int);
+  float GetFractionalDistance(h22Event &event, int index); 
   void Configure(Parameters *params);
 };
 

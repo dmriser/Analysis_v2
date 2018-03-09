@@ -572,6 +572,12 @@ bool CCFiducialCut::IsPassed(h22Event &event, int index)
     else                                        { n_fail++; return false;}
 }
 
+float CCFiducialCut::GetFractionalDistance(h22Event &event, int index){
+  SetMin(a - b*sqrt(1 - pow(event.GetRelativePhi(index),2)/c));
+  SetMax(75.00);
+  return getFractionalDistance(event.GetThetaCC(index), GetMin(), GetMax());
+}
+
 ///////////////////////////////////////////////////////////////
 /*
   EC Edep Inner Cut
@@ -633,6 +639,21 @@ bool DCR1FiducialCut::IsPassed(h22Event &event, int index) {
     else { n_fail++; return false; }
 }
 
+float DCR1FiducialCut::GetFractionalDistance(h22Event &event, int index){  
+
+
+    double slope = 1/tan(0.5*to_radians*angle);
+    double left  = (height - slope*event.GetRotatedDCR1PosY(index));
+    double right = (height + slope*event.GetRotatedDCR1PosY(index));  
+
+    double cutMin = left; 
+    if (right > left){
+      cutMin = right; 
+    }
+
+  // max value chosen by just looking at the largest values for this variable
+  return getFractionalDistance(event.GetRotatedDCR1PosX(index), cutMin, 60.0); 
+}
 
 ///////////////////////////////////////////////////////////////
 /*
@@ -668,6 +689,21 @@ bool DCR3FiducialCut::IsPassed(h22Event &event, int index)
 
     if (event.tl3_x[index] > left && event.tl3_x[index] > right) { n_pass++; return true; }
     else { n_fail++; return false; }
+}
+
+float DCR3FiducialCut::GetFractionalDistance(h22Event &event, int index){  
+
+    double slope = 1/tan(0.5*to_radians*angle);
+    double left  = (height - slope*event.tl3_y[index]);
+    double right = (height + slope*event.tl3_y[index]);
+
+    double cutMin = left; 
+    if (right > left){
+      cutMin = right; 
+    }
+
+  // max value chosen by just looking at the largest values for this variable
+  return getFractionalDistance(event.tl3_x[index], cutMin, 400.0); 
 }
 
 ///////////////////////////////////////////////////////////////

@@ -95,6 +95,9 @@ public:
     DataEventCut_BetaPLikelihood *betap_likelihood_211; 
     DataEventCut_BetaPLikelihood *betap_likelihood_321; 
     DataEventCut_BetaPLikelihood *betap_likelihood_2212; 
+    DataEventCut_BetaPLikelihood *betap_likelihood_neg211; 
+    DataEventCut_BetaPLikelihood *betap_likelihood_neg321; 
+
 
     DataEventCut_DeltaZVertexCut *dvz_cut;
     DCR1FiducialCut              *dcr1_meson_fid_cut;

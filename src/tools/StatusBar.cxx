@@ -37,7 +37,7 @@ void StatusBar::PrintStatus(int done, int total){
 
 void StatusBar::PrintStatus(double doneFraction){
   if (doneFraction > 0.001){
-    cout << "[StatusBar] "; 
+    cout << "\r [StatusBar] "; 
     cout << fLeft; 
 
     int fillNumber = floor(doneFraction*fWidth); 
@@ -56,7 +56,7 @@ void StatusBar::PrintStatus(double doneFraction){
     
     cout.width(6); cout << doneFraction*100 << " %, ("; 
     cout << GetTime() << "/"; 
-    cout << (1-doneFraction)/doneFraction *GetTime() << ")" << endl; 
+    cout << (1-doneFraction)/doneFraction *GetTime() << ")" << std::flush; 
   }
 
 }

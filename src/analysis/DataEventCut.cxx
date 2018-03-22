@@ -524,14 +524,14 @@ void ZVertexCut::Configure(Parameters *params){
 bool ZVertexCut::IsPassed(h22Event &event, int index)
 {
 
-    if ( event.vz[index] > GetMin() && event.vz[index] < GetMax() ) { n_pass++; return true; }
+    if ( event.corr_vz[index] > GetMin() && event.corr_vz[index] < GetMax() ) { n_pass++; return true; }
     else { n_fail++; }
 
     return false;
 }
 
 float ZVertexCut::GetFractionalDistance(h22Event &event, int index){
-  return getFractionalDistance(event.vz[index], GetMin(), GetMax());
+  return getFractionalDistance(event.corr_vz[index], GetMin(), GetMax());
 }
 
 ///////////////////////////////////////////////////////////////

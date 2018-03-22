@@ -25,7 +25,7 @@ public:
     
     // Member Functions
     static void correctEvent(h22Event *event, int runno, int GSIM);
-    static double vz(h22Event &event,int,int,int);           //! event, ipart, runno, GSIM 
+    static double vz(h22Event &event,int,int);           //! event, ipart, runno, GSIM 
     static double electron_sct(h22Event &event,int,int,int);
     static double hadron_sct(h22Event &event,int,int,int);
     static bool good_sc_paddle(h22Event &event,int);         //! event, ipart

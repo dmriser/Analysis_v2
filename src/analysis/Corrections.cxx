@@ -35,24 +35,15 @@ Corrections::~Corrections()
 
 void Corrections::correctEvent(h22Event *event, int runno, int GSIM){
   /*
-    if( !GSIM ){
-        // Correcting electron spot first to avoid an if statement in the
-        // for loop.
-        event->corr_vz[0]   = vz((*event), 0, runno, GSIM);
-        event->corr_sc_t[0] = electron_sct((*event),0,runno,GSIM);
 
-        for(int ipart=1; ipart<event->gpart; ipart++){
-            event->vz[ipart] = vz((*event), ipart, runno, GSIM);
+    I am applying vertex corrections directly in the GetEntry method 
+    of the h22Reader class.
 
-            if(event->q[ipart] != 0){
-                event->sc_t[ipart] = hadron_sct((*event), ipart, runno, GSIM);
-            }
-        }
-    }
-  */
+   */
+
     if( !GSIM ){
       int electronIndex = event->GetElectronIndex();
-      event->corr_vz[electronIndex]   = vz((*event), electronIndex, runno, GSIM);
+      //      event->corr_vz[electronIndex]   = vz((*event), electronIndex, GSIM);
       event->corr_sc_t[electronIndex] = electron_sct((*event),electronIndex,runno,GSIM);
 
       //      double startTime = event->corr_sc_t[electronIndex] - event->sc_r[electronIndex]/speed_of_light; 
@@ -61,7 +52,7 @@ void Corrections::correctEvent(h22Event *event, int runno, int GSIM){
 
       for(int ipart=0; ipart<event->gpart; ipart++){
 	if (ipart != electronIndex){
-	  event->corr_vz[ipart] = vz((*event), ipart, runno, GSIM);
+	  //	  event->corr_vz[ipart] = vz((*event), ipart, GSIM);
 
 	  double beta = event->sc_r[ipart]/(event->sc_t[ipart]-startTime)/speed_of_light;
 	    
@@ -80,7 +71,7 @@ void Corrections::correctEvent(h22Event *event, int runno, int GSIM){
 
 }
 
-double Corrections::vz(h22Event &event, int ipart, int runno, int GSIM){
+double Corrections::vz(h22Event &event, int ipart, int GSIM){
     // set sector need to build better protection here for case
     // of sector = -1
 
@@ -138,14 +129,11 @@ double Corrections::vz(h22Event &event, int ipart, int runno, int GSIM){
     sv = vx*n[0][s] + vy*n[1][s] + vz*n[2][s];
     
     double cvz;
-    
-    if(fabs(sp) > 0.0000000001)
-    {
+    if(fabs(sp) > 0.0000000001){
         A = (s0-sv)/sp;
         cvz = vz + A*pz;
     }
-    else
-    {
+    else{
         cvz = vz;
     }
     

@@ -18,6 +18,7 @@
 #include <stdio.h>
 
 // my includes 
+#include "Corrections.h"
 #include "h22Event.h"
 #include "h22Reader.h"
 
@@ -236,9 +237,16 @@ void h22Reader::GetEntry(int ientry){
   for(int ipart=0; ipart<event.gpart; ipart++){
     event.corr_b[ipart]    = event.b[ipart]; 
     event.corr_sc_t[ipart] = event.sc_t[ipart]; 
-    event.corr_vz[ipart]   = event.vz[ipart];     
+
+
+    if(event.q[ipart] != 0){
+      event.corr_vz[ipart] = Corrections::vz(event, ipart, GSIM);
+    }
+    else{
+      event.corr_vz[ipart] = event.vz[ipart];     
+    }
   }
-  
+
   if(fTreeType == file_types::h10){
     event.corr_hel = 0;
     

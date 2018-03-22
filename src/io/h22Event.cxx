@@ -66,6 +66,7 @@ h22Event::h22Event(const h22Event &event) {
         vx[i] = event.vx[i];
         vy[i] = event.vy[i];
         vz[i] = event.vz[i];
+	corr_vz[i] = event.corr_vz[i]; 
 
         dc_sect[i] = event.dc_sect[i];
         tl1_x[i] = event.tl1_x[i];

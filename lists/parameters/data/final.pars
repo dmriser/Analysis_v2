@@ -9,7 +9,7 @@
          EL_CCT_MU_D     6     v             10.0815             9.56312             10.1775             10.3354             13.3381             10.2109
          EL_CCT_MU_D     6     e           0.0208996           0.0194239           0.0212528           0.0213507           0.0249789           0.0220398
        EL_CCT_NSIGMA     1     v                   4
-       EL_CCT_NSIGMA     1     e                   0
+       EL_CCT_NSIGMA     1     e                   1
       EL_CCT_SIGMA_A     6     v          0.00145462          0.00131274          0.00158937           0.0016807          0.00128591          0.00171782
       EL_CCT_SIGMA_A     6     e         2.66442e-05         2.48814e-05         2.72643e-05         2.70678e-05         2.87704e-05         2.82681e-05
       EL_CCT_SIGMA_B     6     v           -0.040561          -0.0437367          -0.0459872          -0.0462841          -0.0432928          -0.0471851
@@ -19,35 +19,35 @@
       EL_CCT_SIGMA_D     6     v          -0.0182454            -0.24248           -0.252674           -0.120959           -0.586149           -0.180357
       EL_CCT_SIGMA_D     6     e           0.0126171           0.0115466           0.0125282           0.0131561           0.0136996           0.0134141
           EL_CC_FIDA     1     v                  46
-          EL_CC_FIDA     1     e                   0
+          EL_CC_FIDA     1     e                   1
           EL_CC_FIDB     1     v                  35
           EL_CC_FIDB     1     e                   0
           EL_CC_FIDC     1     v                 360
-          EL_CC_FIDC     1     e                   0
+          EL_CC_FIDC     1     e                  12
         EL_DCR1_FIDA     1     v                  60
-        EL_DCR1_FIDA     1     e                   0
+        EL_DCR1_FIDA     1     e                   1
         EL_DCR1_FIDH     1     v                  22
-        EL_DCR1_FIDH     1     e                   0
+        EL_DCR1_FIDH     1     e                   1
         EL_DCR3_FIDA     1     v                  49
-        EL_DCR3_FIDA     1     e                   0
+        EL_DCR3_FIDA     1     e                   1
         EL_DCR3_FIDH     1     v                  80
-        EL_DCR3_FIDH     1     e                   0
+        EL_DCR3_FIDH     1     e                   3
           EL_ECU_MAX     1     v                 400
-          EL_ECU_MAX     1     e                   0
+          EL_ECU_MAX     1     e                  12
           EL_ECU_MIN     1     v                  70
-          EL_ECU_MIN     1     e                   0
+          EL_ECU_MIN     1     e                  12
           EL_ECV_MAX     1     v                 362
-          EL_ECV_MAX     1     e                   0
+          EL_ECV_MAX     1     e                  12
           EL_ECV_MIN     1     v                   0
           EL_ECV_MIN     1     e                   0
           EL_ECW_MAX     1     v                 395
-          EL_ECW_MAX     1     e                   0
+          EL_ECW_MAX     1     e                  12
           EL_ECW_MIN     1     v                   0
           EL_ECW_MIN     1     e                   0
       EL_EC_EDEP_MIN     1     v                0.05
-      EL_EC_EDEP_MIN     1     e                   0
+      EL_EC_EDEP_MIN     1     e                0.01
         EL_EC_NSIGMA     1     v                   3
-        EL_EC_NSIGMA     1     e                   0
+        EL_EC_NSIGMA     1     e                 0.5
          EL_NPHE_MAX     1     v                 999
          EL_NPHE_MAX     1     e                   0
          EL_NPHE_MIN     1     v                  18
@@ -69,9 +69,9 @@
        EL_SF_SIGMA_D     6     v           0.0474188           0.0475098           0.0461743           0.0492728           0.0546257           0.0517508
        EL_SF_SIGMA_D     6     e         0.000473455          0.00048748          0.00041309         0.000620357         0.000707415         0.000676137
            EL_VZ_MAX     1     v            -22.6864
-           EL_VZ_MAX     1     e                   0
+           EL_VZ_MAX     1     e                 0.5
            EL_VZ_MIN     1     v            -27.7302
-           EL_VZ_MIN     1     e                   0
+           EL_VZ_MIN     1     e                 0.5
        KP_DCR1_ANGLE     6     v                  60                  60                  60                  60                  60                  60
        KP_DCR1_ANGLE     6     e                   0                   0                   0                   0                   0                   0
       KP_DCR1_HEIGHT     6     v                  10                  10                  10                  10                  10                  10

@@ -87,21 +87,6 @@ ParticleFilter::ParticleFilter(Parameters *params) : pars(params){
     pp_dbeta_cut     = new DataEventCut_DeltaBetaCut(211); 
     proton_dbeta_cut = new DataEventCut_DeltaBetaCut(2212); 
 
-    // time of flight cuts 
-    pip_tofmass_cut = new DataEventCut_TOFMassCut(); 
-    pim_tofmass_cut = new DataEventCut_TOFMassCut(); 
-    kp_tofmass_cut  = new DataEventCut_TOFMassCut(); 
-    km_tofmass_cut  = new DataEventCut_TOFMassCut(); 
-
-    pip_tofmass_cut->SetMin(params->getParameter("PIP_TOFMASS_MIN").getValue(0));
-    pip_tofmass_cut->SetMax(params->getParameter("PIP_TOFMASS_MAX").getValue(0));
-    pim_tofmass_cut->SetMin(params->getParameter("PIM_TOFMASS_MIN").getValue(0));
-    pim_tofmass_cut->SetMax(params->getParameter("PIM_TOFMASS_MAX").getValue(0));
-    kp_tofmass_cut->SetMin(params->getParameter("KP_TOFMASS_MIN").getValue(0));
-    kp_tofmass_cut->SetMax(params->getParameter("KP_TOFMASS_MAX").getValue(0));
-    km_tofmass_cut->SetMin(params->getParameter("KM_TOFMASS_MIN").getValue(0));
-    km_tofmass_cut->SetMax(params->getParameter("KM_TOFMASS_MAX").getValue(0));
-
     // new cut from Dan Carman 
     dbeta_minimizer_211      = new DataEventCut_DBetaMinimizerCut(); 
     dbeta_minimizer_321      = new DataEventCut_DBetaMinimizerCut(); 
@@ -244,22 +229,18 @@ ParticleFilter::ParticleFilter(Parameters *params) : pars(params){
 
     //    positivePionSelector->AddCut(dbeta_minimizer_211);
     positivePionSelector->AddCut(betap_likelihood_211); 
-    //    positivePionSelector->AddCut(pip_tofmass_cut); 
     positivePionSelector->EnableAll();
 
     negativePionSelector->AddCut(dvz_cut);
     negativePionSelector->AddCut(betap_likelihood_neg211);
-    //    negativePionSelector->AddCut(pim_tofmass_cut); 
     //    negativePionSelector->AddCut(dbeta_minimizer_neg_211);
     negativePionSelector->EnableAll();
 
     //    positiveKaonSelector->AddCut(dbeta_minimizer_321);
     positiveKaonSelector->AddCut(betap_likelihood_321);
-    //    positiveKaonSelector->AddCut(kp_tofmass_cut); 
     positiveKaonSelector->EnableAll();
  
     negativeKaonSelector->AddCut(dvz_cut);
-    //    negativeKaonSelector->AddCut(km_tofmass_cut);
     //    negativeKaonSelector->AddCut(dbeta_minimizer_neg_321);
     negativeKaonSelector->AddCut(betap_likelihood_neg321); 
     negativeKaonSelector->EnableAll();

@@ -23,13 +23,15 @@
 #include "Corrections.h"
 #include "h22Event.h"
 
-Corrections::Corrections()
-{
+float vertex::parameters::rotationVector[3][6] = {{ 1.0,  0.5, -0.5, -1.0, -0.5, 0.5},
+                                                  { 0.0,  0.866025388, 0.866025388,
+                                                    0.0, -0.866025388, 0.866025388},
+                                                  { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0}};
+Corrections::Corrections(){
     // Nothing to do.
 }
 
-Corrections::~Corrections()
-{
+Corrections::~Corrections(){
     // Nothing to destroy.
 }
 
@@ -88,6 +90,8 @@ double Corrections::vz(h22Event &event, int ipart, int GSIM){
     double vz = event.vz[ipart];
     
     double s0, sp, sv;
+
+    /* 
     double n[3][6];
     for(int abc = 0; abc < 3; abc++) // initialize to zero
     {
@@ -109,7 +113,8 @@ double Corrections::vz(h22Event &event, int ipart, int GSIM){
     n[1][4] = -0.866025388;
     n[0][5] = 0.5;
     n[1][5] = -0.866025388;
-    
+    */
+
     double x0, y0, z0; // beam position (cm)
     
     x0 = 0.15;
@@ -124,9 +129,21 @@ double Corrections::vz(h22Event &event, int ipart, int GSIM){
     
     double A;
     
-    s0 = x0*n[0][s] + y0*n[1][s] + z0*n[2][s];
-    sp = px*n[0][s] + py*n[1][s] + pz*n[2][s];
-    sv = vx*n[0][s] + vy*n[1][s] + vz*n[2][s];
+    //    s0 = x0*n[0][s] + y0*n[1][s] + z0*n[2][s];
+    //    sp = px*n[0][s] + py*n[1][s] + pz*n[2][s];
+    //    sv = vx*n[0][s] + vy*n[1][s] + vz*n[2][s];
+    
+    s0 = x0*vertex::parameters::rotationVector[0][s] + 
+      y0*vertex::parameters::rotationVector[1][s] + 
+      z0*vertex::parameters::rotationVector[2][s];
+
+    sp = px*vertex::parameters::rotationVector[0][s] + 
+      py*vertex::parameters::rotationVector[1][s] + 
+      pz*vertex::parameters::rotationVector[2][s];
+    
+    sv = vx*vertex::parameters::rotationVector[0][s] + 
+      vy*vertex::parameters::rotationVector[1][s] + 
+      vz*vertex::parameters::rotationVector[2][s];
     
     double cvz;
     if(fabs(sp) > 0.0000000001){

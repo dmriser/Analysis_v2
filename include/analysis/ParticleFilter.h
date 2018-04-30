@@ -78,9 +78,6 @@ public:
     // Testing 
     TestCut *testCut; 
 
-    // List of cuts used for pions
-    DataEventCut_TOFMassCut      *pip_tofmass_cut, *pim_tofmass_cut, *kp_tofmass_cut, *km_tofmass_cut;
-
     DataEventCut_DeltaBetaCut    *pp_dbeta_cut; 
     DataEventCut_DeltaBetaCut    *kp_dbeta_cut; 
     DataEventCut_DeltaBetaCut    *proton_dbeta_cut; 

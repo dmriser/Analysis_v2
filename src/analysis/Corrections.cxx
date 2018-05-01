@@ -23,10 +23,10 @@
 #include "Corrections.h"
 #include "h22Event.h"
 
-float vertex::parameters::rotationVector[3][6] = {{ 1.0,  0.5, -0.5, -1.0, -0.5, 0.5},
-                                                  { 0.0,  0.866025388, 0.866025388,
-                                                    0.0, -0.866025388, 0.866025388},
-                                                  { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0}};
+float vertexParameters::rotationVector[3][6] = {{ 1.0,  0.5, -0.5, -1.0, -0.5, 0.5},
+						{ 0.0,  0.866025388, 0.866025388,
+						  0.0, -0.866025388, 0.866025388},
+						{ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0}};
 Corrections::Corrections(){
     // Nothing to do.
 }
@@ -74,87 +74,74 @@ void Corrections::correctEvent(h22Event *event, int runno, int GSIM){
 }
 
 double Corrections::vz(h22Event &event, int ipart, int GSIM){
-    // set sector need to build better protection here for case
-    // of sector = -1
 
-  // Nathan's method 
-  //    int s = event.ec_sect[ipart] -1; if (s<0) return 0.00;
+  /* 
+     
+     Vertex correction routine that centers the midplane of the 
+     sector correctly by taking into account the offset (x0,y0)
+     of the beam.  This offset is calculated by selecting events 
+     from the foil.  
 
-  // trying to use dc instead of ec
-    int s = event.dc_sect[ipart] -1; if (s<0) return 0.00;
-    double px = event.cx[ipart]*event.p[ipart];
-    double py = event.cy[ipart]*event.p[ipart];
-    double pz = event.cz[ipart]*event.p[ipart];
-    double vx = event.vx[ipart];
-    double vy = event.vy[ipart];
-    double vz = event.vz[ipart];
-    
-    double s0, sp, sv;
+     The original source of this method is unknown to me.  The 
+     logical within is not clearly described in any source that
+     I have.  If anyone knows who/where this code comes from and 
+     exactly the methodology applied please contant me.  Thanks.
 
-    /* 
-    double n[3][6];
-    for(int abc = 0; abc < 3; abc++) // initialize to zero
-    {
-        for(int def = 0; def < 6; def++)
-        {
-            n[abc][def] = 0.0;
-        }
-    }
-    
-    n[0][0] = 1.0;
-    n[1][0] = 0.0;
-    n[0][1] = 0.5;
-    n[1][1] = 0.866025388;
-    n[0][2] = -0.5;
-    n[1][2] = 0.866025388;
-    n[0][3] = -1.0;
-    n[1][3] = 0.0;
-    n[0][4] = -0.5;
-    n[1][4] = -0.866025388;
-    n[0][5] = 0.5;
-    n[1][5] = -0.866025388;
-    */
+     - David Riser 
+     - May 1, 2018
 
-    double x0, y0, z0; // beam position (cm)
-    
-    x0 = 0.15;
-    y0 = -0.25;
-    z0 = 0.0;
-    
-    if(GSIM){
-        x0 = 0.0;
-        y0 = 0.0;
-        z0 = 0.0;
-    }
-    
-    double A;
-    
-    //    s0 = x0*n[0][s] + y0*n[1][s] + z0*n[2][s];
-    //    sp = px*n[0][s] + py*n[1][s] + pz*n[2][s];
-    //    sv = vx*n[0][s] + vy*n[1][s] + vz*n[2][s];
-    
-    s0 = x0*vertex::parameters::rotationVector[0][s] + 
-      y0*vertex::parameters::rotationVector[1][s] + 
-      z0*vertex::parameters::rotationVector[2][s];
+   */
 
-    sp = px*vertex::parameters::rotationVector[0][s] + 
-      py*vertex::parameters::rotationVector[1][s] + 
-      pz*vertex::parameters::rotationVector[2][s];
-    
-    sv = vx*vertex::parameters::rotationVector[0][s] + 
-      vy*vertex::parameters::rotationVector[1][s] + 
-      vz*vertex::parameters::rotationVector[2][s];
-    
-    double cvz;
-    if(fabs(sp) > 0.0000000001){
-        A = (s0-sv)/sp;
-        cvz = vz + A*pz;
-    }
-    else{
-        cvz = vz;
-    }
-    
-    return cvz;
+
+  // Does this routine really need to accept GSIM?
+  // Can we not just ensure that this method is never
+  // called for MC?  
+  if(GSIM){
+    return 0.0; 
+  }
+
+  int s = event.dc_sect[ipart] -1;
+  if (s<0) {
+    return 0.00;
+  }
+
+  double px = event.cx[ipart]*event.p[ipart];
+  double py = event.cy[ipart]*event.p[ipart];
+  double pz = event.cz[ipart]*event.p[ipart];
+  
+  double s0, sp, sv;
+  double x0, y0, z0; 
+
+  // This is the real position of the beam
+  // at the z position of the foil.
+  x0 =  0.15;
+  y0 = -0.25;
+  z0 =  0.00;
+
+  // Still trying to figure out exactly what
+  // happens here.
+  s0 = x0 * vertexParameters::rotationVector[0][s] + 
+       y0 * vertexParameters::rotationVector[1][s] + 
+       z0 * vertexParameters::rotationVector[2][s];
+  
+  sp = px * vertexParameters::rotationVector[0][s] + 
+       py * vertexParameters::rotationVector[1][s] + 
+       pz * vertexParameters::rotationVector[2][s];
+  
+  sv = event.vx[ipart] * vertexParameters::rotationVector[0][s] + 
+       event.vy[ipart] * vertexParameters::rotationVector[1][s] + 
+       event.vz[ipart] * vertexParameters::rotationVector[2][s];
+
+  double correctedVertex;
+  if(fabs(sp) > 1e-9){
+    double A = (s0 - sv) / sp; 
+    correctedVertex = event.vz[ipart] + A*pz;
+  }
+  else{
+    correctedVertex = event.vz[ipart];
+  }
+  
+  return correctedVertex;
 }
 
 double Corrections::electron_sct(h22Event &event,int ipart,int runno,int GSIM)

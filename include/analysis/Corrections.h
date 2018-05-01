@@ -17,10 +17,8 @@
 // my includes
 #include "h22Event.h"
 
-namespace vertex {
-  struct parameters {
-    static float rotationVector[3][6]; 
-  };
+struct vertexParameters {
+  static float rotationVector[3][6]; 
 };
 
 class Corrections {

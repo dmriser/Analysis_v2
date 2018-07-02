@@ -92,7 +92,12 @@ void h22Reader::SetupMC(){
     
     TObjArray *branches = fchain->GetListOfBranches(); 
     for(int i=0; i<branches->GetEntries(); i++){
-      if (branches->At(i)->GetName() == "mcid"){
+      std::string branchName(branches->At(i)->GetName()); 
+
+      std::cout << "[h22Reader::SetupMC] Searching branch... " << branchName << std::endl; 
+
+      if (branchName == "mcid"){
+	std::cout << "[h22Reader::SetupMC] Found mcid branch! " << std::endl; 
 	GSIM = true; 
       }
     }
@@ -239,7 +244,7 @@ void h22Reader::GetEntry(int ientry){
     event.corr_sc_t[ipart] = event.sc_t[ipart]; 
 
 
-    if(event.q[ipart] != 0){
+    if(event.q[ipart] != 0 && !GSIM){
       event.corr_vz[ipart] = Corrections::vz(event, ipart, GSIM);
     }
     else{

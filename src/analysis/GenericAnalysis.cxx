@@ -38,26 +38,22 @@ void GenericAnalysis::AddFile(std::string file){
 
 bool GenericAnalysis::RunAnalysis(){
 
-  if (GetEntries() == 0){
-    cout << "[GenericAnalysis::RunAnalysis] Abort: No events. " << endl; 
-    return false;
+  if ( !fchain ) {
+    std::cout << "[GenericAnalysis::RunAnalysis] The TChain called fchain hasn't been setup. " << std::endl; 
   }
-
-  else {
-    Init();
-    Initialize();
-    
-    // if we have large sample, optimize events
-    if(options->args["N"].arg > 1000000){
-      OptimizeLoop(10000);
-    }
-
-    Loop(options->args["N"].arg);
-    Save();
-    return true; 
+ 
+  Init();
+  Initialize();
+  
+  // if we have large sample, optimize events
+  if(options->args["N"].arg > 1000000){
+    OptimizeLoop(10000);
   }
+  
+  Loop(options->args["N"].arg);
+  Save();
+  return true; 
 
-  return true;
 }
 
 void GenericAnalysis::Initialize(){
@@ -78,7 +74,7 @@ void GenericAnalysis::Loop(int numberOfEvents){
 
   cout << "[GenericAnalysis::Loop] Starting loop for " << numberOfEvents << " events. " << endl;
 
-  for (int ievent=0; ievent<numberOfEvents; ievent++){
+  for (int ievent=0; ievent < numberOfEvents; ievent++){
     GetEntry(ievent);
     ProcessEvent();
 

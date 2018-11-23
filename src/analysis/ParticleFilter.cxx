@@ -33,7 +33,7 @@ using std::vector;
 #include "TVector3.h"
 #include "TLorentzVector.h"
 
-ParticleFilter::ParticleFilter(Parameters *params) : pars(params){
+ParticleFilter::ParticleFilter(Parameters *params) : pars(params) {
     MC=false; runno = 0;
 
     // Setup the selector

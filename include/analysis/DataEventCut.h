@@ -29,6 +29,9 @@
 #include "h22Event.h"
 #include "Parameters.h"
 
+// root 
+#include "TFile.h"
+
 class DataEventCut{
 
  public:
@@ -494,6 +497,7 @@ struct beta_p_likelihood_data {
   double theory, mean, reso, residual, likelihood; 
 };
 
+
 class DataEventCut_BetaPLikelihood : public DataEventCut {
  public:
   DataEventCut_BetaPLikelihood(int pid);
@@ -504,6 +508,8 @@ class DataEventCut_BetaPLikelihood : public DataEventCut {
   bool IsPassed(h22Event &event, int index);
   float GetFractionalDistance(h22Event &event, int index);
   float GetConfidence(); 
+  float GetConfidence(int pid);   
+  float GetLikelihood(int pid);
   void Configure(Parameters *params); 
 
  protected:
@@ -512,9 +518,7 @@ class DataEventCut_BetaPLikelihood : public DataEventCut {
 
   // this data structure will hopefully be better 
   std::map<int, beta_p_likelihood_data> fData;
-
 };
-
 /////////////////////////////////////////////////////////////////////
 /*
 

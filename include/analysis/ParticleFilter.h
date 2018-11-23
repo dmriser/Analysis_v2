@@ -29,7 +29,7 @@
 
 class ParticleFilter{
 public:
-    ParticleFilter(Parameters *params);              
+  ParticleFilter(Parameters *params);
     ~ParticleFilter();
     
     // Data Members

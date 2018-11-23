@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////
 /*
-  David Riser, University of Connecticut
+  David Rise, University of Connecticut
   August 14, 2016
   DataEventCut.cxx -> Writes class methods.
 */
@@ -1071,6 +1071,8 @@ bool DataEventCut_BetaPLikelihood::IsPassed(h22Event &event, int index){
     currentData.likelihood = norm/currentData.reso * exp(-0.5 * pow(currentData.residual/currentData.reso, 2));
     currentData.confidence = 1.0 - TMath::Erf(fabs(currentData.residual)/currentData.reso/sqrt(2.0));  
 
+    // Add line here to scale by prior for momentum dep. 
+
     // add to total likelihood 
     total += currentData.likelihood; 
 
@@ -1108,8 +1110,16 @@ bool DataEventCut_BetaPLikelihood::IsPassed(h22Event &event, int index){
     return false;
 }
 
+float DataEventCut_BetaPLikelihood::GetLikelihood(int pid){
+  return (fData.count(pid) == 0 ? 0.0 : fData[pid].likelihood); 
+}
+
 float DataEventCut_BetaPLikelihood::GetConfidence(){
   return fData[fPid].confidence; 
+}
+
+float DataEventCut_BetaPLikelihood::GetConfidence(int pid){
+  return (fData.count(pid) == 0 ? 0.0 : fData[fPid].confidence); 
 }
 
 float DataEventCut_BetaPLikelihood::GetFractionalDistance(h22Event &event, int index){

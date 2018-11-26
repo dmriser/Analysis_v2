@@ -497,7 +497,6 @@ struct beta_p_likelihood_data {
   double theory, mean, reso, residual, likelihood; 
 };
 
-
 class DataEventCut_BetaPLikelihood : public DataEventCut {
  public:
   DataEventCut_BetaPLikelihood(int pid);
@@ -516,9 +515,18 @@ class DataEventCut_BetaPLikelihood : public DataEventCut {
   int   fPid; 
   float fConfidenceMin;
 
+  const static int n_momentum_bins = 80; 
+  const float p_min = 0.0; 
+  const float p_max = 5.5; 
+
+  float pion_prior[n_momentum_bins];
+  float kaon_prior[n_momentum_bins];
+  float proton_prior[n_momentum_bins];
+
   // this data structure will hopefully be better 
   std::map<int, beta_p_likelihood_data> fData;
 };
+
 /////////////////////////////////////////////////////////////////////
 /*
 

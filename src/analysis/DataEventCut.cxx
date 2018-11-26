@@ -982,9 +982,10 @@ void DataEventCut_BetaPLikelihood::Configure(Parameters *params){
   parNames.push_back("_DBETA_SIGMA_B"); 
   parNames.push_back("_DBETA_SIGMA_C"); 
 
-  // doing this so that code doesnt die 
+  // doing this so that code doesnt die
+  //
+  // Load the names of all the needed parameters.
   std::vector<std::string> parsNeeded; 
-
   for(std::pair<int, beta_p_likelihood_data> particleData : fData){
     int pid = particleData.first; 
 
@@ -993,6 +994,12 @@ void DataEventCut_BetaPLikelihood::Configure(Parameters *params){
       parsNeeded.push_back(currentParameter);
     }
   }
+
+  // Additionally now add some new things which
+  // are needed. 
+  //  parsNeeded.push_back("PION_FRACTION");
+  //  parsNeeded.push_back("KAON_FRACTION");
+  //  parsNeeded.push_back("PROTON_FRACTION");
 
   bool hasAllPars = true; 
   for(std::string par : parsNeeded){
@@ -1020,6 +1027,17 @@ void DataEventCut_BetaPLikelihood::Configure(Parameters *params){
       }
     }
   }
+
+  /* 
+  // Set the momentum dependent part of the 
+  // normalization for all three particles 
+  // that we use it for. 
+  for (int ibin = 0; ibin < n_momentum_bins; ibin++) {
+    pion_prior[ibin] = params->getParameter("PION_FRACTION").getValue(ibin);
+    kaon_prior[ibin] = params->getParameter("KAON_FRACTION").getValue(ibin);
+    proton_prior[ibin] = params->getParameter("PROTON_FRACTION").getValue(ibin);
+  }
+  */
 
   // try to set confidence level if user supplies 
   if (fPid == 211 && params->hasParameter("PIP_CONFIDENCE_LEVEL")){
@@ -1052,6 +1070,11 @@ bool DataEventCut_BetaPLikelihood::IsPassed(h22Event &event, int index){
   // get sector for the correct params 
   int sector = event.dc_sect[index]-1;
 
+  // get momentum bin for the prior calculation 
+  int momentum_bin = floor( (event.p[index] - p_min) / (p_max - p_min) / n_momentum_bins );
+  momentum_bin = (momentum_bin > -1 ? momentum_bin : 0);
+  momentum_bin = (momentum_bin < n_momentum_bins ? momentum_bin : 0);
+
   std::map<int, beta_p_likelihood_data> updatedParticleData;
   for(std::pair<int, beta_p_likelihood_data> particleData : fData){
     int currentPid                     = particleData.first; 
@@ -1072,6 +1095,17 @@ bool DataEventCut_BetaPLikelihood::IsPassed(h22Event &event, int index){
     currentData.confidence = 1.0 - TMath::Erf(fabs(currentData.residual)/currentData.reso/sqrt(2.0));  
 
     // Add line here to scale by prior for momentum dep. 
+    /*
+    if (currentPid == 211) {
+      currentData.likelihood *= pion_prior[momentum_bin];
+    }
+    else if (currentPid == 321) {
+      currentData.likelihood *= kaon_prior[momentum_bin];
+    }
+    else if (currentPid == 2212) {
+      currentData.likelihood *= proton_prior[momentum_bin];
+    }
+    */
 
     // add to total likelihood 
     total += currentData.likelihood; 

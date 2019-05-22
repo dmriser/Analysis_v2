@@ -1055,6 +1055,9 @@ void DataEventCut_BetaPLikelihood::Configure(Parameters *params){
   else if (fPid == 2212 && params->hasParameter("PROT_CONFIDENCE_LEVEL")){
     fConfidenceMin = params->getParameter("PROT_CONFIDENCE_LEVEL").getValue(0); 
   }
+  else {
+    fConfidenceMin = 0.0; 
+  }
 
 }
 
@@ -1071,9 +1074,9 @@ bool DataEventCut_BetaPLikelihood::IsPassed(h22Event &event, int index){
   int sector = event.dc_sect[index]-1;
 
   // get momentum bin for the prior calculation 
-  int momentum_bin = floor( (event.p[index] - p_min) / (p_max - p_min) / n_momentum_bins );
-  momentum_bin = (momentum_bin > -1 ? momentum_bin : 0);
-  momentum_bin = (momentum_bin < n_momentum_bins ? momentum_bin : 0);
+  //  int momentum_bin = floor( (event.p[index] - p_min) / (p_max - p_min) / n_momentum_bins );
+  //  momentum_bin = (momentum_bin > -1 ? momentum_bin : 0);
+  //  momentum_bin = (momentum_bin < n_momentum_bins ? momentum_bin : 0);
 
   std::map<int, beta_p_likelihood_data> updatedParticleData;
   for(std::pair<int, beta_p_likelihood_data> particleData : fData){
